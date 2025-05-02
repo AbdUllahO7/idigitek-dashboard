@@ -17,10 +17,10 @@ import {
   FormMessage,
 } from "@/src/components/ui/form"
 import { Input } from "@/src/components/ui/input"
+
 import { Textarea } from "@/src/components/ui/textarea"
-import { Plus, Trash2, X, Save, AlertTriangle, Upload, ImageIcon } from "lucide-react"
+import { Plus, Trash2, Save, AlertTriangle, X } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/src/components/ui/accordion"
-import { Label } from "@/src/components/ui/label"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useContentElements } from "@/src/hooks/webConfiguration/use-conent-elements"
@@ -35,6 +35,8 @@ import { FeaturesFormProps, SubsectionData } from "../../types/Features.types"
 import { createFormRef } from "../../Utils/Expose-form-data"
 import { processAndLoadData } from "../../Utils/load-form-data"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
+import { useFeatureImages } from "../../Utils/Image-uploader"
+import { Label } from "@/src/components/ui/label"
 
 // Helper type to infer the schema type
 type FeaturesSchemaType = ReturnType<typeof createFeaturesSchema>
@@ -46,8 +48,6 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(({ languageIds, activeLa
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [featureCountMismatch, setFeatureCountMismatch] = useState(false)
   const [isValidationDialogOpen, setIsValidationDialogOpen] = useState(false)
-  const [featureImages, setFeatureImages] = useState<Record<number, File | null>>({})
-  const [featureImagePreviews, setFeatureImagePreviews] = useState<Record<number, string | null>>({})
   const [existingSubSectionId, setExistingSubSectionId] = useState<string | null>(null)
   const [contentElements, setContentElements] = useState<any[]>([])
   const { toast } = useToast()
@@ -58,6 +58,9 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(({ languageIds, activeLa
     resolver: zodResolver(featuresSchema),
     defaultValues: defaultValues,
   })
+
+  // Initialize useFeatureImages hook
+  const { featureImages, handleFeatureImageUpload, handleFeatureImageRemove, updateFeatureImageIndices, FeatureImageUploader } = useFeatureImages(form)
 
   const onDataChangeRef = useRef(onDataChange)
   useEffect(() => {
@@ -162,16 +165,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(({ languageIds, activeLa
         setIsLoadingData,
         validateCounts: validateFeatureCounts,
         onLoad: (data) => {
-          // Set image previews for existing images
-          const previews: Record<number, string | null> = {}
-          Object.values(data).forEach((features, index) => {
-            features.forEach((feature: Feature, featureIndex: number) => {
-              if (feature.content.image) {
-                previews[featureIndex] = feature.content.image
-              }
-            })
-          })
-          setFeatureImagePreviews(previews)
+          // No need to set image previews here since FeatureImageUploader uses form values
         },
       }
     )
@@ -198,73 +192,6 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(({ languageIds, activeLa
     })
     return () => subscription.unsubscribe()
   }, [form, isLoadingData, dataLoaded])
-
-  // Clean up image previews on unmount
-  useEffect(() => {
-    return () => {
-      Object.values(featureImagePreviews).forEach((preview) => {
-        if (preview && preview.startsWith("blob:")) {
-          URL.revokeObjectURL(preview)
-        }
-      })
-    }
-  }, [featureImagePreviews])
-
-  // Handle image upload for a specific feature index
-  const handleImageUpload = (featureIndex: number, file: File) => {
-    if (!file) return
-
-    if (file.size > 2 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Image must be less than 2MB",
-        variant: "destructive",
-      })
-      return
-    }
-
-    const previewUrl = URL.createObjectURL(file)
-    setFeatureImages((prev) => ({ ...prev, [featureIndex]: file }))
-    setFeatureImagePreviews((prev) => ({ ...prev, [featureIndex]: previewUrl }))
-
-    const formValues = form.getValues()
-    Object.keys(formValues).forEach((langCode) => {
-      if (formValues[langCode] && formValues[langCode][featureIndex]) {
-        form.setValue(`${langCode}.${featureIndex}.content.image` as any, previewUrl)
-      }
-    })
-
-    toast({
-      title: "Image selected",
-      description: "Feature image has been selected successfully",
-    })
-  }
-
-  // Handle image removal for a specific feature index
-  const handleImageRemove = (featureIndex: number) => {
-    const formValues = form.getValues()
-    Object.keys(formValues).forEach((langCode) => {
-      if (formValues[langCode] && formValues[langCode][featureIndex]) {
-        form.setValue(`${langCode}.${featureIndex}.content.image` as any, "")
-      }
-    })
-
-    const newFeatureImages = { ...featureImages }
-    delete newFeatureImages[featureIndex]
-    setFeatureImages(newFeatureImages)
-
-    const newPreviews = { ...featureImagePreviews }
-    if (newPreviews[featureIndex] && newPreviews[featureIndex]!.startsWith("blob:")) {
-      URL.revokeObjectURL(newPreviews[featureIndex]!)
-    }
-    delete newPreviews[featureIndex]
-    setFeatureImagePreviews(newPreviews)
-
-    toast({
-      title: "Image removed",
-      description: "Feature image has been removed",
-    })
-  }
 
   // Handle form save
   const handleSave = async () => {
@@ -427,7 +354,6 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(({ languageIds, activeLa
                     form.setValue(`${langCode}.${featureIndex}.content.image` as any, uploadResult.data.imageUrl)
                   }
                 })
-                setFeatureImagePreviews((prev) => ({ ...prev, [featureIndex]: uploadResult.data.imageUrl }))
               }
             }
           }
@@ -499,7 +425,6 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(({ languageIds, activeLa
                   form.setValue(`${langCode}.${featureIndex}.content.image` as any, uploadResult.data.imageUrl)
                 }
               })
-              setFeatureImagePreviews((prev) => ({ ...prev, [featureIndex]: uploadResult.data.imageUrl }))
             }
           }
 
@@ -555,16 +480,6 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(({ languageIds, activeLa
       })
 
       setHasUnsavedChanges(false)
-      setFeatureImages({})
-      setFeatureImagePreviews((prev) => {
-        const newPreviews: Record<number, string | null> = {}
-        Object.keys(prev).forEach((index) => {
-          if (prev[Number(index)] && !prev[Number(index)]!.startsWith("blob:")) {
-            newPreviews[Number(index)] = prev[Number(index)]
-          }
-        })
-        return newPreviews
-      })
 
       if (slug) {
         const result = await refetch()
@@ -722,101 +637,19 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(({ languageIds, activeLa
       form.setValue(lang as any, features, { shouldDirty: true })
     })
 
-    const newFeatureImages = { ...featureImages }
-    const newPreviews = { ...featureImagePreviews }
-    if (newPreviews[featureIndex] && newPreviews[featureIndex]!.startsWith("blob:")) {
-      URL.revokeObjectURL(newPreviews[featureIndex]!)
-    }
-    delete newFeatureImages[featureIndex]
-    delete newPreviews[featureIndex]
-
+    // Update feature image indices
     for (let i = featureIndex + 1; i < currentFeatures.length; i++) {
-      if (newFeatureImages[i]) {
-        newFeatureImages[i - 1] = newFeatureImages[i]
-        delete newFeatureImages[i]
-      }
-      if (newPreviews[i]) {
-        newPreviews[i - 1] = newPreviews[i]
-        delete newPreviews[i]
-      }
+      updateFeatureImageIndices(i, i - 1)
     }
 
-    setFeatureImages(newFeatureImages)
-    setFeatureImagePreviews(newPreviews)
+    handleFeatureImageRemove(featureIndex)
+
     setHasUnsavedChanges(true)
     validateFeatureCounts()
     toast({
       title: "Feature removed",
       description: "The feature has been removed. Don't forget to save your changes.",
     })
-  }
-
-  // Simple Image Uploader Component
-  const SimpleImageUploader = ({ featureIndex }: { featureIndex: number }) => {
-    const firstLangCode = Object.keys(form.getValues())[0]
-    const features = form.getValues()[firstLangCode] || []
-    const imageValue = featureImagePreviews[featureIndex] || features[featureIndex]?.content?.image || ""
-    const inputId = `file-upload-feature-${featureIndex}`
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0]
-      if (file) {
-        handleImageUpload(featureIndex, file)
-      }
-    }
-
-    return (
-      <Card className="overflow-hidden">
-        <div className="p-4">
-          {imageValue ? (
-            <div className="relative">
-              <img
-                src={imageValue || "/placeholder.svg"}
-                alt="Feature image preview"
-                className="w-full h-48 object-cover rounded-md"
-                key={imageValue}
-                onError={() => {
-                  console.error("Failed to load image:", imageValue)
-                  toast({
-                    title: "Image Load Error",
-                    description: "Failed to load the feature image. Please try uploading again.",
-                    variant: "destructive",
-                  })
-                }}
-              />
-              <Button
-                size="icon"
-                variant="destructive"
-                className="absolute top-2 right-2 h-8 w-8 rounded-full"
-                onClick={() => handleImageRemove(featureIndex)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-              <div className="mt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => document.getElementById(inputId)?.click()}
-                >
-                  Change Image
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div
-              className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors"
-              onClick={() => document.getElementById(inputId)?.click()}
-            >
-              <Upload className="h-10 w-10 text-muted-foreground mb-2" />
-              <p className="text-sm font-medium">Click to upload image</p>
-              <p className="text-xs text-muted-foreground mt-1">SVG, PNG, JPG or GIF (max. 2MB)</p>
-            </div>
-          )}
-          <input id={inputId} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-        </div>
-      </Card>
-    )
   }
 
   // Get language codes for display
@@ -973,16 +806,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(({ languageIds, activeLa
                                 </div>
                                 {langId === languageIds[0] && (
                                   <div className="grid grid-cols-1 gap-4">
-                                    <div>
-                                      <Label className="flex items-center gap-2 mb-2">
-                                        <ImageIcon className="h-4 w-4" />
-                                        Feature Image
-                                        <span className="text-xs text-muted-foreground">
-                                          (applies to all languages)
-                                        </span>
-                                      </Label>
-                                      <SimpleImageUploader featureIndex={index} />
-                                    </div>
+                                    <FeatureImageUploader featureIndex={index} />
                                   </div>
                                 )}
                               </CardContent>
