@@ -366,18 +366,15 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
       setIsSaving(true);
       setIsLoadingData(true);
       try {
-        // Get current form values before any processing
         const allFormValues = form.getValues();
         console.log("Form values at save:", allFormValues);
     
         let sectionId = existingSubSectionId;
     
-        // Create or update logic here
         if (!existingSubSectionId) {
-          // Create new subsection
           const subsectionData = {
             name: "Benefits Section",
-            slug: slug || `benefits-section-${Date.now()}`, // Use provided slug or generate one
+            slug: slug || `benefits-section-${Date.now()}`,
             description: "Benefits section for the website",
             isActive: true,
             order: 0,
@@ -387,7 +384,6 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
     
           const newSubSection = await createSubSection.mutateAsync(subsectionData);
           sectionId = newSubSection.data._id;
-          // Save the ID for future reference
           setExistingSubSectionId(sectionId);
         }
     
@@ -395,231 +391,104 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
           throw new Error("Failed to create or retrieve subsection ID");
         }
     
-        // Process content elements
-        // Get all benefit data from form
-        console.log("Processing form values for content elements:", allFormValues);
-        
-        // Get language mapping for translations
-        const langCodeToIdMap = activeLanguages.reduce<Record<string, string>>((acc, lang) => {
-          acc[lang.languageID] = lang._id;
-          return acc;
-        }, {});
-        
-        // If we're updating existing content elements
-        if (existingSubSectionId && contentElements.length > 0) {
-          console.log("Updating existing content elements");
-          
-          // Process each language
-          for (const [langCode, benefits] of Object.entries(allFormValues)) {
-            // Skip if not an array (might be other form properties)
-            if (!Array.isArray(benefits)) continue;
-            
-            const langId = langCodeToIdMap[langCode];
-            if (!langId) continue;
-            
-            // Update each benefit for this language
-            for (let i = 0; i < benefits.length; i++) {
-              const benefitIndex = i + 1;
-              const benefit = benefits[i] as BenefitItem;
-              
-              // Find elements for this benefit
-              const iconElementName = `Benefit ${benefitIndex} - Icon`;
-              const titleElementName = `Benefit ${benefitIndex} - Title`;
-              const descElementName = `Benefit ${benefitIndex} - Description`;
-              
-              // Find or create elements
-              let iconElement = contentElements.find(el => el.name === iconElementName);
-              let titleElement = contentElements.find(el => el.name === titleElementName);
-              let descElement = contentElements.find(el => el.name === descElementName);
-              
-              // Create elements if they don't exist (new benefit)
-              if (!iconElement) {
-                console.log(`Creating new icon element: ${iconElementName}`);
-                const newElement = await createContentElement.mutateAsync({
-                  name: iconElementName,
-                  type: "text",
-                  parent: sectionId,
-                  isActive: true,
-                  order: (benefitIndex - 1) * 3,
-                  defaultContent: benefit.icon,
-                });
-                iconElement = newElement.data;
-                // Add to content elements array
-                setContentElements(prev => [...prev, iconElement]);
-              } else {
-                // Update existing icon element
-                await updateContentElement.mutateAsync({
-                  id: iconElement._id,
-                  data: {
-                    defaultContent: benefit.icon,
-                  },
-                });
-              }
-              
-              // Create or update title element
-              if (!titleElement) {
-                console.log(`Creating new title element: ${titleElementName}`);
-                const newElement = await createContentElement.mutateAsync({
-                  name: titleElementName,
-                  type: "text",
-                  parent: sectionId,
-                  isActive: true,
-                  order: (benefitIndex - 1) * 3 + 1,
-                  defaultContent: "",
-                });
-                titleElement = newElement.data;
-                setContentElements(prev => [...prev, titleElement]);
-              }
-              
-              // Create or update description element
-              if (!descElement) {
-                console.log(`Creating new description element: ${descElementName}`);
-                const newElement = await createContentElement.mutateAsync({
-                  name: descElementName,
-                  type: "text",
-                  parent: sectionId,
-                  isActive: true,
-                  order: (benefitIndex - 1) * 3 + 2,
-                  defaultContent: "",
-                });
-                descElement = newElement.data;
-                setContentElements(prev => [...prev, descElement]);
-              }
-              
-              // Create translations for title and description
-              const translations: Translation[] = [];
-              
-              // Only add translations if element and language exist
-              if (titleElement && langId) {
-                translations.push({
-                  content: benefit.title,
-                  language: langId,
-                  contentElement: titleElement._id,
-                  isActive: true,
-                });
-              }
-              
-              if (descElement && langId) {
-                translations.push({
-                  content: benefit.description,
-                  language: langId,
-                  contentElement: descElement._id,
-                  isActive: true,
-                });
-              }
-              
-              // Bulk upsert translations if we have any
-              if (translations.length > 0) {
-                console.log(`Upserting ${translations.length} translations for benefit ${benefitIndex}`);
-                await bulkUpsertTranslations.mutateAsync(translations);
-              }
-            }
-          }
-        } else {
-          // Create new content elements for new subsection
-          console.log("Creating new content elements for new subsection");
-          
-          // Get the benefit count (should be the same for all languages)
-          const firstLangCode = Object.keys(allFormValues).find(key => Array.isArray(allFormValues[key]));
-          const benefits = firstLangCode ? allFormValues[firstLangCode] as BenefitItem[] : [];
-          
-          if (!benefits || !Array.isArray(benefits) || benefits.length === 0) {
-            throw new Error("No benefits found in form values");
-          }
-          
-          const benefitCount = benefits.length;
-          console.log(`Creating elements for ${benefitCount} benefits`);
-          
-          // Create all elements first
-          const createdElements: ContentElement[] = [];
-          
-          // For each benefit, create icon, title, and description elements
-          for (let i = 0; i < benefitCount; i++) {
-            const benefitIndex = i + 1;
-            const defaultIcon = benefits[i].icon || "Clock";
-            
-            // Create icon element
-            const iconElement = await createContentElement.mutateAsync({
-              name: `Benefit ${benefitIndex} - Icon`,
+        const langCodeToIdMap = activeLanguages.reduce<Record<string, string>>(
+          (acc, lang) => {
+            acc[lang.languageID] = lang._id;
+            return acc;
+          },
+          {}
+        );
+    
+        const benefitCount = allFormValues[Object.keys(allFormValues)[0]].length;
+        const translations: Translation[] = [];
+    
+        for (let i = 0; i < benefitCount; i++) {
+          const benefitIndex = i + 1;
+          const iconElementName = `Benefit ${benefitIndex} - Icon`;
+          const titleElementName = `Benefit ${benefitIndex} - Title`;
+          const descElementName = `Benefit ${benefitIndex} - Description`;
+    
+          // Find or create icon element
+          let iconElement = contentElements.find((el) => el.name === iconElementName);
+          if (!iconElement) {
+            const newElement = await createContentElement.mutateAsync({
+              name: iconElementName,
               type: "text",
               parent: sectionId,
               isActive: true,
               order: i * 3,
-              defaultContent: defaultIcon,
+              defaultContent: allFormValues[Object.keys(allFormValues)[0]][i].icon || "Clock",
             });
-            createdElements.push(iconElement.data);
-            
-            // Create title element
-            const titleElement = await createContentElement.mutateAsync({
-              name: `Benefit ${benefitIndex} - Title`,
+            iconElement = newElement.data;
+            setContentElements((prev) => [...prev, iconElement]);
+          } else {
+            await updateContentElement.mutateAsync({
+              id: iconElement._id,
+              data: { defaultContent: allFormValues[Object.keys(allFormValues)[0]][i].icon || "Clock" },
+            });
+          }
+    
+          // Find or create title element
+          let titleElement = contentElements.find((el) => el.name === titleElementName);
+          if (!titleElement) {
+            const newElement = await createContentElement.mutateAsync({
+              name: titleElementName,
               type: "text",
               parent: sectionId,
               isActive: true,
               order: i * 3 + 1,
               defaultContent: "",
             });
-            createdElements.push(titleElement.data);
-            
-            // Create description element
-            const descElement = await createContentElement.mutateAsync({
-              name: `Benefit ${benefitIndex} - Description`,
+            titleElement = newElement.data;
+            setContentElements((prev) => [...prev, titleElement]);
+          }
+    
+          // Find or create description element
+          let descElement = contentElements.find((el) => el.name === descElementName);
+          if (!descElement) {
+            const newElement = await createContentElement.mutateAsync({
+              name: descElementName,
               type: "text",
               parent: sectionId,
               isActive: true,
               order: i * 3 + 2,
               defaultContent: "",
             });
-            createdElements.push(descElement.data);
+            descElement = newElement.data;
+            setContentElements((prev) => [...prev, descElement]);
           }
-          
-          // Update content elements state
-          setContentElements(createdElements);
-          
-          // Create translations for all languages
-          const translations: Translation[] = [];
-          
-          // Process each language's benefits
-          for (const [langCode, langBenefits] of Object.entries(allFormValues)) {
-            if (!Array.isArray(langBenefits)) continue;
-            
+    
+          // Collect translations for all languages
+          Object.entries(allFormValues).forEach(([langCode, benefits]) => {
+            if (!Array.isArray(benefits) || !benefits[i]) return;
             const langId = langCodeToIdMap[langCode];
-            if (!langId) continue;
-            
-            // Process each benefit for this language
-            for (let i = 0; i < langBenefits.length; i++) {
-              const benefitIndex = i + 1;
-              const benefit = langBenefits[i] as BenefitItem;
-              
-              // Find the title and description elements we just created
-              const titleElement = createdElements.find(el => el.name === `Benefit ${benefitIndex} - Title`);
-              const descElement = createdElements.find(el => el.name === `Benefit ${benefitIndex} - Description`);
-              
-              // Add translations for title and description
-              if (titleElement) {
-                translations.push({
-                  content: benefit.title,
-                  language: langId,
-                  contentElement: titleElement._id,
-                  isActive: true,
-                });
-              }
-              
-              if (descElement) {
-                translations.push({
-                  content: benefit.description,
-                  language: langId,
-                  contentElement: descElement._id,
-                  isActive: true,
-                });
-              }
+            if (!langId) return;
+    
+            const benefit = benefits[i];
+            if (titleElement) {
+              translations.push({
+                content: benefit.title,
+                language: langId,
+                contentElement: titleElement._id,
+                isActive: true,
+              });
             }
-          }
-          
-          // Bulk upsert all translations
-          if (translations.length > 0) {
-            console.log(`Upserting ${translations.length} translations for all benefits`);
-            await bulkUpsertTranslations.mutateAsync(translations);
-          }
+            if (descElement) {
+              translations.push({
+                content: benefit.description,
+                language: langId,
+                contentElement: descElement._id,
+                isActive: true,
+              });
+            }
+            // Note: Icon translations are not typically needed since it's a default content
+          });
+        }
+    
+        // Bulk upsert translations
+        if (translations.length > 0) {
+          console.log(`Upserting ${translations.length} translations`);
+          await bulkUpsertTranslations.mutateAsync(translations);
         }
     
         toast({
@@ -628,38 +497,15 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
             : "Benefits section created successfully!",
         });
     
-        // Refresh data immediately after save
         if (slug) {
-          try {
-            // First set loading state to show loading indicator
-            setIsLoadingData(true);
-            setDataLoaded(false);
-            
-            // Refetch data
-            const result = await refetch();
-            
-            if (result.data?.data) {
-              console.log("Refetched data:", result.data.data);
-              
-              // Clear form cache first
-              form.reset();
-              
-              // Process and load the new data
-              processBenefitsData(result.data.data as SubsectionData);
-            } else {
-              console.warn("No data returned from refetch");
-            }
-          } catch (refetchError) {
-            console.error("Error refetching data:", refetchError);
-            toast({
-              title: "Error refreshing data",
-              description: "Could not refresh the data after saving",
-              variant: "destructive",
-            });
+          setIsLoadingData(true);
+          setDataLoaded(false);
+          const result = await refetch();
+          if (result.data?.data) {
+            processAndLoadData(result.data.data as SubsectionData);
           }
         }
     
-        // Reset form state
         setHasUnsavedChanges(false);
       } catch (error) {
         console.error("Operation failed:", error);

@@ -164,9 +164,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(({ languageIds, activeLa
         setHasUnsavedChanges,
         setIsLoadingData,
         validateCounts: validateFeatureCounts,
-        onLoad: (data) => {
-          // No need to set image previews here since FeatureImageUploader uses form values
-        },
+      
       }
     )
   }
