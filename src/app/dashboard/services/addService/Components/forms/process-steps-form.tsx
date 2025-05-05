@@ -1,6 +1,6 @@
 "use client"
 
-import { forwardRef,  useEffect, useState, useRef, Key } from "react"
+import { forwardRef, useEffect, useState, useRef, Key } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { 
@@ -29,6 +29,7 @@ import { processAndLoadData } from "../../Utils/load-form-data"
 import { HeroFormProps, SubSectionData } from "../../types/HeroFor.types"
 import { HeroFormRef } from "../../types/BenefitsForm.types"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
+import DeleteServiceDialog from "@/src/components/DeleteServiceDialog"
 
 // Available icons
 const availableIcons = [
@@ -41,10 +42,6 @@ const availableIcons = [
   "LineChart",
   "Headphones",
 ]
-
-
-
-
 
 const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId }, ref) => {
@@ -59,6 +56,11 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
     const [isSaving, setIsSaving] = useState(false)
     const { toast } = useToast()
 
+    // State for delete confirmation dialog
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [stepToDelete, setStepToDelete] = useState<{ langCode: string, index: number } | null>(null)
+    const [isDeleting, setIsDeleting] = useState(false)
+
     // Get default language code for form values
     const defaultLangCode = activeLanguages.length > 0 ? activeLanguages[0].languageID : "en"
     const defaultValues = createProcessStepsDefaultValues(languageIds, activeLanguages)
@@ -67,8 +69,6 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
       resolver: zodResolver(formSchema),
       defaultValues:defaultValues
     })
-
-
 
     const onDataChangeRef = useRef(onDataChange)
     useEffect(() => {
@@ -217,21 +217,19 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
       })
     }
 
-    // Function to update icon across all languages
-    const updateIconAcrossLanguages = (stepIndex: string | number, newIcon: string) => {
-      Object.keys(form.getValues()).forEach((langCode) => {
-        const steps = form.getValues()[langCode] || []
-        if (steps[stepIndex]) {
-          form.setValue(`${langCode}.${stepIndex}.icon`, newIcon, {
-            shouldDirty: true,
-            shouldValidate: true,
-          })
-        }
-      })
+    // Function to trigger delete confirmation dialog
+    const confirmDeleteStep = (langCode: string, index: number) => {
+      setStepToDelete({ langCode, index })
+      setDeleteDialogOpen(true)
     }
 
-    // Function to remove a process step
-    const removeProcessStep = (langCode: string | number, index: number) => {
+    // Function to remove a process step after confirmation
+    const removeProcessStep = async () => {
+      if (!stepToDelete) return
+      
+      const { langCode, index } = stepToDelete
+      setIsDeleting(true)
+      
       const currentSteps = form.getValues()[langCode] || []
       if (currentSteps.length <= 1) {
         toast({
@@ -239,6 +237,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
           description: "You need at least one process step",
           variant: "destructive",
         })
+        setIsDeleting(false)
         return
       }
 
@@ -315,6 +314,8 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
         updatedSteps.splice(index, 1)
         form.setValue(langCode, updatedSteps)
       })
+      
+      setIsDeleting(false)
     }
 
     // Function to get step counts by language
@@ -382,6 +383,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
           return acc
         }, {} as Record<string, string>)
 
+        // Use the first language values just to determine the number of steps
         const firstLangCode = Object.keys(allFormValues)[0]
         const steps = allFormValues[firstLangCode]
 
@@ -405,6 +407,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
           })
 
           const translations: { content: any; language: any; contentElement: any; isActive: boolean }[] = []
+          // Process each step
           for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
             const stepNumber = stepIndex + 1
             const stepElements = stepGroups[stepNumber]
@@ -414,20 +417,22 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
               const titleElement = stepElements.find((el: { name: string | string[] }) => el.name.includes("Title"))
               const descriptionElement = stepElements.find((el: { name: string | string[] }) => el.name.includes("Description"))
 
-              const iconValue = steps[stepIndex].icon
-              if (iconElement && iconValue) {
+              // Update the icon only for the first language
+              const firstLangStep = allFormValues[defaultLangCode][stepIndex]
+              if (iconElement && firstLangStep?.icon) {
                 await updateContentElement.mutateAsync({
                   id: iconElement._id,
                   data: {
-                    defaultContent: iconValue,
+                    defaultContent: firstLangStep.icon,
                   },
                 })
-                const foundElement = updatedContentElements.find((e) => e._id === iconElement._id);
+                const foundElement = updatedContentElements.find((e) => e._id === iconElement._id)
                 if (foundElement) {
-                  foundElement.defaultContent = iconValue;
+                  foundElement.defaultContent = firstLangStep.icon
                 }
               }
 
+              // Update title and description for all languages
               Object.entries(allFormValues).forEach(([langCode, langSteps]) => {
                 if (!Array.isArray(langSteps) || !langSteps[stepIndex]) return
                 const langId = langCodeToIdMap[langCode]
@@ -455,19 +460,22 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
             }
           }
 
+          // Create new steps as needed
           const existingStepCount = Object.keys(stepGroups).length
           if (steps.length > existingStepCount) {
             for (let stepNumber = existingStepCount + 1; stepNumber <= steps.length; stepNumber++) {
               const stepIndex = stepNumber - 1
-              const step = steps[stepIndex]
-
+              
+              // Create elements with icon from first language only
+              const firstLangStep = allFormValues[defaultLangCode][stepIndex]
+              
               const iconElement = await createContentElement.mutateAsync({
                 name: `Step ${stepNumber} - Icon`,
                 type: "text",
                 parent: sectionId,
                 isActive: true,
                 order: (stepNumber - 1) * 3,
-                defaultContent: step.icon || "Car",
+                defaultContent: firstLangStep?.icon || "Car",
               })
 
               const titleElement = await createContentElement.mutateAsync({
@@ -476,7 +484,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
                 parent: sectionId,
                 isActive: true,
                 order: (stepNumber - 1) * 3 + 1,
-                defaultContent: step.title || "",
+                defaultContent: firstLangStep?.title || "",
               })
 
               const descriptionElement = await createContentElement.mutateAsync({
@@ -485,11 +493,12 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
                 parent: sectionId,
                 isActive: true,
                 order: (stepNumber - 1) * 3 + 2,
-                defaultContent: step.description || "",
+                defaultContent: firstLangStep?.description || "",
               })
 
               updatedContentElements.push(iconElement.data, titleElement.data, descriptionElement.data)
 
+              // Add translations for all languages
               Object.entries(allFormValues).forEach(([langCode, langSteps]) => {
                 if (!Array.isArray(langSteps) || !langSteps[stepIndex]) return
                 const langId = langCodeToIdMap[langCode]
@@ -521,10 +530,12 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
             await bulkUpsertTranslations.mutateAsync(translations)
           }
         } else {
+          // Create new section from scratch
           const translations: { content: any; language: any; contentElement: any; isActive: boolean }[] = []
           for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
             const stepNumber = stepIndex + 1
-            const step = steps[stepIndex]
+            // Use first language for the icon
+            const firstLangStep = allFormValues[defaultLangCode][stepIndex]
 
             const iconElement = await createContentElement.mutateAsync({
               name: `Step ${stepNumber} - Icon`,
@@ -532,7 +543,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
               parent: sectionId,
               isActive: true,
               order: stepIndex * 3,
-              defaultContent: step.icon || "Car",
+              defaultContent: firstLangStep?.icon || "Car",
             })
 
             const titleElement = await createContentElement.mutateAsync({
@@ -541,7 +552,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
               parent: sectionId,
               isActive: true,
               order: stepIndex * 3 + 1,
-              defaultContent: step.title || "",
+              defaultContent: firstLangStep?.title || "",
             })
 
             const descriptionElement = await createContentElement.mutateAsync({
@@ -550,11 +561,12 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
               parent: sectionId,
               isActive: true,
               order: stepIndex * 3 + 2,
-              defaultContent: step.description || "",
+              defaultContent: firstLangStep?.description || "",
             })
 
             updatedContentElements.push(iconElement.data, titleElement.data, descriptionElement.data)
 
+            // Add translations for all languages
             Object.entries(allFormValues).forEach(([langCode, langSteps]) => {
               if (!Array.isArray(langSteps) || !langSteps[stepIndex]) return
               const langId = langCodeToIdMap[langCode]
@@ -634,6 +646,9 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
     // Get language codes for display
     const languageCodes = createLanguageCodeMap(activeLanguages);
 
+    // Determine if a language is the first language (for icon control)
+    const isFirstLanguage = (langCode: string) => langCode === defaultLangCode;
+
     return (
       <div className="space-y-6">
         <LoadingDialog 
@@ -652,6 +667,8 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {languageIds.map((langId) => {
                 const langCode = languageCodes[langId] || langId
+                const isFirst = isFirstLanguage(langCode)
+                
                 return (
                   <Card key={langId} className="w-full">
                     <CardHeader>
@@ -660,8 +677,20 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
                           {langCode}
                         </span>
                         Process Steps Section
+                        {isFirst && (
+                          <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                            Icon Control
+                          </span>
+                        )}
                       </CardTitle>
-                      <CardDescription>Manage process steps content for {langCode.toUpperCase()}</CardDescription>
+                      <CardDescription>
+                        Manage process steps content for {langCode.toUpperCase()}
+                        {isFirst && (
+                          <span className="block text-xs text-blue-600 mt-1">
+                            Icons defined here will be used for all languages
+                          </span>
+                        )}
+                      </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {form.watch(langCode)?.map((_: any, index: Key | null | undefined) => (
@@ -672,50 +701,67 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
                               type="button"
                               variant="destructive"
                               size="icon"
-                              onClick={() => removeProcessStep(langCode, Number(index))}
+                              onClick={() => confirmDeleteStep(langCode, Number(index))}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </CardHeader>
                           <CardContent className="p-4 pt-0 space-y-4">
-                            <FormField
-                              control={form.control}
-                              name={`${langCode}.${index}.icon`}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Icon</FormLabel>
-                                  <Select 
-                                    onValueChange={(value) => {
-                                      field.onChange(value)
-                                      updateIconAcrossLanguages(Number(index), value)
-                                    }} 
-                                    defaultValue={field.value}
-                                  >
-                                    <FormControl>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select an icon">
-                                          <div className="flex items-center">
-                                            <span className="mr-2"><IconComponent iconName={field.value} /></span>
-                                            {field.value}
-                                          </div>
-                                        </SelectValue>
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      {availableIcons.map((icon) => (
-                                        <SelectItem key={icon} value={icon}>
-                                          <div className="flex items-center">
-                                            <span className="mr-2"><IconComponent iconName={icon} /></span>
-                                            {icon}
-                                          </div>
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
+                            {/* Only show icon selector for first language */}
+                            {isFirst && (
+                              <FormField
+                                control={form.control}
+                                name={`${langCode}.${index}.icon`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Icon</FormLabel>
+                                    <Select 
+                                      onValueChange={field.onChange} 
+                                      defaultValue={field.value}
+                                    >
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select an icon">
+                                            <div className="flex items-center">
+                                              <span className="mr-2"><IconComponent iconName={field.value} /></span>
+                                              {field.value}
+                                            </div>
+                                          </SelectValue>
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        {availableIcons.map((icon) => (
+                                          <SelectItem key={icon} value={icon}>
+                                            <div className="flex items-center">
+                                              <span className="mr-2"><IconComponent iconName={icon} /></span>
+                                              {icon}
+                                            </div>
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            )}
+                            {/* For other languages, show the icon but don't allow selection */}
+                            {!isFirst && (
+                              <div className="mb-4">
+                                <FormLabel className="text-muted-foreground">Icon (controlled by {defaultLangCode})</FormLabel>
+                                <div className="flex items-center h-10 px-3 border rounded-md bg-muted/10">
+                                  <span className="mr-2">
+                                    <IconComponent iconName={form.watch(`${defaultLangCode}.${index}.icon`) || "Car"} />
+                                  </span>
+                                  {form.watch(`${defaultLangCode}.${index}.icon`) || "Car"}
+                                </div>
+                                <input 
+                                  type="hidden" 
+                                  {...form.register(`${langCode}.${index}.icon`)} 
+                                  value={form.watch(`${defaultLangCode}.${index}.icon`) || "Car"}
+                                />
+                              </div>
+                            )}
                             <FormField
                               control={form.control}
                               name={`${langCode}.${index}.title`}
@@ -782,6 +828,8 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
             )}
           </Button>
         </div>
+        
+        {/* Step Count Mismatch Dialog */}
         <Dialog open={isValidationDialogOpen} onOpenChange={setIsValidationDialogOpen}>
           <DialogContent>
             <DialogHeader>
@@ -807,6 +855,15 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
             </div>
           </DialogContent>
         </Dialog>
+        
+        {/* Delete Step Confirmation Dialog */}
+        <DeleteServiceDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          serviceName={stepToDelete ? `Step ${stepToDelete.index + 1}` : ''}
+          onConfirm={removeProcessStep}
+          isDeleting={isDeleting}
+        />
       </div>
     )
   },

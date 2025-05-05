@@ -4,7 +4,6 @@ import { forwardRef, useEffect, useState, useRef } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { Save, Loader2, ImageIcon } from "lucide-react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/src/components/ui/form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Input } from "@/src/components/ui/input"
@@ -23,27 +22,24 @@ import { createHeroSchema } from "../../Utils/language-specifi-schemas"
 import { createHeroDefaultValues } from "../../Utils/Language-default-values"
 import { createFormRef } from "../../Utils/Expose-form-data"
 import { processAndLoadData } from "../../Utils/load-form-data"
-import { ContentElementType } from "@/src/api/types"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
 import { SimpleImageUploader, useImageUpload } from "../../Utils/Image-uploader"
+import { ImageIcon, Loader2, Save } from "lucide-react"
 
 const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId, initialData }, ref) => {
-    // Create schema with type safety
     const formSchema = createHeroSchema(languageIds, activeLanguages)
     type FormSchemaType = z.infer<typeof formSchema>
     const defaultValues = createHeroDefaultValues(languageIds, activeLanguages)
-    const [isLoadingData, setIsLoadingData] = useState<boolean>(false)
-    const [dataLoaded, setDataLoaded] = useState<boolean>(false)
+    const [isLoadingData, setIsLoadingData] = useState(!slug)
+    const [dataLoaded, setDataLoaded] = useState(!slug)
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false)
     const [existingSubSectionId, setExistingSubSectionId] = useState<string | null>(null)
-    const [contentElements, setContentElements] = useState<ContentElementType[]>([])
+    const [contentElements, setContentElements] = useState<any[]>([])
     const [isSaving, setIsSaving] = useState<boolean>(false)
-    const [isFormReady, setIsFormReady] = useState<boolean>(false)
     const { toast } = useToast()
     const dataProcessed = useRef<boolean>(false)
-    
-    // API hooks
+
     const { useCreate: useCreateSubSection, useGetCompleteBySlug, useUpdate: useUpdateSubSection } = useSubSections()
     const { useCreate: useCreateContentElement } = useContentElements()
     const { useBulkUpsert: useBulkUpsertTranslations } = useContentTranslations()
@@ -52,7 +48,6 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
     const createContentElement = useCreateContentElement()
     const bulkUpsertTranslations = useBulkUpsertTranslations()
 
-    // Get default language code for form values
     const defaultLangCode = activeLanguages.length > 0 ? activeLanguages[0].languageID : 'en'
 
     const form = useForm<FormSchemaType>({
@@ -60,61 +55,49 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
       defaultValues: defaultValues
     })
 
-    // Use the image upload hook from our utility
     const { 
       imageFile, 
       imagePreview, 
       handleImageUpload, 
-      handleImageRemove 
+      handleImageRemove,
     } = useImageUpload({
       form,
       fieldPath: 'backgroundImage',
       initialImageUrl: initialData?.image || form.getValues().backgroundImage,
       onUpload: (file) => {
-        setHasUnsavedChanges(true);
+        setHasUnsavedChanges(true)
       },
       onRemove: () => {
-        setHasUnsavedChanges(true);
+        setHasUnsavedChanges(true)
+      },
+      validate: (file) => {
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml']
+        return validTypes.includes(file.type) || 'Only JPEG, PNG, GIF, or SVG files are allowed'
       }
-    });
+    })
 
-    // Use ref for callback to avoid unnecessary re-renders
     const onDataChangeRef = useRef<((data: any) => void) | undefined>(onDataChange)
     useEffect(() => {
       onDataChangeRef.current = onDataChange
     }, [onDataChange])
 
-    // Query for complete subsection data by slug if provided
     const { 
       data: completeSubsectionData, 
       isLoading: isLoadingSubsection, 
       refetch 
-    } = useGetCompleteBySlug(
-      slug || '', 
-      Boolean(slug),  // Only enable query if slug exists
-    )
-    
+    } = useGetCompleteBySlug(slug || '', Boolean(slug))
+
     const processInitialData = () => {
-      // If initialData is provided directly (from parent service/section item), use that
       if (initialData && !dataLoaded) {
         console.log("Processing initial data from parent:", initialData)
-        
         if (initialData.description) {
-          // Set description for default language
-          const formValues = form.getValues()
-          if (formValues[defaultLangCode] && typeof formValues[defaultLangCode] === 'object') {
-            form.setValue(`${defaultLangCode}.description` as any, initialData.description)
-          }
+          form.setValue(`${defaultLangCode}.description` as any, initialData.description)
         }
-        
         if (initialData.image) {
           form.setValue('backgroundImage', initialData.image)
-          // Image preview is now handled by the useImageUpload hook
         }
-        
         setDataLoaded(true)
         setHasUnsavedChanges(false)
-        setIsFormReady(true)
       }
     }
 
@@ -125,42 +108,28 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
         languageIds,
         activeLanguages,
         {
-          // Group elements by their type - for hero we don't need grouping
-          groupElements: (elements) => {
-            // For hero section, we don't group by ID, but by element name
-            return {
-              'hero': elements.filter(el => el.type === 'text' || (el.name === 'Background Image' && el.type === 'image'))
-            };
-          },
-          
-          // Process the hero elements for a language
+          groupElements: (elements) => ({
+            'hero': elements.filter(el => el.type === 'text' || (el.name === 'Background Image' && el.type === 'image'))
+          }),
           processElementGroup: (groupId, elements, langId, getTranslationContent) => {
-            // Map element names to keys for form values
             const elementKeyMap = {
               'Title': 'title',
               'Description': 'description',
               'Back Link Text': 'backLinkText'
-            };
-            
-            // Create result object
+            }
             const result = {
               title: '',
               description: '',
               backLinkText: ''
-            };
-            
-            // Find and set values for text elements
+            }
             elements.filter(el => el.type === 'text').forEach(element => {
-              const key = elementKeyMap[element.name];
+              const key = elementKeyMap[element.name]
               if (key) {
-                result[key] = getTranslationContent(element, '');
+                result[key] = getTranslationContent(element, '')
               }
-            });
-            
-            return result;
+            })
+            return result
           },
-          
-          // Default value for hero
           getDefaultValue: () => ({
             title: '',
             description: '',
@@ -174,29 +143,23 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
           setHasUnsavedChanges,
           setIsLoadingData
         }
-      );
-      
-      // Handle background image separately (this is outside the language structure)
+      )
       const bgImageElement = subsectionData?.elements?.find(
         (el) => el.name === 'Background Image' && el.type === 'image'
       ) || subsectionData?.contentElements?.find(
         (el) => el.name === 'Background Image' && el.type === 'image'
-      );
-      
+      )
       if (bgImageElement?.imageUrl) {
-        form.setValue('backgroundImage', bgImageElement.imageUrl);
-        // Image preview is now handled by the useImageUpload hook
+        form.setValue('backgroundImage', bgImageElement.imageUrl)
       }
-    };
-    
-    // Effect to process initial data from parent component
+    }
+
     useEffect(() => {
       if (!dataLoaded && initialData) {
         processInitialData()
       }
     }, [initialData])
-    
-    // Effect to populate form with existing data from complete subsection
+
     useEffect(() => {
       if (!slug || isLoadingSubsection || dataProcessed.current) return
       if (completeSubsectionData?.data) {
@@ -205,32 +168,20 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
         setDataLoaded(true)
         dataProcessed.current = true
         setIsLoadingData(false)
-        setIsFormReady(true)
       }
     }, [completeSubsectionData, isLoadingSubsection, slug])
 
-    // Make form ready even if no data is loaded
     useEffect(() => {
-      if (!isLoadingData && !isLoadingSubsection && !isFormReady) {
-        setIsFormReady(true)
-      }
-    }, [isLoadingData, isLoadingSubsection, isFormReady])
-
-    // Track form changes, but only after initial data is loaded
-    useEffect(() => {
-      if (isLoadingData || !isFormReady) return
-
+      if (isLoadingData || !dataLoaded) return
       const subscription = form.watch((value) => {
         setHasUnsavedChanges(true)
         if (onDataChangeRef.current) {
           onDataChangeRef.current(value)
         }
       })
-      
       return () => subscription.unsubscribe()
-    }, [form, isLoadingData, isFormReady])
+    }, [form, isLoadingData, dataLoaded])
 
-    // Handler for saving the form
     const handleSave = async (): Promise<boolean> => {
       const isValid = await form.trigger()
       if (!isValid) {
@@ -248,7 +199,6 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
         console.log("Form values at save:", allFormValues)
 
         let sectionId = existingSubSectionId
-
         if (!existingSubSectionId) {
           if (!ParentSectionId) {
             throw new Error("Parent section ID is required to create a subsection")
@@ -287,24 +237,41 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
           return acc
         }, {})
 
-
         if (contentElements.length > 0) {
-          const bgImageElement = contentElements.find((e) => e.type === "image")
-          if (bgImageElement && imageFile) {
-            const formData = new FormData()
-            formData.append("image", imageFile)
-            const uploadResult = await apiClient.post(`/content-elements/${bgImageElement._id}/image`, formData, {
-              headers: { "Content-Type": "multipart/form-data" },
-            })
-            if (uploadResult.data?.imageUrl) {
-              form.setValue("backgroundImage", uploadResult.data.imageUrl, { shouldDirty: false })
-              // Update handled by the form value
+          if (imageFile) {
+            const imageElement = contentElements.find((e) => e.type === "image")
+            if (imageElement) {
+              try {
+                const formData = new FormData()
+                formData.append("image", imageFile)
+                const uploadResult = await apiClient.post(`/content-elements/${imageElement._id}/image`, formData, {
+                  headers: { "Content-Type": "multipart/form-data" },
+                })
+                console.log("Image upload response:", uploadResult.data) // Log for debugging
+                const imageUrl = uploadResult.data?.imageUrl || uploadResult.data?.url || uploadResult.data?.data?.imageUrl
+                if (imageUrl) {
+                  form.setValue("backgroundImage", imageUrl, { shouldDirty: false })
+                  toast({
+                    title: "Image Uploaded",
+                    description: "Background image has been successfully uploaded.",
+                  })
+                } else {
+                  throw new Error("No image URL returned from server. Response: " + JSON.stringify(uploadResult.data))
+                }
+              } catch (error) {
+                console.error("Image upload failed:", error)
+                toast({
+                  title: "Image Upload Failed",
+                  description: error instanceof Error ? error.message : "Failed to upload image",
+                  variant: "destructive",
+                })
+                throw error
+              }
             }
           }
 
           const textElements = contentElements.filter((e) => e.type === "text")
           const translations: Translation[] = []
-
           const elementNameToKeyMap: Record<string, string> = {
             Title: "title",
             Description: "description",
@@ -343,7 +310,7 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
           for (const [index, el] of elementTypes.entries()) {
             let defaultContent = ""
             if (el.type === "image") {
-              defaultContent = allFormValues.backgroundImage || "image-placeholder"
+              defaultContent = "image-placeholder"
             } else if (el.type === "text" && typeof allFormValues[defaultLangCode] === "object") {
               const langValues = allFormValues[defaultLangCode] as FormLanguageValues
               defaultContent =
@@ -369,21 +336,31 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
 
           const bgImageElement = createdElements.find((e) => e.key === "backgroundImage")
           if (bgImageElement && imageFile) {
-            const formData = new FormData()
-            formData.append("image", imageFile)
-            const uploadResult = await apiClient.post(`/content-elements/${bgImageElement._id}/image`, formData, {
-              headers: { "Content-Type": "multipart/form-data", timeout: 30000 },
-              onUploadProgress: (progressEvent) => {
-                const percentCompleted = Math.round(
-                  (progressEvent.loaded * 100) / (progressEvent.total || 1)
-                )
-                console.log(`Upload progress: ${percentCompleted}%`)
-              },
-            })
-
-            if (uploadResult.data?.imageUrl) {
-              form.setValue("backgroundImage", uploadResult.data.imageUrl, { shouldDirty: false })
-              // Update handled by the form value
+            try {
+              const formData = new FormData()
+              formData.append("image", imageFile)
+              const uploadResult = await apiClient.post(`/content-elements/${bgImageElement._id}/image`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+              })
+              console.log("Image upload response (new element):", uploadResult.data) // Log for debugging
+              const imageUrl = uploadResult.data?.imageUrl || uploadResult.data?.url || uploadResult.data?.data?.imageUrl
+              if (imageUrl) {
+                form.setValue("backgroundImage", imageUrl, { shouldDirty: false })
+                toast({
+                  title: "Image Uploaded",
+                  description: "Background image has been successfully uploaded.",
+                })
+              } else {
+                throw new Error("No image URL returned from server. Response: " + JSON.stringify(uploadResult.data))
+              }
+            } catch (error) {
+              console.error("Image upload failed:", error)
+              toast({
+                title: "Image Upload Failed",
+                description: error instanceof Error ? error.message : "Failed to upload image",
+                variant: "destructive",
+              })
+              throw error
             }
           }
 
@@ -417,10 +394,28 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
         })
 
         setHasUnsavedChanges(false)
-        // Do not clear imageFile here, as it's managed by the utility hook
 
+        // Update form state with saved data
         if (slug) {
-          await refetch()
+          const result = await refetch()
+          if (result.data?.data) {
+            setDataLoaded(false)
+            await processHeroData(result.data.data)
+          }
+        } else {
+          // For new subsections, manually update form state
+          const updatedData = {
+            ...allFormValues,
+            backgroundImage: form.getValues("backgroundImage"),
+          }
+          Object.entries(updatedData).forEach(([key, value]) => {
+            if (key !== "backgroundImage") {
+              Object.entries(value as FormLanguageValues).forEach(([field, content]) => {
+                form.setValue(`${key}.${field}`, content, { shouldDirty: false })
+              })
+            }
+          })
+          form.setValue("backgroundImage", updatedData.backgroundImage, { shouldDirty: false })
         }
 
         return true
@@ -437,7 +432,6 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
       }
     }
 
-    // Use the form ref utility
     createFormRef(ref, {
       form,
       hasUnsavedChanges,
@@ -453,21 +447,18 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
         imageFile,
         existingSubSectionId
       }
-    });
+    })
 
-    // Get language codes for display
-    const languageCodes = createLanguageCodeMap(activeLanguages);
+    const languageCodes = createLanguageCodeMap(activeLanguages)
 
     return (
       <div className="space-y-6">
-        {/* Loading Dialog */}
         <LoadingDialog 
           isOpen={isSaving} 
           title={existingSubSectionId ? "Updating Hero Section" : "Creating Hero Section"}
           description="Please wait while we save your changes..."
         />
-        
-        {(isLoadingData || isLoadingSubsection) ? (
+        {slug && (isLoadingData || isLoadingSubsection) && !dataLoaded ? (
           <div className="flex items-center justify-center p-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="ml-2 text-muted-foreground">Loading hero section data...</p>
@@ -488,20 +479,19 @@ const HeroForm = forwardRef<HeroFormRef, HeroFormProps>(
                         Background Image
                         <span className="text-xs text-muted-foreground">(applies to all languages)</span>
                       </Label>
-                      {/* Use our SimpleImageUploader component from the utilities */}
                       <SimpleImageUploader
                         imageValue={imagePreview || form.getValues().backgroundImage}
                         inputId="file-upload-background-image"
                         onUpload={handleImageUpload}
                         onRemove={handleImageRemove}
                         altText="Background image preview"
+                        acceptedTypes="image/jpeg,image/png,image/gif,image/svg+xml"
                       />
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {languageIds.map((langId) => {
                 const langCode = languageCodes[langId] || langId

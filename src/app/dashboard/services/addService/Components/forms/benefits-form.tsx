@@ -62,11 +62,20 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const { toast } = useToast();
 
+    // Ref to keep track of the primaryLanguage (first language)
+    const primaryLanguageRef = useRef<string | null>(null);
+
+    // Set primary language when languageIds change
+    useEffect(() => {
+      if (languageIds.length > 0) {
+        primaryLanguageRef.current = languageIds[0];
+      }
+    }, [languageIds]);
+
     const form = useForm<FormSchemaType>({
       resolver: zodResolver(formSchema),
       defaultValues: defaultValues
     });
-
 
     const onDataChangeRef = useRef<((data: FormValues) => void) | undefined>(onDataChange);
     useEffect(() => {
@@ -94,6 +103,21 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
       isLoading: isLoadingSubsection,
       refetch,
     } = useGetCompleteBySlug(slug || "", Boolean(slug));
+
+    // Function to synchronize icon changes from the first language to all other languages
+    const syncIcons = (index: number, iconValue: string) => {
+      const formValues = form.getValues();
+      const allLanguages = Object.keys(formValues);
+      const primaryLang = allLanguages[0]; // First language is primary
+      
+      allLanguages.forEach(lang => {
+        if (lang !== primaryLang) {
+          if (formValues[lang] && Array.isArray(formValues[lang]) && formValues[lang].length > index) {
+            form.setValue(`${lang}.${index}.icon` as any, iconValue);
+          }
+        }
+      });
+    };
 
     // Check if all languages have the same number of benefits
     const validateBenefitCounts = (): boolean => {
@@ -130,6 +154,8 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
 
     // Function to process and load data into the form
     const processBenefitsData = (subsectionData: SubsectionData | null) => {
+      console.log("Processing benefits data:", subsectionData);
+      
       processAndLoadData(
         subsectionData,
         form,
@@ -220,7 +246,7 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
     const addBenefit = (langCode: string): void => {
       const currentBenefits = form.getValues()[langCode] || [];
       
-      // Update the form
+      // Add to the specified language
       form.setValue(langCode as any, [
         ...currentBenefits,
         {
@@ -229,6 +255,28 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
           description: "",
         },
       ]);
+      
+      // If this is the first language, add to all languages to maintain consistency
+      const formValues = form.getValues();
+      const allLanguages = Object.keys(formValues);
+      const firstLang = allLanguages[0];
+      
+      if (langCode === firstLang) {
+        // Add to all other languages too
+        allLanguages.forEach(lang => {
+          if (lang !== firstLang) {
+            const otherLangBenefits = formValues[lang] || [];
+            form.setValue(lang as any, [
+              ...otherLangBenefits,
+              {
+                icon: "Clock",
+                title: "",
+                description: "",
+              },
+            ]);
+          }
+        });
+      }
       
       // Force update the form to ensure React re-renders
       form.trigger(langCode as any);
@@ -252,6 +300,12 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
         });
         return;
       }
+
+      // Get all languages
+      const formValues = form.getValues();
+      const allLanguages = Object.keys(formValues);
+      const firstLang = allLanguages[0];
+      const isFirstLanguage = langCode === firstLang;
 
       // If we have existing content elements and a subsection ID, delete the elements from the database
       if (existingSubSectionId && contentElements.length > 0) {
@@ -328,12 +382,25 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
           });
         }
       }
-      const updatedBenefits = [...currentBenefits];
-      updatedBenefits.splice(index, 1);
-      form.setValue(langCode as any, updatedBenefits);
-      
-      // Force update the form to ensure React re-renders
-      form.trigger(langCode as any);
+
+      // If removing from first language, remove from all languages
+      if (isFirstLanguage) {
+        allLanguages.forEach(lang => {
+          const langBenefits = form.getValues()[lang] || [];
+          if (langBenefits.length > index) {
+            const updatedBenefits = [...langBenefits];
+            updatedBenefits.splice(index, 1);
+            form.setValue(lang as any, updatedBenefits);
+            form.trigger(lang as any);
+          }
+        });
+      } else {
+        // Just remove from this specific language
+        const updatedBenefits = [...currentBenefits];
+        updatedBenefits.splice(index, 1);
+        form.setValue(langCode as any, updatedBenefits);
+        form.trigger(langCode as any);
+      }
       
       // Force immediate validation after removing a benefit
       setTimeout(() => {
@@ -350,6 +417,38 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
         language: langCode,
         count: Array.isArray(benefits) ? benefits.length : 0,
       }));
+    };
+
+    // Function to get a safe icon value from the form data
+    const getSafeIconValue = (allFormValues: any, benefitIndex: number) => {
+      // Try to get from first language first
+      const languages = Object.keys(allFormValues);
+      if (languages.length === 0) return "Clock";
+
+      const firstLang = languages[0];
+      if (
+        allFormValues[firstLang] && 
+        Array.isArray(allFormValues[firstLang]) && 
+        allFormValues[firstLang][benefitIndex] && 
+        allFormValues[firstLang][benefitIndex].icon
+      ) {
+        return allFormValues[firstLang][benefitIndex].icon;
+      }
+
+      // Try other languages
+      for (const lang of languages) {
+        if (
+          allFormValues[lang] && 
+          Array.isArray(allFormValues[lang]) && 
+          allFormValues[lang][benefitIndex] && 
+          allFormValues[lang][benefitIndex].icon
+        ) {
+          return allFormValues[lang][benefitIndex].icon;
+        }
+      }
+
+      // Default fallback
+      return "Clock";
     };
 
     const handleSave = async (): Promise<void> => {
@@ -399,7 +498,8 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
           {}
         );
     
-        const benefitCount = allFormValues[Object.keys(allFormValues)[0]].length;
+        const firstLangKey = Object.keys(allFormValues)[0];
+        const benefitCount = Array.isArray(allFormValues[firstLangKey]) ? allFormValues[firstLangKey].length : 0;
         const translations: Translation[] = [];
     
         for (let i = 0; i < benefitCount; i++) {
@@ -407,6 +507,9 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
           const iconElementName = `Benefit ${benefitIndex} - Icon`;
           const titleElementName = `Benefit ${benefitIndex} - Title`;
           const descElementName = `Benefit ${benefitIndex} - Description`;
+    
+          // Get a safe icon value with fallbacks
+          const iconValue = getSafeIconValue(allFormValues, i);
     
           // Find or create icon element
           let iconElement = contentElements.find((el) => el.name === iconElementName);
@@ -417,14 +520,14 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
               parent: sectionId,
               isActive: true,
               order: i * 3,
-              defaultContent: allFormValues[Object.keys(allFormValues)[0]][i].icon || "Clock",
+              defaultContent: iconValue,
             });
             iconElement = newElement.data;
             setContentElements((prev) => [...prev, iconElement]);
           } else {
             await updateContentElement.mutateAsync({
               id: iconElement._id,
-              data: { defaultContent: allFormValues[Object.keys(allFormValues)[0]][i].icon || "Clock" },
+              data: { defaultContent: iconValue },
             });
           }
     
@@ -497,16 +600,33 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
             : "Benefits section created successfully!",
         });
     
+        // Refresh data after save
         if (slug) {
-          setIsLoadingData(true);
-          setDataLoaded(false);
-          const result = await refetch();
-          if (result.data?.data) {
-            processAndLoadData(result.data.data as SubsectionData);
+          try {
+            // Reset form states to trigger a fresh load
+            setIsLoadingData(true);
+            setDataLoaded(false);
+            
+            // Refetch data from the server
+            const result = await refetch();
+            
+            // Process the refreshed data if available
+            if (result.data?.data) {
+              console.log("Refreshed data retrieved:", result.data.data);
+              processBenefitsData(result.data.data as SubsectionData);
+            } else {
+              console.error("No data returned from refetch");
+              setIsLoadingData(false);
+            }
+          } catch (error) {
+            console.error("Error refreshing data:", error);
+            setIsLoadingData(false);
           }
+        } else {
+          // For new forms, just mark as not having unsaved changes
+          setHasUnsavedChanges(false);
+          setIsLoadingData(false);
         }
-    
-        setHasUnsavedChanges(false);
       } catch (error) {
         console.error("Operation failed:", error);
         toast({
@@ -514,8 +634,8 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
           variant: "destructive",
           description: error instanceof Error ? error.message : "Unknown error occurred",
         });
-      } finally {
         setIsLoadingData(false);
+      } finally {
         setIsSaving(false);
       }
     };
@@ -531,7 +651,6 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
 
     // Get language codes for display
     const languageCodes = createLanguageCodeMap(activeLanguages);
-
 
     useEffect(() => {
       // Force validation whenever the form is changed
@@ -561,8 +680,10 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
         ) : (
           <Form {...form}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {languageIds.map((langId) => {
-                const langCode = languageCodes[langId] || langId
+              {languageIds.map((langId, langIndex) => {
+                const langCode = languageCodes[langId] || langId;
+                const isFirstLanguage = langIndex === 0; // First language in the list
+                
                 return (
                   <Card key={langId} className="w-full">
                     <CardHeader>
@@ -571,6 +692,11 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
                           {langCode}
                         </span>
                         Benefits Section
+                        {isFirstLanguage && (
+                          <span className="ml-2 text-xs bg-amber-100 text-amber-800 rounded-md px-2 py-1">
+                            Primary Language (Icon Control)
+                          </span>
+                        )}
                       </CardTitle>
                       <CardDescription>Manage benefits content for {langCode.toUpperCase()}</CardDescription>
                     </CardHeader>
@@ -589,38 +715,59 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
                             </Button>
                           </CardHeader>
                           <CardContent className="p-4 pt-0 space-y-4">
-                            <FormField
-                              control={form.control}
-                              name={`${langCode}.${index}.icon`}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Icon</FormLabel>
-                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select an icon">
-                                          <div className="flex items-center">
-                                            <span className="mr-2"><IconComponent iconName={field.value} /></span>
-                                            {field.value}
-                                          </div>
-                                        </SelectValue>
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      {availableIcons.map((icon) => (
-                                        <SelectItem key={icon} value={icon}>
-                                          <div className="flex items-center">
-                                            <span className="mr-2"><IconComponent iconName={icon} /></span>
-                                            {icon}
-                                          </div>
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
+                            {/* Only show icon selector for the first language */}
+                            {isFirstLanguage ? (
+                              <FormField
+                                control={form.control}
+                                name={`${langCode}.${index}.icon`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Icon</FormLabel>
+                                    <Select 
+                                      onValueChange={(value) => {
+                                        field.onChange(value);
+                                        // Sync this icon value to all other languages
+                                        syncIcons(index, value);
+                                      }} 
+                                      defaultValue={field.value || "Clock"}
+                                    >
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select an icon">
+                                            <div className="flex items-center">
+                                              <span className="mr-2"><IconComponent iconName={field.value || "Clock"} /></span>
+                                              {field.value || "Clock"}
+                                            </div>
+                                          </SelectValue>
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        {availableIcons.map((icon) => (
+                                          <SelectItem key={icon} value={icon}>
+                                            <div className="flex items-center">
+                                              <span className="mr-2"><IconComponent iconName={icon} /></span>
+                                              {icon}
+                                            </div>
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            ) : (
+                              <div className="mb-4">
+                                <FormLabel className="block mb-2">Icon</FormLabel>
+                                <div className="flex items-center h-10 px-3 rounded-md border border-input bg-muted/50 text-muted-foreground">
+                                  <span className="mr-2">
+                                    <IconComponent iconName={form.watch(`${langCode}.${index}.icon`) || "Clock"} />
+                                  </span>
+                                  {form.watch(`${langCode}.${index}.icon`) || "Clock"}
+                                  <span className="ml-2 text-xs text-muted-foreground">(Controlled by primary language)</span>
+                                </div>
+                              </div>
+                            )}
 
                             <FormField
                               control={form.control}
@@ -653,7 +800,12 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
                         </Card>
                       ))}
 
-                      <Button type="button" variant="outline" size="sm" onClick={() => addBenefit(langCode)}>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => addBenefit(langCode)}
+                      >
                         <Plus className="mr-2 h-4 w-4" />
                         Add Benefit
                       </Button>
