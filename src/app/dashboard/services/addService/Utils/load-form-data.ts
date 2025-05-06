@@ -14,7 +14,7 @@ export interface ContentElement {
   defaultContent?: string;
   imageUrl?: string;
   translations?: Array<{
-    language: any; // Can be string ID or object with _id
+    language: any; 
     content: string;
   }>;
 }
@@ -208,3 +208,4 @@ export const processAndLoadData = (
     }
   }
 };
+

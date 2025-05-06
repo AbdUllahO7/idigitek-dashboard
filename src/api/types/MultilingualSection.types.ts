@@ -25,8 +25,8 @@ export interface FieldConfig {
   id: string;
   label: string;
   type: FieldType;
-  placeholder?: string;
-  required?: boolean;
+  placeholder: string;
+  required: boolean;
   description?: string;
   options?: string[];
 }

@@ -3,6 +3,7 @@
 import { FieldConfig } from "@/src/api/types";
 
 
+
 // Define service section configuration
 export const serviceSectionConfig = {
     name: "Service Section Basic",
@@ -10,12 +11,12 @@ export const serviceSectionConfig = {
     subSectionName: "Service Section Basic",
     description: "Service section for managing service information",
     isMain: true,
-    
+    type: 'service',
     // Define fields with proper typing
     fields: [
         { id: "sectionBadge", label: "Section Badge", type: "text", required: true },
         { id: "sectionTitle", label: "Section Title", type: "text", required: true },
-        { id: "sectionDescription", label: "Section Description", type: "textarea", required: true },
+        { id: "sectionDescription", label: "Section Description", type: "textarea", required: false },
         { id: "serviceDetails", label: "Service Details", type: "badge", required: true },
     ] as FieldConfig[],
 
@@ -27,5 +28,3 @@ export const serviceSectionConfig = {
         "serviceDetails": "ServiceDetails"
     }
 };
-
-

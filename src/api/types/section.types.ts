@@ -40,15 +40,17 @@ export interface SubSection {
   slug: string;
   isActive: boolean;
   order: number;
-  sectionItem: string | SectionItem;
+  sectionItem?: string | SectionItem;
   languages: string[] | Language[];
   metadata?: any;
+  defaultContent : string
   contentElements?: ContentElement[];
   contentCount?: number;
   createdAt?: string;
   updatedAt?: string;
   isMain?: boolean;
   parentSections?: string[];
+  section?:SubSection,
 }
 
 export interface Service extends SectionItem {

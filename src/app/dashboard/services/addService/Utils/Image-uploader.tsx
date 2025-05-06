@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 
 import { Upload, X, ImageIcon } from 'lucide-react';
@@ -448,4 +448,60 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
     updateFeatureImageIndices,
     FeatureImageUploader,
   };
+  };
+
+  export const useImageUploader = ({ form, fieldPath, initialImageUrl, onUpload, onRemove, validate }) => {
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    
+    // Handle image upload
+    const handleImageUpload = useCallback((e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      // Validate file if validation function provided
+      if (validate) {
+        const validationResult = validate(file);
+        if (typeof validationResult === 'string') {
+          alert(validationResult);
+          return;
+        }
+      }
+      
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setImageFile(file);
+      setImagePreview(previewUrl);
+      
+      // Call onUpload callback if provided
+      if (onUpload) {
+        onUpload(file, previewUrl);
+      }
+    }, [validate, onUpload]);
+    
+    // Handle image removal
+    const handleImageRemove = useCallback(() => {
+      setImageFile(null);
+      setImagePreview(null);
+      form.setValue(fieldPath, '', { shouldDirty: true });
+      
+      // Call onRemove callback if provided
+      if (onRemove) {
+        onRemove();
+      }
+    }, [form, fieldPath, onRemove]);
+    
+    // Initialize with initial image URL if provided
+    useState(() => {
+      if (initialImageUrl) {
+        form.setValue(fieldPath, initialImageUrl);
+      }
+    });
+    
+    return {
+      imageFile,
+      imagePreview,
+      handleImageUpload,
+      handleImageRemove,
+    };
   };

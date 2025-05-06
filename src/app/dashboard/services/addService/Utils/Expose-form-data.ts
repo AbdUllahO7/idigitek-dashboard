@@ -1,4 +1,4 @@
-import { useImperativeHandle, RefObject } from 'react';
+import { useImperativeHandle, RefObject, useReducer } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 // Base ref interface that all form refs extend
@@ -65,3 +65,95 @@ export const createFormRef = (
     ...extraMethods
   }));
 };
+
+
+export const useForceUpdate = () => {
+  const [, updateState] = useReducer((x) => x + 1, 0);
+  return updateState;
+};
+
+
+/**
+ * Check if all languages have the same number of benefits
+ */
+export const validateBenefitCounts = (values) => {
+  // Filter out any non-array values that might be causing issues
+  const validLangEntries = Object.entries(values).filter(
+    ([_, langBenefits]) => Array.isArray(langBenefits)
+  );
+
+  if (validLangEntries.length <= 1) {
+    // If there's only one or zero languages, no mismatch is possible
+    return true;
+  }
+
+  // Get counts of benefits for each language
+  const counts = validLangEntries.map(
+    ([_, langBenefits]) => langBenefits.length
+  );
+
+  // Check if all counts are the same as the first count
+  const firstCount = counts[0];
+  const allEqual = counts.every(count => count === firstCount);
+
+  console.log("Benefit counts validation:", { counts, allEqual, validLangEntries: validLangEntries.length });
+
+  return allEqual;
+};
+
+/**
+ * Get benefit counts by language
+ */
+export const getBenefitCountsByLanguage = (values) => {
+  return Object.entries(values).map(([langCode, benefits]) => ({
+    language: langCode,
+    count: Array.isArray(benefits) ? benefits.length : 0,
+  }));
+};
+const availableIcons = [
+  "Car",
+  "MonitorSmartphone",
+  "Settings",
+  "CreditCard",
+  "Clock",
+  "MessageSquare",
+  "LineChart",
+  "Headphones",
+] as const;
+
+export const getAvailableIcons = () => availableIcons;
+
+/**
+ * Get a safe icon value from the form data
+ */
+export const getSafeIconValue = (allFormValues, benefitIndex) => {
+  // Try to get from first language first
+  const languages = Object.keys(allFormValues);
+  if (languages.length === 0) return "Clock";
+
+  const firstLang = languages[0];
+  if (
+    allFormValues[firstLang] && 
+    Array.isArray(allFormValues[firstLang]) && 
+    allFormValues[firstLang][benefitIndex] && 
+    allFormValues[firstLang][benefitIndex].icon
+  ) {
+    return allFormValues[firstLang][benefitIndex].icon;
+  }
+
+  // Try other languages
+  for (const lang of languages) {
+    if (
+      allFormValues[lang] && 
+      Array.isArray(allFormValues[lang]) && 
+      allFormValues[lang][benefitIndex] && 
+      allFormValues[lang][benefitIndex].icon
+    ) {
+      return allFormValues[lang][benefitIndex].icon;
+    }
+  }
+
+  // Default fallback
+  return "Clock";
+};
+

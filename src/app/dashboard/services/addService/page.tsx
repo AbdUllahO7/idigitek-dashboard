@@ -10,12 +10,12 @@ import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 
 import { FormData } from "@/src/api/types/service/serviceSections.types"
-import HeroForm from "./Components/forms/hero-form"
-import BenefitsForm from "./Components/forms/benefits-form"
-import FeaturesForm from "./Components/forms/features-form"
-import ProcessStepsForm from "./Components/forms/process-steps-form"
-import FaqForm from "./Components/forms/faq-form"
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
+import HeroForm from "./Components/Hero/HeroForm"
+import BenefitsForm from "./Components/BenefitsForm/BenefitsForm"
+import ProcessStepsForm from "./Components/ProcessStepsForm/process-steps-form"
+import FaqForm from "./Components/FaqForm/faq-form"
+import FeaturesForm from "./Components/FeaturesForm/features-form"
 
 // Form sections to collect data from
 const FORM_SECTIONS = ["hero", "benefits", "features", "processSteps", "faq"]

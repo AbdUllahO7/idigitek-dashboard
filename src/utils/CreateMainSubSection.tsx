@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef, useMemo, useCallback } from "react"
+import { useEffect, useState, useRef, useMemo, useCallback, Key } from "react"
 import { useToast } from "@/src/hooks/use-toast"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,11 +21,11 @@ import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useContentElements } from "@/src/hooks/webConfiguration/use-conent-elements"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
-import { ActionButton, CancelButton, ErrorCard, InfoAlert, LanguageSelector, LanguageTabs, LoadingCard, MainFormCard, SuccessCard, WarningAlert, WarningCard } from "./MainSectionComponents"
+import { ActionButton, CancelButton, ErrorCard,LanguageTabs, LoadingCard, MainFormCard, SuccessCard, WarningCard } from "./MainSectionComponents"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
-// Types
+// Types 
 interface FieldConfig {
   id: string
   label: string
@@ -208,7 +208,7 @@ export default function CreateMainSubSection({
   useEffect(() => {
     if (languages.length > 0) {
       const forms: Record<string, any> = {}
-      languages.forEach((lang, index) => {
+      languages.forEach((lang: { languageID: string | number }, index: number) => {
         if (index < formInstances.length) {
           forms[lang.languageID] = formInstances[index]
         }
@@ -225,7 +225,7 @@ export default function CreateMainSubSection({
   // Initialize selected languages and active tab
   useEffect(() => {
     if (languages.length > 0 && !languagesInitialized.current) {
-      setSelectedLanguages(languages.map(lang => lang._id))
+      setSelectedLanguages(languages.map((lang: { _id: any }) => lang._id))
       if (defaultLanguage) {
         setActiveTab(defaultLanguage.languageID)
       }
@@ -236,16 +236,16 @@ export default function CreateMainSubSection({
   // Process complete subsection data
   useEffect(() => {
     if (completeSubsectionsData?.data && completeSubsectionsData.data.length > 0) {
-      const mainSubsection = completeSubsectionsData.data.find(sub => sub.isMain) || completeSubsectionsData.data[0]
+      const mainSubsection = completeSubsectionsData.data.find((sub: { isMain: any }) => sub.isMain) || completeSubsectionsData.data[0]
       if (JSON.stringify(mainSubsection) !== JSON.stringify(subsection)) {
         setSubsection(mainSubsection)
         setSubsectionExists(true)
         if (mainSubsection.elements && mainSubsection.elements.length > 0) {
           setContentElements(mainSubsection.elements)
           const translationMap: Record<string, any[]> = {}
-          mainSubsection.elements.forEach(element => {
+          mainSubsection.elements.forEach((element: { translations: string | any[]; _id: string | number }) => {
             if (element.translations && element.translations.length > 0) {
-              translationMap[element._id] = element.translations
+              translationMap[element._id] = Array.isArray(element.translations) ? element.translations : []
             }
           })
           setContentTranslations(translationMap)
@@ -271,8 +271,8 @@ export default function CreateMainSubSection({
       languages.length > 0 &&
       Object.keys(languageForms).length > 0
     ) {
-      languages.forEach(lang => {
-        const form = languageForms[lang.languageID]
+      languages.forEach((lang: { languageID: string | number; _id: any }) => {
+        const form = lang.languageID ? languageForms[String(lang.languageID)] : undefined
         if (!form) return
         const fieldValues: Record<string, string> = {}
         
@@ -362,7 +362,7 @@ export default function CreateMainSubSection({
   // Validate all forms
   const validateAllForms = async () => {
     for (const lang of languages) {
-      const form = languageForms[lang.languageID]
+      const form = lang.languageID ? languageForms[String(lang.languageID)] : undefined
       if (!form) continue
       const result = await form.trigger()
       if (!result) {
@@ -399,7 +399,7 @@ export default function CreateMainSubSection({
           elementsMapping: sectionConfig.elementsMapping
         }
       }
-      
+
       const response = await createMutation.mutateAsync(subSectionData)
       if (response?.data) {
         const createdSubsection = response.data
@@ -423,8 +423,8 @@ export default function CreateMainSubSection({
             throw new Error(`Failed to create content element for ${field.label}`)
           }
           
-          await Promise.all(languages.map(async (lang) => {
-            const form = languageForms[lang.languageID]
+          await Promise.all(languages.map(async (lang: { languageID: string | number; _id: any }) => {
+            const form = lang.languageID ? languageForms[String(lang.languageID)] : undefined
             if (!form) return null
             const formValues = form.getValues()
             const translationData = {
@@ -494,8 +494,8 @@ const handleUpdateSubsection = async () => {
         })
       }
       
-      await Promise.all(languages.map(async (lang) => {
-        const form = languageForms[lang.languageID]
+      await Promise.all(languages.map(async (lang: { languageID: string | number; _id: any }) => {
+        const form = lang.languageID ? languageForms[String(lang.languageID)] : undefined
         if (!form) return null
         const formValues = form.getValues()
         const content = formValues[field.id]
@@ -548,11 +548,11 @@ const handleUpdateSubsection = async () => {
   
   // Render form content for each language tab
   const renderLanguageForms = () => {
-    return languages.map(lang => {
-      const form = languageForms[lang.languageID]
+    return languages.map((lang: { languageID: Key ; name: any; language: any }) => {
+      const form = languageForms[String(lang.languageID)]
       if (!form) return null
       return (
-        <TabsContent key={lang.languageID} value={lang.languageID}>
+        <TabsContent key={lang.languageID} value={String(lang.languageID)}>
           <Form {...form}>
             <div className="space-y-6">
               {sectionConfig.fields.map((field) => (

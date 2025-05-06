@@ -6,14 +6,16 @@ export interface Language {
 }
 
 export interface ContentElement {
-  _id: string;
+  _id: string,
   name: string;
   type: string;
-  parent: string;
-  isActive: boolean;
-  order: number;
-  defaultContent: string;
-  translations?: Translation[];
+  defaultContent?: string;
+  imageUrl?: string;
+  order:any,
+  translations?: Array<{
+    language: any; 
+    content: string;
+  }>;
 }
 
 export interface Translation {

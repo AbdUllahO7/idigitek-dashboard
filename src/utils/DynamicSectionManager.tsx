@@ -3,13 +3,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/src/components/ui/textarea';
 import React, { JSX } from 'react';
 import { IconComponent, LoadingDialog } from './MainSectionComponents';
-import { SimpleImageUploader } from '../../Utils/Image-uploader';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/src/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Button } from '@/src/components/ui/button';
 import { AlertTriangle, Loader2, Plus, Save, Trash2, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/src/components/ui/dialog';
 import { AlertDialogHeader } from '@/src/components/ui/alert-dialog';
+import { SimpleImageUploader } from '../app/dashboard/services/addService/Utils/Image-uploader';
 
 interface FieldConfig {
   type: 'input' | 'textarea' | 'select' | 'image' | 'featureImage';

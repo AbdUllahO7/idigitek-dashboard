@@ -365,7 +365,7 @@ export function LanguageTabs({
 
 // Main Form Card
 interface MainFormCardProps {
-  title: string
+  title: ReactNode
   description: string
   children: ReactNode
 }
@@ -413,7 +413,9 @@ export const LoadingDialog = ({ isOpen, title, description } : LoadingDialogProp
 
 
 // Icon mapping component to render the actual icons
-export const IconComponent = ({ iconName } : {iconName : string}) => {
+export type IconNames = 'Car' | 'MonitorSmartphone' | 'Settings' | 'CreditCard' | 'Clock' | 'MessageSquare' | 'LineChart' | 'Headphones';
+
+export const IconComponent = ({ iconName } : {iconName : IconNames}) => {
   const icons = {
     Car: <Car className="h-4 w-4" />,
     MonitorSmartphone: <MonitorSmartphone className="h-4 w-4" />,

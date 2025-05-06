@@ -8,7 +8,7 @@ import { Language } from "./language.types";
 export interface ContentElement {
   _id: string;
   name: string;
-  type: ContentElementType;
+  type: string;
   defaultContent?: string;
   isActive: boolean;
   metadata?: any;
