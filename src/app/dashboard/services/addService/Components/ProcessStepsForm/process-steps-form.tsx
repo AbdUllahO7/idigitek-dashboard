@@ -43,8 +43,8 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [isValidationDialogOpen, setIsValidationDialogOpen] = useState(false);
     const [stepCountMismatch, setStepCountMismatch] = useState(false);
-    const [existingSubSectionId, setExistingSubSectionId] = useState(null);
-    const [contentElements, setContentElements] = useState<Array<{ _id: string; name: string; order: number; defaultContent?: string }>>([]);
+    const [existingSubSectionId, setExistingSubSectionId] = useState<string | null>(null);
+    const [contentElements, setContentElements] = useState<any[]>([]);
     const [isSaving, setIsSaving] = useState(false);
     const { toast } = useToast();
 
@@ -117,7 +117,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
         {
           // Group elements by step number
           groupElements: (elements) => {
-            const stepGroups = {};
+            const stepGroups: Record<number, Array<{  name: string ; defaultContent?: string  ; type : string  }>> = {};
             elements.forEach((element) => {
               const match = element.name.match(/Step (\d+)/i);
               if (match) {
@@ -371,6 +371,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
             description: "Process steps section for the website",
             isActive: true,
             order: 0,
+            defaultContent : '',
             sectionItem: ParentSectionId,
             languages: languageIds,
           };
@@ -409,7 +410,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
         // Handle existing content vs creating new content
         if (existingSubSectionId && contentElements.length > 0) {
           // Organize existing elements by step numbers
-          const stepGroups: { [key: number]: Array<{ _id: string; name: string; order: number; defaultContent?: string }> } = {};
+          const stepGroups: Record<number, Array<{ _id: string; name: string; order: number; defaultContent?: string }>> = {};
           contentElements.forEach((element) => {
             const match = element.name.match(/Step (\d+)/i);
             if (match) {

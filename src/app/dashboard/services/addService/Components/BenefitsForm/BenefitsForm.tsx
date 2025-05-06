@@ -26,48 +26,11 @@ import { ValidationDialog } from "./ValidationDialog";
 import DeleteServiceDialog from "@/src/components/DeleteServiceDialog";
 import { LanguageCard } from "./LanguageCard";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
-import { BenefitsFormProps, BenefitsFormRef, ContentElement } from "../../types/BenefitsForm.types";
+import { BenefitsFormProps, BenefitsFormRef} from "../../types/BenefitsForm.types";
 import { SubSectionData } from "../../types/HeroFor.types";
-import { ContentTranslation, FormData } from "@/src/api/types";
+import { ContentElement, ContentTranslation, FormData } from "@/src/api/types";
 
-// Types
-// interface Benefit {
-//   icon: string;
-//   title: string;
-//   description: string;
-// }
 
-// type FormData = {
-//   [languageId: string]: Benefit[];
-// };
-
-// interface ContentElement {
-//   _id: string;
-//   name: string;
-//   type: string;
-//   parent: string;
-//   isActive: boolean;
-//   order: number;
-//   defaultContent?: string;
-// }
-
-// interface SubSection {
-//   _id: string;
-//   name: string;
-//   slug: string;
-//   description: string;
-//   isActive: boolean;
-//   order: number;
-//   sectionItem: string;
-//   languages: string[];
-// }
-
-// interface ContentTranslation {
-//   content: string;
-//   language: string;
-//   contentElement: string;
-//   isActive: boolean;
-// }
 
 interface BenefitsFormState {
   isLoadingData: boolean;
@@ -84,30 +47,6 @@ interface StepToDelete {
   langCode: string;
   index: number;
 }
-
-// interface BenefitsFormRef {
-//   form: UseFormReturn<FormData>;
-//   hasUnsavedChanges: boolean;
-//   setHasUnsavedChanges: (value: boolean) => void;
-//   existingSubSectionId: string | null;
-//   contentElements: ContentElement[];
-//   componentName: string;
-// }
-
-// interface BenefitsFormProps {
-//   languageIds: string[];
-//   activeLanguages: { languageID: string; _id: string }[];
-//   onDataChange?: (data: FormData) => void;
-//   slug?: string;
-//   ParentSectionId?: string;
-// }
-
-
-
-
-
-
-
 
 
 // Main Component

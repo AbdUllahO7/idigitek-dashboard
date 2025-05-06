@@ -19,6 +19,7 @@ import { processAndLoadData } from "../../Utils/load-form-data"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
 import { LanguageCard } from "./LanguageCard"
 import { LoadingDialog } from "@/src/utils/MainSectionComponents"
+import { SubsectionData } from "../../types/BenefitsForm.types"
 
 
 interface FaqFormProps {
@@ -47,8 +48,8 @@ const FaqForm = forwardRef<any, FaqFormProps>(
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [isValidationDialogOpen, setIsValidationDialogOpen] = useState(false);
     const [faqCountMismatch, setFaqCountMismatch] = useState(false);
-    const [existingSubSectionId, setExistingSubSectionId] = useState(null);
-    const [contentElements, setContentElements] = useState([]);
+    const [existingSubSectionId, setExistingSubSectionId] = useState<string | null>(null);
+    const [contentElements, setContentElements] = useState<any[]>([]);
     const [isSaving, setIsSaving] = useState(false);
     
     // Delete dialog state
@@ -106,7 +107,7 @@ const FaqForm = forwardRef<any, FaqFormProps>(
     }).current;
 
     // Function to process and load data into the form
-    const processFaqData = useRef((subsectionData) => {
+    const processFaqData = useRef((subsectionData: SubsectionData | null) => {
       processAndLoadData(
         subsectionData,
         form,
@@ -115,7 +116,7 @@ const FaqForm = forwardRef<any, FaqFormProps>(
         {
           // Group elements by FAQ number
           groupElements: (elements) => {
-            const faqGroups = {};
+            const faqGroups = {} as any;
             elements.forEach((element) => {
               const match = element.name.match(/FAQ (\d+)/i);
               if (match) {
@@ -191,7 +192,7 @@ const FaqForm = forwardRef<any, FaqFormProps>(
     }, [form, isLoadingData, dataLoaded, validateFaqCounts]);
 
     // Function to add a new FAQ
-    const addFaq = (langCode) => {
+    const addFaq = (langCode: string) => {
       const currentFaqs = form.getValues()[langCode] || [];
       form.setValue(langCode, [
         ...currentFaqs,
@@ -211,7 +212,7 @@ const FaqForm = forwardRef<any, FaqFormProps>(
     };
 
     // Function to confirm FAQ deletion - opens the dialog
-  const confirmRemoveFaq = (langCode, index) => {
+  const confirmRemoveFaq = (langCode: string, index: any) => {
     const currentFaqs = form.getValues()[langCode] || [];
     if (currentFaqs.length <= 1) {
       toast({
@@ -223,7 +224,7 @@ const FaqForm = forwardRef<any, FaqFormProps>(
     }
     
     // Set the FAQ to delete and open the dialog
-    setFaqToDelete({ langCode, index });
+    setFaqToDelete({ langCode  , index });
     setDeleteDialogOpen(true);
   };
   
@@ -379,6 +380,7 @@ const FaqForm = forwardRef<any, FaqFormProps>(
             slug: slug || `faq-section-${Date.now()}`, // Use provided slug or generate one
             description: "FAQ section for the website",
             isActive: true,
+            defaultContent : '',
             order: 0,
             sectionItem: ParentSectionId,
             languages: languageIds,
@@ -412,12 +414,12 @@ const FaqForm = forwardRef<any, FaqFormProps>(
         );
 
         // Prepare translations array for bulk operations
-        const translations = [];
-        const newContentElements = [];
+        const translations: { content: any; language: any; contentElement: any; isActive: boolean }[] = [];
+        const newContentElements: any[] = [];
 
         if (existingSubSectionId && contentElements.length > 0) {
           // Group content elements by FAQ number for faster lookup
-          const faqGroups = {};
+          const faqGroups: Record<number, any[]> = {};
           contentElements.forEach((element) => {
             const match = element.name.match(/FAQ (\d+)/i);
             if (match) {
@@ -796,7 +798,6 @@ const FaqForm = forwardRef<any, FaqFormProps>(
           isDeleting={isDeleting}
           title="Delete FAQ"
           confirmText="Delete FAQ"
-          dangerText="This will permanently remove this FAQ from all languages."
         />
       </div>
     );

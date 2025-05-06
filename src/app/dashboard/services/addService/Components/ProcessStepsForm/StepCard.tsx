@@ -6,7 +6,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/src/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select";
 import { Input } from "@/src/components/ui/input";
 import { Textarea } from "@/src/components/ui/textarea";
-import { IconComponent } from "@/src/utils/MainSectionComponents";
+import { IconComponent, IconNames } from "@/src/utils/MainSectionComponents";
 
 interface StepCardProps {
   index: number;
@@ -15,7 +15,7 @@ interface StepCardProps {
   defaultLangCode: string;
   form: any;
   onDelete: (langCode: string, index: number) => void;
-  availableIcons: string[];
+  availableIcons: IconNames[];
 }
 
 // Memoized StepCard component to prevent unnecessary rerenders

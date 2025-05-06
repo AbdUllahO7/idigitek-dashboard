@@ -8,6 +8,15 @@ import { memo } from "react";
 /**
  * SimpleImageUploader - Reusable image upload component
  */
+interface SimpleImageUploaderProps {
+  imageValue?: string;
+  inputId: string;
+  onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemove: () => void;
+  altText?: string;
+  acceptedTypes?: string;
+}
+
 export const SimpleImageUploader = memo(({
   imageValue,
   inputId,
@@ -15,7 +24,7 @@ export const SimpleImageUploader = memo(({
   onRemove,
   altText = "Image preview",
   acceptedTypes = "image/jpeg,image/png,image/gif,image/svg+xml"
-}) => {
+}: SimpleImageUploaderProps) => {
   return (
     <div className="relative">
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center hover:border-primary transition-colors">
@@ -73,12 +82,19 @@ SimpleImageUploader.displayName = "SimpleImageUploader";
 /**
  * BackgroundImageSection - Component for managing the hero background image
  */
+interface BackgroundImageSectionProps {
+  imagePreview?: string;
+  imageValue?: string;
+  onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemove: () => void;
+}
+
 export const BackgroundImageSection = memo(({
   imagePreview,
   imageValue,
   onUpload,
   onRemove
-}) => {
+}: BackgroundImageSectionProps) => {
   return (
     <div className="mb-6">
       <Card className="w-full">

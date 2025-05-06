@@ -20,6 +20,8 @@ import { createHeroDefaultValues } from "../../Utils/Language-default-values";
 import {  useImageUploader } from "../../Utils/Image-uploader";
 import { createFormRef } from "../../Utils/Expose-form-data";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
+import { SubsectionData } from "../../types/BenefitsForm.types";
+import { ContentTranslation } from "@/src/api/types";
 
 
 interface HeroFormProps {
@@ -51,17 +53,24 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
   });
 
   // State management
+  interface ContentElement {
+    _id: string;
+    type: string;
+    name: string;
+    translations: any[];
+  }
+
   const [state, setState] = useState({
     isLoadingData: !slug,
     dataLoaded: !slug,
     hasUnsavedChanges: false,
-    existingSubSectionId: null,
-    contentElements: [],
+    existingSubSectionId: null as string | null ,
+    contentElements: [] as ContentElement[],
     isSaving: false
   });
 
   // Use object state update for better performance and readability
-  const updateState = useCallback((newState) => {
+  const updateState = useCallback((newState: { isLoadingData?: boolean; dataLoaded?: boolean; hasUnsavedChanges?: boolean; existingSubSectionId?: string | null; contentElements?: any[]; isSaving?: boolean; }) => {
     setState(prev => ({ ...prev, ...newState }));
   }, []);
 
@@ -106,9 +115,15 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
     form,
     fieldPath: 'backgroundImage',
     initialImageUrl: initialData?.image || form.getValues().backgroundImage,
-    onUpload: () => updateState({ hasUnsavedChanges: true }),
-    onRemove: () => updateState({ hasUnsavedChanges: true }),
-    validate: (file) => {
+    onUpload: () => updateState({
+      hasUnsavedChanges: true,
+
+    }),
+    onRemove: () => updateState({
+      hasUnsavedChanges: true,
+
+    }),
+    validate: (file: { type: string; }) => {
       const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
       return validTypes.includes(file.type) || 'Only JPEG, PNG, GIF, or SVG files are allowed';
     }
@@ -147,7 +162,7 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
   }, [initialData, dataLoaded, defaultLangCode, form]);
 
   // Process hero data from API
-  const processHeroData = useCallback((subsectionData) => {
+  const processHeroData = useCallback((subsectionData: SubsectionData | null) => {
     processAndLoadData(
       subsectionData,
       form,
@@ -158,7 +173,7 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
           'hero': elements.filter(el => el.type === 'text' || (el.name === 'Background Image' && el.type === 'image'))
         }),
         processElementGroup: (groupId, elements, langId, getTranslationContent) => {
-          const elementKeyMap = {
+          const elementKeyMap: Record<string, keyof typeof result> = {
             'Title': 'title',
             'Description': 'description',
             'Back Link Text': 'backLinkText'
@@ -243,7 +258,7 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
   }, [form, isLoadingData, dataLoaded, updateState]);
 
   // Image upload handler
-  const uploadImage = useCallback(async (elementId, file) => {
+  const uploadImage = useCallback(async (elementId: any, file: string | Blob) => {
     if (!file) return null;
     
     try {
@@ -314,6 +329,7 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
           isActive: true,
           isMain: false,
           order: 0,
+          defaultContent : '',
           sectionItem: ParentSectionId,
           languages: languageIds
         };
@@ -339,7 +355,7 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
       }
 
       // Step 2: Map language codes to IDs
-      const langCodeToIdMap = activeLanguages.reduce((acc, lang) => {
+      const langCodeToIdMap = activeLanguages.reduce<Record<string, string>>((acc, lang) => {
         acc[lang.languageID] = lang._id;
         return acc;
       }, {});
@@ -356,11 +372,11 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
 
         // Update translations for text elements
         const textElements = contentElements.filter((e) => e.type === "text");
-        const translations = [];
-        const elementNameToKeyMap = {
-          Title: "title",
-          Description: "description",
-          "Back Link Text": "backLinkText"
+        const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] | { content: any; language: string; contentElement: string; isActive: boolean; }[] = [];
+        const elementNameToKeyMap: Record<string, 'title' | 'description' | 'backLinkText'> = {
+          'Title': 'title',
+          'Description': 'description',
+          'Back Link Text': 'backLinkText'
         };
 
         Object.entries(allFormValues).forEach(([langCode, values]) => {
@@ -429,7 +445,7 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
 
         // Create translations for new elements
         const textElements = createdElements.filter((e) => e.key !== "backgroundImage");
-        const translations = [];
+        const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] | { content: any; language: string; contentElement: any; isActive: boolean; }[] = [];
         
         Object.entries(allFormValues).forEach(([langCode, langValues]) => {
           if (langCode === "backgroundImage") return;
@@ -561,7 +577,7 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
       <Form {...form}>
         {/* Background Image Section */}
         <BackgroundImageSection 
-          imagePreview={imagePreview} 
+          imagePreview={imagePreview || undefined} 
           imageValue={form.getValues().backgroundImage}
           onUpload={handleImageUpload}
           onRemove={handleImageRemove}

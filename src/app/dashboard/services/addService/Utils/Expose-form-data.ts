@@ -1,3 +1,4 @@
+import { FormData } from '@/src/api/types';
 import { useImperativeHandle, RefObject, useReducer } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
@@ -76,7 +77,7 @@ export const useForceUpdate = () => {
 /**
  * Check if all languages have the same number of benefits
  */
-export const validateBenefitCounts = (values) => {
+export const validateBenefitCounts = (values: FormData | ArrayLike<unknown>) => {
   // Filter out any non-array values that might be causing issues
   const validLangEntries = Object.entries(values).filter(
     ([_, langBenefits]) => Array.isArray(langBenefits)
@@ -104,7 +105,7 @@ export const validateBenefitCounts = (values) => {
 /**
  * Get benefit counts by language
  */
-export const getBenefitCountsByLanguage = (values) => {
+export const getBenefitCountsByLanguage = (values: FormData | ArrayLike<unknown>) => {
   return Object.entries(values).map(([langCode, benefits]) => ({
     language: langCode,
     count: Array.isArray(benefits) ? benefits.length : 0,
@@ -126,7 +127,7 @@ export const getAvailableIcons = () => availableIcons;
 /**
  * Get a safe icon value from the form data
  */
-export const getSafeIconValue = (allFormValues, benefitIndex) => {
+export const getSafeIconValue = (allFormValues: FormData, benefitIndex: number) => {
   // Try to get from first language first
   const languages = Object.keys(allFormValues);
   if (languages.length === 0) return "Clock";

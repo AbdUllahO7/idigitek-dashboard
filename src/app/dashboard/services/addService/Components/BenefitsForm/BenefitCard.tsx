@@ -17,7 +17,7 @@ interface BenefitCardProps {
   form: any;
   isFirstLanguage: boolean;
   syncIcons: (index: number, value: IconNames) => void;
-  availableIcons: IconNames[];
+  availableIcons: readonly IconNames[];
   onDelete: (langCode: string, index: number) => void;
 }
 
