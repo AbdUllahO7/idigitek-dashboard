@@ -6,11 +6,12 @@ import { Button } from "@/src/components/ui/button"
 import { Skeleton } from "@/src/components/ui/skeleton"
 import { Check, AlertCircle, Loader2, Globe, Info, Edit, Save, AlertTriangle, Car, MonitorSmartphone, CreditCard, Settings, Clock, MessageSquare, Headphones, LineChart } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
+import { Tabs,  TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { motion } from "framer-motion"
 // Import the Plus icon that was missing
 import { Plus } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
+import { ActionButtonProps, CancelButtonProps, ErrorCardProps, InfoAlertProps, LanguageSelectorProps, LanguageTabsProps, LoadingDialogProps, MainFormCardProps, SuccessCardProps, WarningAlertProps, WarningCardProps } from "../api/types/utils/MainSectionComponents.types"
 
 
 // Loading Card Component
@@ -33,10 +34,6 @@ export function LoadingCard() {
 }
 
 // Error Card Component
-interface ErrorCardProps {
-  errorMessage?: string
-  onRetry?: () => void
-}
 
 export function ErrorCard({ 
   errorMessage = "Could not check if main subsection exists.", 
@@ -76,10 +73,7 @@ export function ErrorCard({
 }
 
 // Warning Card Component
-interface WarningCardProps {
-  title: string
-  message: string
-}
+
 
 export function WarningCard({ title, message }: WarningCardProps) {
   return (
@@ -102,17 +96,10 @@ export function WarningCard({ title, message }: WarningCardProps) {
 }
 
 // Success Card Component
-interface SuccessCardProps {
-  title: string
-  description: string
-
-  onEdit: () => void
-}
 
 export function SuccessCard({ 
   title, 
   description, 
-
   onEdit 
 }: SuccessCardProps) {
   return (
@@ -152,10 +139,6 @@ export function SuccessCard({
 }
 
 // Warning Alert Component
-interface WarningAlertProps {
-  title: string
-  message: string
-}
 
 export function WarningAlert({ title, message }: WarningAlertProps) {
   return (
@@ -170,10 +153,6 @@ export function WarningAlert({ title, message }: WarningAlertProps) {
 }
 
 // Info Alert Component
-interface InfoAlertProps {
-  title: string
-  message: ReactNode
-}
 
 export function InfoAlert({ title, message }: InfoAlertProps) {
   return (
@@ -188,18 +167,6 @@ export function InfoAlert({ title, message }: InfoAlertProps) {
 }
 
 // Language Selector Component
-interface Language {
-  _id: string
-  name?: string
-  language?: string
-  languageID: string
-  isDefault?: boolean
-}
-
-interface LanguageSelectorProps {
-  languages: Language[]
-}
-
 export function LanguageSelector({ languages }: LanguageSelectorProps) {
   return (
     <div className="mb-6 bg-white dark:bg-gray-900 p-5 rounded-xl border border-gray-100 dark:border-gray-800 shadow-lg">
@@ -232,16 +199,7 @@ export function LanguageSelector({ languages }: LanguageSelectorProps) {
 }
 
 // Action Button Component
-interface ActionButtonProps {
-  isLoading: boolean
-  isCreating: boolean 
-  isCreatingElements: boolean
-  isUpdating: boolean
-  exists: boolean
-  onClick: () => void
-  disabled?: boolean
-  className?: string
-}
+
 
 export function ActionButton({ 
   isLoading,
@@ -306,10 +264,7 @@ export function ActionButton({
 }
 
 // Cancel Button Component
-interface CancelButtonProps {
-  onClick: () => void
-  className?: string
-}
+
 
 export function CancelButton({ 
   onClick, 
@@ -329,12 +284,7 @@ export function CancelButton({
 }
 
 // Language Tabs Container
-interface LanguageTabsProps {
-  activeTab: string
-  setActiveTab: (tab: string) => void
-  languages: Language[]
-  children: ReactNode
-}
+
 
 export function LanguageTabs({ 
   activeTab, 
@@ -364,11 +314,6 @@ export function LanguageTabs({
 }
 
 // Main Form Card
-interface MainFormCardProps {
-  title: ReactNode
-  description: string
-  children: ReactNode
-}
 
 export function MainFormCard({ 
   title, 
@@ -388,11 +333,6 @@ export function MainFormCard({
   )
 }
 
-interface LoadingDialogProps {
-  isOpen: boolean
-  title: string
-  description: string
-}
 
 // Loading Dialog Component
 export const LoadingDialog = ({ isOpen, title, description } : LoadingDialogProps) => {
@@ -413,7 +353,6 @@ export const LoadingDialog = ({ isOpen, title, description } : LoadingDialogProp
 
 
 // Icon mapping component to render the actual icons
-export type IconNames = 'Car' | 'MonitorSmartphone' | 'Settings' | 'CreditCard' | 'Clock' | 'MessageSquare' | 'LineChart' | 'Headphones';
 
 export const IconComponent = ({ iconName } : {iconName : IconNames}) => {
   const icons = {
@@ -430,3 +369,5 @@ export const IconComponent = ({ iconName } : {iconName : IconNames}) => {
   return icons[iconName] || <Car className="h-4 w-4" />;
 };
 
+
+export type IconNames = 'Car' | 'MonitorSmartphone' | 'Settings' | 'CreditCard' | 'Clock' | 'MessageSquare' | 'LineChart' | 'Headphones';

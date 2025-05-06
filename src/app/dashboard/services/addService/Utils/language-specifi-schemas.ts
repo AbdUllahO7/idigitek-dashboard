@@ -1,5 +1,5 @@
+import { Language } from "@/src/api/types/hooks/language.types";
 import { z } from "zod";
-import { Language } from "../types/HeroFor.types";
 
 const createLanguageSchema = <T>(
     languageIds: string[], 

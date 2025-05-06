@@ -13,26 +13,34 @@ import { Form } from "@/src/components/ui/form"
 import { Button } from "@/src/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
-import { useContentElements } from "@/src/hooks/webConfiguration/use-conent-elements"
+import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
 import { useToast } from "@/src/hooks/use-toast"
 import { createProcessStepsSchema } from "../../Utils/language-specifi-schemas"
 import { createProcessStepsDefaultValues } from "../../Utils/Language-default-values"
 import { createFormRef } from "../../Utils/Expose-form-data"
 import { processAndLoadData } from "../../Utils/load-form-data"
-import { HeroFormProps, SubSectionData } from "../../types/HeroFor.types"
-import { HeroFormRef } from "../../types/BenefitsForm.types"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
 import DeleteServiceDialog from "@/src/components/DeleteServiceDialog"
 import { LanguageCard } from "./LanguageCard"
 import { LoadingDialog } from "@/src/utils/MainSectionComponents"
+import { HeroFormProps, HeroFormRef } from "@/src/api/types/sections/service/serviceSections.types"
+import { SubSection } from "@/src/api/types/hooks/section.types"
 
 
 
 
 const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
-  ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId }, ref) => {
+  (props, ref) => {
     // Memoize schema creation to prevent unnecessary recalculations
+    const { 
+      languageIds, 
+      activeLanguages, 
+      onDataChange, 
+      slug, 
+      ParentSectionId, 
+    } = props;
+    
     const formSchema = useMemo(() => 
       createProcessStepsSchema(languageIds, activeLanguages), 
       [languageIds, activeLanguages]
@@ -108,7 +116,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
     };
 
     // Process data loading - extracted as a separate function
-    const processProcessStepsData = (subsectionData: SubSectionData | null) => {
+    const processProcessStepsData = (subsectionData: SubSection | null) => {
       processAndLoadData(
         subsectionData,
         form,
@@ -391,10 +399,10 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
         }
 
         // Create language mapping
-        const langCodeToIdMap: Record<string, string> = activeLanguages.reduce((acc, lang) => {
+        const langCodeToIdMap = activeLanguages.reduce<Record<string, string>>((acc, lang) => {
           acc[lang.languageID] = lang._id;
           return acc;
-        }, {} as Record<string, string>);
+        }, {});
 
         // Use the first language values to determine the number of steps
         const firstLangCode = Object.keys(allFormValues)[0];

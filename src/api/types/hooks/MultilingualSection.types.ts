@@ -1,10 +1,3 @@
-/**
- * Multilingual section type definitions
- */
-
-import { LanguageConfig } from "./language.types";
-
-
 export type FieldType = 
   | "text" 
   | "textarea" 

@@ -1,23 +1,10 @@
+import { ContentElement } from '@/src/api/types/hooks/content.types';
+import { Language } from '@/src/api/types/hooks/language.types';
+import { SubSection } from '@/src/api/types/hooks/section.types';
 import { toast } from '@/src/hooks/use-toast';
 import { UseFormReturn } from 'react-hook-form';
-import { SubsectionData } from '../types/BenefitsForm.types';
 
 // Common types
-export interface Language {
-  _id: string;
-  languageID: string;
-}
-
-export interface ContentElement {
-  name: string;
-  type: string;
-  defaultContent?: string;
-  imageUrl?: string;
-  translations?: Array<{
-    language: any; 
-    content: string;
-  }>;
-}
 
 
 
@@ -42,7 +29,7 @@ interface ProcessElementOptions {
  * Generic function to process subsection data and load it into a form
  */
 export const processAndLoadData = (
-  subsectionData: SubsectionData | null,
+  subsectionData: SubSection | null,
   form: UseFormReturn<any>,
   languageIds: string[],
   activeLanguages: Language[],

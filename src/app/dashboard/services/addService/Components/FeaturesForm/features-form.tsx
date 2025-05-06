@@ -14,14 +14,12 @@ import { Plus,  Save, AlertTriangle, X, Loader2 } from "lucide-react"
 import { Accordion } from "@/src/components/ui/accordion"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
-import { useContentElements } from "@/src/hooks/webConfiguration/use-conent-elements"
+import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
 import apiClient from "@/src/lib/api-client"
-import type { ContentTranslation, Feature } from "@/src/api/types"
 import { useToast } from "@/src/hooks/use-toast"
 import { createFeaturesSchema } from "../../Utils/language-specifi-schemas"
 import { createFeaturesDefaultValues } from "../../Utils/Language-default-values"
-import { FeaturesFormProps, SubsectionData } from "../../types/Features.types"
 import { createFormRef } from "../../Utils/Expose-form-data"
 import { processAndLoadData } from "../../Utils/load-form-data"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
@@ -29,6 +27,9 @@ import { useFeatureImages } from "../../Utils/Image-uploader"
 import { LoadingDialog } from "@/src/utils/MainSectionComponents"
 import DeleteServiceDialog from "@/src/components/DeleteServiceDialog"
 import { FeatureForm } from "./FeatureForm"
+import { SubSection } from "@/src/api/types/hooks/section.types"
+import { Feature } from "@/src/api/types/hooks/MultilingualSection.types"
+import { ContentTranslation } from "@/src/api/types/hooks/content.types"
 
 // Helper type to infer the schema type
 type FeaturesSchemaType = ReturnType<typeof createFeaturesSchema>
@@ -106,6 +107,14 @@ const LanguageCard = memo(({
 });
 
 LanguageCard.displayName = "LanguageCard";
+
+interface FeaturesFormProps {
+  languageIds: string[];
+  activeLanguages: any[];
+  onDataChange?: (value: any) => void;
+  slug?: string;
+  ParentSectionId?: string;
+}
 
 const FeaturesForm = forwardRef<any, FeaturesFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId }, ref) => {
@@ -190,7 +199,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
     }).current;
 
     // Function to process and load data into the form - memoized
-    const processFeaturesData = useRef((subsectionData: SubsectionData | null) => {
+    const processFeaturesData = useRef((subsectionData: SubSection | null) => {
       processAndLoadData(
         subsectionData,
         form,
@@ -560,7 +569,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
         }
 
         // Create language map for quick lookups
-        const langCodeToIdMap = activeLanguages.reduce<Record<string, string>>((acc, lang) => {
+        const langCodeToIdMap = activeLanguages.reduce((acc, lang) => {
           acc[lang.languageID] = lang._id;
           return acc;
         }, {});
@@ -596,7 +605,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
 
             if (existingHeading || existingTitle) {
               // Update existing feature
-              const translations: (Omit<ContentTranslation, "_id"> & { id?: string })[] | { content: any; language: string; contentElement: any; isActive: boolean }[] = [];
+              const translations: (Omit<ContentTranslation, "_id"> & { id?: string })[] | { content: any; language: any; contentElement: any; isActive: boolean }[] = [];
               
               Object.entries(allFormValues).forEach(([langCode, langFeatures]) => {
                 const langId = langCodeToIdMap[langCode];

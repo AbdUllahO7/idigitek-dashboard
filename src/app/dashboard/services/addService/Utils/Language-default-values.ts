@@ -1,6 +1,6 @@
-import { Language } from "../types/HeroFor.types";
+import { Language } from "@/src/api/types/hooks/language.types";
 
-const createLanguageCodeMap = (activeLanguages: Language[]): Record<string, string> => {
+export const createLanguageCodeMap = (activeLanguages: Language[]): Record<string, string> => {
     return activeLanguages.reduce<Record<string, string>>((acc, lang) => {
         acc[lang._id] = lang.languageID;
         return acc;
@@ -103,4 +103,5 @@ export const createFeaturesDefaultValues = (languageIds: string[], activeLanguag
 };
 
 
+// ex : 
 // const defaultValues = createHeroDefaultValues(languageIds, activeLanguages)

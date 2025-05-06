@@ -17,6 +17,7 @@ export interface ContentElement {
   createdAt?: string;
   updatedAt?: string;
   translations?: ContentTranslation[];
+  imageUrl?: string 
 }
 
 export type ContentElementType = 'text' | 'heading' | 'paragraph' | 'list' | 'image' | 'video' | 'link' | 'custom';

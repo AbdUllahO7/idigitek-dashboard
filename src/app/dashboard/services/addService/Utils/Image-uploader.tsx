@@ -450,12 +450,21 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
   };
   };
 
-  export const useImageUploader = ({ form, fieldPath, initialImageUrl, onUpload, onRemove, validate }) => {
-    const [imageFile, setImageFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
+  interface ImageUploaderOptions {
+    form: UseFormReturn<any>;
+    fieldPath: string;
+    initialImageUrl?: string;
+    onUpload?: (file: File, previewUrl: string) => void;
+    onRemove?: () => void;
+    validate?: (file: File) => boolean | string;
+  }
+  
+  export const useImageUploader = ({ form, fieldPath, initialImageUrl, onUpload, onRemove, validate }: ImageUploaderOptions) => {
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     
     // Handle image upload
-    const handleImageUpload = useCallback((e) => {
+    const handleImageUpload = useCallback((e: { target: { files: any[]; }; }) => {
       const file = e.target.files[0];
       if (!file) return;
       

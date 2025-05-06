@@ -8,27 +8,23 @@ import { Form} from "@/src/components/ui/form"
 import { Button } from "@/src/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
-import { useContentElements } from "@/src/hooks/webConfiguration/use-conent-elements"
+import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
 import { useToast } from "@/src/hooks/use-toast"
 import DeleteServiceDialog from "@/src/components/DeleteServiceDialog"
 import { createFaqSchema } from "../../Utils/language-specifi-schemas"
-import { createFaqDefaultValues } from "../../Utils/Language-default-values"
+import { createFaqDefaultValues} from "../../Utils/Language-default-values"
 import { createFormRef } from "../../Utils/Expose-form-data"
 import { processAndLoadData } from "../../Utils/load-form-data"
-import { createLanguageCodeMap } from "../../Utils/language-utils"
+
 import { LanguageCard } from "./LanguageCard"
 import { LoadingDialog } from "@/src/utils/MainSectionComponents"
-import { SubsectionData } from "../../types/BenefitsForm.types"
+import { FaqFormProps } from "@/src/api/types/sections/service/serviceSections.types"
+import { SubSection } from "@/src/api/types/hooks/section.types"
+import { createLanguageCodeMap } from "../../Utils/language-utils"
 
 
-interface FaqFormProps {
-  languageIds: string[];
-  activeLanguages: any[];
-  onDataChange?: (data: any) => void;
-  slug?: string;
-  ParentSectionId: string;
-}
+
 
 const FaqForm = forwardRef<any, FaqFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId }, ref) => {
@@ -107,7 +103,7 @@ const FaqForm = forwardRef<any, FaqFormProps>(
     }).current;
 
     // Function to process and load data into the form
-    const processFaqData = useRef((subsectionData: SubsectionData | null) => {
+    const processFaqData = useRef((subsectionData: SubSection | null) => {
       processAndLoadData(
         subsectionData,
         form,

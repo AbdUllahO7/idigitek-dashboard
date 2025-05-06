@@ -3,17 +3,8 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/src/hooks/use-toast"
+import { UseGenericListOptions } from "../api/types/hooks/UseGenericList.types"
 
-interface UseGenericListOptions {
-  sectionId: string | null
-  apiHooks: {
-    useGetBySectionId: any
-    useDelete: any
-  }
-  editPath: string
-  onSuccessDelete?: () => void
-  onErrorDelete?: (error: any) => void
-}
 
 export function useGenericList({
   sectionId,

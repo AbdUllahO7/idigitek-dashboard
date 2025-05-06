@@ -1,4 +1,4 @@
-import { MultilingualSectionData } from "@/src/api/types";
+import { MultilingualSectionData } from "../api/types/hooks/MultilingualSection.types";
 import { useSectionItems } from "./webConfiguration/use-section-items";
 
 /**

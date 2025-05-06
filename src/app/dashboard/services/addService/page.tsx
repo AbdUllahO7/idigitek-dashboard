@@ -9,7 +9,7 @@ import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 
-import { FormData } from "@/src/api/types/service/serviceSections.types"
+import { FormData } from "@/src/api/types/sections/service/serviceSections.types"
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
 import HeroForm from "./Components/Hero/HeroForm"
 import BenefitsForm from "./Components/BenefitsForm/BenefitsForm"
@@ -103,7 +103,7 @@ export default function AddService() {
       // Check both with hyphen and without
       return (lowerSlug.includes(normalizedSlug.replace('-', '')) || 
               lowerSlug.includes(normalizedSlug)) && 
-              lowerSlug.includes(sectionItemId.toLowerCase());
+              sectionItemId && lowerSlug.includes(sectionItemId.toLowerCase());
     });
     
     if (partialMatch) {

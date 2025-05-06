@@ -8,6 +8,7 @@ import { SubSection } from "./section.types";
 
 
 export interface Language extends Resource {
+  _id:string
   language: string;
   languageID: string;
   isActive: boolean;

@@ -18,38 +18,15 @@ import { Input } from "@/src/components/ui/input"
 import { Textarea } from "@/src/components/ui/textarea"
 import { TabsContent } from "@/src/components/ui/tabs"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
-import { useContentElements } from "@/src/hooks/webConfiguration/use-conent-elements"
+import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
 import { ActionButton, CancelButton, ErrorCard,LanguageTabs, LoadingCard, MainFormCard, SuccessCard, WarningCard } from "./MainSectionComponents"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { CreateMainSubSectionProps } from "../api/types/utils/CreateMainSubSection.types"
 
 // Types 
-interface FieldConfig {
-  id: string
-  label: string
-  type: string
-  required: boolean
-  description?: string
-  placeholder?: string
-}
-
-interface CreateMainSubSectionProps {
-  sectionId: string
-  sectionConfig: {
-    type: string,
-    name: string
-    slug: string
-    subSectionName: string
-    description: string
-    isMain: boolean
-    fields: FieldConfig[]
-    elementsMapping: Record<string, string>
-  }
-  onSubSectionCreated?: (subsection: any) => void
-  onFormValidityChange?: (isValid: boolean, message?: string) => void
-}
 
 // Debounce utility
 function debounce(func: (...args: any[]) => void, wait: number) {

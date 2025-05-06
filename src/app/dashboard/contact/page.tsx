@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src
 
 import MultilingualSectionComponent from "@/src/components/dashboard/MultilingualSectionComponent"
 import { ContactData } from "@/src/api/types/contact/contactSection.types"
-import { FieldConfig, LanguageConfig, MultilingualSectionData } from "@/src/api/types"
+import {  LanguageConfig, MultilingualSectionData } from "@/src/api/types"
 
 // Contact information data
 

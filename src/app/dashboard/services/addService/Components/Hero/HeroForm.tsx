@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { Form } from "@/src/components/ui/form";
 import { Button } from "@/src/components/ui/button";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
-import { useContentElements } from "@/src/hooks/webConfiguration/use-conent-elements";
+import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions";
 import apiClient from "@/src/lib/api-client";
 import { useToast } from "@/src/hooks/use-toast";
@@ -20,18 +20,10 @@ import { createHeroDefaultValues } from "../../Utils/Language-default-values";
 import {  useImageUploader } from "../../Utils/Image-uploader";
 import { createFormRef } from "../../Utils/Expose-form-data";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
-import { SubsectionData } from "../../types/BenefitsForm.types";
-import { ContentTranslation } from "@/src/api/types";
+import { HeroFormProps } from "@/src/api/types/sections/service/serviceSections.types";
+import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
+import { SubSection } from "@/src/api/types/hooks/section.types";
 
-
-interface HeroFormProps {
-  languageIds: string[];
-  activeLanguages: { _id: string; languageID: string; }[];
-  onDataChange?: (data: any) => void;
-  slug?: string;
-  ParentSectionId?: string;
-  initialData?: any;
-}
 
 const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
   const { 
@@ -53,13 +45,6 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
   });
 
   // State management
-  interface ContentElement {
-    _id: string;
-    type: string;
-    name: string;
-    translations: any[];
-  }
-
   const [state, setState] = useState({
     isLoadingData: !slug,
     dataLoaded: !slug,
@@ -162,7 +147,7 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
   }, [initialData, dataLoaded, defaultLangCode, form]);
 
   // Process hero data from API
-  const processHeroData = useCallback((subsectionData: SubsectionData | null) => {
+  const processHeroData = useCallback((subsectionData: SubSection | null) => {
     processAndLoadData(
       subsectionData,
       form,

@@ -7,9 +7,10 @@ import {
   useState,
   useRef,
   useCallback,
+  Key,
 } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Save, AlertTriangle, Loader2 } from "lucide-react";
 import { Form } from "@/src/components/ui/form";
 import { Button } from "@/src/components/ui/button";
@@ -18,39 +19,21 @@ import { createBenefitsSchema } from "../../Utils/language-specifi-schemas";
 import { createBenefitsDefaultValues } from "../../Utils/Language-default-values";
 import { createFormRef, getAvailableIcons, getBenefitCountsByLanguage, getSafeIconValue, useForceUpdate, validateBenefitCounts } from "../../Utils/Expose-form-data";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
-import { useContentElements } from "@/src/hooks/webConfiguration/use-conent-elements";
+import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions";
 import { processAndLoadData } from "../../Utils/load-form-data";
-import { createLanguageCodeMap } from "../../Utils/language-utils";
 import { ValidationDialog } from "./ValidationDialog";
 import DeleteServiceDialog from "@/src/components/DeleteServiceDialog";
 import { LanguageCard } from "./LanguageCard";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
-import { BenefitsFormProps, BenefitsFormRef} from "../../types/BenefitsForm.types";
-import { SubSectionData } from "../../types/HeroFor.types";
-import { ContentElement, ContentTranslation, FormData } from "@/src/api/types";
-
-
-
-interface BenefitsFormState {
-  isLoadingData: boolean;
-  dataLoaded: boolean;
-  hasUnsavedChanges: boolean;
-  isValidationDialogOpen: boolean;
-  benefitCountMismatch: boolean;
-  existingSubSectionId: string | null;
-  contentElements: ContentElement[];
-  isSaving: boolean;
-}
-
-interface StepToDelete {
-  langCode: string;
-  index: number;
-}
+import { BenefitsFormState, HeroFormProps, HeroFormRef, StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
+import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
+import { createLanguageCodeMap } from "../../Utils/language-utils";
+import { SubSection } from "@/src/api/types/hooks/section.types";
 
 
 // Main Component
-const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
+const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
   (
     { languageIds, activeLanguages, onDataChange, slug, ParentSectionId },
     ref
@@ -61,11 +44,20 @@ const BenefitsForm = forwardRef<BenefitsFormRef, BenefitsFormProps>(
       languageIds,
       activeLanguages
     );
+    interface FormData {
+      [key: string]: Array<{
+        icon: string;
+        title: string;
+        description: string;
+        id?: string;
+      }>;
+    }
+    
     const form = useForm<FormData>({
-      resolver: zodResolver(formSchema),
-      defaultValues,
-      mode: "onChange",
-    });
+          resolver: zodResolver(formSchema),
+          defaultValues,
+          mode: "onChange",
+        });
 
     // State management
     const [state, setState] = useState<BenefitsFormState>({
@@ -275,7 +267,7 @@ const removeProcessStep = useCallback(async () => {
 
     // Process benefits data
     const processBenefitsData = useCallback(
-      (subsectionData: SubSectionData) => {
+      (subsectionData: SubSection) => {
         processAndLoadData(
           subsectionData,
           form,
@@ -572,7 +564,7 @@ const removeProcessStep = useCallback(async () => {
           throw new Error("Failed to create or retrieve subsection ID");
         }
 
-        const langCodeToIdMap = activeLanguages.reduce((acc, lang) => {
+        const langCodeToIdMap = activeLanguages.reduce((acc: { [x: string]: any; }, lang: { languageID: string | number; _id: any; }) => {
           acc[lang.languageID] = lang._id;
           return acc;
         }, {} as Record<string, string>);
@@ -664,7 +656,7 @@ const removeProcessStep = useCallback(async () => {
             const benefit = benefits[i];
             if (titleElement) {
               translations.push({
-                _id : benefit.id,
+                _id : String(benefit.id),
                 content: benefit.title,
                 language: langId,
                 contentElement: titleElement._id,
@@ -673,7 +665,7 @@ const removeProcessStep = useCallback(async () => {
             }
             if (descElement) {
               translations.push({
-                _id : benefit.id,
+                _id : String(benefit.id),
                 content: benefit.description,
                 language: langId,
                 contentElement: descElement._id,
@@ -794,8 +786,8 @@ const removeProcessStep = useCallback(async () => {
 
         <Form {...form}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {languageIds.map((langId, langIndex) => {
-              const langCode = languageCodes[langId] || langId;
+            {languageIds.map((langId: Key | null | undefined, langIndex: number) => {
+              const langCode = String(langId) in languageCodes ? languageCodes[String(langId)] : String(langId);
               const isFirstLanguage = langIndex === 0;
 
               return (

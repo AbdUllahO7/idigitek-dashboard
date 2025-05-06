@@ -7,10 +7,6 @@ import { Input } from "@/src/components/ui/input";
 import { Textarea } from "@/src/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 
-/**
- * LanguageCard - Component for managing hero content in a specific language
- */
-
 
 interface LanguageCardProps {
   langCode: string;

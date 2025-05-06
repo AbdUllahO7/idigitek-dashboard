@@ -2,6 +2,7 @@
  * Section related type definitions
  */
 
+
 import { Resource } from "./Common.types";
 import { ContentElement } from "./content.types";
 import { Language } from "./language.types";
@@ -50,7 +51,8 @@ export interface SubSection {
   updatedAt?: string;
   isMain?: boolean;
   parentSections?: string[];
-  section?:SubSection,
+  section?:SubSection | string,
+  elements?: ContentElement[];
 }
 
 export interface Service extends SectionItem {
