@@ -1,4 +1,5 @@
-import { Language } from "./utils/MainSectionComponents.types"
+import { Language } from "./language.types"
+
 export interface FormRef {
   getFormData: () => Promise<any>
   hasUnsavedChanges: boolean

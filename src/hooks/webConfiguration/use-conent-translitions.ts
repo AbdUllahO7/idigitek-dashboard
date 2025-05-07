@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
-import { ContentTranslation } from '@/src/api/types';
+import { ContentTranslation } from '@/src/api/types/hooks/content.types';
 
 // Base content translation hook
 export function useContentTranslations() {
