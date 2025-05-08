@@ -772,7 +772,6 @@ const removeProcessStep = useCallback(async () => {
     // Confirm delete step
     const confirmDeleteStep = (langCode: string, index: number) => {
       setStepToDelete({ langCode, index });
-      console.log("index:" ,  index)
       setDeleteDialogOpen(true);
     };
 

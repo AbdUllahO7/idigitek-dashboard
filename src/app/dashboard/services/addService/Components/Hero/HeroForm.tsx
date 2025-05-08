@@ -129,7 +129,6 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
   // Process initial data from parent
   const processInitialData = useCallback(() => {
     if (initialData && !dataLoaded) {
-      console.log("Processing initial data from parent:", initialData);
       
       if (initialData.description) {
         form.setValue(`${defaultLangCode}.description`, initialData.description);

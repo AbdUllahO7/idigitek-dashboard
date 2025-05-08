@@ -6,6 +6,7 @@
 import { Resource } from "./Common.types";
 import { ContentElement } from "./content.types";
 import { Language } from "./language.types";
+import { WebSiteProps } from "./WebSite.types";
 
 
 export interface Section extends Resource {
@@ -28,6 +29,7 @@ export interface SectionItem {
   order: number;
   isMain: boolean;
   section: string | Section;
+  WebSite : string,
   subsections?: string[] | SubSection[];
   subsectionCount?: number;
   createdAt?: string;
@@ -53,6 +55,7 @@ export interface SubSection {
   parentSections?: string[];
   section?:SubSection | string,
   elements?: ContentElement[];
+  WebSite :WebSiteProps 
 }
 
 export interface Service extends SectionItem {

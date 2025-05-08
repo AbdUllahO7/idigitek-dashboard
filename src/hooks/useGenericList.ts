@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/src/hooks/use-toast"
 import { UseGenericListOptions } from "../api/types/hooks/UseGenericList.types"
+import { useWebSite } from "./webConfiguration/use-WebSite"
 
 
 export function useGenericList({
@@ -25,24 +26,27 @@ export function useGenericList({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false)
   const [itemToDelete, setItemToDelete] = useState<{id: string; name: string} | null>(null)
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
+  const { useGetMyWebsites } = useWebSite()
+
+  const { data: websites = [], isLoading: isLoadingWebsites, error: websitesError } = useGetMyWebsites()
 
   // API hooks for fetching and deleting items
-  const { useGetBySectionId, useDelete } = apiHooks
-
+  const { useGetByWebSiteId, useDelete } = apiHooks
+  
   // Query for items with the parent section ID
   const {
     data: itemsData,
     isLoading: isLoadingData,
     refetch: refetchItems,
-  } = useGetBySectionId(
-    sectionId || "", 
-    Boolean(sectionId), // Conditionally execute query only if sectionId exists
+  } = useGetByWebSiteId(
+    websites[0]?._id || "", 
+    Boolean(websites[0]?._id ), // Conditionally execute query only if sectionId exists
     100, // limit
     0, // skip
     true, // includeSubSectionCount
   )
 
-  console.log("Items data:", itemsData)
+
 
   // Delete mutation
   const deleteItem = useDelete()

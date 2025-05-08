@@ -7,6 +7,7 @@ import { toast } from "@/src/hooks/use-toast"
 import type React from "react"
 import { useState } from "react"
 import { PlusCircle, Edit2, Trash2, Upload, X, Save, ArrowLeft } from "lucide-react"
+import DeleteServiceDialog from "../../DeleteServiceDialog"
 
 const WebsiteImageExampleFixed: React.FC = () => {
   const [showCreateForm, setShowCreateForm] = useState(false)
@@ -19,6 +20,8 @@ const WebsiteImageExampleFixed: React.FC = () => {
   const [editingWebsite, setEditingWebsite] = useState<WebSiteProps | null>(null)
   const [uploadingLogo, setUploadingLogo] = useState<Record<string, boolean>>({})
   const [newLogoFile, setNewLogoFile] = useState<File | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [websiteToDelete, setWebsiteToDelete] = useState<WebSiteProps | null>(null)
 
   const { useGetMyWebsites, useCreate, useUpdate, useUploadLogo, useDelete } = useWebSite()
 
@@ -74,17 +77,36 @@ const WebsiteImageExampleFixed: React.FC = () => {
     }
   }
 
-  const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this website?")) {
-      deleteMutation.mutate(id, {
-        onSuccess: () => {
-          toast({
-            title: "Website Deleted",
-            description: "The website has been deleted successfully",
+  const openDeleteDialog = (website: WebSiteProps) => {
+    setWebsiteToDelete(website)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (websiteToDelete && websiteToDelete._id) {
+      return new Promise<void>((resolve) => {
+        if(websiteToDelete._id) {
+          deleteMutation.mutate(websiteToDelete._id, {
+            onSuccess: () => {
+              toast({
+                title: "Website Deleted",
+                description: "The website has been deleted successfully",
+              })
+              resolve()
+            },
+            onError: () => {
+              toast({
+                title: "Delete Failed",
+                description: "There was a problem deleting the website. Please try again.",
+                variant: "destructive",
+              })
+              resolve()
+            },
           })
-        },
+        }
       })
     }
+    return Promise.resolve()
   }
 
   const handleNewLogoSelect = (file: File) => {
@@ -505,7 +527,7 @@ const WebsiteImageExampleFixed: React.FC = () => {
                     </button>
                     <button
                       className="p-2 rounded-md text-gray-500 hover:text-red-600 hover:bg-red-50 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-red-900/20 transition-colors"
-                      onClick={() => website._id && handleDelete(website._id)}
+                      onClick={() => openDeleteDialog(website)}
                       aria-label="Delete website"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -550,10 +572,21 @@ const WebsiteImageExampleFixed: React.FC = () => {
   }
 
   return (
-    <div className=" mx-auto">
+    <div className="mx-auto">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
         <div className="p-6 md:p-8">{renderContent()}</div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteServiceDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        serviceName={websiteToDelete?.name || ""}
+        onConfirm={handleDeleteConfirm}
+        isDeleting={deleteMutation.isPending}
+        title="Delete Website"
+        confirmText="Delete Website"
+      />
     </div>
   )
 }

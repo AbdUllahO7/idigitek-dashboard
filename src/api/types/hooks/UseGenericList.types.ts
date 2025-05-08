@@ -4,6 +4,7 @@ export interface UseGenericListOptions {
   apiHooks: {
     useGetBySectionId: any
     useDelete: any
+    useGetByWebSiteId: any
   }
   editPath: string
   onSuccessDelete?: () => void

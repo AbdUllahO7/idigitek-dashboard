@@ -69,8 +69,6 @@ export async function createMainServiceItem(
   
   // Create the main-service section item
   try {
-    console.log("Creating main-service for section:", sectionId);
-    
     const sectionItemData = {
       name: "main-service",
       description: description,
@@ -79,14 +77,14 @@ export async function createMainServiceItem(
       isMain: true,
       order: 0,
       // Optional image from section data if available
-      image: sectionData.imageUrl || null
+      image: sectionData.imageUrl || null,
+      WebSite : localStorage.getItem('websiteId')
     };
     
     const response = await createSectionItem.mutateAsync(sectionItemData);
     
     // Extract and return the new ID
     if (response && response.data && response.data._id) {
-      console.log("Created main-service with ID:", response.data._id);
       return response.data._id;
     } else {
       throw new Error("Failed to extract ID from response");

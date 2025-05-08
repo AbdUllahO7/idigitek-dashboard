@@ -12,6 +12,7 @@ import GenericSectionIntegration from "@/src/components/dashboard/GenericSection
 import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import DeleteServiceDialog from "@/src/components/DeleteServiceDialog"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
+import { useWebSite } from "@/src/hooks/webConfiguration/use-WebSite"
 
 // Configuration for the Services page
 const SERVICES_CONFIG = {
@@ -76,20 +77,18 @@ export default function ServicesPage() {
   const [hasMainSubSection, setHasMainSubSection] = useState<boolean>(false)
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
   const [mainSectionFormValid, setMainSectionFormValid] = useState<boolean>(false)
-  const [mainSectionErrorMessage, setMainSectionErrorMessage] = useState<string | undefined>(
-    SERVICES_CONFIG.mainSectionRequiredMessage
-  )
+  const [mainSectionErrorMessage, setMainSectionErrorMessage] = useState<string | undefined>(SERVICES_CONFIG.mainSectionRequiredMessage)
   const [sectionData, setSectionData] = useState<any>(null)
+  const { useGetMyWebsites } = useWebSite()
+  const { data: websites = [], isLoading: isLoadingWebsites, error: websitesError } = useGetMyWebsites()
   
   // Check if main subsection exists
-  const {
-    useGetCompleteBySectionId
-  } = useSubSections()
+  const { useGetMainByWebSiteId } = useSubSections()
   
   const {
-    data: completeSubsectionsData,
+    data: mainSubSectionData,
     isLoading: isLoadingCompleteSubsections
-  } = useGetCompleteBySectionId(sectionId || "")
+  } = useGetMainByWebSiteId(websites[0]?._id)
 
   // Use the generic list hook for service management
   const {
@@ -118,50 +117,51 @@ export default function ServicesPage() {
   })
 
   // Determine if main subsection exists when data loads & set section data if needed
-  console.log("Complete Subsections Data:", completeSubsectionsData)
   useEffect(() => {
-    if (!isLoadingCompleteSubsections && completeSubsectionsData?.data) {
-      const mainSubsection = completeSubsectionsData.data.find((sub: { isMain: any }) => sub.isMain)
-      setHasMainSubSection(!!mainSubsection)
+    if (!isLoadingCompleteSubsections && mainSubSectionData) {
+      // Check if data exists and has isMain: true
+      const hasMain = mainSubSectionData?.data && mainSubSectionData.data.isMain === true
+      setHasMainSubSection(hasMain)
       setIsLoadingMainSubSection(false)
       
       // Extract section data from the main subsection and set it
-      if (mainSubsection && mainSubsection.section) {
+      if (hasMain && mainSubSectionData.data.section) {
         // The section could be either a string ID or a populated object
-        const sectionInfo = typeof mainSubsection.section === 'string' 
-          ? { _id: mainSubsection.section } 
-          : mainSubsection.section
+        const sectionInfo = typeof mainSubSectionData.data.section === 'string' 
+          ? { _id: mainSubSectionData.data.section } 
+          : mainSubSectionData.data.section
 
         // Set local section data
         setSectionData(sectionInfo)
         
-        // Also update the serviceSection in useGenericList hook
-        // This ensures the "Add New Service" button gets enabled
+        // Update the serviceSection in useGenericList hook if not already set
         if (serviceSection === null) {
           setSection(sectionInfo)
         }
       }
-    } else if (!sectionId) {
+    } else if (!isLoadingCompleteSubsections) {
+      // No main subsection found
+      setHasMainSubSection(false)
       setIsLoadingMainSubSection(false)
     }
-  }, [completeSubsectionsData, isLoadingCompleteSubsections, sectionId, serviceSection, setSection])
+  }, [mainSubSectionData, isLoadingCompleteSubsections, serviceSection, setSection])
 
   // Handle form validity changes
   const handleFormValidityChange = (isValid: boolean, message?: string) => {
-    setMainSectionFormValid(isValid);
+    setMainSectionFormValid(isValid)
     if (message) {
-      setMainSectionErrorMessage(message);
+      setMainSectionErrorMessage(message)
     } else {
-      setMainSectionErrorMessage(undefined);
+      setMainSectionErrorMessage(undefined)
     }
-  };
+  }
 
   // Custom add button logic based on main subsection existence and form validity
   const isAddButtonDisabled = 
     defaultAddButtonDisabled || 
     !hasMainSubSection || 
     isLoadingMainSubSection ||
-    !mainSectionFormValid;
+    !mainSectionFormValid
   
   // Custom tooltip message based on condition
   const addButtonTooltip = !serviceSection && !sectionData 
@@ -170,7 +170,7 @@ export default function ServicesPage() {
       ? SERVICES_CONFIG.mainSectionRequiredMessage
       : (!mainSectionFormValid && mainSectionErrorMessage)
         ? mainSectionErrorMessage
-        : defaultAddButtonTooltip;
+        : defaultAddButtonTooltip
 
   // Custom message for empty state based on conditions
   const emptyStateMessage = !serviceSection && !sectionData 
@@ -179,11 +179,11 @@ export default function ServicesPage() {
       ? SERVICES_CONFIG.mainSectionRequiredMessage
       : (!mainSectionFormValid && mainSectionErrorMessage)
         ? mainSectionErrorMessage
-        : SERVICES_CONFIG.emptyStateMessage;
+        : SERVICES_CONFIG.emptyStateMessage
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
-    setHasMainSubSection(true);
+    setHasMainSubSection(subsection.isMain === true)
     
     // If we have section data from the subsection, update it
     if (subsection.section) {
@@ -194,7 +194,7 @@ export default function ServicesPage() {
       setSectionData(sectionInfo)
       setSection(sectionInfo)
     }
-  };
+  }
 
   // Components
   const ServicesTable = (
@@ -204,7 +204,7 @@ export default function ServicesPage() {
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
     />
-  );
+  )
 
   const SectionIntegration = (
     <GenericSectionIntegration
@@ -216,7 +216,7 @@ export default function ServicesPage() {
       editButtonLabel={SERVICES_CONFIG.editSectionButtonLabel}
       saveButtonLabel={SERVICES_CONFIG.saveSectionButtonLabel}
     />
-  );
+  )
 
   const CreateDialog = (
     <DialogCreateSectionItem
@@ -225,7 +225,7 @@ export default function ServicesPage() {
       sectionId={sectionId || ""}
       onServiceCreated={handleItemCreated}
     />
-  );
+  )
 
   const DeleteDialog = (
     <DeleteServiceDialog
@@ -234,10 +234,10 @@ export default function ServicesPage() {
       serviceName={itemToDelete?.name || ""}
       onConfirm={handleDelete}
       isDeleting={isDeleting}
-      title = "Delete Section"
+      title="Delete Section"
       confirmText="Confirm"
     />
-  );
+  )
 
   return (
     <div className="space-y-6">
@@ -260,7 +260,7 @@ export default function ServicesPage() {
       />
       
       {/* Main subsection management (only shown when section exists) */}
-      { sectionId && (
+      {sectionId && (
         <CreateMainSubSection 
           sectionId={sectionId}
           sectionConfig={serviceSectionConfig}
@@ -269,5 +269,5 @@ export default function ServicesPage() {
         />
       )}
     </div>
-  );
+  )
 }

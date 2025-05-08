@@ -248,7 +248,6 @@ const FaqForm = forwardRef<any, FaqFormProps>(
           await Promise.all(faqElements.map(async (element) => {
             try {
               await deleteContentElement.mutateAsync(element._id);
-              console.log(`Deleted content element: ${element.name}`);
             } catch (error) {
               console.error(`Failed to delete content element ${element.name}:`, error);
             }
@@ -292,7 +291,6 @@ const FaqForm = forwardRef<any, FaqFormProps>(
                     order: newOrder,
                   },
                 });
-                console.log(`Updated element ${element.name} to ${newName}`);
               } catch (error) {
                 console.error(`Failed to update element ${element.name}:`, error);
               }
@@ -365,7 +363,6 @@ const FaqForm = forwardRef<any, FaqFormProps>(
       try {
         // Get current form values before any processing
         const allFormValues = form.getValues();
-        console.log("Form values at save:", allFormValues);
 
         let sectionId = existingSubSectionId;
 

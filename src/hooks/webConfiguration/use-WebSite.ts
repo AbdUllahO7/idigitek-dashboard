@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
-import { WebSiteProps, WebSiteUserProps } from '@/src/api/types/hooks/WebSite.types';
+import { WebSiteProps } from '@/src/api/types/hooks/WebSite.types';
 
 // Base WebSite hook
 export function useWebSite() {
