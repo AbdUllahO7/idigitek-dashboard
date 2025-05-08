@@ -78,7 +78,7 @@ export async function createMainServiceItem(
       order: 0,
       // Optional image from section data if available
       image: sectionData.imageUrl || null,
-      WebSite : localStorage.getItem('websiteId')
+      WebSiteId : localStorage.getItem('websiteId')
     };
     
     const response = await createSectionItem.mutateAsync(sectionItemData);

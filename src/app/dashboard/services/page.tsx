@@ -12,7 +12,7 @@ import GenericSectionIntegration from "@/src/components/dashboard/GenericSection
 import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import DeleteServiceDialog from "@/src/components/DeleteServiceDialog"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
-import { useWebSite } from "@/src/hooks/webConfiguration/use-WebSite"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 // Configuration for the Services page
 const SERVICES_CONFIG = {
@@ -79,8 +79,9 @@ export default function ServicesPage() {
   const [mainSectionFormValid, setMainSectionFormValid] = useState<boolean>(false)
   const [mainSectionErrorMessage, setMainSectionErrorMessage] = useState<string | undefined>(SERVICES_CONFIG.mainSectionRequiredMessage)
   const [sectionData, setSectionData] = useState<any>(null)
-  const { useGetMyWebsites } = useWebSite()
-  const { data: websites = [], isLoading: isLoadingWebsites, error: websitesError } = useGetMyWebsites()
+  const { websiteId } = useWebsiteContext();
+
+  console.log("websiteId" , websiteId)
   
   // Check if main subsection exists
   const { useGetMainByWebSiteId } = useSubSections()
@@ -88,7 +89,9 @@ export default function ServicesPage() {
   const {
     data: mainSubSectionData,
     isLoading: isLoadingCompleteSubsections
-  } = useGetMainByWebSiteId(websites[0]?._id)
+  } = useGetMainByWebSiteId(websiteId)
+
+  console.log("mainSubSectionData" ,mainSubSectionData)
 
   // Use the generic list hook for service management
   const {

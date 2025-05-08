@@ -25,8 +25,7 @@ import { ActionButton, CancelButton, ErrorCard,LanguageTabs, LoadingCard, MainFo
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { CreateMainSubSectionProps } from "../api/types/utils/CreateMainSubSection.types"
-import { useWebSite } from "../hooks/webConfiguration/use-WebSite"
-import { useQueryClient } from "@tanstack/react-query"
+import { useWebsiteContext } from "../providers/WebsiteContext"
 
 // Types 
 
@@ -72,10 +71,9 @@ export default function CreateMainSubSection({
   const [isExpanded, setIsExpanded] = useState(true)
   const [languageForms, setLanguageForms] = useState<Record<string, any>>({})
   const languagesInitialized = useRef(false)
-  const { useGetMyWebsites } = useWebSite()
-  const { data: websites = [], isLoading: isLoadingWebsites, error: websitesError } = useGetMyWebsites()
-  let websiteId = websites[0]?._id
-  
+
+  const { websiteId } = useWebsiteContext();
+
   // API Hooks
   const {
     useCreate,
@@ -383,7 +381,7 @@ export default function CreateMainSubSection({
         isActive: true,
         order: 0,
         section: sectionId,
-        WebSite : websiteId,
+        WebSiteId : websiteId,
         languages: selectedLanguages,
         metadata: {
           fields: sectionConfig.fields,
@@ -406,7 +404,7 @@ export default function CreateMainSubSection({
               type: field.type === 'textarea' ? 'text' : 'text',
               order: index,
               parent: createdSubsection._id,
-              WebSite: websiteId,
+              WebSiteId: websiteId,
               isActive: true
             }
             

@@ -204,7 +204,7 @@ export function useSubSections() {
         }
         if (data.WebSite) {
           queryClient.invalidateQueries({ 
-            queryKey: subsectionsByWebSiteKey(typeof data.WebSite === 'string' ? data.WebSite : data.WebSite._id) 
+            queryKey: subsectionsByWebSiteKey(typeof data.WebSite === 'string' ? data.WebSiteId : data.WebSite._id) 
           });
         }
       },
@@ -249,10 +249,10 @@ export function useSubSections() {
         }
         if (data.WebSite) {
           queryClient.invalidateQueries({ 
-            queryKey: subsectionsByWebSiteKey(typeof data.WebSite === 'string' ? data.WebSite : data.WebSite._id) 
+            queryKey: subsectionsByWebSiteKey(typeof data.WebSite === 'string' ? data.WebSiteId : data.WebSite._id) 
           });
           queryClient.invalidateQueries({ 
-            queryKey: completeSubsectionsByWebSiteKey(typeof data.WebSite === 'string' ? data.WebSite : data.WebSite._id) 
+            queryKey: completeSubsectionsByWebSiteKey(typeof data.WebSite === 'string' ? data.WebSiteId : data.WebSite._id) 
           });
         } 
         queryClient.invalidateQueries({ queryKey: subsectionsKey });

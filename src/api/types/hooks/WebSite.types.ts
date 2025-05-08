@@ -14,7 +14,7 @@ export interface WebSiteProps {
 export interface WebSiteUserProps {
   _id?: string;
   userId: string ;
-  webSiteId: string ;
+  WebSiteId: string ;
   role: 'owner' | 'editor' | 'viewer';
   createdAt?: Date;
   updatedAt?: Date;

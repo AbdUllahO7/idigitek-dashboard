@@ -11,6 +11,7 @@ import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useWebSite } from "@/src/hooks/webConfiguration/use-WebSite"
 import { useToast } from "../hooks/use-toast"
 import useUsers from "../hooks/users/use-users"
+import { useWebsiteContext } from "../providers/WebsiteContext"
 
 interface DialogCreateSectionItemProps {
   open: boolean;
@@ -30,9 +31,8 @@ export default function DialogCreateSectionItem({
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const { toast } = useToast()
   const { useGetCurrentUser } = useUsers()
-  const { useGetMyWebsites } = useWebSite()
   const { data: userData, isLoading: isLoadingUser, error: userError } = useGetCurrentUser()
-  const { data: websites = [], isLoading: isLoadingWebsites, error: websitesError } = useGetMyWebsites()
+  const { websiteId  , websites , isLoadingWebsites , websitesError} = useWebsiteContext();
 
   // Get create hook from useSectionItems
   const { useCreate: useCreateSectionItem } = useSectionItems()
@@ -98,7 +98,7 @@ export default function DialogCreateSectionItem({
         description: description.trim(),
         isActive: true,
         section: sectionId,
-        WebSite: websiteId
+        WebSiteId: websiteId
       }
 
       // Create the service

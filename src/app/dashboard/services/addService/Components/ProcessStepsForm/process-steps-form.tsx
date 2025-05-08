@@ -26,6 +26,7 @@ import { LanguageCard } from "./LanguageCard"
 import { LoadingDialog } from "@/src/utils/MainSectionComponents"
 import { HeroFormProps, HeroFormRef } from "@/src/api/types/sections/service/serviceSections.types"
 import { SubSection } from "@/src/api/types/hooks/section.types"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 
 
@@ -40,6 +41,9 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
       slug, 
       ParentSectionId, 
     } = props;
+
+
+      const { websiteId } = useWebsiteContext();
     
     const formSchema = useMemo(() => 
       createProcessStepsSchema(languageIds, activeLanguages), 
@@ -382,6 +386,8 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
             defaultContent : '',
             sectionItem: ParentSectionId,
             languages: languageIds,
+            WebSiteId : websiteId
+
           };
 
           toast({

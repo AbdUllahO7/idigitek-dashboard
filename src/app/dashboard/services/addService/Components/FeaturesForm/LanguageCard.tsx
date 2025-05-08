@@ -4,6 +4,7 @@ import { memo } from "react";
 import { Button } from "@/src/components/ui/button";
 import { Plus } from "lucide-react";
 import FeaturesForm from "./features-form";
+import { FeatureForm } from "./FeatureForm";
 
 interface LanguageCardProps {
   langId: string;
@@ -45,7 +46,7 @@ export const LanguageCard = memo(({
       <CardContent className="space-y-4">
         <Accordion type="single" collapsible className="w-full">
           {features.map((feature: { title: string; content: { heading: string; description: string; features: any[] } }, index: number) => (
-            <FeaturesForm
+            <FeatureForm
               key={`${langCode}-feature-${index}`}
               index={index}
               feature={feature}
@@ -73,5 +74,3 @@ export const LanguageCard = memo(({
     </Card>
   );
 });
-
-LanguageCard.displayName = "LanguageCard";

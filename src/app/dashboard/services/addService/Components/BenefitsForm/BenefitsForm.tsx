@@ -30,15 +30,13 @@ import { BenefitsFormState, HeroFormProps, HeroFormRef, StepToDelete } from "@/s
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
 import { createLanguageCodeMap } from "../../Utils/language-utils";
 import { SubSection } from "@/src/api/types/hooks/section.types";
+import { useWebsiteContext } from "@/src/providers/WebsiteContext";
 
 
 // Main Component
 const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
-  (
-    { languageIds, activeLanguages, onDataChange, slug, ParentSectionId },
-    ref
-  ) => {
-    // Setup form
+  ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId },ref) => {
+    const { websiteId } = useWebsiteContext();
     const formSchema = createBenefitsSchema(languageIds, activeLanguages);
     const defaultValues = createBenefitsDefaultValues(
       languageIds,
@@ -163,107 +161,107 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
       updateState({ benefitCountMismatch: !isValid });
       return isValid;
     }, [form, updateState]);
-// Remove process step
-const removeProcessStep = useCallback(async () => {
-  if (!stepToDelete) return;
+    // Remove process step
+    const removeProcessStep = useCallback(async () => {
+      if (!stepToDelete) return;
 
-  const { langCode, index } = stepToDelete;
-  setIsDeleting(true);
+      const { langCode, index } = stepToDelete;
+      setIsDeleting(true);
 
-  const currentSteps = form.getValues()[langCode] || [];
-  if (currentSteps.length <= 1) {
-    toast({
-      title: "Cannot remove",
-      description: "You need at least one process step",
-      variant: "destructive",
-    });
-    setIsDeleting(false);
-    setDeleteDialogOpen(false);
-    return;
-  }
-
-  if (existingSubSectionId && contentElements.length > 0) {
-    try {
-      const stepNumber = index + 1;
-      const stepElements = contentElements.filter((element) => {
-        const match = element.name.match(/Benefit (\d+)/i);
-        return match && Number.parseInt(match[1]) === stepNumber;
-      });
-
-      if (stepElements.length > 0) {
-        await Promise.all(
-          stepElements.map(async (element) => {
-            await deleteContentElement.mutateAsync(element._id);
-          })
-        );
-
-        updateState({
-          contentElements: contentElements.filter((element) => {
-            const match = element.name.match(/Benefit (\d+)/i);
-            return !(match && Number.parseInt(match[1]) === stepNumber);
-          }),
-        });
-
+      const currentSteps = form.getValues()[langCode] || [];
+      if (currentSteps.length <= 1) {
         toast({
-          title: "Step deleted",
-          description: `Step ${stepNumber} has been deleted from the database`,
+          title: "Cannot remove",
+          description: "You need at least one process step",
+          variant: "destructive",
         });
+        setIsDeleting(false);
+        setDeleteDialogOpen(false);
+        return;
       }
 
-      const remainingElements = contentElements.filter((element) => {
-        const match = element.name.match(/Benefit (\d+)/i);
-        return match && Number.parseInt(match[1]) > stepNumber;
-      });
+      if (existingSubSectionId && contentElements.length > 0) {
+        try {
+          const stepNumber = index + 1;
+          const stepElements = contentElements.filter((element) => {
+            const match = element.name.match(/Benefit (\d+)/i);
+            return match && Number.parseInt(match[1]) === stepNumber;
+          });
 
-      await Promise.all(
-        remainingElements.map(async (element) => {
-          const match = element.name.match(/Benefit (\d+)/i);
-          if (match) {
-            const oldNumber = Number.parseInt(match[1]);
-            const newNumber = oldNumber - 1;
-            const newName = element.name.replace(
-              `Benefit ${oldNumber}`,
-              `Benefit ${newNumber}`
+          if (stepElements.length > 0) {
+            await Promise.all(
+              stepElements.map(async (element) => {
+                await deleteContentElement.mutateAsync(element._id);
+              })
             );
-            const newOrder = element.order - 3;
 
-            await updateContentElement.mutateAsync({
-              id: element._id,
-              data: { name: newName, order: newOrder },
+            updateState({
+              contentElements: contentElements.filter((element) => {
+                const match = element.name.match(/Benefit (\d+)/i);
+                return !(match && Number.parseInt(match[1]) === stepNumber);
+              }),
+            });
+
+            toast({
+              title: "Step deleted",
+              description: `Step ${stepNumber} has been deleted from the database`,
             });
           }
-        })
-      );
-    } catch (error) {
-      console.error("Error removing process step elements:", error);
-      toast({
-        title: "Error removing step",
-        description: "There was an error removing the step from the database",
-        variant: "destructive",
+
+          const remainingElements = contentElements.filter((element) => {
+            const match = element.name.match(/Benefit (\d+)/i);
+            return match && Number.parseInt(match[1]) > stepNumber;
+          });
+
+          await Promise.all(
+            remainingElements.map(async (element) => {
+              const match = element.name.match(/Benefit (\d+)/i);
+              if (match) {
+                const oldNumber = Number.parseInt(match[1]);
+                const newNumber = oldNumber - 1;
+                const newName = element.name.replace(
+                  `Benefit ${oldNumber}`,
+                  `Benefit ${newNumber}`
+                );
+                const newOrder = element.order - 3;
+
+                await updateContentElement.mutateAsync({
+                  id: element._id,
+                  data: { name: newName, order: newOrder },
+                });
+              }
+            })
+          );
+        } catch (error) {
+          console.error("Error removing process step elements:", error);
+          toast({
+            title: "Error removing step",
+            description: "There was an error removing the step from the database",
+            variant: "destructive",
+          });
+        }
+      }
+
+      Object.keys(form.getValues()).forEach((langCode) => {
+        const updatedSteps = [...(form.getValues()[langCode] || [])];
+        updatedSteps.splice(index, 1);
+        form.setValue(langCode, updatedSteps);
       });
-    }
-  }
 
-  Object.keys(form.getValues()).forEach((langCode) => {
-    const updatedSteps = [...(form.getValues()[langCode] || [])];
-    updatedSteps.splice(index, 1);
-    form.setValue(langCode, updatedSteps);
-  });
-
-  setIsDeleting(false);
-  setDeleteDialogOpen(false);
-  validateFormBenefitCounts();
-}, [
-  stepToDelete,
-  form,
-  existingSubSectionId,
-  contentElements,
-  deleteContentElement,
-  updateContentElement,
-  toast,
-  validateFormBenefitCounts,
-  updateState,
-]);
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+      validateFormBenefitCounts();
+    }, [
+      stepToDelete,
+      form,
+      existingSubSectionId,
+      contentElements,
+      deleteContentElement,
+      updateContentElement,
+      toast,
+      validateFormBenefitCounts,
+      updateState,
+    ]);
 
     // Process benefits data
     const processBenefitsData = useCallback(
@@ -553,6 +551,7 @@ const removeProcessStep = useCallback(async () => {
             order: 0,
             sectionItem: ParentSectionId,
             languages: languageIds,
+            WebSiteId : websiteId
           };
 
           const newSubSection = await createSubSection.mutateAsync(subsectionData);
@@ -767,8 +766,6 @@ const removeProcessStep = useCallback(async () => {
         </div>
       );
     }
-
-
     // Confirm delete step
     const confirmDeleteStep = (langCode: string, index: number) => {
       setStepToDelete({ langCode, index });

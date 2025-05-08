@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/src/hooks/use-toast"
 import { UseGenericListOptions } from "../api/types/hooks/UseGenericList.types"
-import { useWebSite } from "./webConfiguration/use-WebSite"
+import { useWebsiteContext } from "../providers/WebsiteContext"
 
 
 export function useGenericList({
@@ -26,10 +26,8 @@ export function useGenericList({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false)
   const [itemToDelete, setItemToDelete] = useState<{id: string; name: string} | null>(null)
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
-  const { useGetMyWebsites } = useWebSite()
-
-  const { data: websites = [], isLoading: isLoadingWebsites, error: websitesError } = useGetMyWebsites()
-
+    const { websiteId } = useWebsiteContext();
+  
   // API hooks for fetching and deleting items
   const { useGetByWebSiteId, useDelete } = apiHooks
   
@@ -39,8 +37,8 @@ export function useGenericList({
     isLoading: isLoadingData,
     refetch: refetchItems,
   } = useGetByWebSiteId(
-    websites[0]?._id || "", 
-    Boolean(websites[0]?._id ), // Conditionally execute query only if sectionId exists
+    websiteId || "", 
+    Boolean(websiteId), // Conditionally execute query only if sectionId exists
     100, // limit
     0, // skip
     true, // includeSubSectionCount

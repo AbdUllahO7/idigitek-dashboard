@@ -191,7 +191,7 @@ export default function DashboardSidebar() {
   const [isLoading, setIsLoading] = useState(true)
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null)
   const { user, isLoading: userIsLoading } = useAuth();
-
+  
   // Store the mapping of section names to actual section IDs from API
   const [sectionIdMapping, setSectionIdMapping] = useState<Map<string, string>>(new Map());
 

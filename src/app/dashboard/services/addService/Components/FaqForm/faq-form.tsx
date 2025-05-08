@@ -22,6 +22,7 @@ import { LoadingDialog } from "@/src/utils/MainSectionComponents"
 import { FaqFormProps } from "@/src/api/types/sections/service/serviceSections.types"
 import { SubSection } from "@/src/api/types/hooks/section.types"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 
 
@@ -33,6 +34,7 @@ const FaqForm = forwardRef<any, FaqFormProps>(
       createFaqSchema(languageIds, activeLanguages), 
       [languageIds, activeLanguages]
     );
+    const { websiteId } = useWebsiteContext();
     
     const defaultValues = useMemo(() => 
       createFaqDefaultValues(languageIds, activeLanguages), 
@@ -377,6 +379,8 @@ const FaqForm = forwardRef<any, FaqFormProps>(
             order: 0,
             sectionItem: ParentSectionId,
             languages: languageIds,
+            WebSiteId : websiteId
+
           };
 
           toast({

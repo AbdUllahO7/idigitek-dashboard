@@ -22,26 +22,7 @@ export default function DashboardLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
   const pathname = usePathname()
-  const router = useRouter()
-  const { isAuthenticated, isLoading } = useAuth()
 
-  // Check for valid selections on client side as a fallback
-  // useEffect(() => {
-  //   if (!isLoading && isAuthenticated) {
-  //     try {
-  //       const selectedLanguages = JSON.parse(localStorage.getItem('selectedLanguages') || '[]')
-  //       const selectedSections = JSON.parse(localStorage.getItem('selectedSections') || '[]')
-        
-  //       if (!selectedLanguages.length || !selectedSections.length) {
-  //         router.replace('/websiteConfiguration')
-  //       }
-  //     } catch (error) {
-  //       router.replace('/websiteConfiguration')
-  //     }
-  //   }
-  // }, [router, isLoading, isAuthenticated])
-
-  // Handle responsive sidebar
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 1024)

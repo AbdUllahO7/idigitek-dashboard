@@ -29,7 +29,7 @@ export interface SectionItem {
   order: number;
   isMain: boolean;
   section: string | Section;
-  WebSite : string,
+  WebSiteId : string,
   subsections?: string[] | SubSection[];
   subsectionCount?: number;
   createdAt?: string;

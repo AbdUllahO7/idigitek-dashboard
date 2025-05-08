@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src
 import {
   Form,
 } from "@/src/components/ui/form"
-import { Plus,  Save, AlertTriangle, X, Loader2 } from "lucide-react"
+import { Plus, Save, AlertTriangle, X, Loader2 } from "lucide-react"
 import { Accordion } from "@/src/components/ui/accordion"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
@@ -30,13 +30,93 @@ import { FeatureForm } from "./FeatureForm"
 import { SubSection } from "@/src/api/types/hooks/section.types"
 import { Feature } from "@/src/api/types/hooks/MultilingualSection.types"
 import { ContentTranslation } from "@/src/api/types/hooks/content.types"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 // Helper type to infer the schema type
 type FeaturesSchemaType = ReturnType<typeof createFeaturesSchema>
 
+// FeatureItem Component
+import { FormControl, FormField, FormItem, FormMessage } from "@/src/components/ui/form"
+import { Input } from "@/src/components/ui/input"
 
+interface FeatureItemProps {
+  featureItemIndex: number;
+  langCode: string;
+  index: number;
+  form: any;
+  onRemoveFeatureItem: (langCode: string, index: number, featureItemIndex: number) => void;
+}
 
+// Fixed Feature Item component
+export const FeatureItem = memo(({
+  featureItemIndex,
+  langCode,
+  index,
+  form,
+  onRemoveFeatureItem
+}: FeatureItemProps) => {
+  // Create a stable reference for the field name
+  const fieldName = `${langCode}.${index}.content.features.${featureItemIndex}`;
+  const previousFieldNameRef = useRef(fieldName);
+  
+  // Update the ref when the field name changes
+  useEffect(() => {
+    previousFieldNameRef.current = fieldName;
+  }, [fieldName]);
+  
+  const handleRemove = () => onRemoveFeatureItem(langCode, index, featureItemIndex);
+  
+  // Add data attributes for better debugging
+  const dataAttributes = {
+    'data-feature-item': true,
+    'data-lang-code': langCode,
+    'data-feature-index': index,
+    'data-item-index': featureItemIndex,
+  };
+  
+  return (
+    <FormField
+      control={form.control}
+      name={fieldName}
+      render={({ field }) => (
+        <FormItem className="flex items-center gap-2" {...dataAttributes}>
+          <div className="flex-1">
+            <FormControl>
+              <Input 
+                placeholder={`Feature ${featureItemIndex + 1}`} 
+                {...field} 
+                onChange={(e) => {
+                  field.onChange(e);
+                  // Force form to register this specific field value
+                  const currentValues = form.getValues();
+                  if (currentValues[langCode]?.[index]?.content?.features?.length > featureItemIndex) {
+                    form.setValue(fieldName, e.target.value, { 
+                      shouldDirty: true,
+                      shouldTouch: true,
+                    });
+                  }
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={handleRemove}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </FormItem>
+      )}
+    />
+  );
+});
 
+FeatureItem.displayName = "FeatureItem";
+
+// Language Card Component
 interface LanguageCardProps {
   langId: string;
   langCode: string;
@@ -108,6 +188,7 @@ const LanguageCard = memo(({
 
 LanguageCard.displayName = "LanguageCard";
 
+// Main Features Form Component
 interface FeaturesFormProps {
   languageIds: string[];
   activeLanguages: any[];
@@ -118,6 +199,14 @@ interface FeaturesFormProps {
 
 const FeaturesForm = forwardRef<any, FeaturesFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId }, ref) => {
+    const { websiteId } = useWebsiteContext();
+    
+    // Track feature item IDs to prevent duplicates
+    const [featureItemIds, setFeatureItemIds] = useState<Record<string, Set<string>>>({});
+    
+    // Debug mode for development
+    const [debugMode, setDebugMode] = useState(false);
+    
     // Memoize schema and default values
     const featuresSchema = useMemo(() => 
       createFeaturesSchema(languageIds, activeLanguages),
@@ -157,6 +246,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
     const form = useForm<z.infer<FeaturesSchemaType>>({
       resolver: zodResolver(featuresSchema),
       defaultValues: defaultValues,
+      mode: "onChange" // Enable onChange validation for better UX
     });
 
     // Initialize useFeatureImages hook
@@ -179,6 +269,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
 
     const createSubSection = useCreateSubSection();
     const createContentElement = useCreateContentElement();
+    const updateContentElement = useUpdateContentElement();
     const deleteContentElement = useDeleteContentElement();
     const bulkUpsertTranslations = useBulkUpsertTranslations();
 
@@ -189,96 +280,179 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
       refetch,
     } = useGetCompleteBySlug(slug || "", Boolean(slug));
 
+    // Get a unique feature item name that doesn't exist yet
+    const getUniqueFeatureItemName = (featureNum: number, itemIndex: number): string => {
+      const baseName = `Feature ${featureNum} - Feature Item ${itemIndex + 1}`;
+      
+      // Check if this name already exists in content elements
+      const nameExists = contentElements.some(el => el.name === baseName);
+      
+      if (!nameExists) {
+        return baseName;
+      }
+      
+      // Find a unique name by appending a counter
+      let counter = 1;
+      let uniqueName = `${baseName} (${counter})`;
+      
+      while (contentElements.some(el => el.name === uniqueName)) {
+        counter++;
+        uniqueName = `${baseName} (${counter})`;
+      }
+      
+      return uniqueName;
+    };
+
     // Check if all languages have the same number of features
-    const validateFeatureCounts = useRef(() => {
+    const validateFeatureCounts = () => {
       const values = form.getValues();
       const counts = Object.values(values).map((features) => features?.length || 0);
       const allEqual = counts.every((count) => count === counts[0]);
       setFeatureCountMismatch(!allEqual);
       return allEqual;
-    }).current;
+    };
 
-    // Function to process and load data into the form - memoized
-    const processFeaturesData = useRef((subsectionData: SubSection | null) => {
-      processAndLoadData(
-        subsectionData,
-        form,
-        languageIds,
-        activeLanguages,
-        {
-          groupElements: (elements) => {
-            const featureGroups: Record<string, any[]> = {};
-            elements.forEach((element) => {
-              const featureIdMatch = element.name.match(/Feature (\d+)/i);
-              if (featureIdMatch) {
-                const featureId = featureIdMatch[1];
-                if (!featureGroups[featureId]) {
-                  featureGroups[featureId] = [];
+    // Function to process and load data into the form
+    const processFeaturesData = (subsectionData: SubSection | null) => {
+      if (!subsectionData) return;
+      
+      setIsLoadingData(true);
+      
+      try {
+        // Create tracking structure for feature items
+        const featureItemTracking: Record<string, Set<string>> = {};
+        
+        processAndLoadData(
+          subsectionData,
+          form,
+          languageIds,
+          activeLanguages,
+          {
+            groupElements: (elements) => {
+              const featureGroups: Record<string, any[]> = {};
+              
+              // First sort elements by name to ensure consistent order
+              elements.sort((a, b) => {
+                // Extract feature numbers
+                const aMatch = a.name.match(/Feature (\d+)/i);
+                const bMatch = b.name.match(/Feature (\d+)/i);
+                
+                const aNum = aMatch ? parseInt(aMatch[1], 10) : 0;
+                const bNum = bMatch ? parseInt(bMatch[1], 10) : 0;
+                
+                // Sort by feature number first
+                if (aNum !== bNum) return aNum - bNum;
+                
+                // Then sort by element type/name
+                return a.name.localeCompare(b.name);
+              });
+              
+              // Group elements by feature
+              elements.forEach((element) => {
+                const featureIdMatch = element.name.match(/Feature (\d+)/i);
+                if (featureIdMatch) {
+                  const featureId = featureIdMatch[1];
+                  if (!featureGroups[featureId]) {
+                    featureGroups[featureId] = [];
+                  }
+                  featureGroups[featureId].push(element);
+                  
+                  // Track feature item elements
+                  if (element.name.includes("Feature Item")) {
+                    if (!featureItemTracking[featureId]) {
+                      featureItemTracking[featureId] = new Set();
+                    }
+                    featureItemTracking[featureId].add(element.name);
+                  }
                 }
-                featureGroups[featureId].push(element);
-              }
-            });
-            return featureGroups;
-          },
-          processElementGroup: (featureId, elements, langId, getTranslationContent) => {
-            const titleElement = elements.find((el) => el.name.includes("Title"));
-            const headingElement = elements.find((el) => el.name.includes("Heading"));
-            const descriptionElement = elements.find((el) => el.name.includes("Description"));
-            const imageElement = elements.find((el) => el.name.includes("Image") && el.type === "image");
-            const featureListElements = elements.filter((el) => el.name.includes("Feature Item"));
-
-            const featureItems = featureListElements
-              .map((el) => getTranslationContent(el, ""))
-              .filter(Boolean);
-
-            if (featureItems.length === 0) {
-              featureItems.push("");
-            }
-
-            const imageUrl = imageElement?.imageUrl || "";
-            return {
-              id: `feature-${featureId}`,
-              title: getTranslationContent(titleElement, ""),
-              content: {
-                heading: getTranslationContent(headingElement, ""),
-                description: getTranslationContent(descriptionElement, ""),
-                features: featureItems,
-                image: imageUrl,
-              },
-            };
-          },
-          getDefaultValue: () => [{
-            id: "feature-1",
-            title: "",
-            content: {
-              heading: "",
-              description: "",
-              features: [""],
-              image: "",
+              });
+              
+              // Store feature item tracking information
+              setFeatureItemIds(featureItemTracking);
+              
+              return featureGroups;
             },
-          }],
-        },
-        {
-          setExistingSubSectionId,
-          setContentElements,
-          setDataLoaded,
-          setHasUnsavedChanges,
-          setIsLoadingData,
-          validateCounts: validateFeatureCounts,
-        }
-      );
-    }).current;
+            processElementGroup: (featureId, elements, langId, getTranslationContent) => {
+              const titleElement = elements.find((el) => el.name.includes("Title"));
+              const headingElement = elements.find((el) => el.name.includes("Heading"));
+              const descriptionElement = elements.find((el) => el.name.includes("Description"));
+              const imageElement = elements.find((el) => el.name.includes("Image") && el.type === "image");
+              
+              // Get feature item elements sorted by index number
+              const featureListElements = elements
+                .filter((el) => el.name.includes("Feature Item"))
+                .sort((a, b) => {
+                  const aMatch = a.name.match(/Feature Item (\d+)/i);
+                  const bMatch = b.name.match(/Feature Item (\d+)/i);
+                  
+                  const aNum = aMatch ? parseInt(aMatch[1], 10) : 0;
+                  const bNum = bMatch ? parseInt(bMatch[1], 10) : 0;
+                  
+                  return aNum - bNum;
+                });
+
+              const featureItems = featureListElements
+                .map((el) => getTranslationContent(el, ""))
+                .filter(Boolean);
+
+              if (featureItems.length === 0) {
+                featureItems.push("");
+              }
+
+              const imageUrl = imageElement?.imageUrl || "";
+              return {
+                id: `feature-${featureId}`,
+                title: getTranslationContent(titleElement, ""),
+                content: {
+                  heading: getTranslationContent(headingElement, ""),
+                  description: getTranslationContent(descriptionElement, ""),
+                  features: featureItems,
+                  image: imageUrl,
+                  imagePosition: "right", // Default value
+                },
+              };
+            },
+            getDefaultValue: () => [{
+              id: "feature-1",
+              title: "",
+              content: {
+                heading: "",
+                description: "",
+                features: [""],
+                image: "",
+                imagePosition: "right",
+              },
+            }],
+          },
+          {
+            setExistingSubSectionId,
+            setContentElements,
+            setDataLoaded,
+            setHasUnsavedChanges,
+            setIsLoadingData,
+            validateCounts: validateFeatureCounts,
+          }
+        );
+      } catch (error) {
+        console.error("Error processing features data:", error);
+        toast({
+          title: "Error loading data",
+          description: "Failed to load features data. Please try again.",
+          variant: "destructive",
+        });
+        setIsLoadingData(false);
+      }
+    };
 
     // Effect to populate form with existing data
     useEffect(() => {
       if (!slug || dataLoaded || isLoadingSubsection || !completeSubsectionData?.data) {
         return;
       }
-      setIsLoadingData(true);
       processFeaturesData(completeSubsectionData.data);
-    }, [completeSubsectionData, isLoadingSubsection, dataLoaded, slug, processFeaturesData]);
+    }, [completeSubsectionData, isLoadingSubsection, dataLoaded, slug]);
 
-    // Track form changes with debounce for better performance
+    // Track form changes with debounce
     useEffect(() => {
       if (isLoadingData || !dataLoaded) return;
       
@@ -294,31 +468,51 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
       }, 300);
       
       return () => clearTimeout(timeoutId);
-    }, [form, isLoadingData, dataLoaded, validateFeatureCounts]);
+    }, [form, isLoadingData, dataLoaded]);
 
-    // Function to add a feature item
+    // Function to add a feature item - fixed to prevent duplications
     const addFeatureItem = (langCode: string, featureIndex: number) => {
-      Object.keys(form.getValues()).forEach((lang) => {
-        const features = [...(form.getValues()[lang] || [])];
-        if (features[featureIndex]) {
-          const feature = { ...features[featureIndex] };
-          const featureItems = [...(feature.content.features || [])];
-          featureItems.push("");
-          feature.content = {
-            ...feature.content,
-            features: featureItems,
-          };
-          features[featureIndex] = feature;
-          form.setValue(lang as any, features, { 
-            shouldDirty: true, 
-            shouldValidate: true 
-          });
-        }
+      // Take a snapshot of current form values
+      const snapshot = { ...form.getValues() };
+      const updates: Record<string, any[]> = {};
+      
+      // For each language, update the feature items
+      Object.keys(snapshot).forEach((lang) => {
+        const features = [...(snapshot[lang] || [])];
+        if (!features[featureIndex]) return;
+        
+        const feature = { ...features[featureIndex] };
+        const featureItems = [...(feature.content.features || [])];
+        
+        // Add a new empty item
+        featureItems.push("");
+        
+        // Update feature
+        feature.content = {
+          ...feature.content,
+          features: featureItems,
+        };
+        
+        features[featureIndex] = feature;
+        updates[lang] = features;
       });
+      
+      // Apply all updates at once to maintain consistency
+      Object.entries(updates).forEach(([lang, features]) => {
+        form.setValue(lang as any, features, { 
+          shouldDirty: true, 
+          shouldValidate: true 
+        });
+      });
+      
+      // Validate after updates
+      setTimeout(() => {
+        validateFeatureCounts();
+      }, 0);
       
       toast({
         title: "Feature item added",
-        description: "A new feature item has been added to the list.",
+        description: "A new feature item has been added to all languages.",
       });
     };
 
@@ -327,7 +521,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
       const currentFeatures = form.getValues()[langCode] || [];
       const currentFeature = currentFeatures[featureIndex];
       
-      if (!currentFeature || currentFeature.content.features.length <= 1) {
+      if (!currentFeature || !currentFeature.content || !Array.isArray(currentFeature.content.features) || currentFeature.content.features.length <= 1) {
         toast({
           title: "Cannot remove",
           description: "You need at least one feature item",
@@ -349,38 +543,84 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
       setIsDeletingFeatureItem(true);
       
       try {
+        // Handle deletion from the server if we have existing content
         if (existingSubSectionId && contentElements.length > 0) {
           const featureNum = featureIndex + 1;
-          const itemNum = itemIndex + 1;
-          const featureItemElement = contentElements.find(
-            (element) => element.name === `Feature ${featureNum} - Feature Item ${itemNum}`
+          
+          // Find elements by feature number and type (Feature Item)
+          const featureItemElements = contentElements.filter(
+            element => element.name.includes(`Feature ${featureNum}`) && 
+                     element.name.includes("Feature Item")
           );
           
-          if (featureItemElement) {
-            await deleteContentElement.mutateAsync(featureItemElement._id);
+          // Sort by item number
+          featureItemElements.sort((a, b) => {
+            const getItemNumber = (name: string) => {
+              const match = name.match(/Feature Item (\d+)/i);
+              return match ? parseInt(match[1], 10) : 999;
+            };
+            return getItemNumber(a.name) - getItemNumber(b.name);
+          });
+          
+          // Get the element at the specific index position
+          if (featureItemElements.length > itemIndex) {
+            const elementToDelete = featureItemElements[itemIndex];
             
-            // Update content elements state after deletion
-            setContentElements(prev => 
-              prev.filter(item => item._id !== featureItemElement._id)
-            );
+            if (elementToDelete) {
+              await deleteContentElement.mutateAsync(elementToDelete._id);
+              
+              // Update content elements state
+              setContentElements(prev => 
+                prev.filter(item => item._id !== elementToDelete._id)
+              );
+              
+              // Update tracking
+              const featureKey = `${featureNum}`;
+              if (featureItemIds[featureKey]) {
+                const updatedIds = { ...featureItemIds };
+                updatedIds[featureKey].delete(elementToDelete.name);
+                setFeatureItemIds(updatedIds);
+              }
+            }
           }
         }
 
-        // Update form values for all languages
-        Object.keys(form.getValues()).forEach((lang) => {
-          const features = [...(form.getValues()[lang] || [])];
-          if (features[featureIndex]) {
-            const feature = { ...features[featureIndex] };
-            const featureItems = [...(feature.content.features || [])];
+        // Update form values for all languages consistently
+        const snapshot = { ...form.getValues() };
+        const updates: Record<string, any[]> = {};
+        
+        Object.keys(snapshot).forEach((lang) => {
+          const features = [...(snapshot[lang] || [])];
+          if (!features[featureIndex]) return;
+          
+          const feature = { ...features[featureIndex] };
+          if (!feature.content || !Array.isArray(feature.content.features)) return;
+          
+          const featureItems = [...feature.content.features];
+          if (itemIndex >= 0 && itemIndex < featureItems.length) {
             featureItems.splice(itemIndex, 1);
+            
+            // Ensure at least one item remains
+            if (featureItems.length === 0) {
+              featureItems.push("");
+            }
+            
             feature.content = {
               ...feature.content,
               features: featureItems,
             };
+            
             features[featureIndex] = feature;
-            form.setValue(lang as any, features, { shouldDirty: true });
+            updates[lang] = features;
           }
         });
+        
+        // Apply all updates at once to maintain consistency
+        Object.entries(updates).forEach(([lang, features]) => {
+          form.setValue(lang as any, features, { shouldDirty: true });
+        });
+        
+        validateFeatureCounts();
         
         toast({
           title: "Item removed",
@@ -395,6 +635,8 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
         });
       } finally {
         setIsDeletingFeatureItem(false);
+        setDeleteFeatureItemDialogOpen(false);
+        setFeatureItemToDelete(null);
       }
     };
 
@@ -405,15 +647,16 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
         id: newFeatureId,
         title: "",
         content: {
-          title:"",
+          title: "",
           heading: "",
           description: "",
           features: [""],
           image: "",
-          imagePosition : "right"
+          imagePosition: "right"
         },
       };
 
+      // Add the feature to all languages simultaneously
       Object.keys(form.getValues()).forEach((lang) => {
         const currentFeatures = form.getValues()[lang] || [];
         const updatedFeatures = [...currentFeatures, newFeature];
@@ -465,16 +708,21 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
             (element) => element.name.includes(`Feature ${featureNum}`)
           );
 
-          // Delete elements in parallel for better performance
+          // Delete elements in parallel
           if (featureElements.length > 0) {
             await Promise.all(featureElements.map(element => 
               deleteContentElement.mutateAsync(element._id)
             ));
             
-            // Update content elements state after deletion
+            // Update content elements state
             setContentElements(prev => 
               prev.filter(element => !element.name.includes(`Feature ${featureNum}`))
             );
+            
+            // Update tracking state
+            const updatedIds = { ...featureItemIds };
+            delete updatedIds[`${featureNum}`];
+            setFeatureItemIds(updatedIds);
           }
         }
 
@@ -509,6 +757,8 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
         });
       } finally {
         setIsDeleting(false);
+        setDeleteDialogOpen(false);
+        setFeatureToDelete(null);
       }
     };
 
@@ -554,9 +804,10 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
             description: "Features section for the website",
             isActive: true,
             order: 0,
-            defaultContent : "",
+            defaultContent: "",
             sectionItem: ParentSectionId,
             languages: languageIds as string[],
+            WebSiteId: websiteId
           };
           
           const newSubSection = await createSubSection.mutateAsync(subsectionData);
@@ -593,244 +844,326 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
           }
         });
 
+        // Keep track of processed elements to avoid orphaned elements
+        const processedElementIds = new Set<string>();
+        
+        // Keep track of next available item number for each feature
+        const featureItemNumbers: Record<number, number> = {};
+        
         // Process each feature
-        const featurePromises = [];
         for (let featureIndex = 0; featureIndex < features.length; featureIndex++) {
-          featurePromises.push((async () => {
-            const featureNum = featureIndex + 1;
-            const headingElementName = `Feature ${featureNum} - Heading`;
-            const titleElementName = `Feature ${featureNum} - Title`;
-            const existingHeading = contentElements.find((e) => e.name === headingElementName);
-            const existingTitle = contentElements.find((e) => e.name === titleElementName);
+          const featureNum = featureIndex + 1;
+          const headingElementName = `Feature ${featureNum} - Heading`;
+          const titleElementName = `Feature ${featureNum} - Title`;
+          const descElementName = `Feature ${featureNum} - Description`;
+          const imageElementName = `Feature ${featureNum} - Image`;
+          
+          // Check if this feature already exists
+          const existingHeading = contentElements.find((e) => e.name === headingElementName);
+          const existingTitle = contentElements.find((e) => e.name === titleElementName);
+          const existingDesc = contentElements.find((e) => e.name === descElementName);
+          const existingImage = contentElements.find((e) => e.type === "image" && e.name === imageElementName);
 
-            if (existingHeading || existingTitle) {
-              // Update existing feature
-              const translations: (Omit<ContentTranslation, "_id"> & { id?: string })[] | { content: any; language: any; contentElement: any; isActive: boolean }[] = [];
+          if (existingHeading || existingTitle) {
+            // Update existing feature
+            const translations: (Omit<ContentTranslation, "_id"> & { id?: string })[] | { content: any; language: any; contentElement: any; isActive: boolean }[] = [];
+            
+            // Mark these elements as processed
+            if (existingHeading) processedElementIds.add(existingHeading._id);
+            if (existingTitle) processedElementIds.add(existingTitle._id);
+            if (existingDesc) processedElementIds.add(existingDesc._id);
+            if (existingImage) processedElementIds.add(existingImage._id);
+            
+            // Process translations for all languages
+            Object.entries(allFormValues).forEach(([langCode, langFeatures]) => {
+              const langId = langCodeToIdMap[langCode];
+              if (!langId || !Array.isArray(langFeatures) || !langFeatures[featureIndex]) return;
+
+              const feature = langFeatures[featureIndex];
               
-              Object.entries(allFormValues).forEach(([langCode, langFeatures]) => {
-                const langId = langCodeToIdMap[langCode];
-                if (!langId || !Array.isArray(langFeatures) || !langFeatures[featureIndex]) return;
+              // Add base elements translations
+              if (existingHeading) {
+                translations.push({
+                  content: feature.content.heading || "",
+                  language: langId,
+                  contentElement: existingHeading._id,
+                  isActive: true,
+                });
+              }
 
-                const feature = langFeatures[featureIndex];
-                const headingElement = contentElements.find((e) => e.name === `Feature ${featureNum} - Heading`);
-                const titleElement = contentElements.find((e) => e.name === `Feature ${featureNum} - Title`);
-                const descriptionElement = contentElements.find((e) => e.name === `Feature ${featureNum} - Description`);
+              if (existingTitle) {
+                translations.push({
+                  content: feature.title || "",
+                  language: langId,
+                  contentElement: existingTitle._id,
+                  isActive: true,
+                });
+              }
 
-                if (headingElement) {
+              if (existingDesc) {
+                translations.push({
+                  content: feature.content.description || "",
+                  language: langId,
+                  contentElement: existingDesc._id,
+                  isActive: true,
+                });
+              }
+
+              // Get existing feature item elements
+              const featureItems = feature.content.features || [];
+              
+              // Sort existing feature item elements by their index
+              const existingFeatureItems = contentElements
+                .filter(e => e.name.includes(`Feature ${featureNum}`) && e.name.includes("Feature Item"))
+                .sort((a, b) => {
+                  const aMatch = a.name.match(/Feature Item (\d+)/i);
+                  const bMatch = b.name.match(/Feature Item (\d+)/i);
+                  return aMatch && bMatch 
+                    ? parseInt(aMatch[1], 10) - parseInt(bMatch[1], 10) 
+                    : 0;
+                });
+                
+              // Initialize next available number for feature items
+              if (!featureItemNumbers[featureNum]) {
+                featureItemNumbers[featureNum] = 1;
+                
+                // Find the highest existing item number
+                existingFeatureItems.forEach(item => {
+                  const match = item.name.match(/Feature Item (\d+)/i);
+                  if (match) {
+                    const num = parseInt(match[1], 10);
+                    if (num >= featureItemNumbers[featureNum]) {
+                      featureItemNumbers[featureNum] = num + 1;
+                    }
+                  }
+                });
+              }
+              
+              // Process each feature item - match with existing elements when possible
+              for (let itemIndex = 0; itemIndex < featureItems.length; itemIndex++) {
+                const item = featureItems[itemIndex];
+                
+                // Try to use an existing element if available at this index
+                let itemElement = existingFeatureItems[itemIndex];
+                
+                if (itemElement) {
+                  // Mark as processed
+                  processedElementIds.add(itemElement._id);
+                  
+                  // Add translation
                   translations.push({
-                    content: feature.content.heading,
+                    content: item,
                     language: langId,
-                    contentElement: headingElement._id,
+                    contentElement: itemElement._id,
                     isActive: true,
                   });
-                }
-
-                if (titleElement) {
-                  translations.push({
-                    content: feature.title,
-                    language: langId,
-                    contentElement: titleElement._id,
+                } else {
+                  // Create a new feature item element with unique name
+                  const itemName = getUniqueFeatureItemName(featureNum, featureItemNumbers[featureNum] - 1);
+                  featureItemNumbers[featureNum]++;
+                  
+                  // Create the element
+                  createContentElement.mutateAsync({
+                    name: itemName,
+                    type: "text",
+                    parent: sectionId,
                     isActive: true,
-                  });
-                }
-
-                if (descriptionElement) {
-                  translations.push({
-                    content: feature.content.description,
-                    language: langId,
-                    contentElement: descriptionElement._id,
-                    isActive: true,
-                  });
-                }
-
-                const featureItems = feature.content.features || [];
-                featureItems.forEach((item: any, itemIndex: number) => {
-                  const itemName = `Feature ${featureNum} - Feature Item ${itemIndex + 1}`;
-                  const itemElement = contentElements.find((e) => e.name === itemName);
-
-                  if (itemElement) {
-                    translations.push({
+                    order: itemIndex,
+                    defaultContent: item || "",
+                  }).then((newElement) => {
+                    // Add the new element to our content elements
+                    setContentElements(prev => [...prev, newElement.data]);
+                    
+                    // Add translation
+                    bulkUpsertTranslations.mutateAsync([{
                       content: item,
                       language: langId,
-                      contentElement: itemElement._id,
+                      contentElement: newElement.data._id,
                       isActive: true,
-                    });
-                  } else {
-                    // Create new feature item element
-                    createContentElement.mutateAsync({
-                      name: itemName,
-                      type: "text",
-                      parent: sectionId,
-                      isActive: true,
-                      order: itemIndex,
-                      defaultContent: item,
-                    }).then((newElement) => {
-                      bulkUpsertTranslations.mutateAsync([{
-                        content: item,
-                        language: langId,
-                        contentElement: newElement.data._id,
-                        isActive: true,
-                      }]);
-                    });
-                  }
-                });
-              });
-
-              // Batch translations for better performance
-              if (translations.length > 0) {
-                await bulkUpsertTranslations.mutateAsync(translations);
-              }
-
-              // Handle image upload if available
-              const imageFile = featureImages[featureIndex];
-              if (imageFile) {
-                const imageElement = contentElements.find((e) => e.type === "image" && e.name === `Feature ${featureNum} - Image`);
-                if (imageElement) {
-                  const formData = new FormData();
-                  formData.append("image", imageFile);
-                  const uploadResult = await apiClient.post(`/content-elements/${imageElement._id}/image`, formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
-                  });
-                  if (uploadResult.data?.imageUrl) {
-                    Object.keys(allFormValues).forEach((langCode) => {
-                      if (allFormValues[langCode] && allFormValues[langCode][featureIndex]) {
-                        form.setValue(`${langCode}.${featureIndex}.content.image` as any, uploadResult.data.imageUrl);
-                      }
-                    });
-                  }
-                }
-              }
-            } else {
-              // Create new feature
-              const actualFeatureNum = highestFeatureNum + 1;
-              highestFeatureNum = actualFeatureNum;
-
-              const elementTypes = [
-                { type: "image", key: "image", name: `Feature ${actualFeatureNum} - Image` },
-                { type: "text", key: "title", name: `Feature ${actualFeatureNum} - Title` },
-                { type: "text", key: "heading", name: `Feature ${actualFeatureNum} - Heading` },
-                { type: "text", key: "description", name: `Feature ${actualFeatureNum} - Description` },
-              ];
-
-              // Create elements in parallel for better performance
-              const elementPromises = elementTypes.map(async (el, index) => {
-                let defaultContent = "";
-                if (el.type === "image") {
-                  defaultContent = "image-placeholder";
-                } else if (el.type === "text" && allFormValues[firstLangCode]) {
-                  const feature = allFormValues[firstLangCode][featureIndex];
-                  if (el.key === "title") {
-                    defaultContent = feature.title || "";
-                  } else if (feature?.content && el.key in feature.content) {
-                    defaultContent = feature.content[el.key];
-                  }
-                }
-
-                const elementData = {
-                  name: el.name,
-                  type: el.type,
-                  parent: sectionId,
-                  isActive: true,
-                  order: index,
-                  defaultContent: defaultContent,
-                };
-                
-                const newElement = await createContentElement.mutateAsync(elementData);
-                return { ...newElement.data, key: el.key };
-              });
-              
-              const createdElements = await Promise.all(elementPromises);
-
-              // Create feature items in parallel
-              const featureItems = features[featureIndex].content.features || [];
-              const itemPromises = featureItems.map(async (item: any, itemIndex: number) => {
-                const itemName = `Feature ${actualFeatureNum} - Feature Item ${itemIndex + 1}`;
-                const elementData = {
-                  name: itemName,
-                  type: "text",
-                  parent: sectionId,
-                  isActive: true,
-                  order: itemIndex,
-                  defaultContent: item || "",
-                };
-                
-                const newElement = await createContentElement.mutateAsync(elementData);
-                return { ...newElement.data, itemIndex };
-              });
-              
-              const featureItemElements = await Promise.all(itemPromises);
-
-              // Handle image upload
-              const imageElement = createdElements.find((e) => e.key === "image");
-              const imageFile = featureImages[featureIndex];
-              if (imageElement && imageFile) {
-                const formData = new FormData();
-                formData.append("image", imageFile);
-                const uploadResult = await apiClient.post(`/content-elements/${imageElement._id}/image`, formData, {
-                  headers: { "Content-Type": "multipart/form-data" },
-                });
-                
-                if (uploadResult.data?.imageUrl) {
-                  Object.keys(allFormValues).forEach((langCode) => {
-                    if (allFormValues[langCode] && allFormValues[langCode][featureIndex]) {
-                      form.setValue(`${langCode}.${featureIndex}.content.image` as any, uploadResult.data.imageUrl);
-                    }
+                    }]);
                   });
                 }
               }
+            });
 
-              // Prepare translations for all languages
-              const translations = [];
-              for (const [langCode, langFeatures] of Object.entries(allFormValues)) {
-                const langId = langCodeToIdMap[langCode];
-                if (!langId || !Array.isArray(langFeatures) || !langFeatures[featureIndex]) continue;
+            // Send translations in batches for better reliability
+            if (translations.length > 0) {
+              const batchSize = 20;
+              for (let i = 0; i < translations.length; i += batchSize) {
+                const batch = translations.slice(i, i + batchSize);
+                await bulkUpsertTranslations.mutateAsync(batch);
+              }
+            }
 
-                const feature = langFeatures[featureIndex];
-                for (const element of createdElements) {
-                  if (element.key === "image") continue;
-                  if (element.key === "title") {
-                    translations.push({
-                      content: feature.title,
-                      language: langId,
-                      contentElement: element._id,
-                      isActive: true,
-                    });
-                  } else if (feature.content && element.key in feature.content) {
-                    translations.push({
-                      content: feature.content[element.key],
-                      language: langId,
-                      contentElement: element._id,
-                      isActive: true,
-                    });
+            // Handle image upload if available
+            const imageFile = featureImages[featureIndex];
+            if (imageFile && existingImage) {
+              const formData = new FormData();
+              formData.append("image", imageFile);
+              const uploadResult = await apiClient.post(`/content-elements/${existingImage._id}/image`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+              });
+              
+              if (uploadResult.data?.imageUrl) {
+                Object.keys(allFormValues).forEach((langCode) => {
+                  if (allFormValues[langCode] && allFormValues[langCode][featureIndex]) {
+                    form.setValue(`${langCode}.${featureIndex}.content.image` as any, uploadResult.data.imageUrl);
                   }
-                }
+                });
+              }
+            }
+          } else {
+            // Create new feature with a unique feature number
+            const actualFeatureNum = highestFeatureNum + 1;
+            highestFeatureNum = actualFeatureNum;
 
-                // Add feature item translations
-                const items = feature.content?.features || [];
-                for (let i = 0; i < items.length && i < featureItemElements.length; i++) {
+            // Define element types to create
+            const elementTypes = [
+              { type: "image", key: "image", name: `Feature ${actualFeatureNum} - Image` },
+              { type: "text", key: "title", name: `Feature ${actualFeatureNum} - Title` },
+              { type: "text", key: "heading", name: `Feature ${actualFeatureNum} - Heading` },
+              { type: "text", key: "description", name: `Feature ${actualFeatureNum} - Description` },
+            ];
+
+            // Create elements in parallel
+            const elementPromises = elementTypes.map(async (el, index) => {
+              let defaultContent = "";
+              if (el.type === "image") {
+                defaultContent = "image-placeholder";
+              } else if (el.type === "text" && allFormValues[firstLangCode]) {
+                const feature = allFormValues[firstLangCode][featureIndex];
+                if (el.key === "title") {
+                  defaultContent = feature.title || "";
+                } else if (feature?.content && el.key in feature.content) {
+                  defaultContent = feature.content[el.key] || "";
+                }
+              }
+
+              const elementData = {
+                name: el.name,
+                type: el.type,
+                parent: sectionId,
+                isActive: true,
+                order: index,
+                defaultContent: defaultContent,
+              };
+              
+              const newElement = await createContentElement.mutateAsync(elementData);
+              processedElementIds.add(newElement.data._id);
+              return { ...newElement.data, key: el.key };
+            });
+            
+            const createdElements = await Promise.all(elementPromises);
+
+            // Initialize feature item counter
+            featureItemNumbers[actualFeatureNum] = 1;
+            
+            // Create feature items with guaranteed unique names
+            const featureItems = features[featureIndex].content.features || [];
+            const itemPromises = featureItems.map(async (item: any, itemIndex: number) => {
+              const itemName = `Feature ${actualFeatureNum} - Feature Item ${featureItemNumbers[actualFeatureNum]}`;
+              featureItemNumbers[actualFeatureNum]++;
+              
+              const elementData = {
+                name: itemName,
+                type: "text",
+                parent: sectionId,
+                isActive: true,
+                order: itemIndex,
+                defaultContent: item || "",
+              };
+              
+              const newElement = await createContentElement.mutateAsync(elementData);
+              processedElementIds.add(newElement.data._id);
+              return { ...newElement.data, itemIndex };
+            });
+            
+            const featureItemElements = await Promise.all(itemPromises);
+
+            // Handle image upload for new feature
+            const imageElement = createdElements.find((e) => e.key === "image");
+            const imageFile = featureImages[featureIndex];
+            if (imageElement && imageFile) {
+              const formData = new FormData();
+              formData.append("image", imageFile);
+              const uploadResult = await apiClient.post(`/content-elements/${imageElement._id}/image`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+              });
+              
+              if (uploadResult.data?.imageUrl) {
+                Object.keys(allFormValues).forEach((langCode) => {
+                  if (allFormValues[langCode] && allFormValues[langCode][featureIndex]) {
+                    form.setValue(`${langCode}.${featureIndex}.content.image` as any, uploadResult.data.imageUrl);
+                  }
+                });
+              }
+            }
+
+            // Prepare translations for all languages
+            const translations = [];
+            for (const [langCode, langFeatures] of Object.entries(allFormValues)) {
+              const langId = langCodeToIdMap[langCode];
+              if (!langId || !Array.isArray(langFeatures) || !langFeatures[featureIndex]) continue;
+
+              const feature = langFeatures[featureIndex];
+              
+              // Add translations for base elements
+              for (const element of createdElements) {
+                if (element.key === "image") continue;
+                
+                if (element.key === "title") {
                   translations.push({
-                    content: items[i],
+                    content: feature.title || "",
                     language: langId,
-                    contentElement: featureItemElements[i]._id,
+                    contentElement: element._id,
+                    isActive: true,
+                  });
+                } else if (feature.content && element.key in feature.content) {
+                  translations.push({
+                    content: feature.content[element.key] || "",
+                    language: langId,
+                    contentElement: element._id,
                     isActive: true,
                   });
                 }
               }
 
-              // Send translations in smaller batches for better reliability
-              if (translations.length > 0) {
-                const batchSize = 20;
-                for (let i = 0; i < translations.length; i += batchSize) {
-                  const batch = translations.slice(i, i + batchSize);
-                  await bulkUpsertTranslations.mutateAsync(batch);
-                }
+              // Add feature item translations
+              const items = feature.content?.features || [];
+              for (let i = 0; i < items.length && i < featureItemElements.length; i++) {
+                translations.push({
+                  content: items[i] || "",
+                  language: langId,
+                  contentElement: featureItemElements[i]._id,
+                  isActive: true,
+                });
               }
             }
-          })());
-        }
 
-        // Wait for all features to be processed
-        await Promise.all(featurePromises);
+            // Send translations in batches for better reliability
+            if (translations.length > 0) {
+              const batchSize = 20;
+              for (let i = 0; i < translations.length; i += batchSize) {
+                const batch = translations.slice(i, i + batchSize);
+                await bulkUpsertTranslations.mutateAsync(batch);
+              }
+            }
+          }
+        }
+        
+        // Clean up orphaned elements - those that weren't processed but exist
+        const orphanedElements = contentElements.filter(el => !processedElementIds.has(el._id));
+        
+        if (orphanedElements.length > 0) {
+          await Promise.all(orphanedElements.map(element => 
+            deleteContentElement.mutateAsync(element._id)
+          ));
+          
+          // Update content elements state
+          setContentElements(prev => 
+            prev.filter(el => !orphanedElements.some(orphan => orphan._id === el._id))
+          );
+        }
 
         toast({
           title: existingSubSectionId ? "Features section updated successfully!" : "Features section created successfully!",
@@ -845,7 +1178,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
           const result = await refetch();
           if (result.data?.data) {
             setDataLoaded(false);
-            await processFeaturesData(result.data.data);
+            processFeaturesData(result.data.data);
           }
         }
       } catch (error) {
@@ -892,6 +1225,8 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
 
     return (
       <div className="space-y-6">
+        
+        
         {/* Loading Dialog */}
         <LoadingDialog
           isOpen={isSaving}

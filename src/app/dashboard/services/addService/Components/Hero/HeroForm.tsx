@@ -23,6 +23,7 @@ import { LoadingDialog } from "@/src/utils/MainSectionComponents";
 import { HeroFormProps } from "@/src/api/types/sections/service/serviceSections.types";
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
 import { SubSection } from "@/src/api/types/hooks/section.types";
+import { useWebsiteContext } from "@/src/providers/WebsiteContext";
 
 
 const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
@@ -34,6 +35,8 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
     ParentSectionId, 
     initialData 
   } = props;
+
+  const { websiteId } = useWebsiteContext();
 
   // Setup form with schema validation
   const formSchema = createHeroSchema(languageIds, activeLanguages);
@@ -315,7 +318,8 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
           order: 0,
           defaultContent : '',
           sectionItem: ParentSectionId,
-          languages: languageIds
+          languages: languageIds,
+          WebSiteId : websiteId
         };
         
         const newSubSection = await createSubSection.mutateAsync(subsectionData);
