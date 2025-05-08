@@ -5,11 +5,11 @@ import type { NextRequest } from 'next/server'
 
 // Define interface for JWT token payload
 interface JwtPayload {
-  id: string
-  email: string
-  role: string
-  iat: number
-  exp: number
+    id: string
+    email: string
+    role: string
+    iat: number
+    exp: number
 }
 
 export function middleware(request: NextRequest) {
@@ -77,7 +77,7 @@ export function middleware(request: NextRequest) {
                 return NextResponse.redirect(new URL('/dashboard/user', request.url))
             }
             // Owner and SuperAdmin can access the main dashboard
-            else if (userRole === 'owner' || userRole === 'superadmin') {
+            else if (userRole === 'owner' || userRole === 'superAdmin') {
                 return NextResponse.next()
             }
         } catch (error) {

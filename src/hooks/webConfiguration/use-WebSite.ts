@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
 import { WebSiteProps } from '@/src/api/types/hooks/WebSite.types';
+import { Roles } from '@/src/api/user.types';
 
 // Base WebSite hook
 export function useWebSite() {
@@ -169,7 +170,7 @@ export function useWebSite() {
       }: { 
         websiteId: string; 
         userId: string; 
-        role: 'owner' | 'editor' | 'viewer' 
+        role: Roles
       }) => {
         const { data } = await apiClient.post(`${endpoint}/${websiteId}/users`, { userId, role });
         return data?.data?.websiteUser;

@@ -82,7 +82,7 @@ export default function DashboardLayout({
               className="container mx-auto"
             >
               {children}
-              
+              <Toaster/>
             </motion.div>
             {/* <Toaster/> */}
 

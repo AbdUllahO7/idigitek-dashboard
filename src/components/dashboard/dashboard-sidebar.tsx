@@ -31,7 +31,7 @@ import { Button } from "../ui/button"
 import { cn } from "@/src/lib/utils"
 import { useAuth } from "@/src/context/AuthContext"
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
-import { Section } from "@/src/api/types"
+import { Section } from "@/src/api/types/hooks/section.types"
 
 /**
  * Navigation item interface
@@ -219,7 +219,7 @@ export default function DashboardSidebar() {
         const sectionId = section.name.toLowerCase().replace(/\s/g, "");
         sectionNameMap.set(sectionId, section.name);
         // Store the actual database ID for each section
-        idMapping.set(sectionId, section._id);
+        idMapping.set(sectionId, section?._id);
       });
       
       // Save the ID mapping for use in navigation
