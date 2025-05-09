@@ -6,7 +6,7 @@ export interface UseGenericListOptions {
     useDelete: any
     useGetByWebSiteId: any
   }
-  editPath: string
+  editPath?: string
   onSuccessDelete?: () => void
   onErrorDelete?: (error: any) => void
 }

@@ -11,7 +11,6 @@ import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
 import { useToast } from "@/src/hooks/use-toast"
-import DeleteServiceDialog from "@/src/components/DeleteServiceDialog"
 import { createFaqSchema } from "../../Utils/language-specifi-schemas"
 import { createFaqDefaultValues} from "../../Utils/Language-default-values"
 import { createFormRef } from "../../Utils/Expose-form-data"
@@ -23,6 +22,7 @@ import { FaqFormProps } from "@/src/api/types/sections/service/serviceSections.t
 import { SubSection } from "@/src/api/types/hooks/section.types"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
+import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 
 
 
@@ -787,7 +787,7 @@ const FaqForm = forwardRef<any, FaqFormProps>(
         </Dialog>
 
         {/* Delete FAQ Confirmation Dialog */}
-        <DeleteServiceDialog
+        <DeleteSectionDialog
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
           serviceName={faqToDelete ? `FAQ ${faqToDelete.index + 1}` : ''}

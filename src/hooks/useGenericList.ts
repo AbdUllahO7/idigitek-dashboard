@@ -29,16 +29,16 @@ export function useGenericList({
     const { websiteId } = useWebsiteContext();
   
   // API hooks for fetching and deleting items
-  const { useGetByWebSiteId, useDelete } = apiHooks
+  const { useGetByWebSiteId, useDelete , useGetBySectionId } = apiHooks
   
   // Query for items with the parent section ID
   const {
     data: itemsData,
     isLoading: isLoadingData,
     refetch: refetchItems,
-  } = useGetByWebSiteId(
-    websiteId || "", 
-    Boolean(websiteId), // Conditionally execute query only if sectionId exists
+  } = useGetBySectionId(
+    sectionId || "", 
+    Boolean(sectionId), // Conditionally execute query only if sectionId exists
     100, // limit
     0, // skip
     true, // includeSubSectionCount
@@ -131,12 +131,12 @@ export function useGenericList({
 
   // Handle editing an item
   const handleEdit = (itemId: string) => {
-    if (sectionId) {
+    if (sectionId && itemId) {
       router.push(`${editPath}?sectionId=${sectionId}&sectionItemId=${itemId}&mode=edit`)
     } else {
       toast({
         title: "Error",
-        description: "Section ID is missing. Cannot edit item.",
+        description: "Section ID or section item id  is missing. Cannot edit item.",
         variant: "destructive",
       })
     }

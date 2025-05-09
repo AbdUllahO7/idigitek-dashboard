@@ -8,9 +8,28 @@ import { Checkbox } from "@/src/components/ui/checkbox"
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { AlertTriangle, Check, LayoutGrid, Loader2, Plus, ToggleLeft, ToggleRight } from "lucide-react"
+import { AlertTriangle, Check, Edit, LayoutGrid, Loader2, Plus, ToggleLeft, ToggleRight, Trash } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../ui/card"
 import { Button } from "../../ui/button"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../../ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../../ui/alert-dialog"
 
 
 interface ManagementProps {
@@ -18,6 +37,9 @@ interface ManagementProps {
 }
 
 export function SectionManagement({ hasWebsite }: ManagementProps) {
+
+  const { websiteId } = useWebsiteContext()
+
     const { 
       useGetAll: useGetAllSections,
       useCreate: useCreateSection,
@@ -37,6 +59,8 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
     const updateSectionMutation = useUpdateSection();
     const deleteSectionMutation = useDeleteSection();
     const toggleSectionActiveMutation = useToggleSectionActive();
+
+    console.log("webSite id  : " , websiteId)
   
     const [newSection, setNewSection] = useState<Section>({ 
       name: "", 
@@ -44,7 +68,8 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
       image: "",
       order: 0,
       subSections: [],
-      isActive: false
+      isActive: false,
+      WebSiteId : websiteId
     });
     
     const [editItem, setEditItem] = useState<EditItemData | null>(null);
@@ -82,8 +107,10 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
         });
         return;
       }
-  
+      console.log(newSection)
+
       createSectionMutation.mutate(newSection, {
+        
         onSuccess: () => {
           setNewSection({ 
             name: "", 
@@ -91,8 +118,10 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
             image: "",
             order: 0,
             subSections: [],
-            isActive: false
+            isActive: false,
+            WebSiteId : websiteId
           });
+
           toast({
             title: "Section added",
             description: `${newSection.name} has been added successfully.`,
@@ -118,6 +147,10 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
         isActive: section.isActive,
         type: "section"
       });
+    };
+    
+    const handleCancelEdit = () => {
+      setEditItem(null);
     };
   
     const handleToggleActive = (id: string, isActive: boolean) => {
@@ -174,7 +207,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
       const updateData = {
         id: editItem._id,
         data: {
-          section_name: editItem.section_name,
+          name: editItem.section_name,
           description: editItem.description,
           image: editItem.image,
           isActive: editItem.isActive
@@ -198,6 +231,18 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
           });
         }
       });
+    };
+    
+    const handleOpenDelete = (section: Section) => {
+      setItemToDelete({
+        _id: section._id,
+        name: section.name,
+        type: "section"
+      });
+    };
+    
+    const handleCancelDelete = () => {
+      setItemToDelete(null);
     };
   
     const confirmDelete = () => {
@@ -393,6 +438,24 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                                   <ToggleLeft className="h-4 w-4 text-slate-600" />
                                 }
                               </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8" 
+                                onClick={() => handleEdit(section)}
+                                disabled={!hasWebsite}
+                              >
+                                <Edit className="h-4 w-4 text-blue-600" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8" 
+                                onClick={() => handleOpenDelete(section)}
+                                disabled={!hasWebsite}
+                              >
+                                <Trash className="h-4 w-4 text-red-600" />
+                              </Button>
                             </div>
                           </div>
                         </div>
@@ -409,6 +472,96 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
             )}
           </CardContent>
         </Card>
+        
+        {/* Edit Section Dialog */}
+        <Dialog open={!!editItem} onOpenChange={(open) => !open && handleCancelEdit()}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Edit Section</DialogTitle>
+              <DialogDescription>
+                Update the details for this section
+              </DialogDescription>
+            </DialogHeader>
+            {editItem && (
+              <div className="grid gap-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-section-name">Section Name</Label>
+                  <Input
+                    id="edit-section-name"
+                    value={editItem.section_name || ""}
+                    onChange={(e) => setEditItem({ ...editItem, section_name: e.target.value })}
+                    className="w-full"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-section-description">Description</Label>
+                  <Input
+                    id="edit-section-description"
+                    value={editItem.description || ""}
+                    onChange={(e) => setEditItem({ ...editItem, description: e.target.value })}
+                    className="w-full"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="edit-section-active"
+                    checked={editItem.isActive || false}
+                    onCheckedChange={(checked) => 
+                      setEditItem({ ...editItem, isActive: checked === true })
+                    }
+                  />
+                  <Label htmlFor="edit-section-active">Active</Label>
+                </div>
+                <div className="space-y-2">
+                  <Label>Section Image</Label>
+                  {/* <ImageUpload
+                    value={editItem.image || ""} 
+                    onChange={(url) => setEditItem({ ...editItem, image: url })} 
+                  /> */}
+                  <p className="text-xs text-slate-500 mt-2">
+                    Update the image for this section (optional)
+                  </p>
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={handleCancelEdit}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSaveEdit} 
+                disabled={updateSectionMutation.isPending}
+                className="flex items-center gap-2"
+              >
+                {updateSectionMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                Save Changes
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={!!itemToDelete} onOpenChange={(open) => !open && handleCancelDelete()}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently delete the section "{itemToDelete?.name}". 
+                This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={handleCancelDelete}>Cancel</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={confirmDelete}
+                className="bg-red-600 hover:bg-red-700 flex items-center gap-2"
+              >
+                {deleteSectionMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </motion.div>
     );
   }

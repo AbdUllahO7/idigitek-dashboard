@@ -8,9 +8,6 @@ import { useAuth } from "@/src/context/AuthContext";
 import { mapFormRoleToApiRole } from "@/src/utils/user-helpers";
 import { Roles, User, UserFormData, UserStatus } from "@/src/api/user.types";
 
-
-
-
 export function useUserManagement() {
   // State for search and filtering
   const [searchTerm, setSearchTerm] = useState("");
@@ -333,121 +330,120 @@ export function useUserManagement() {
     toast
   ]);
   
- 
-const submitAddUser = useCallback(async () => {
-  // Validate password match
-  if (!validatePasswords()) return;
-  
-  // Check if trying to create a owner when one already exists
-  if (formData.role?.toLowerCase() === 'owner' && superOwnerExists) {
-    setFormError("A owner user already exists in the system. Only one owner is allowed.");
-    return;
-  }
-  
-  // Create a copy of form data without confirmPassword
-  const userData = { ...formData };
-  delete userData.confirmPassword;
-  
-  // Variable to track created user ID for potential rollback
-  let createdUserId: string | undefined;
-  let userCreated = false;
-  let websiteUserCreated = false;
-  
-  try {
-    // Step 1: Create the user
-    const newUser = await createUserMutation.mutateAsync(userData as any);
-    console.log("User created successfully:", newUser);
+  const submitAddUser = useCallback(async () => {
+    // Validate password match
+    if (!validatePasswords()) return;
     
-    // Get the user ID from the response
-    createdUserId = newUser?.data?.id || newUser?.data?._id || newUser?.id || newUser?._id;
-    
-    if (!createdUserId) {
-      throw new Error("Failed to get new user ID from response");
-    }
-    
-    userCreated = true;
-    console.log("Adding user to website with ID:", createdUserId);
-    
-    // Step 2: Map role to expected values for the API
-    const websiteRole = mapFormRoleToApiRole(userData.role || "user");
-    
-    // Step 3: Add the user to the website
-    try {
-      await createWebSiteUser.mutateAsync({ 
-        websiteId, 
-        userId: createdUserId, 
-        role: websiteRole as Roles
-      });
-      
-      websiteUserCreated = true;
-      
-      // Success! Both operations completed
-      console.log("User successfully added to website");
-      
-      // Refresh users list
-      await refetchUsers();
-      
-      toast({
-        title: "User added",
-        description: "The new user has been added successfully and assigned to this website",
-        variant: "default"
-      });
-      
-      setIsAddDialogOpen(false);
-    } catch (websiteError: any) {
-      // The website user creation failed, but the user was created
-      console.error("Error adding user to website:", websiteError);
-      
-      // We should consider this operation a failure
-      throw new Error(`User was created but could not be added to the website: ${websiteError.message || "Unknown error"}`);
-    }
-  } catch (error: any) {
-    console.error("Error in user creation process:", error);
-    
-    // Handle specific owner error
-    if (
-      error?.response?.data?.message?.includes("owner user already exists") || 
-      error?.message?.includes("owner user already exists")
-    ) {
+    // Check if trying to create a owner when one already exists
+    if (formData.role?.toLowerCase() === 'owner' && superOwnerExists) {
       setFormError("A owner user already exists in the system. Only one owner is allowed.");
-    } else {
-      // Show the appropriate error message
-      let errorMessage = "Failed to add user. Please try again.";
+      return;
+    }
+    
+    // Create a copy of form data without confirmPassword
+    const userData = { ...formData };
+    delete userData.confirmPassword;
+    
+    // Variable to track created user ID for potential rollback
+    let createdUserId: string | undefined;
+    let userCreated = false;
+    let websiteUserCreated = false;
+    
+    try {
+      // Step 1: Create the user
+      const newUser = await createUserMutation.mutateAsync(userData as any);
+      console.log("User created successfully:", newUser);
       
-      if (userCreated && !websiteUserCreated) {
-        errorMessage = "User was created but could not be added to the website. Please contact support for assistance.";
-        
-        // Optionally: Attempt to delete the user that was created but not added to the website
-        // This would be a rollback operation
-        try {
-          if (createdUserId) {
-            await deleteUserMutation.mutateAsync(createdUserId);
-            console.log("Rolled back user creation due to failure to add to website");
-          }
-        } catch (rollbackError) {
-          console.error("Failed to roll back user creation:", rollbackError);
-        }
+      // Get the user ID from the response
+      createdUserId = newUser?.data?.id || newUser?.data?._id || newUser?.id || newUser?._id;
+      
+      if (!createdUserId) {
+        throw new Error("Failed to get new user ID from response");
       }
       
-      toast({
-        title: "Error",
-        description: error?.response?.data?.message || error?.message || errorMessage,
-        variant: "destructive"
-      });
+      userCreated = true;
+      console.log("Adding user to website with ID:", createdUserId);
+      
+      // Step 2: Map role to expected values for the API
+      const websiteRole = mapFormRoleToApiRole(userData.role || "user");
+      
+      // Step 3: Add the user to the website
+      try {
+        await createWebSiteUser.mutateAsync({ 
+          websiteId, 
+          userId: createdUserId, 
+          role: websiteRole as Roles
+        });
+        
+        websiteUserCreated = true;
+        
+        // Success! Both operations completed
+        console.log("User successfully added to website");
+        
+        // Refresh users list
+        await refetchUsers();
+        
+        toast({
+          title: "User added",
+          description: "The new user has been added successfully and assigned to this website",
+          variant: "default"
+        });
+        
+        setIsAddDialogOpen(false);
+      } catch (websiteError: any) {
+        // The website user creation failed, but the user was created
+        console.error("Error adding user to website:", websiteError);
+        
+        // We should consider this operation a failure
+        throw new Error(`User was created but could not be added to the website: ${websiteError.message || "Unknown error"}`);
+      }
+    } catch (error: any) {
+      console.error("Error in user creation process:", error);
+      
+      // Handle specific owner error
+      if (
+        error?.response?.data?.message?.includes("owner user already exists") || 
+        error?.message?.includes("owner user already exists")
+      ) {
+        setFormError("A owner user already exists in the system. Only one owner is allowed.");
+      } else {
+        // Show the appropriate error message
+        let errorMessage = "Failed to add user. Please try again.";
+        
+        if (userCreated && !websiteUserCreated) {
+          errorMessage = "User was created but could not be added to the website. Please contact support for assistance.";
+          
+          // Optionally: Attempt to delete the user that was created but not added to the website
+          // This would be a rollback operation
+          try {
+            if (createdUserId) {
+              await deleteUserMutation.mutateAsync(createdUserId);
+              console.log("Rolled back user creation due to failure to add to website");
+            }
+          } catch (rollbackError) {
+            console.error("Failed to roll back user creation:", rollbackError);
+          }
+        }
+        
+        toast({
+          title: "Error",
+          description: error?.response?.data?.message || error?.message || errorMessage,
+          variant: "destructive"
+        });
+      }
+      
     }
-    
-  }
-}, [
-  validatePasswords, 
-  formData, 
-  superOwnerExists, 
-  createUserMutation, 
-  websiteId, 
-  createWebSiteUser, 
-  refetchUsers, 
-  toast,
-  // Add deleteUserMutation if you implement rollback
-]);
+  }, [
+    validatePasswords, 
+    formData, 
+    superOwnerExists, 
+    createUserMutation, 
+    websiteId, 
+    createWebSiteUser, 
+    refetchUsers, 
+    toast,
+    // Add deleteUserMutation if you implement rollback
+  ]);
   
   // Password visibility toggles
   const toggleShowPassword = useCallback(() => setShowPassword(prev => !prev), []);

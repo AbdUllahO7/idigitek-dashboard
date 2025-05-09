@@ -12,7 +12,7 @@ import {
 import { Button } from "@/src/components/ui/button"
 import { Loader2 } from "lucide-react"
 
-interface DeleteServiceDialogProps {
+interface DeleteSectionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   serviceName: string;
@@ -22,7 +22,7 @@ interface DeleteServiceDialogProps {
   confirmText?:string
 }
 
-export default function DeleteServiceDialog({
+export default function DeleteSectionDialog({
   open,
   onOpenChange,
   serviceName,
@@ -30,7 +30,7 @@ export default function DeleteServiceDialog({
   isDeleting,
   title,
   confirmText
-}: DeleteServiceDialogProps) {
+}: DeleteSectionDialogProps) {
   
   const handleConfirm = async () => {
     await onConfirm();

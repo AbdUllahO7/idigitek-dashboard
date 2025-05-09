@@ -23,7 +23,6 @@ import { useContentElements } from "@/src/hooks/webConfiguration/use-content-ele
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions";
 import { processAndLoadData } from "../../Utils/load-form-data";
 import { ValidationDialog } from "./ValidationDialog";
-import DeleteServiceDialog from "@/src/components/DeleteServiceDialog";
 import { LanguageCard } from "./LanguageCard";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
 import { BenefitsFormState, HeroFormProps, HeroFormRef, StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
@@ -31,6 +30,7 @@ import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/conten
 import { createLanguageCodeMap } from "../../Utils/language-utils";
 import { SubSection } from "@/src/api/types/hooks/section.types";
 import { useWebsiteContext } from "@/src/providers/WebsiteContext";
+import DeleteSectionDialog from "@/src/components/DeleteSectionDialog";
 
 
 // Main Component
@@ -832,7 +832,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
           </Button>
         </div>
 
-        <DeleteServiceDialog
+        <DeleteSectionDialog
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
           serviceName={stepToDelete ? `Step ${stepToDelete.index + 1}` : ""}

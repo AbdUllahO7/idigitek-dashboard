@@ -87,21 +87,26 @@ interface BackgroundImageSectionProps {
   imageValue?: string;
   onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onRemove: () => void;
+  imageType?:string,
 }
 
 export const BackgroundImageSection = memo(({
   imagePreview,
   imageValue,
   onUpload,
-  onRemove
+  onRemove,
+  imageType
 }: BackgroundImageSectionProps) => {
   return (
     <div className="mb-6">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Hero Background Image</CardTitle>
+          <CardTitle> {
+            imageType === "logo" ? 'Logo Image Uploading':"Hero Background Image"
+            }</CardTitle>
           <CardDescription>
-            Upload a background image for the hero section (applies to all languages)
+              
+              {      imageType === "logo" ? 'Logo Image Uploading for header':"Upload a background image for the hero section (applies to all languages)"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -109,7 +114,9 @@ export const BackgroundImageSection = memo(({
             <div>
               <Label className="flex items-center gap-2 mb-2">
                 <ImageIcon className="h-4 w-4" />
-                Background Image
+                  {
+                    imageType === 'logo' ? 'Logo':'Background Image' 
+                  }
                 <span className="text-xs text-muted-foreground">
                   (applies to all languages)
                 </span>

@@ -13,7 +13,8 @@ import {
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useUsers } from "@/src/hooks/users/use-users"
-import { Language, Section } from "@/src/api/types"
+import { Language } from "@/src/api/types/hooks/language.types"
+import { Section } from "@/src/api/types/hooks/section.types"
 
 /**
  * Dashboard overview page

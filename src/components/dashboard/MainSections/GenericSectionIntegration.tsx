@@ -7,8 +7,6 @@ import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { FieldConfig, MultilingualSectionData } from "@/src/api/types/hooks/MultilingualSection.types"
 
-// Define types for better TypeScript support
-// Interface for section configuration
 interface SectionConfig {
   name: string // Section name used for display
   slug: string // Section slug used in API calls
@@ -19,7 +17,6 @@ interface SectionConfig {
   isMain: boolean // Flag to indicate if this is a main section
 }
 
-// Define props interface
 interface GenericSectionIntegrationProps {
   onSectionChange?: (data: MultilingualSectionData) => void
   config: SectionConfig // Configuration for this specific section
@@ -32,7 +29,6 @@ interface GenericSectionIntegrationProps {
   ParentSectionId: string // The ID of the parent entity (section or sectionItem)
   createMainService?: boolean // Whether to create a main-service section item
 }
-
 
 
 // Helper function to extract ID from various response formats
@@ -75,10 +71,6 @@ function GenericSectionIntegration({
     useGetCompleteBySlug,
     useGetBySectionItemId,
   } = useSubSections()
-
-  
-
-
 
   const { useGetAll: useGetAllLanguages } = useLanguages()
 
@@ -184,8 +176,6 @@ function GenericSectionIntegration({
   // Determine the actual parent ID to use (section ID or main-service ID)
   const effectiveParentId = createMainService && mainServiceId ? mainServiceId : ParentSectionId
 
-  // Check if ParentSectionId looks like a section ID or a section item ID
-  // For now, just fetch subsections by both methods to ensure we find them
   const { data: sectionItemSubSections, isLoading: isLoadingSectionItemSubSections } = useGetBySectionItemId(
     effectiveParentId,
     true,
@@ -214,7 +204,6 @@ function GenericSectionIntegration({
   } = getCompleteSectionQuery
 
   const { data: languagesData, isLoading: isLoadingLanguages } = useGetAllLanguages()
-
 
   // Build section data when complete service data loads
   useEffect(() => {
@@ -365,9 +354,6 @@ function GenericSectionIntegration({
       </div>
     )
   }
-
-  // Use provided values or generate defaults from config
-
 
   return (
     <>

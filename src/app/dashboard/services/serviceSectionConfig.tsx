@@ -1,6 +1,7 @@
 // src/hooks/service/service-section-config.ts
 
-import { FieldConfig } from "@/src/api/types";
+import { FieldConfig } from "@/src/api/types/hooks/MultilingualSection.types";
+
 
 
 

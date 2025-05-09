@@ -78,7 +78,13 @@ const allNavItems: NavItem[] = [
     title: "Services",
     href: "/dashboard/services",
     icon: Package,
-    sectionId: "services", // Show when "service" section is selected
+    sectionId: "services", 
+  },
+  {
+    title: "Header",
+    href: "/dashboard/header",
+    icon: Package,
+    sectionId: "header", 
   },
   {
     title: "Blog",

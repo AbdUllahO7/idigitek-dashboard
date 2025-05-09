@@ -21,12 +21,12 @@ import { createProcessStepsDefaultValues } from "../../Utils/Language-default-va
 import { createFormRef } from "../../Utils/Expose-form-data"
 import { processAndLoadData } from "../../Utils/load-form-data"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
-import DeleteServiceDialog from "@/src/components/DeleteServiceDialog"
 import { LanguageCard } from "./LanguageCard"
 import { LoadingDialog } from "@/src/utils/MainSectionComponents"
 import { HeroFormProps, HeroFormRef } from "@/src/api/types/sections/service/serviceSections.types"
 import { SubSection } from "@/src/api/types/hooks/section.types"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
+import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 
 
 
@@ -405,7 +405,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
         }
 
         // Create language mapping
-        const langCodeToIdMap = activeLanguages.reduce<Record<string, string>>((acc, lang) => {
+        const langCodeToIdMap = activeLanguages.reduce((acc: Record<string, string>, lang) => {
           acc[lang.languageID] = lang._id;
           return acc;
         }, {});
@@ -799,7 +799,7 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
         </Dialog>
         
         {/* Delete Step Confirmation Dialog */}
-        <DeleteServiceDialog
+        <DeleteSectionDialog
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
           serviceName={stepToDelete ? `Step ${stepToDelete.index + 1}` : ''}

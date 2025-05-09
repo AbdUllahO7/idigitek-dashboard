@@ -11,24 +11,24 @@ import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
-import { serviceSectionConfig } from "./serviceSectionConfig"
+import { headerSectionConfig } from "./HeaderSectionConfig"
 
 // Configuration for the Services page
 const SERVICES_CONFIG = {
-  title: "Services Management",
-  description: "Manage your service inventory and multilingual content",
-  addButtonLabel: "Add New Service",
-  emptyStateMessage: "No services found. Create your first service by clicking the \"Add New Service\" button.",
-  noSectionMessage: "Please create a service section first before adding services.",
-  mainSectionRequiredMessage: "Please enter your main section data before adding services.",
-  emptyFieldsMessage: "Please complete all required fields in the main section before adding services.",
+  title: "Header Management",
+  description: "Manage your Header inventory and multilingual content",
+  addButtonLabel: "Add New Nav item",
+  emptyStateMessage: "No Header found. Create your first Header by clicking the \"Add New Header\" button.",
+  noSectionMessage: "Please create a Header section first before adding Header.",
+  mainSectionRequiredMessage: "Please enter your main section data before adding Header.",
+  emptyFieldsMessage: "Please complete all required fields in the main section before adding Header.",
   sectionIntegrationTitle: "Service Section Content",
-  sectionIntegrationDescription: "Manage your service section content in multiple languages.",
+  sectionIntegrationDescription: "Manage your Header section content in multiple languages.",
   addSectionButtonLabel: "Add Service Section",
-  editSectionButtonLabel: "Edit Service Section",
-  saveSectionButtonLabel: "Save Service Section",
-  listTitle: "Service List",
-  editPath: "services/addService"
+  editSectionButtonLabel: "Edit Header Section",
+  saveSectionButtonLabel: "Save Header Section",
+  listTitle: "Header List",
+  editPath: "header/addNavItems"
 }
 
 // Service table column definitions
@@ -90,9 +90,9 @@ export default function ServicesPage() {
   } = useGetMainByWebSiteId(websiteId)
 
 
-  // Use the generic list hook for service management
+  // Use the generic list hook for Header management
   const {
-    section: serviceSection,
+    section: HeaderSection,
     items: services,
     isLoadingItems: isLoadingServices,
     isCreateDialogOpen,
@@ -135,7 +135,7 @@ export default function ServicesPage() {
         setSectionData(sectionInfo)
         
         // Update the serviceSection in useGenericList hook if not already set
-        if (serviceSection === null) {
+        if (HeaderSection === null) {
           setSection(sectionInfo)
         }
       }
@@ -144,7 +144,7 @@ export default function ServicesPage() {
       setHasMainSubSection(false)
       setIsLoadingMainSubSection(false)
     }
-  }, [mainSubSectionData, isLoadingCompleteSubsections, serviceSection, setSection])
+  }, [mainSubSectionData, isLoadingCompleteSubsections, HeaderSection, setSection])
 
   // Handle form validity changes
   const handleFormValidityChange = (isValid: boolean, message?: string) => {
@@ -164,7 +164,7 @@ export default function ServicesPage() {
     !mainSectionFormValid
   
   // Custom tooltip message based on condition
-  const addButtonTooltip = !serviceSection && !sectionData 
+  const addButtonTooltip = !HeaderSection && !sectionData 
     ? SERVICES_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection)
       ? SERVICES_CONFIG.mainSectionRequiredMessage
@@ -173,7 +173,7 @@ export default function ServicesPage() {
         : defaultAddButtonTooltip
 
   // Custom message for empty state based on conditions
-  const emptyStateMessage = !serviceSection && !sectionData 
+  const emptyStateMessage = !HeaderSection && !sectionData 
     ? SERVICES_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection)
       ? SERVICES_CONFIG.mainSectionRequiredMessage
@@ -206,17 +206,6 @@ export default function ServicesPage() {
     />
   )
 
-  // const SectionIntegration = (
-  //   <GenericSectionIntegration
-  //     config={serviceSectionConfig}
-  //     ParentSectionId={sectionId || ""}
-  //     onSectionChange={handleSectionChange}
-  //     sectionTitle={SERVICES_CONFIG.sectionIntegrationTitle}
-  //     sectionDescription={SERVICES_CONFIG.sectionIntegrationDescription}
-  //     editButtonLabel={SERVICES_CONFIG.editSectionButtonLabel}
-  //     saveButtonLabel={SERVICES_CONFIG.saveSectionButtonLabel}
-  //   />
-  // )
 
   const CreateDialog = (
     <DialogCreateSectionItem
@@ -245,7 +234,7 @@ export default function ServicesPage() {
       <GenericListPage
         config={SERVICES_CONFIG}
         sectionId={sectionId}
-        sectionConfig={serviceSectionConfig}
+        sectionConfig={headerSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
         addButtonTooltip={addButtonTooltip}
         tableComponent={ServicesTable}
@@ -255,7 +244,7 @@ export default function ServicesPage() {
         onAddNew={handleAddNew}
         isLoading={isLoadingServices || isLoadingMainSubSection}
         emptyCondition={services.length === 0}
-        noSectionCondition={!serviceSection && !sectionData}
+        noSectionCondition={!HeaderSection && !sectionData}
         customEmptyMessage={emptyStateMessage}
       />
       
@@ -263,7 +252,7 @@ export default function ServicesPage() {
       {sectionId && (
         <CreateMainSubSection 
           sectionId={sectionId}
-          sectionConfig={serviceSectionConfig}
+          sectionConfig={headerSectionConfig}
           onSubSectionCreated={handleMainSubSectionCreated}
           onFormValidityChange={handleFormValidityChange}
         />

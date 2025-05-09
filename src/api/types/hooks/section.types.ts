@@ -15,6 +15,7 @@ export interface Section extends Resource {
   order?: number;
   image?: string;
   sectionItems?: string[] | SectionItem[];
+  WebSiteId: string,
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -55,7 +56,7 @@ export interface SubSection {
   parentSections?: string[];
   section?:SubSection | string,
   elements?: ContentElement[];
-  WebSite :WebSiteProps 
+  WebSiteId :string, 
 }
 
 export interface Service extends SectionItem {

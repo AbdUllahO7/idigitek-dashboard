@@ -7,7 +7,7 @@ import { toast } from "@/src/hooks/use-toast"
 import type React from "react"
 import { useState } from "react"
 import { PlusCircle, Edit2, Trash2, Upload, X, Save, ArrowLeft } from "lucide-react"
-import DeleteServiceDialog from "../../DeleteServiceDialog"
+import DeleteSectionDialog from "../../DeleteSectionDialog"
 
 const WebsiteImageExampleFixed: React.FC = () => {
   const [showCreateForm, setShowCreateForm] = useState(false)
@@ -578,7 +578,7 @@ const WebsiteImageExampleFixed: React.FC = () => {
       </div>
 
       {/* Delete Confirmation Dialog */}
-      <DeleteServiceDialog
+      <DeleteSectionDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         serviceName={websiteToDelete?.name || ""}

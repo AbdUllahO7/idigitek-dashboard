@@ -11,7 +11,8 @@ import { Label } from "@/src/components/ui/label"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
 import { useToast } from "@/src/hooks/use-toast"
-import { Language, Section } from "@/src/api/types"
+import { Language } from "@/src/api/types/hooks/language.types"
+import { Section } from "@/src/api/types/hooks/section.types"
 
 export default function ConfigurationPage() {
   const [isSaving, setIsSaving] = useState(false)

@@ -78,7 +78,7 @@ export default function CreateMainSubSection({
   const {
     useCreate,
     useUpdate,
-    useGetCompleteByWebSiteId
+    useGetBySectionId
   } = useSubSections()
   
   const { 
@@ -99,7 +99,9 @@ export default function CreateMainSubSection({
     isLoading: isLoadingCompleteSubsections,
     error: completeSubsectionsError,
     refetch: refetchCompleteSubsections
-  } = useGetCompleteByWebSiteId(websiteId)
+  } = useGetBySectionId(sectionId)
+
+  console.log(completeSubsectionsData)
 
   // Mutations
   const createMutation = useCreate();

@@ -25,7 +25,6 @@ import { processAndLoadData } from "../../Utils/load-form-data"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
 import { useFeatureImages } from "../../Utils/Image-uploader"
 import { LoadingDialog } from "@/src/utils/MainSectionComponents"
-import DeleteServiceDialog from "@/src/components/DeleteServiceDialog"
 import { FeatureForm } from "./FeatureForm"
 import { SubSection } from "@/src/api/types/hooks/section.types"
 import { Feature } from "@/src/api/types/hooks/MultilingualSection.types"
@@ -38,6 +37,7 @@ type FeaturesSchemaType = ReturnType<typeof createFeaturesSchema>
 // FeatureItem Component
 import { FormControl, FormField, FormItem, FormMessage } from "@/src/components/ui/form"
 import { Input } from "@/src/components/ui/input"
+import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 
 interface FeatureItemProps {
   featureItemIndex: number;
@@ -1313,7 +1313,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
         </Dialog>
         
         {/* Delete Feature Confirmation Dialog */}
-        <DeleteServiceDialog
+        <DeleteSectionDialog
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
           serviceName={featureToDelete ? `Feature ${featureToDelete.index + 1}` : ''}
@@ -1324,7 +1324,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
         />
         
         {/* Delete Feature Item Confirmation Dialog */}
-        <DeleteServiceDialog
+        <DeleteSectionDialog
           open={deleteFeatureItemDialogOpen}
           onOpenChange={setDeleteFeatureItemDialogOpen}
           serviceName={featureItemToDelete ? `Feature Item ${featureItemToDelete.itemIndex + 1}` : ''}
