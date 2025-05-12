@@ -11,28 +11,28 @@ import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
-import { serviceSectionConfig } from "./serviceSectionConfig"
+import { newsSectionConfig } from "./NewsSectionConfig"
 
 // Configuration for the Services page
-const SERVICES_CONFIG = {
-  title: "Services Management",
-  description: "Manage your service inventory and multilingual content",
-  addButtonLabel: "Add New Service",
-  emptyStateMessage: "No services found. Create your first service by clicking the \"Add New Service\" button.",
-  noSectionMessage: "Please create a service section first before adding services.",
-  mainSectionRequiredMessage: "Please enter your main section data before adding services.",
-  emptyFieldsMessage: "Please complete all required fields in the main section before adding services.",
+const NEWS_CONFIG = {
+  title: "News Management",
+  description: "Manage your News inventory and multilingual content",
+  addButtonLabel: "Add New News item",
+  emptyStateMessage: "No News found. Create your first News by clicking the \"Add New News\" button.",
+  noSectionMessage: "Please create a News section first before adding News.",
+  mainSectionRequiredMessage: "Please enter your main section data before adding News.",
+  emptyFieldsMessage: "Please complete all required fields in the main section before adding News.",
   sectionIntegrationTitle: "Service Section Content",
-  sectionIntegrationDescription: "Manage your service section content in multiple languages.",
-  addSectionButtonLabel: "Add Service Section",
-  editSectionButtonLabel: "Edit Service Section",
-  saveSectionButtonLabel: "Save Service Section",
-  listTitle: "Service List",
-  editPath: "services/addService"
+  sectionIntegrationDescription: "Manage your News section content in multiple languages.",
+  addSectionButtonLabel: "Add News Section",
+  editSectionButtonLabel: "Edit News Section",
+  saveSectionButtonLabel: "Save News Section",
+  listTitle: "News List",
+  editPath: "News/addNews"
 }
 
 // Service table column definitions
-const SERVICE_COLUMNS = [
+const NEWS_COLUMNS = [
   {
     header: "Name",
     accessor: "name",
@@ -70,13 +70,13 @@ const SERVICE_COLUMNS = [
   }
 ]
 
-export default function ServicesPage() {
+export default function NewsPage() {
   const searchParams = useSearchParams()
   const sectionId = searchParams.get("sectionId")
   const [hasMainSubSection, setHasMainSubSection] = useState<boolean>(false)
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
   const [mainSectionFormValid, setMainSectionFormValid] = useState<boolean>(false)
-  const [mainSectionErrorMessage, setMainSectionErrorMessage] = useState<string | undefined>(SERVICES_CONFIG.mainSectionRequiredMessage)
+  const [mainSectionErrorMessage, setMainSectionErrorMessage] = useState<string | undefined>(NEWS_CONFIG.mainSectionRequiredMessage)
   const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
 
@@ -90,9 +90,9 @@ export default function ServicesPage() {
   } = useGetMainByWebSiteId(websiteId)
 
 
-  // Use the generic list hook for service management
+  // Use the generic list hook for News management
   const {
-    section: serviceSection,
+    section: NewsSection,
     items: services,
     isLoadingItems: isLoadingServices,
     isCreateDialogOpen,
@@ -113,7 +113,7 @@ export default function ServicesPage() {
   } = useGenericList({
     sectionId,
     apiHooks: useSectionItems(),
-    editPath: SERVICES_CONFIG.editPath
+    editPath: NEWS_CONFIG.editPath
   })
 
   // Determine if main subsection exists when data loads & set section data if needed
@@ -135,7 +135,7 @@ export default function ServicesPage() {
         setSectionData(sectionInfo)
         
         // Update the serviceSection in useGenericList hook if not already set
-        if (serviceSection === null) {
+        if (NewsSection === null) {
           setSection(sectionInfo)
         }
       }
@@ -144,7 +144,7 @@ export default function ServicesPage() {
       setHasMainSubSection(false)
       setIsLoadingMainSubSection(false)
     }
-  }, [mainSubSectionData, isLoadingCompleteSubsections, serviceSection, setSection])
+  }, [mainSubSectionData, isLoadingCompleteSubsections, NewsSection, setSection])
 
   // Handle form validity changes
   const handleFormValidityChange = (isValid: boolean, message?: string) => {
@@ -164,22 +164,22 @@ export default function ServicesPage() {
     !mainSectionFormValid
   
   // Custom tooltip message based on condition
-  const addButtonTooltip = !serviceSection && !sectionData 
-    ? SERVICES_CONFIG.noSectionMessage 
+  const addButtonTooltip = !NewsSection && !sectionData 
+    ? NEWS_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection)
-      ? SERVICES_CONFIG.mainSectionRequiredMessage
+      ? NEWS_CONFIG.mainSectionRequiredMessage
       : (!mainSectionFormValid && mainSectionErrorMessage)
         ? mainSectionErrorMessage
         : defaultAddButtonTooltip
 
   // Custom message for empty state based on conditions
-  const emptyStateMessage = !serviceSection && !sectionData 
-    ? SERVICES_CONFIG.noSectionMessage 
+  const emptyStateMessage = !NewsSection && !sectionData 
+    ? NEWS_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection)
-      ? SERVICES_CONFIG.mainSectionRequiredMessage
+      ? NEWS_CONFIG.mainSectionRequiredMessage
       : (!mainSectionFormValid && mainSectionErrorMessage)
         ? mainSectionErrorMessage
-        : SERVICES_CONFIG.emptyStateMessage
+        : NEWS_CONFIG.emptyStateMessage
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
@@ -199,24 +199,13 @@ export default function ServicesPage() {
   // Components
   const ServicesTable = (
     <GenericTable
-      columns={SERVICE_COLUMNS}
+      columns={NEWS_COLUMNS}
       data={services}
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
     />
   )
 
-  // const SectionIntegration = (
-  //   <GenericSectionIntegration
-  //     config={serviceSectionConfig}
-  //     ParentSectionId={sectionId || ""}
-  //     onSectionChange={handleSectionChange}
-  //     sectionTitle={SERVICES_CONFIG.sectionIntegrationTitle}
-  //     sectionDescription={SERVICES_CONFIG.sectionIntegrationDescription}
-  //     editButtonLabel={SERVICES_CONFIG.editSectionButtonLabel}
-  //     saveButtonLabel={SERVICES_CONFIG.saveSectionButtonLabel}
-  //   />
-  // )
 
   const CreateDialog = (
     <DialogCreateSectionItem
@@ -224,7 +213,7 @@ export default function ServicesPage() {
       onOpenChange={setIsCreateDialogOpen}
       sectionId={sectionId || ""}
       onServiceCreated={handleItemCreated}
-      title="Service"
+      title="News"
     />
   )
 
@@ -244,9 +233,9 @@ export default function ServicesPage() {
     <div className="space-y-6">
       {/* Main list page with table and section integration */}
       <GenericListPage
-        config={SERVICES_CONFIG}
+        config={NEWS_CONFIG}
         sectionId={sectionId}
-        sectionConfig={serviceSectionConfig}
+        sectionConfig={newsSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
         addButtonTooltip={addButtonTooltip}
         tableComponent={ServicesTable}
@@ -256,7 +245,7 @@ export default function ServicesPage() {
         onAddNew={handleAddNew}
         isLoading={isLoadingServices || isLoadingMainSubSection}
         emptyCondition={services.length === 0}
-        noSectionCondition={!serviceSection && !sectionData}
+        noSectionCondition={!NewsSection && !sectionData}
         customEmptyMessage={emptyStateMessage}
       />
       
@@ -264,7 +253,7 @@ export default function ServicesPage() {
       {sectionId && (
         <CreateMainSubSection 
           sectionId={sectionId}
-          sectionConfig={serviceSectionConfig}
+          sectionConfig={newsSectionConfig}
           onSubSectionCreated={handleMainSubSectionCreated}
           onFormValidityChange={handleFormValidityChange}
         />

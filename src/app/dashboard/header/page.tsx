@@ -213,6 +213,7 @@ export default function ServicesPage() {
       onOpenChange={setIsCreateDialogOpen}
       sectionId={sectionId || ""}
       onServiceCreated={handleItemCreated}
+      title="Header"
     />
   )
 

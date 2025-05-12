@@ -18,13 +18,16 @@ interface DialogCreateSectionItemProps {
   onOpenChange: (open: boolean) => void;
   sectionId: string;
   onServiceCreated: (serviceId: string) => void;
+  title:string,
 }
 
 export default function DialogCreateSectionItem({ 
   open, 
   onOpenChange, 
   sectionId, 
-  onServiceCreated 
+  onServiceCreated,
+  title ,
+
 }: DialogCreateSectionItemProps) {
   const [name, setName] = useState<string>("")
   const [description, setDescription] = useState<string>("")
@@ -138,7 +141,7 @@ export default function DialogCreateSectionItem({
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create New Service</DialogTitle>
+            <DialogTitle>Create New {title}</DialogTitle>
             <DialogDescription>
               Enter the basic information for your new service. You'll be able to add more details after creating it.
             </DialogDescription>
@@ -147,7 +150,7 @@ export default function DialogCreateSectionItem({
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="name" className="font-medium">
-                Service Name <span className="text-red-500">*</span>
+                {title} Name <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="name"
@@ -191,7 +194,7 @@ export default function DialogCreateSectionItem({
                   Creating...
                 </>
               ) : (
-                "Create Service"
+                `Create ${title}`
               )}
             </Button>
           </DialogFooter>

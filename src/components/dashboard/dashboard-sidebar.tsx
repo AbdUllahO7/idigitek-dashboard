@@ -131,9 +131,9 @@ const allNavItems: NavItem[] = [
   },
   {
     title: "News",
-    href: "/dashboard/news",
+    href: "/dashboard/News",
     icon: Megaphone,
-    sectionId: "newsSection", // Show when "newsSection" section is selected
+    sectionId: "news", // Show when "newsSection" section is selected
   },
   {
     title: "Partners",
