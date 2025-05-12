@@ -13,7 +13,7 @@ import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { newsSectionConfig } from "./NewsSectionConfig"
 
-// Configuration for the Services page
+// Configuration for the News page
 const NEWS_CONFIG = {
   title: "News Management",
   description: "Manage your News inventory and multilingual content",
@@ -22,7 +22,7 @@ const NEWS_CONFIG = {
   noSectionMessage: "Please create a News section first before adding News.",
   mainSectionRequiredMessage: "Please enter your main section data before adding News.",
   emptyFieldsMessage: "Please complete all required fields in the main section before adding News.",
-  sectionIntegrationTitle: "Service Section Content",
+  sectionIntegrationTitle: "News Section Content",
   sectionIntegrationDescription: "Manage your News section content in multiple languages.",
   addSectionButtonLabel: "Add News Section",
   editSectionButtonLabel: "Edit News Section",
@@ -31,7 +31,7 @@ const NEWS_CONFIG = {
   editPath: "News/addNews"
 }
 
-// Service table column definitions
+// News table column definitions
 const NEWS_COLUMNS = [
   {
     header: "Name",
@@ -75,33 +75,35 @@ export default function NewsPage() {
   const sectionId = searchParams.get("sectionId")
   const [hasMainSubSection, setHasMainSubSection] = useState<boolean>(false)
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
-  const [mainSectionFormValid, setMainSectionFormValid] = useState<boolean>(false)
-  const [mainSectionErrorMessage, setMainSectionErrorMessage] = useState<string | undefined>(NEWS_CONFIG.mainSectionRequiredMessage)
   const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
 
-  
   // Check if main subsection exists
-  const { useGetMainByWebSiteId } = useSubSections()
+  const { useGetMainByWebSiteId, useGetBySectionId } = useSubSections()
   
   const {
     data: mainSubSectionData,
-    isLoading: isLoadingCompleteSubsections
+    isLoading: isLoadingCompleteSubsections,
+    refetch: refetchMainSubSection
   } = useGetMainByWebSiteId(websiteId)
 
+  // If we have a specific section ID, also fetch subsections for that section
+  const {
+    data: sectionSubsections,
+    isLoading: isLoadingSectionSubsections
+  } = useGetBySectionId(sectionId || "")
 
   // Use the generic list hook for News management
   const {
-    section: NewsSection,
-    items: services,
-    isLoadingItems: isLoadingServices,
+    section: newsSection,
+    items: newsItems,
+    isLoadingItems: isLoadingNewsItems,
     isCreateDialogOpen,
     isDeleteDialogOpen,
     itemToDelete,
     isDeleting,
     isAddButtonDisabled: defaultAddButtonDisabled,
     addButtonTooltip: defaultAddButtonTooltip,
-    handleSectionChange,
     handleEdit,
     handleDelete,
     handleAddNew,
@@ -118,94 +120,143 @@ export default function NewsPage() {
 
   // Determine if main subsection exists when data loads & set section data if needed
   useEffect(() => {
-    if (!isLoadingCompleteSubsections && mainSubSectionData) {
-      // Check if data exists and has isMain: true
-      const hasMain = mainSubSectionData?.data && mainSubSectionData.data.isMain === true
-      setHasMainSubSection(hasMain)
-      setIsLoadingMainSubSection(false)
+    console.log("Checking for main subsection...");
+    
+    // First check if we are still loading
+    if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
+      setIsLoadingMainSubSection(true);
+      return;
+    }
+    
+    // We're done loading, now check the data
+    let foundMainSubSection = false;
+    let mainSubSection = null;
+    
+    // If we have a sectionId, prioritize checking the section-specific subsections
+    if (sectionId && sectionSubsections?.data) {
+      const sectionData = sectionSubsections.data;
       
-      // Extract section data from the main subsection and set it
-      if (hasMain && mainSubSectionData.data.section) {
-        // The section could be either a string ID or a populated object
-        const sectionInfo = typeof mainSubSectionData.data.section === 'string' 
-          ? {_id : mainSubSectionData.data.section } 
-          : mainSubSectionData.data.section
-
-        // Set local section data
-        setSectionData(sectionInfo)
-        
-        // Update the serviceSection in useGenericList hook if not already set
-        if (NewsSection === null) {
-          setSection(sectionInfo)
-        }
+      if (Array.isArray(sectionData)) {
+        // Find the main subsection in the array
+        mainSubSection = sectionData.find(sub => sub.isMain === true);
+        foundMainSubSection = !!mainSubSection;
+      } else {
+        // Single object response
+        foundMainSubSection = sectionData.isMain === true;
+        mainSubSection = foundMainSubSection ? sectionData : null;
       }
-    } else if (!isLoadingCompleteSubsections) {
-      // No main subsection found
-      setHasMainSubSection(false)
-      setIsLoadingMainSubSection(false)
+      
+      console.log("Section subsections check:", { foundMainSubSection, mainSubSection });
     }
-  }, [mainSubSectionData, isLoadingCompleteSubsections, NewsSection, setSection])
-
-  // Handle form validity changes
-  const handleFormValidityChange = (isValid: boolean, message?: string) => {
-    setMainSectionFormValid(isValid)
-    if (message) {
-      setMainSectionErrorMessage(message)
-    } else {
-      setMainSectionErrorMessage(undefined)
+    
+    // If we didn't find anything in the section-specific data, check the website-wide data
+    if (!foundMainSubSection && mainSubSectionData?.data) {
+      const websiteData = mainSubSectionData.data;
+      
+      if (Array.isArray(websiteData)) {
+        // Find the main subsection in the array
+        mainSubSection = websiteData.find(sub => sub.isMain === true);
+        foundMainSubSection = !!mainSubSection;
+      } else {
+        // Single object response
+        foundMainSubSection = websiteData.isMain === true;
+        mainSubSection = foundMainSubSection ? websiteData : null;
+      }
+      
+      console.log("Website subsections check:", { foundMainSubSection, mainSubSection });
     }
-  }
-
-  // Custom add button logic based on main subsection existence and form validity
-  const isAddButtonDisabled = 
-    defaultAddButtonDisabled || 
-    !hasMainSubSection || 
-    isLoadingMainSubSection ||
-    !mainSectionFormValid
-  
-  // Custom tooltip message based on condition
-  const addButtonTooltip = !NewsSection && !sectionData 
-    ? NEWS_CONFIG.noSectionMessage 
-    : (!hasMainSubSection && !isLoadingMainSubSection)
-      ? NEWS_CONFIG.mainSectionRequiredMessage
-      : (!mainSectionFormValid && mainSectionErrorMessage)
-        ? mainSectionErrorMessage
-        : defaultAddButtonTooltip
-
-  // Custom message for empty state based on conditions
-  const emptyStateMessage = !NewsSection && !sectionData 
-    ? NEWS_CONFIG.noSectionMessage 
-    : (!hasMainSubSection && !isLoadingMainSubSection)
-      ? NEWS_CONFIG.mainSectionRequiredMessage
-      : (!mainSectionFormValid && mainSectionErrorMessage)
-        ? mainSectionErrorMessage
-        : NEWS_CONFIG.emptyStateMessage
+    
+    // Update state based on what we found
+    setHasMainSubSection(foundMainSubSection);
+    setIsLoadingMainSubSection(false);
+    
+    // Extract section data from the main subsection if we found one
+    if (foundMainSubSection && mainSubSection && mainSubSection.section) {
+      const sectionInfo = typeof mainSubSection.section === 'string' 
+        ? { _id: mainSubSection.section } 
+        : mainSubSection.section;
+      
+      // Set local section data
+      setSectionData(sectionInfo);
+      
+      // Update the newsSection in useGenericList hook if not already set
+      if (newsSection === null) {
+        setSection(sectionInfo);
+      }
+    }
+    
+  }, [
+    mainSubSectionData, 
+    sectionSubsections, 
+    isLoadingCompleteSubsections, 
+    isLoadingSectionSubsections, 
+    sectionId, 
+    newsSection, 
+    setSection
+  ]);
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
-    setHasMainSubSection(subsection.isMain === true)
+    console.log("Main subsection created:", subsection);
+    
+    // Set that we have a main subsection now
+    setHasMainSubSection(subsection.isMain === true);
     
     // If we have section data from the subsection, update it
     if (subsection.section) {
       const sectionInfo = typeof subsection.section === 'string' 
         ? { _id: subsection.section } 
-        : subsection.section
+        : subsection.section;
         
-      setSectionData(sectionInfo)
-      setSection(sectionInfo)
+      setSectionData(sectionInfo);
+      setSection(sectionInfo);
     }
-  }
+    
+    // Refetch the main subsection data to ensure we have the latest
+    if (refetchMainSubSection) {
+      refetchMainSubSection();
+    }
+  };
+
+  // Custom add button logic - simplified to only care about having a main subsection
+  const isAddButtonDisabled = 
+    defaultAddButtonDisabled || 
+    isLoadingMainSubSection ||
+    (sectionId && !hasMainSubSection);  // Only require main subsection when we have a section
+  
+  // Custom tooltip message based on condition
+  const addButtonTooltip = !newsSection && !sectionData 
+    ? NEWS_CONFIG.noSectionMessage 
+    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
+      ? NEWS_CONFIG.mainSectionRequiredMessage
+      : defaultAddButtonTooltip;
+
+  // Custom message for empty state 
+  const emptyStateMessage = !newsSection && !sectionData 
+    ? NEWS_CONFIG.noSectionMessage 
+    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
+      ? NEWS_CONFIG.mainSectionRequiredMessage
+      : NEWS_CONFIG.emptyStateMessage;
+
+  // Debug logging
+  useEffect(() => {
+    console.log("Current state:", {
+      hasMainSubSection,
+      isLoadingMainSubSection,
+      isAddButtonDisabled,
+      sectionId: sectionId || "none"
+    });
+  }, [hasMainSubSection, isLoadingMainSubSection, isAddButtonDisabled, sectionId]);
 
   // Components
-  const ServicesTable = (
+  const NewsTable = (
     <GenericTable
       columns={NEWS_COLUMNS}
-      data={services}
+      data={newsItems}
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
     />
-  )
-
+  );
 
   const CreateDialog = (
     <DialogCreateSectionItem
@@ -215,7 +266,7 @@ export default function NewsPage() {
       onServiceCreated={handleItemCreated}
       title="News"
     />
-  )
+  );
 
   const DeleteDialog = (
     <DeleteSectionDialog
@@ -224,10 +275,10 @@ export default function NewsPage() {
       serviceName={itemToDelete?.name || ""}
       onConfirm={handleDelete}
       isDeleting={isDeleting}
-      title="Delete Section"
+      title="Delete News Item"
       confirmText="Confirm"
     />
-  )
+  );
 
   return (
     <div className="space-y-6">
@@ -238,14 +289,13 @@ export default function NewsPage() {
         sectionConfig={newsSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
         addButtonTooltip={addButtonTooltip}
-        tableComponent={ServicesTable}
-        // sectionIntegrationComponent={SectionIntegration}
+        tableComponent={NewsTable}
         createDialogComponent={CreateDialog}
         deleteDialogComponent={DeleteDialog}
         onAddNew={handleAddNew}
-        isLoading={isLoadingServices || isLoadingMainSubSection}
-        emptyCondition={services.length === 0}
-        noSectionCondition={!NewsSection && !sectionData}
+        isLoading={isLoadingNewsItems || isLoadingMainSubSection}
+        emptyCondition={newsItems.length === 0}
+        noSectionCondition={!newsSection && !sectionData}
         customEmptyMessage={emptyStateMessage}
       />
       
@@ -255,9 +305,9 @@ export default function NewsPage() {
           sectionId={sectionId}
           sectionConfig={newsSectionConfig}
           onSubSectionCreated={handleMainSubSectionCreated}
-          onFormValidityChange={handleFormValidityChange}
+          onFormValidityChange={() => {/* We don't need to track form validity */}}
         />
       )}
     </div>
-  )
+  );
 }

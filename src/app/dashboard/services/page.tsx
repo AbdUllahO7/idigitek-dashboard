@@ -75,20 +75,24 @@ export default function ServicesPage() {
   const sectionId = searchParams.get("sectionId")
   const [hasMainSubSection, setHasMainSubSection] = useState<boolean>(false)
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
-  const [mainSectionFormValid, setMainSectionFormValid] = useState<boolean>(false)
-  const [mainSectionErrorMessage, setMainSectionErrorMessage] = useState<string | undefined>(SERVICES_CONFIG.mainSectionRequiredMessage)
   const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
 
-  
   // Check if main subsection exists
-  const { useGetMainByWebSiteId } = useSubSections()
+  const { useGetMainByWebSiteId, useGetBySectionId } = useSubSections()
   
+  // Get the main subsection data
   const {
     data: mainSubSectionData,
-    isLoading: isLoadingCompleteSubsections
+    isLoading: isLoadingCompleteSubsections,
+    refetch: refetchMainSubSection
   } = useGetMainByWebSiteId(websiteId)
 
+  // If we have a sectionId, also try to get subsections for that specific section
+  const {
+    data: sectionSubsections,
+    isLoading: isLoadingSectionSubsections
+  } = useGetBySectionId(sectionId || "")
 
   // Use the generic list hook for service management
   const {
@@ -118,83 +122,125 @@ export default function ServicesPage() {
 
   // Determine if main subsection exists when data loads & set section data if needed
   useEffect(() => {
-    if (!isLoadingCompleteSubsections && mainSubSectionData) {
-      // Check if data exists and has isMain: true
-      const hasMain = mainSubSectionData?.data && mainSubSectionData.data.isMain === true
-      setHasMainSubSection(hasMain)
-      setIsLoadingMainSubSection(false)
+    console.log("Checking for main subsection...");
+    
+    // First check if we are still loading
+    if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
+      setIsLoadingMainSubSection(true);
+      return;
+    }
+    
+    // We're done loading, now check the data
+    let foundMainSubSection = false;
+    let mainSubSection = null;
+    
+    // If we have a sectionId, prioritize checking the section-specific subsections
+    if (sectionId && sectionSubsections?.data) {
+      const sectionData = sectionSubsections.data;
       
-      // Extract section data from the main subsection and set it
-      if (hasMain && mainSubSectionData.data.section) {
-        // The section could be either a string ID or a populated object
-        const sectionInfo = typeof mainSubSectionData.data.section === 'string' 
-          ? {_id : mainSubSectionData.data.section } 
-          : mainSubSectionData.data.section
-
-        // Set local section data
-        setSectionData(sectionInfo)
-        
-        // Update the serviceSection in useGenericList hook if not already set
-        if (serviceSection === null) {
-          setSection(sectionInfo)
-        }
+      if (Array.isArray(sectionData)) {
+        // Find the main subsection in the array
+        mainSubSection = sectionData.find(sub => sub.isMain === true);
+        foundMainSubSection = !!mainSubSection;
+      } else {
+        // Single object response
+        foundMainSubSection = sectionData.isMain === true;
+        mainSubSection = foundMainSubSection ? sectionData : null;
       }
-    } else if (!isLoadingCompleteSubsections) {
-      // No main subsection found
-      setHasMainSubSection(false)
-      setIsLoadingMainSubSection(false)
+      
+      console.log("Section subsections check:", { foundMainSubSection, mainSubSection });
     }
-  }, [mainSubSectionData, isLoadingCompleteSubsections, serviceSection, setSection])
-
-  // Handle form validity changes
-  const handleFormValidityChange = (isValid: boolean, message?: string) => {
-    setMainSectionFormValid(isValid)
-    if (message) {
-      setMainSectionErrorMessage(message)
-    } else {
-      setMainSectionErrorMessage(undefined)
+    
+    // If we didn't find anything in the section-specific data, check the website-wide data
+    if (!foundMainSubSection && mainSubSectionData?.data) {
+      const websiteData = mainSubSectionData.data;
+      
+      if (Array.isArray(websiteData)) {
+        // Find the main subsection in the array
+        mainSubSection = websiteData.find(sub => sub.isMain === true);
+        foundMainSubSection = !!mainSubSection;
+      } else {
+        // Single object response
+        foundMainSubSection = websiteData.isMain === true;
+        mainSubSection = foundMainSubSection ? websiteData : null;
+      }
+      
+      console.log("Website subsections check:", { foundMainSubSection, mainSubSection });
     }
-  }
-
-  // Custom add button logic based on main subsection existence and form validity
-  const isAddButtonDisabled = 
-    defaultAddButtonDisabled || 
-    !hasMainSubSection || 
-    isLoadingMainSubSection ||
-    !mainSectionFormValid
-  
-  // Custom tooltip message based on condition
-  const addButtonTooltip = !serviceSection && !sectionData 
-    ? SERVICES_CONFIG.noSectionMessage 
-    : (!hasMainSubSection && !isLoadingMainSubSection)
-      ? SERVICES_CONFIG.mainSectionRequiredMessage
-      : (!mainSectionFormValid && mainSectionErrorMessage)
-        ? mainSectionErrorMessage
-        : defaultAddButtonTooltip
-
-  // Custom message for empty state based on conditions
-  const emptyStateMessage = !serviceSection && !sectionData 
-    ? SERVICES_CONFIG.noSectionMessage 
-    : (!hasMainSubSection && !isLoadingMainSubSection)
-      ? SERVICES_CONFIG.mainSectionRequiredMessage
-      : (!mainSectionFormValid && mainSectionErrorMessage)
-        ? mainSectionErrorMessage
-        : SERVICES_CONFIG.emptyStateMessage
+    
+    // Update state based on what we found
+    setHasMainSubSection(foundMainSubSection);
+    setIsLoadingMainSubSection(false);
+    
+    // Extract section data from the main subsection if we found one
+    if (foundMainSubSection && mainSubSection && mainSubSection.section) {
+      const sectionInfo = typeof mainSubSection.section === 'string' 
+        ? { _id: mainSubSection.section } 
+        : mainSubSection.section;
+      
+      // Set local section data
+      setSectionData(sectionInfo);
+      
+      // Update the serviceSection in useGenericList hook if not already set
+      if (serviceSection === null) {
+        setSection(sectionInfo);
+      }
+    }
+    
+  }, [
+    mainSubSectionData, 
+    sectionSubsections, 
+    isLoadingCompleteSubsections, 
+    isLoadingSectionSubsections, 
+    sectionId, 
+    serviceSection, 
+    setSection
+  ]);
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
-    setHasMainSubSection(subsection.isMain === true)
+    console.log("Main subsection created:", subsection);
+    
+    // Set that we have a main subsection now
+    setHasMainSubSection(subsection.isMain === true);
     
     // If we have section data from the subsection, update it
     if (subsection.section) {
       const sectionInfo = typeof subsection.section === 'string' 
         ? { _id: subsection.section } 
-        : subsection.section
+        : subsection.section;
         
-      setSectionData(sectionInfo)
-      setSection(sectionInfo)
+      setSectionData(sectionInfo);
+      setSection(sectionInfo);
     }
-  }
+    
+    // Refetch the main subsection data to ensure we have the latest
+    refetchMainSubSection();
+  };
+
+  // SIMPLIFIED LOGIC:
+  // Only disable the button if:
+  // 1. Default disabled (no section selected)
+  // 2. We're still loading subsection data
+  // 3. We need a main subsection and don't have one
+  const isAddButtonDisabled = 
+    defaultAddButtonDisabled || 
+    isLoadingMainSubSection ||
+    (sectionId && !hasMainSubSection);  // Only require main subsection when we have a section
+
+  // Tooltip logic - keep it simple
+  const addButtonTooltip = !serviceSection && !sectionData 
+    ? SERVICES_CONFIG.noSectionMessage 
+    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
+      ? SERVICES_CONFIG.mainSectionRequiredMessage
+      : defaultAddButtonTooltip;
+
+  // Custom message for empty state - keep it simple
+  const emptyStateMessage = !serviceSection && !sectionData 
+    ? SERVICES_CONFIG.noSectionMessage 
+    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
+      ? SERVICES_CONFIG.mainSectionRequiredMessage
+      : SERVICES_CONFIG.emptyStateMessage;
 
   // Components
   const ServicesTable = (
@@ -204,19 +250,7 @@ export default function ServicesPage() {
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
     />
-  )
-
-  // const SectionIntegration = (
-  //   <GenericSectionIntegration
-  //     config={serviceSectionConfig}
-  //     ParentSectionId={sectionId || ""}
-  //     onSectionChange={handleSectionChange}
-  //     sectionTitle={SERVICES_CONFIG.sectionIntegrationTitle}
-  //     sectionDescription={SERVICES_CONFIG.sectionIntegrationDescription}
-  //     editButtonLabel={SERVICES_CONFIG.editSectionButtonLabel}
-  //     saveButtonLabel={SERVICES_CONFIG.saveSectionButtonLabel}
-  //   />
-  // )
+  );
 
   const CreateDialog = (
     <DialogCreateSectionItem
@@ -226,7 +260,7 @@ export default function ServicesPage() {
       onServiceCreated={handleItemCreated}
       title="Service"
     />
-  )
+  );
 
   const DeleteDialog = (
     <DeleteSectionDialog
@@ -238,7 +272,14 @@ export default function ServicesPage() {
       title="Delete Section"
       confirmText="Confirm"
     />
-  )
+  );
+
+  console.log("Current state:", {
+    hasMainSubSection,
+    isLoadingMainSubSection,
+    isAddButtonDisabled,
+    sectionId: sectionId || "none"
+  });
 
   return (
     <div className="space-y-6">
@@ -250,7 +291,6 @@ export default function ServicesPage() {
         isAddButtonDisabled={isAddButtonDisabled}
         addButtonTooltip={addButtonTooltip}
         tableComponent={ServicesTable}
-        // sectionIntegrationComponent={SectionIntegration}
         createDialogComponent={CreateDialog}
         deleteDialogComponent={DeleteDialog}
         onAddNew={handleAddNew}
@@ -266,9 +306,9 @@ export default function ServicesPage() {
           sectionId={sectionId}
           sectionConfig={serviceSectionConfig}
           onSubSectionCreated={handleMainSubSectionCreated}
-          onFormValidityChange={handleFormValidityChange}
+          onFormValidityChange={() => {/* Simplified: We don't care about form validity */}}
         />
       )}
     </div>
-  )
+  );
 }

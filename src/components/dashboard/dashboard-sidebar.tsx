@@ -72,7 +72,7 @@ const allNavItems: NavItem[] = [
     title: "Hero",
     href: "/dashboard/hero",
     icon: Package,
-    sectionId: "hero", // Show when "features" section is selected
+    sectionId: "hero", 
   },
   {
     title: "Services",
@@ -180,9 +180,15 @@ const allNavItems: NavItem[] = [
   },
   {
     title: "Web Configurations",
-    href: "/dashboard/addWebSiteConfiguration", // const 
+    href: "/dashboard/addWebSiteConfiguration", 
     icon: Settings,
-    roles: ['superAdmin' , 'owner'], // Only superAdmin can see this
+    roles: ['superAdmin' , 'owner'], 
+  },
+  {
+    title: "Idigitek Admin",
+    href: "/dashboard/idigitekAdmin", 
+    icon: Settings,
+    roles: ['idigitekAdmin'], 
   },
 ]
 

@@ -15,8 +15,8 @@ interface ViewUserDialogProps {
   user: any | null;
   isOpen: boolean;
   onClose: () => void;
-  onEdit: (user: any) => void;
-  onDelete: (user: any) => void;
+  onEdit?: (user: any) => void;
+  onDelete?: (user: any) => void;
   canEditOwner: boolean;
 }
 
@@ -118,7 +118,7 @@ export function ViewUserDialog({
                     size="sm"
                     onClick={() => {
                       onClose();
-                      onDelete(user);
+                      onDelete?.(user);
                     }}
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
@@ -139,7 +139,7 @@ export function ViewUserDialog({
                   <Button 
                     onClick={() => {
                       onClose();
-                      onEdit(user);
+                      onEdit?.(user);
                     }}
                   >
                     <Edit className="h-4 w-4 mr-2" />

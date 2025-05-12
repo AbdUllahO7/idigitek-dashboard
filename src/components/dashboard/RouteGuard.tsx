@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useAuth } from "@/src/context/AuthContext"
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
-import { Section } from "@/src/api/types"
+import { Section } from "@/src/api/types/hooks/section.types"
 
 // Define route permissions map
 interface RoutePermission {
@@ -35,6 +35,8 @@ const routePermissions: Record<string, RoutePermission> = {
   "/dashboard/technology-stack": {},
   "/dashboard/testimonials": {},
   "/dashboard/addWebSiteConfiguration": { roles: ["superAdmin", "owner"] },
+  "/dashboard/idigitekAdmin": { roles: ["idigitekAdmin"] },
+
 }
 
 export function RouteGuard({ children }: { children: React.ReactNode }) {
@@ -62,16 +64,24 @@ export function RouteGuard({ children }: { children: React.ReactNode }) {
     if (userIsLoading || isLoadingSections || pathname === "/sign-in") {
       return
     }
+    
 
     // Handle initial dashboard access based on role
     if (pathname === "/dashboard" && user?.role) {
       const userRole = user.role.toLowerCase()
-      
+
+        if (userRole === "idigitekadmin") {
+        router.push("/dashboard/idigitekAdmin")
+        return
+      }
+
       // Redirect non-owner/non-superAdmin roles to user dashboard
       if (userRole === "admin" || userRole === "user") {
         router.push("/dashboard/userDashboard")
         return
       }
+        
+    
     }
 
     // Skip permission checks for routes not in the map

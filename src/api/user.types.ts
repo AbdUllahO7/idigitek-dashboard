@@ -31,7 +31,7 @@ export interface UserFormData extends Omit<User, '_id' | 'id'> {
 
 export enum Roles {
   OWNER = 'owner',
-  SUPERADMIN = 'superAdmin',
+  superAdmin = 'superAdmin',
   ADMIN = 'admin',
   USER = 'user'
 

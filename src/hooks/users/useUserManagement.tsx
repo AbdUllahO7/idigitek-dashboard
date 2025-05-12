@@ -35,7 +35,7 @@ export function useUserManagement() {
     firstName: "",
     lastName: "",
     email: "",
-    role: Roles.USER,
+    role: undefined,
     status: UserStatus.ACTIVE,
     password: "",
     confirmPassword: ""
@@ -363,16 +363,16 @@ export function useUserManagement() {
       
       userCreated = true;
       console.log("Adding user to website with ID:", createdUserId);
-      
+      console.log("userData.role",userData.role)
       // Step 2: Map role to expected values for the API
-      const websiteRole = mapFormRoleToApiRole(userData.role || "user");
       
+      console.log("userData.role" , userData.role)
       // Step 3: Add the user to the website
       try {
         await createWebSiteUser.mutateAsync({ 
           websiteId, 
           userId: createdUserId, 
-          role: websiteRole as Roles
+          role: userData.role as Roles
         });
         
         websiteUserCreated = true;

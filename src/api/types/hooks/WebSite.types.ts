@@ -15,7 +15,7 @@ export interface WebSiteUserProps {
   _id?: string;
   userId: string ;
   WebSiteId: string ;
-  role: 'owner' | 'editor' | 'viewer';
+  role: 'owner' | 'user' | 'superAdmin' | 'Admin'| 'idigitekAdmin';
   createdAt?: Date;
   updatedAt?: Date;
 }

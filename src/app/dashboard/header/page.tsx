@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useGenericList } from "@/src/hooks/useGenericList"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
@@ -13,8 +13,8 @@ import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { headerSectionConfig } from "./HeaderSectionConfig"
 
-// Configuration for the Services page
-const SERVICES_CONFIG = {
+// Configuration for the Header page
+const HEADER_CONFIG = {
   title: "Header Management",
   description: "Manage your Header inventory and multilingual content",
   addButtonLabel: "Add New Nav item",
@@ -22,17 +22,17 @@ const SERVICES_CONFIG = {
   noSectionMessage: "Please create a Header section first before adding Header.",
   mainSectionRequiredMessage: "Please enter your main section data before adding Header.",
   emptyFieldsMessage: "Please complete all required fields in the main section before adding Header.",
-  sectionIntegrationTitle: "Service Section Content",
+  sectionIntegrationTitle: "Header Section Content",
   sectionIntegrationDescription: "Manage your Header section content in multiple languages.",
-  addSectionButtonLabel: "Add Service Section",
+  addSectionButtonLabel: "Add Header Section",
   editSectionButtonLabel: "Edit Header Section",
   saveSectionButtonLabel: "Save Header Section",
   listTitle: "Header List",
   editPath: "header/addNavItems"
 }
 
-// Service table column definitions
-const SERVICE_COLUMNS = [
+// Column definitions
+const HEADER_COLUMNS = [
   {
     header: "Name",
     accessor: "name",
@@ -70,31 +70,38 @@ const SERVICE_COLUMNS = [
   }
 ]
 
-export default function ServicesPage() {
+export default function HeaderPage() {
   const searchParams = useSearchParams()
   const sectionId = searchParams.get("sectionId")
   const [hasMainSubSection, setHasMainSubSection] = useState<boolean>(false)
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
-  const [mainSectionFormValid, setMainSectionFormValid] = useState<boolean>(false)
-  const [mainSectionErrorMessage, setMainSectionErrorMessage] = useState<string | undefined>(SERVICES_CONFIG.mainSectionRequiredMessage)
   const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
-
   
+  // Refs to track previous values for debugging
+  const prevHasMainSubSection = useRef(hasMainSubSection);
+  const isFirstRender = useRef(true);
+
   // Check if main subsection exists
-  const { useGetMainByWebSiteId } = useSubSections()
+  const { useGetMainByWebSiteId, useGetBySectionId } = useSubSections()
   
   const {
     data: mainSubSectionData,
-    isLoading: isLoadingCompleteSubsections
+    isLoading: isLoadingCompleteSubsections,
+    refetch: refetchMainSubSection
   } = useGetMainByWebSiteId(websiteId)
 
+  // If we have a specific section ID, also fetch subsections for that section
+  const {
+    data: sectionSubsections,
+    isLoading: isLoadingSectionSubsections
+  } = useGetBySectionId(sectionId || "")
 
   // Use the generic list hook for Header management
   const {
-    section: HeaderSection,
-    items: services,
-    isLoadingItems: isLoadingServices,
+    section: headerSection,
+    items: navItems,
+    isLoadingItems: isLoadingNavItems,
     isCreateDialogOpen,
     isDeleteDialogOpen,
     itemToDelete,
@@ -113,99 +120,184 @@ export default function ServicesPage() {
   } = useGenericList({
     sectionId,
     apiHooks: useSectionItems(),
-    editPath: SERVICES_CONFIG.editPath
+    editPath: HEADER_CONFIG.editPath
   })
+
+  // Deep debug logging every render
+  console.log("RENDER HEADER PAGE", {
+    sectionId,
+    websiteId,
+    hasMainSubSection,
+    isLoadingMainSubSection,
+    defaultAddButtonDisabled,
+    mainSubSectionData: mainSubSectionData?.data,
+    headerSection,
+    sectionData
+  });
+
+  // Debug changes in hasMainSubSection
+  useEffect(() => {
+    if (!isFirstRender.current && prevHasMainSubSection.current !== hasMainSubSection) {
+      console.log(`hasMainSubSection changed from ${prevHasMainSubSection.current} to ${hasMainSubSection}`);
+    }
+    
+    prevHasMainSubSection.current = hasMainSubSection;
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+    }
+  }, [hasMainSubSection]);
 
   // Determine if main subsection exists when data loads & set section data if needed
   useEffect(() => {
-    if (!isLoadingCompleteSubsections && mainSubSectionData) {
-      // Check if data exists and has isMain: true
-      const hasMain = mainSubSectionData?.data && mainSubSectionData.data.isMain === true
-      setHasMainSubSection(hasMain)
-      setIsLoadingMainSubSection(false)
+    console.log("Checking for main subsection...");
+    console.log("Subsection data state:", { 
+      mainSubSectionData, 
+      sectionSubsections,
+      isLoadingCompleteSubsections,
+      isLoadingSectionSubsections
+    });
+    
+    // First check if we are still loading
+    if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
+      console.log("Still loading subsection data...");
+      setIsLoadingMainSubSection(true);
+      return;
+    }
+    
+    // We're done loading, now check the data
+    let foundMainSubSection = false;
+    let mainSubSection = null;
+    
+    // If we have a sectionId, prioritize checking the section-specific subsections
+    if (sectionId && sectionSubsections?.data) {
+      const sectionData = sectionSubsections.data;
       
-      // Extract section data from the main subsection and set it
-      if (hasMain && mainSubSectionData.data.section) {
-        // The section could be either a string ID or a populated object
-        const sectionInfo = typeof mainSubSectionData.data.section === 'string' 
-          ? {_id : mainSubSectionData.data.section } 
-          : mainSubSectionData.data.section
-
-        // Set local section data
-        setSectionData(sectionInfo)
-        
-        // Update the serviceSection in useGenericList hook if not already set
-        if (HeaderSection === null) {
-          setSection(sectionInfo)
-        }
+      if (Array.isArray(sectionData)) {
+        // Find the main subsection in the array
+        mainSubSection = sectionData.find(sub => sub.isMain === true);
+        foundMainSubSection = !!mainSubSection;
+      } else {
+        // Single object response
+        foundMainSubSection = sectionData.isMain === true;
+        mainSubSection = foundMainSubSection ? sectionData : null;
       }
-    } else if (!isLoadingCompleteSubsections) {
-      // No main subsection found
-      setHasMainSubSection(false)
-      setIsLoadingMainSubSection(false)
+      
+      console.log("Section subsections check:", { foundMainSubSection, mainSubSection });
     }
-  }, [mainSubSectionData, isLoadingCompleteSubsections, HeaderSection, setSection])
-
-  // Handle form validity changes
-  const handleFormValidityChange = (isValid: boolean, message?: string) => {
-    setMainSectionFormValid(isValid)
-    if (message) {
-      setMainSectionErrorMessage(message)
-    } else {
-      setMainSectionErrorMessage(undefined)
+    
+    // If we didn't find anything in the section-specific data, check the website-wide data
+    if (!foundMainSubSection && mainSubSectionData?.data) {
+      const websiteData = mainSubSectionData.data;
+      
+      if (Array.isArray(websiteData)) {
+        // Find the main subsection in the array
+        mainSubSection = websiteData.find(sub => sub.isMain === true);
+        foundMainSubSection = !!mainSubSection;
+      } else {
+        // Single object response
+        foundMainSubSection = websiteData.isMain === true;
+        mainSubSection = foundMainSubSection ? websiteData : null;
+      }
+      
+      console.log("Website subsections check:", { foundMainSubSection, mainSubSection });
     }
-  }
-
-  // Custom add button logic based on main subsection existence and form validity
-  const isAddButtonDisabled = 
-    defaultAddButtonDisabled || 
-    !hasMainSubSection || 
-    isLoadingMainSubSection ||
-    !mainSectionFormValid
-  
-  // Custom tooltip message based on condition
-  const addButtonTooltip = !HeaderSection && !sectionData 
-    ? SERVICES_CONFIG.noSectionMessage 
-    : (!hasMainSubSection && !isLoadingMainSubSection)
-      ? SERVICES_CONFIG.mainSectionRequiredMessage
-      : (!mainSectionFormValid && mainSectionErrorMessage)
-        ? mainSectionErrorMessage
-        : defaultAddButtonTooltip
-
-  // Custom message for empty state based on conditions
-  const emptyStateMessage = !HeaderSection && !sectionData 
-    ? SERVICES_CONFIG.noSectionMessage 
-    : (!hasMainSubSection && !isLoadingMainSubSection)
-      ? SERVICES_CONFIG.mainSectionRequiredMessage
-      : (!mainSectionFormValid && mainSectionErrorMessage)
-        ? mainSectionErrorMessage
-        : SERVICES_CONFIG.emptyStateMessage
+    
+    console.log("Final subsection result:", { foundMainSubSection, mainSubSection });
+    
+    // Update state based on what we found
+    setHasMainSubSection(foundMainSubSection);
+    setIsLoadingMainSubSection(false);
+    
+    // Extract section data from the main subsection if we found one
+    if (foundMainSubSection && mainSubSection && mainSubSection.section) {
+      const sectionInfo = typeof mainSubSection.section === 'string' 
+        ? { _id: mainSubSection.section } 
+        : mainSubSection.section;
+      
+      console.log("Setting section data:", sectionInfo);
+      
+      // Set local section data
+      setSectionData(sectionInfo);
+      
+      // Update the headerSection in useGenericList hook if not already set
+      if (headerSection === null) {
+        setSection(sectionInfo);
+      }
+    }
+    
+  }, [
+    mainSubSectionData, 
+    sectionSubsections, 
+    isLoadingCompleteSubsections, 
+    isLoadingSectionSubsections, 
+    sectionId, 
+    headerSection, 
+    setSection
+  ]);
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
-    setHasMainSubSection(subsection.isMain === true)
+    console.log("Main subsection created:", subsection);
+    
+    // Set that we have a main subsection now
+    setHasMainSubSection(subsection.isMain === true);
     
     // If we have section data from the subsection, update it
     if (subsection.section) {
       const sectionInfo = typeof subsection.section === 'string' 
         ? { _id: subsection.section } 
-        : subsection.section
+        : subsection.section;
         
-      setSectionData(sectionInfo)
-      setSection(sectionInfo)
+      setSectionData(sectionInfo);
+      setSection(sectionInfo);
     }
-  }
+    
+    // Refetch the main subsection data to ensure we have the latest
+    if (refetchMainSubSection) {
+      refetchMainSubSection();
+    }
+  };
+
+  // IMPORTANT: Here's the crux of the button enabling/disabling logic
+  const isAddButtonDisabled = 
+    defaultAddButtonDisabled || 
+    isLoadingMainSubSection ||
+    (sectionId && !hasMainSubSection);
+  
+  // Debug logging specifically for our button disabling conditions
+  useEffect(() => {
+    console.log("BUTTON DISABLED LOGIC:", {
+      defaultAddButtonDisabled,
+      isLoadingMainSubSection,
+      sectionId: sectionId || "none",
+      hasMainSubSection,
+      finalIsAddButtonDisabled: isAddButtonDisabled
+    });
+  }, [defaultAddButtonDisabled, isLoadingMainSubSection, sectionId, hasMainSubSection, isAddButtonDisabled]);
+  
+  // Custom tooltip message based on condition
+  const addButtonTooltip = !headerSection && !sectionData 
+    ? HEADER_CONFIG.noSectionMessage 
+    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
+      ? HEADER_CONFIG.mainSectionRequiredMessage
+      : defaultAddButtonTooltip;
+
+  // Custom message for empty state 
+  const emptyStateMessage = !headerSection && !sectionData 
+    ? HEADER_CONFIG.noSectionMessage 
+    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
+      ? HEADER_CONFIG.mainSectionRequiredMessage
+      : HEADER_CONFIG.emptyStateMessage;
 
   // Components
-  const ServicesTable = (
+  const NavItemsTable = (
     <GenericTable
-      columns={SERVICE_COLUMNS}
-      data={services}
+      columns={HEADER_COLUMNS}
+      data={navItems}
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
     />
-  )
-
+  );
 
   const CreateDialog = (
     <DialogCreateSectionItem
@@ -215,7 +307,7 @@ export default function ServicesPage() {
       onServiceCreated={handleItemCreated}
       title="Header"
     />
-  )
+  );
 
   const DeleteDialog = (
     <DeleteSectionDialog
@@ -227,25 +319,37 @@ export default function ServicesPage() {
       title="Delete Section"
       confirmText="Confirm"
     />
-  )
+  );
+
+  // Log out all key properties that would affect rendering just before the return
+  console.log("Pre-render state:", {
+    hasMainSubSection,
+    isLoadingMainSubSection,
+    isAddButtonDisabled,
+    sectionId: sectionId || "none",
+    headerSection,
+    sectionData,
+    defaultAddButtonDisabled
+  });
 
   return (
     <div className="space-y-6">
+     
+      
       {/* Main list page with table and section integration */}
       <GenericListPage
-        config={SERVICES_CONFIG}
+        config={HEADER_CONFIG}
         sectionId={sectionId}
         sectionConfig={headerSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
         addButtonTooltip={addButtonTooltip}
-        tableComponent={ServicesTable}
-        // sectionIntegrationComponent={SectionIntegration}
+        tableComponent={NavItemsTable}
         createDialogComponent={CreateDialog}
         deleteDialogComponent={DeleteDialog}
         onAddNew={handleAddNew}
-        isLoading={isLoadingServices || isLoadingMainSubSection}
-        emptyCondition={services.length === 0}
-        noSectionCondition={!HeaderSection && !sectionData}
+        isLoading={isLoadingNavItems || isLoadingMainSubSection}
+        emptyCondition={navItems.length === 0}
+        noSectionCondition={!headerSection && !sectionData}
         customEmptyMessage={emptyStateMessage}
       />
       
@@ -255,9 +359,9 @@ export default function ServicesPage() {
           sectionId={sectionId}
           sectionConfig={headerSectionConfig}
           onSubSectionCreated={handleMainSubSectionCreated}
-          onFormValidityChange={handleFormValidityChange}
+          onFormValidityChange={() => {/* We don't need to track form validity */}}
         />
       )}
     </div>
-  )
+  );
 }

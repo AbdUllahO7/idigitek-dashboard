@@ -37,10 +37,10 @@ export default function RootLayout({
           <QueryProvider>
             <AuthProvider>
               <WebsiteProvider>
-              {/* Navigation event handlers */}
-              <NavigationEvents />
-              <NavigationProgress />
-              {children}
+                  {/* Navigation event handlers */}
+                  <NavigationEvents />
+                  <NavigationProgress />
+                  {children}
               </WebsiteProvider>
             </AuthProvider>
           </QueryProvider>

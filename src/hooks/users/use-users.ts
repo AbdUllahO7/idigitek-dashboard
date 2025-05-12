@@ -1,7 +1,7 @@
 // src/hooks/webConfiguration/use-users.ts
 
+import { UserStatus } from '@/src/api/user.types';
 import apiClient from '@/src/lib/api-client';
-import { UserStatus } from '@/src/app/dashboard/users/page';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 // Define User interface that matches both frontend and backend
@@ -22,6 +22,7 @@ export interface User {
 // Define query keys
 export const usersKey = ['users'];
 export const userKey = (id: string) => [...usersKey, id];
+export const ownerUsersKey = [...usersKey, 'owners'];
 
 // API endpoint
 const endpoint = '/users';
@@ -141,38 +142,57 @@ export const useUsers = () => {
   };
 
   // Delete a user
-    const useDelete = () => {
-        return useMutation({
-        mutationFn: async (id: string) => {
-            const { data: responseData } = await apiClient.delete(`${endpoint}/${id}`);
-            return responseData;
-        },
-        onSuccess: () => {
-            // Invalidate users query to refresh the list
-            queryClient.invalidateQueries({ queryKey: usersKey });
-        }
-        });
-    };
+  const useDelete = () => {
+      return useMutation({
+      mutationFn: async (id: string) => {
+          const { data: responseData } = await apiClient.delete(`${endpoint}/${id}`);
+          return responseData;
+      },
+      onSuccess: () => {
+          // Invalidate users query to refresh the list
+          queryClient.invalidateQueries({ queryKey: usersKey });
+      }
+      });
+  };
 
   // Get current user profile
-    const useGetCurrentUser = () => {
-        return useQuery({
-        queryKey: [...usersKey, 'me'],
-        queryFn: async () => {
-            const { data: responseData } = await apiClient.get(`${endpoint}/me`);
-            
-            // Transform to match frontend expected format
-            if (responseData && responseData.data) {
-            responseData.data = {
-                ...responseData.data,
-                _id: responseData.data.id
-            };
-            }
-            
-            return responseData;
+  const useGetCurrentUser = () => {
+      return useQuery({
+      queryKey: [...usersKey, 'me'],
+      queryFn: async () => {
+          const { data: responseData } = await apiClient.get(`${endpoint}/me`);
+          
+          // Transform to match frontend expected format
+          if (responseData && responseData.data) {
+          responseData.data = {
+              ...responseData.data,
+              _id: responseData.data.id
+          };
+          }
+          
+          return responseData;
+      }
+      });
+  };
+
+  const useGetOwners = () => {
+    return useQuery({
+      queryKey: ownerUsersKey,
+      queryFn: async () => {
+        const { data: responseData } = await apiClient.get(`${endpoint}/owners`);
+        console.log("responseData" , responseData)
+        // Transform response to match frontend expected format
+        if (responseData && responseData.data) {
+          responseData.data = responseData.data.map((user: User) => ({
+            ...user,
+            _id: user.id // Ensure _id is available for frontend
+          }));
         }
-        });
-    };
+        
+        return responseData;
+      }
+    });
+  }
 
     return {
         useGetAll,
@@ -181,7 +201,8 @@ export const useUsers = () => {
         useUpdate,
         useDelete,
         useGetCurrentUser,
-        useUpdateProfile
+        useUpdateProfile,
+        useGetOwners
     };
 };
 

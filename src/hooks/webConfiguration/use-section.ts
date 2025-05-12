@@ -1,17 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
-import { Section } from '@/src/api/types';
+import { Section } from '@/src/api/types/hooks/section.types';
 
-// Base section hook
+// Enhanced section hook with user-section functionality
 export function useSections() {
   const queryClient = useQueryClient();
   const endpoint = '/sections';
+  const userSectionsEndpoint = '/user-sections';
 
   // Query keys
   const sectionsKey = ['sections'];
   const sectionKey = (id: string) => [...sectionsKey, id];
   const completeDataKey = (id: string) => [...sectionKey(id), 'complete'];
   const allCompleteDataKey = [...sectionsKey, 'allComplete'];
+  const userSectionsKey = (userId: string) => ['user-sections', userId];
 
   // Get all sections (optionally with section items count)
   const useGetAll = (includeItemsCount = false, activeOnly = true) => {
@@ -51,7 +53,7 @@ export function useSections() {
   };
 
   /**
-   * NEW: Get section with complete data (section items and subsections)
+   * Get section with complete data (section items and subsections)
    * @param id Section ID
    * @param includeInactive Whether to include inactive items
    * @param languageId Optional language ID for translations
@@ -84,7 +86,7 @@ export function useSections() {
   };
 
   /**
-   * NEW: Get all sections with complete data
+   * Get all sections with complete data
    * @param isActive Filter by active status
    * @param includeInactive Whether to include inactive items
    * @param languageId Optional language ID for translations
@@ -113,6 +115,47 @@ export function useSections() {
           console.error("Error fetching all sections with complete data:", error);
           throw error;
         }
+      },
+    });
+  };
+
+  /**
+   * NEW: Get all active sections for the current user
+   * @param userId User ID
+   */
+  const useGetUserActiveSections = (userId: string) => {
+    return useQuery({
+      queryKey: userSectionsKey(userId),
+      queryFn: async () => {
+        try {
+          const { data } = await apiClient.get(`${userSectionsEndpoint}/${userId}`);
+          return data;
+        } catch (error: any) {
+          console.error(`Error fetching active sections for user ${userId}:`, error);
+          throw error;
+        }
+      },
+      enabled: !!userId,
+    });
+  };
+
+  /**
+   * NEW: Toggle section activation for the current user
+   */
+  const useToggleSectionForUser = () => {
+    return useMutation({
+      mutationFn: async ({ userId, sectionId }: { userId: string; sectionId: string }) => {
+        try {
+          const { data } = await apiClient.post(`${userSectionsEndpoint}/${userId}/${sectionId}/toggle`);
+          return data;
+        } catch (error: any) {
+          console.error(`Error toggling section ${sectionId} for user ${userId}:`, error);
+          throw error;
+        }
+      },
+      onSuccess: (_, { userId }) => {
+        // Invalidate the user's active sections query
+        queryClient.invalidateQueries({ queryKey: userSectionsKey(userId) });
       },
     });
   };
@@ -197,6 +240,12 @@ export function useSections() {
         // Also invalidate complete data queries that include this section
         queryClient.invalidateQueries({ queryKey: completeDataKey(id) });
         queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        
+        // If a section is deactivated globally, also invalidate all user-section queries
+        // since this will affect all users who had this section active
+        if (!data.isActive) {
+          queryClient.invalidateQueries({ queryKey: ['user-sections'] });
+        }
       },
     });
   };
@@ -220,6 +269,9 @@ export function useSections() {
         queryClient.removeQueries({ queryKey: completeDataKey(id) });
         queryClient.invalidateQueries({ queryKey: sectionsKey });
         queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        
+        // Also invalidate all user-section queries since this will affect users who had this section
+        queryClient.invalidateQueries({ queryKey: ['user-sections'] });
       },
     });
   };
@@ -239,12 +291,14 @@ export function useSections() {
     });
   };
 
-  // Return all hooks, including the new ones
+  // Return all hooks, including the new user-section related hooks
   return {
     useGetAll,
     useGetById,
     useGetWithCompleteData,        
-    useGetAllWithCompleteData,      
+    useGetAllWithCompleteData,
+    useGetUserActiveSections,     // NEW
+    useToggleSectionForUser,      // NEW
     useCreate,
     useUpdate,
     useToggleActive,
