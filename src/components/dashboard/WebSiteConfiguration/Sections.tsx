@@ -1,11 +1,11 @@
-// Section Management Component with Predefined Sections
+// Section Management Component with Predefined Sections and Auto User-Section Relationship
 import { useToast } from "@/src/hooks/use-toast"
 import { Section } from "@/src/api/types/hooks/section.types"
 import { DeleteItemData, EditItemData } from "@/src/api/types/hooks/Common.types"
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Checkbox } from "@/src/components/ui/checkbox"
-import { useSections } from "@/src/hooks/webConfiguration/use-section"
+import { useAuth } from "@/src/context/AuthContext"
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
@@ -48,6 +48,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../ui/tabs"
+import { useUserSections } from "@/src/hooks/webConfiguration/useUserSections"
+import { useSections } from "@/src/hooks/webConfiguration/use-section"
 
 
 interface ManagementProps {
@@ -62,16 +64,16 @@ const PREDEFINED_SECTIONS = [
     image: "/sections/hero.jpg",
     icon: <LayoutGrid className="h-10 w-10 text-indigo-600" />
   },
-    {
+  {
     name: "services",
-    description: "Main banner section with heading, subtext, and call to action",
-    image: "/sections/hero.jpg",
+    description: "Service listings and descriptions",
+    image: "/sections/services.jpg",
     icon: <LayoutGrid className="h-10 w-10 text-indigo-600" />
   },
   {
     name: "news",
-    description: "Highlight your main product or service features",
-    image: "/sections/features.jpg",
+    description: "Latest news and updates",
+    image: "/sections/news.jpg",
     icon: <LayoutGrid className="h-10 w-10 text-blue-600" />
   },
   {
@@ -126,21 +128,40 @@ const PREDEFINED_SECTIONS = [
 
 export function SectionManagement({ hasWebsite }: ManagementProps) {
   const { websiteId } = useWebsiteContext()
+  const { user } = useAuth() // Get the current user
+  const userId = user?.id || user?._id // Get the user ID
 
+  // Get section hooks
   const { 
-    useGetAll: useGetAllSections,
+    useGetByWebsiteId,      // NEW: Use the website-specific hook instead of useGetAll
     useCreate: useCreateSection,
     useUpdate: useUpdateSection,
     useDelete: useDeleteSection,
     useToggleActive: useToggleSectionActive
   } = useSections();
 
+  // Get user-section hooks - using the simpler createUserSection if available
   const { 
-    data: sections, 
+    useActivateSection,
+    useCreateUserSection, // Try to use the enhanced hook if available
+  } = useUserSections();
+  
+  // Get the correct mutation function depending on what's available
+  const activateSectionMutation = useActivateSection();
+  const createUserSectionMutation = useCreateUserSection ? useCreateUserSection() : null;
+
+  // Use the website-specific query instead of fetching all sections
+  const { 
+    data: websiteSections, 
     isLoading: isLoadingSections,
     error: sectionsError,
-    refetch: refetchSections
-  } = useGetAllSections();
+    refetch: refetchSections,
+    isError
+  } = useGetByWebsiteId(
+    websiteId,            // Pass websiteId as the first parameter
+    false,                // includeInactive = false (only show active sections)
+    hasWebsite            // enabled = hasWebsite (only run query if there's a website)
+  );
 
   const createSectionMutation = useCreateSection();
   const updateSectionMutation = useUpdateSection();
@@ -156,6 +177,11 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
     isActive: false,
     WebSiteId: websiteId
   });
+  
+  // Update WebSiteId when it changes
+  useEffect(() => {
+    setNewSection(prev => ({ ...prev, WebSiteId: websiteId }));
+  }, [websiteId]);
   
   const [editItem, setEditItem] = useState<EditItemData | null>(null);
   const [itemToDelete, setItemToDelete] = useState<DeleteItemData | null>(null);
@@ -175,6 +201,27 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
     refetchSections
   ]);
 
+  // Function to create user-section relationship after section creation
+  const createUserSectionRelation = (sectionId: string) => {
+    if (!userId) {
+      console.warn("Cannot create user-section relationship: User ID not available");
+      return;
+    }
+
+    activateSectionMutation.mutate(
+      { userId, sectionId },
+      {
+        onSuccess: (data) => {
+          console.log("User-section relationship created:", data);
+        },
+        onError: (error: any) => {
+          console.error("Error creating user-section relationship:", error);
+          // Don't show error to user since this is an automatic background process
+        }
+      }
+    );
+  };
+
   const handleAddCustomSection = () => {
     if (!newSection.name) {
       toast({
@@ -193,32 +240,68 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
       return;
     }
 
-    createSectionMutation.mutate(newSection, {
-      onSuccess: () => {
-        setNewSection({ 
-          name: "", 
-          description: "", 
-          image: "",
-          order: 0,
-          subSections: [],
-          isActive: false,
-          WebSiteId: websiteId
-        });
+    // If we have the enhanced createUserSectionMutation that automatically creates the relationship
+    if (createUserSectionMutation) {
+      createUserSectionMutation.mutate(newSection, {
+        onSuccess: () => {
+          setNewSection({ 
+            name: "", 
+            description: "", 
+            image: "",
+            order: 0,
+            subSections: [],
+            isActive: false,
+            WebSiteId: websiteId
+          });
 
-        toast({
-          title: "Section added",
-          description: `${newSection.name} has been added successfully.`,
-        });
-        showSuccessMessage();
-      },
-      onError: (error: Error) => {
-        toast({
-          title: "Error adding section",
-          description: error.message || "An error occurred while adding the section.",
-          variant: "destructive",
-        });
-      }
-    });
+          toast({
+            title: "Section added",
+            description: `${newSection.name} has been added successfully.`,
+          });
+          showSuccessMessage();
+        },
+        onError: (error: any) => {
+          toast({
+            title: "Error adding section",
+            description: error.message || "An error occurred while adding the section.",
+            variant: "destructive",
+          });
+        }
+      });
+    } else {
+      // Use the regular create section and manually create the relationship
+      createSectionMutation.mutate(newSection, {
+        onSuccess: (createdSection) => {
+          setNewSection({ 
+            name: "", 
+            description: "", 
+            image: "",
+            order: 0,
+            subSections: [],
+            isActive: false,
+            WebSiteId: websiteId
+          });
+
+          toast({
+            title: "Section added",
+            description: `${newSection.name} has been added successfully.`,
+          });
+          showSuccessMessage();
+
+          // Create user-section relationship
+          if (createdSection._id) {
+            createUserSectionRelation(createdSection._id);
+          }
+        },
+        onError: (error: any) => {
+          toast({
+            title: "Error adding section",
+            description: error.message || "An error occurred while adding the section.",
+            variant: "destructive",
+          });
+        }
+      });
+    }
   };
 
   const handleAddPredefinedSection = (predefinedSection: typeof PREDEFINED_SECTIONS[0]) => {
@@ -242,22 +325,48 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
       return;
     }
 
-    createSectionMutation.mutate(newSectionData, {
-      onSuccess: () => {
-        toast({
-          title: "Section added",
-          description: `${predefinedSection.name} section has been added successfully.`,
-        });
-        showSuccessMessage();
-      },
-      onError: (error: Error) => {
-        toast({
-          title: "Error adding section",
-          description: error.message || "An error occurred while adding the section.",
-          variant: "destructive",
-        });
-      }
-    });
+    // If we have the enhanced createUserSectionMutation that automatically creates the relationship
+    if (createUserSectionMutation) {
+      createUserSectionMutation.mutate(newSectionData, {
+        onSuccess: () => {
+          toast({
+            title: "Section added",
+            description: `${predefinedSection.name} section has been added successfully.`,
+          });
+          showSuccessMessage();
+        },
+        onError: (error: any) => {
+          toast({
+            title: "Error adding section",
+            description: error.message || "An error occurred while adding the section.",
+            variant: "destructive",
+          });
+        }
+      });
+    } else {
+      // Use the regular create section and manually create the relationship
+      createSectionMutation.mutate(newSectionData, {
+        onSuccess: (createdSection) => {
+          toast({
+            title: "Section added",
+            description: `${predefinedSection.name} section has been added successfully.`,
+          });
+          showSuccessMessage();
+
+          // Create user-section relationship
+          if (createdSection._id) {
+            createUserSectionRelation(createdSection._id);
+          }
+        },
+        onError: (error: any) => {
+          toast({
+            title: "Error adding section",
+            description: error.message || "An error occurred while adding the section.",
+            variant: "destructive",
+          });
+        }
+      });
+    }
   };
 
   const handleEdit = (section: Section) => {
@@ -285,7 +394,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
             description: `The section has been ${!isActive ? "activated" : "deactivated"} successfully.`,
           });
         },
-        onError: (error: Error) => {
+        onError: (error: any) => {
           toast({
             title: "Error updating section",
             description: error.message || "An error occurred while updating the section status.",
@@ -332,7 +441,8 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
         name: editItem.section_name,
         description: editItem.description,
         image: editItem.image,
-        isActive: editItem.isActive
+        isActive: editItem.isActive,
+        WebSiteId: websiteId  // Ensure WebSiteId is preserved during updates
       }
     };
 
@@ -345,7 +455,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
         });
         showSuccessMessage();
       },
-      onError: (error: Error) => {
+      onError: (error: any) => {
         toast({
           title: "Error updating section",
           description: error.message || "An error occurred while updating the section.",
@@ -378,7 +488,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
           setItemToDelete(null);
           showSuccessMessage();
         },
-        onError: (error: Error) => {
+        onError: (error: any) => {
           toast({
             title: "Error deleting section",
             description: error.message || "An error occurred while deleting the section.",
@@ -406,9 +516,18 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
     }, 3000);
   };
 
-  const sectionArray = sections?.data || [];
-  if (isLoadingSections) return <div className="text-center py-8">Loading sections...</div>;
-  if (sectionsError) return <div className="text-center py-8 text-red-500">Error: {(sectionsError as Error).message}</div>;
+  // Modified to get sections from the website-specific query result
+  const sectionArray = websiteSections?.data || [];
+  
+  // Show loading state when fetching sections for this website
+  if (isLoadingSections && hasWebsite) return <div className="text-center py-8">Loading sections for this website...</div>;
+  
+  // Show error state if there's an error fetching website sections
+  if (isError && hasWebsite) return (
+    <div className="text-center py-8 text-red-500">
+      Error: {(sectionsError as Error)?.message || "Failed to fetch sections for this website"}
+    </div>
+  );
   
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -436,8 +555,9 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
       </AnimatePresence>
 
       <Tabs defaultValue="predefined">
-        <TabsList className="grid w-full grid-cols-1">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="predefined">Predefined Sections</TabsTrigger>
+          <TabsTrigger value="custom">Custom Section</TabsTrigger>
         </TabsList>
         
         <TabsContent value="predefined">
@@ -468,12 +588,6 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                     <Card className="h-full overflow-hidden hover:shadow-md transition-shadow group">
                       <div className="relative h-40 bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                         {section.icon}
-                        {/* This would be where you'd show an actual image if available */}
-                        {/* <img 
-                          src={section.image} 
-                          alt={section.name} 
-                          className="w-full h-full object-cover"
-                        /> */}
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                       </div>
                       <CardContent className="p-4">
@@ -483,7 +597,11 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                       <CardFooter className="p-4 pt-0 flex justify-end">
                         <Button
                           onClick={() => handleAddPredefinedSection(section)}
-                          disabled={createSectionMutation.isPending || !hasWebsite}
+                          disabled={
+                            (createSectionMutation.isPending || 
+                            (createUserSectionMutation && createUserSectionMutation.isPending)) || 
+                            !hasWebsite
+                          }
                           size="sm"
                           className="transition-transform group-hover:scale-105"
                         >
@@ -558,9 +676,14 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
               <Button 
                 onClick={handleAddCustomSection} 
                 className="flex items-center gap-2"
-                disabled={createSectionMutation.isPending || !hasWebsite}
+                disabled={
+                  (createSectionMutation.isPending || 
+                  (createUserSectionMutation && createUserSectionMutation.isPending)) || 
+                  !hasWebsite
+                }
               >
-                {createSectionMutation.isPending ? 
+                {(createSectionMutation.isPending || 
+                (createUserSectionMutation && createUserSectionMutation.isPending)) ? 
                   <Loader2 className="h-4 w-4 animate-spin" /> : 
                   <Plus className="h-4 w-4" />
                 }
@@ -575,14 +698,18 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <LayoutGrid className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-            Current Sections
+            Current Website Sections
           </CardTitle>
           <CardDescription>
-            Edit or remove existing sections ({sectionArray.length} total)
+            Edit or remove existing sections for this website ({sectionArray.length} total)
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {sectionArray.length > 0 ? (
+          {!hasWebsite ? (
+            <div className="mb-4 p-4 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-lg">
+              Please create a website first to see its sections.
+            </div>
+          ) : sectionArray.length > 0 ? (
             <motion.div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3" variants={containerVariants}>
               {sectionArray.map((section: Section) => (
                 <motion.div key={section._id || `section-${section.name}`} variants={itemVariants}>
@@ -606,7 +733,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                             </div>
                           </div>
                           <div className="flex gap-2">
-                            <Button 
+                            {/* <Button 
                               variant="ghost" 
                               size="icon" 
                               className="h-8 w-8"
@@ -617,8 +744,8 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                                 <ToggleRight className="h-4 w-4 text-green-600" /> : 
                                 <ToggleLeft className="h-4 w-4 text-slate-600" />
                               }
-                            </Button>
-                            <Button 
+                            </Button> */}
+                            {/* <Button 
                               variant="ghost" 
                               size="icon" 
                               className="h-8 w-8" 
@@ -626,7 +753,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                               disabled={!hasWebsite}
                             >
                               <Edit className="h-4 w-4 text-blue-600" />
-                            </Button>
+                            </Button> */}
                             <Button 
                               variant="ghost" 
                               size="icon" 
@@ -647,7 +774,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
           ) : (
             <div className="text-center py-8 text-slate-500">
               <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-yellow-500" />
-              <p>No sections found. Add your first section from the tabs above.</p>
+              <p>No sections found for this website. Add your first section from the tabs above.</p>
             </div>
           )}
         </CardContent>
@@ -718,6 +845,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
             <AlertDialogDescription>
               This will permanently delete the section "{itemToDelete?.name}". 
               This action cannot be undone.
+
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

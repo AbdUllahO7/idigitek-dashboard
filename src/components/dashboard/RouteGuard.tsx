@@ -14,9 +14,9 @@ interface RoutePermission {
 
 // Map routes to their required permissions
 const routePermissions: Record<string, RoutePermission> = {
-  "/dashboard": { roles: ["superAdmin", "owner"] },
-  "/dashboard/users": { roles: ["superAdmin", "owner"] }, 
-  "/dashboard/userDashboard": { roles: ["user", "admin", "superAdmin", "owner"] }, 
+  "/dashboard": { roles: ["superAdmin", "owner"] }, // const 
+  "/dashboard/users": { roles: ["superAdmin", "owner"] }, // const 
+  "/dashboard/userDashboard": { roles: ["user", "admin", "superAdmin", "owner"] }, // const 
   "/dashboard/features": {},
   "/dashboard/hero": { sectionId: "hero" },
   "/dashboard/services": {},
@@ -34,8 +34,8 @@ const routePermissions: Record<string, RoutePermission> = {
   "/dashboard/team": {},
   "/dashboard/technology-stack": {},
   "/dashboard/testimonials": {},
-  "/dashboard/addWebSiteConfiguration": { roles: ["superAdmin", "owner"] },
-  "/dashboard/idigitekAdmin": { roles: ["idigitekAdmin"] },
+  "/dashboard/addWebSiteConfiguration": { roles: ["superAdmin", "owner"] }, // const 
+  "/dashboard/idigitekAdmin": { roles: ["idigitekAdmin"] }, // const 
 
 }
 

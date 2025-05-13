@@ -15,6 +15,7 @@ export interface Language extends Resource {
   subSections: string[] | SubSection[];
   createdAt?: string;
   updatedAt?: string;
+  websiteId : string,
 }
 
 export interface CreateLanguageDto {

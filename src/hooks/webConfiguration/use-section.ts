@@ -1,19 +1,27 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
 import { Section } from '@/src/api/types/hooks/section.types';
+import { useAuth } from '@/src/context/AuthContext'; // Import auth context to get current user
 
-// Enhanced section hook with user-section functionality
+// Base section hook
 export function useSections() {
   const queryClient = useQueryClient();
   const endpoint = '/sections';
-  const userSectionsEndpoint = '/user-sections';
+  const { user } = useAuth(); // Get current user to include in cache keys
+  
+  // Get a user-specific prefix for cache keys
+  const getUserPrefix = () => {
+    const userId = user?.id || user?._id;
+    return userId ? `user-${userId}` : 'anonymous';
+  };
 
   // Query keys
-  const sectionsKey = ['sections'];
+  const sectionsKey = ['sections', getUserPrefix()]; // Include user in base key
   const sectionKey = (id: string) => [...sectionsKey, id];
   const completeDataKey = (id: string) => [...sectionKey(id), 'complete'];
   const allCompleteDataKey = [...sectionsKey, 'allComplete'];
-  const userSectionsKey = (userId: string) => ['user-sections', userId];
+  const websiteSectionsKey = (websiteId: string) => [...sectionsKey, 'website', websiteId];
+  const websiteSectionsCompleteKey = (websiteId: string) => [...websiteSectionsKey(websiteId), 'complete'];
 
   // Get all sections (optionally with section items count)
   const useGetAll = (includeItemsCount = false, activeOnly = true) => {
@@ -118,45 +126,70 @@ export function useSections() {
       },
     });
   };
-
+  
   /**
-   * NEW: Get all active sections for the current user
-   * @param userId User ID
+   * Get all sections for a specific website
+   * @param websiteId Website ID
+   * @param includeInactive Whether to include inactive sections
    */
-  const useGetUserActiveSections = (userId: string) => {
+  const useGetByWebsiteId = (
+    websiteId: string,
+    includeInactive = false,
+    enabled = true
+  ) => {
+    // Include both websiteId and user in the query key
     return useQuery({
-      queryKey: userSectionsKey(userId),
+      queryKey: [...websiteSectionsKey(websiteId), { includeInactive }],
       queryFn: async () => {
         try {
-          const { data } = await apiClient.get(`${userSectionsEndpoint}/${userId}`);
+          const params = new URLSearchParams();
+          params.append('includeInactive', String(includeInactive));
+          
+          const { data } = await apiClient.get(`${endpoint}/website/${websiteId}?${params.toString()}`);
           return data;
         } catch (error: any) {
-          console.error(`Error fetching active sections for user ${userId}:`, error);
+          console.error(`Error fetching sections for website ${websiteId}:`, error);
           throw error;
         }
       },
-      enabled: !!userId,
+      enabled: !!websiteId && enabled,
+      // Force refetching when user changes
+      staleTime: 0, 
     });
   };
 
   /**
-   * NEW: Toggle section activation for the current user
+   * Get all sections with complete data for a specific website
+   * @param websiteId Website ID
+   * @param includeInactive Whether to include inactive items
+   * @param languageId Optional language ID for translations
    */
-  const useToggleSectionForUser = () => {
-    return useMutation({
-      mutationFn: async ({ userId, sectionId }: { userId: string; sectionId: string }) => {
+  const useGetCompleteByWebsiteId = (
+    websiteId: string,
+    includeInactive = false,
+    languageId?: string,
+    enabled = true
+  ) => {
+    return useQuery({
+      queryKey: [...websiteSectionsCompleteKey(websiteId), { includeInactive, languageId }],
+      queryFn: async () => {
         try {
-          const { data } = await apiClient.post(`${userSectionsEndpoint}/${userId}/${sectionId}/toggle`);
+          const params = new URLSearchParams();
+          params.append('includeInactive', String(includeInactive));
+          if (languageId) {
+            params.append('languageId', languageId);
+          }
+          
+          const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/complete?${params.toString()}`);
           return data;
         } catch (error: any) {
-          console.error(`Error toggling section ${sectionId} for user ${userId}:`, error);
+          console.error(`Error fetching complete section data for website ${websiteId}:`, error);
           throw error;
         }
       },
-      onSuccess: (_, { userId }) => {
-        // Invalidate the user's active sections query
-        queryClient.invalidateQueries({ queryKey: userSectionsKey(userId) });
-      },
+      enabled: !!websiteId && enabled,
+      // Force refetching when user changes
+      staleTime: 0,
     });
   };
 
@@ -185,6 +218,15 @@ export function useSections() {
         queryClient.invalidateQueries({ queryKey: sectionsKey });
         if (data._id) {
           queryClient.setQueryData(sectionKey(data._id), data);
+        }
+        // Also invalidate website-specific queries if the section has a WebSiteId
+        if (data.WebSiteId) {
+          queryClient.invalidateQueries({ 
+            queryKey: websiteSectionsKey(data.WebSiteId.toString()) 
+          });
+          queryClient.invalidateQueries({ 
+            queryKey: websiteSectionsCompleteKey(data.WebSiteId.toString()) 
+          });
         }
       },
     });
@@ -217,6 +259,15 @@ export function useSections() {
         // Also invalidate complete data queries that include this section
         queryClient.invalidateQueries({ queryKey: completeDataKey(id) });
         queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        // Also invalidate website-specific queries if the section has a WebSiteId
+        if (data.WebSiteId) {
+          queryClient.invalidateQueries({ 
+            queryKey: websiteSectionsKey(data.WebSiteId.toString()) 
+          });
+          queryClient.invalidateQueries({ 
+            queryKey: websiteSectionsCompleteKey(data.WebSiteId.toString()) 
+          });
+        }
       },
     });
   };
@@ -240,11 +291,14 @@ export function useSections() {
         // Also invalidate complete data queries that include this section
         queryClient.invalidateQueries({ queryKey: completeDataKey(id) });
         queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
-        
-        // If a section is deactivated globally, also invalidate all user-section queries
-        // since this will affect all users who had this section active
-        if (!data.isActive) {
-          queryClient.invalidateQueries({ queryKey: ['user-sections'] });
+        // Also invalidate website-specific queries if the section has a WebSiteId
+        if (data.WebSiteId) {
+          queryClient.invalidateQueries({ 
+            queryKey: websiteSectionsKey(data.WebSiteId.toString()) 
+          });
+          queryClient.invalidateQueries({ 
+            queryKey: websiteSectionsCompleteKey(data.WebSiteId.toString()) 
+          });
         }
       },
     });
@@ -255,23 +309,38 @@ export function useSections() {
     return useMutation({
       mutationFn: async (id: string) => {
         try {
+          // First, get the section to know its WebSiteId
+          const { data: section } = await apiClient.get(`${endpoint}/${id}`);
+          const websiteId = section?.data?.WebSiteId;
+          
+          // Then delete the section
           await apiClient.delete(`${endpoint}/${id}`, {
             params: { hardDelete }
           });
-        } catch (error: any) {
+          
+          // Return the websiteId for use in onSuccess
+          return { websiteId };
+        } catch (error) {
           console.error(`Error deleting section ${id}:`, error);
           throw error;
         }
       },
-      onSuccess: (_, id) => {
+      onSuccess: ({ websiteId }, id) => {
         // Remove and invalidate all related queries
         queryClient.removeQueries({ queryKey: sectionKey(id) });
         queryClient.removeQueries({ queryKey: completeDataKey(id) });
         queryClient.invalidateQueries({ queryKey: sectionsKey });
         queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
         
-        // Also invalidate all user-section queries since this will affect users who had this section
-        queryClient.invalidateQueries({ queryKey: ['user-sections'] });
+        // Also invalidate website-specific queries if we have the WebSiteId
+        if (websiteId) {
+          queryClient.invalidateQueries({ 
+            queryKey: websiteSectionsKey(websiteId.toString()) 
+          });
+          queryClient.invalidateQueries({ 
+            queryKey: websiteSectionsCompleteKey(websiteId.toString()) 
+          });
+        }
       },
     });
   };
@@ -279,30 +348,55 @@ export function useSections() {
   // Update order of multiple sections
   const useUpdateOrder = () => {
     return useMutation({
-      mutationFn: async (sections: { id: string; order: number }[]) => {
+      mutationFn: async (sections: { id: string; order: number; websiteId?: string }[]) => {
         const { data } = await apiClient.put(`${endpoint}/order`, { sections });
-        return data;
+        
+        // Get any websiteIds from the sections for cache invalidation
+        const websiteIds = [...new Set(
+          sections
+            .filter(s => s.websiteId)
+            .map(s => s.websiteId!)
+        )];
+        
+        return { data, websiteIds };
       },
-      onSuccess: () => {
+      onSuccess: ({ websiteIds }) => {
         // Invalidate all section queries to ensure order changes are reflected
         queryClient.invalidateQueries({ queryKey: sectionsKey });
         queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        
+        // Also invalidate website-specific queries
+        websiteIds.forEach(websiteId => {
+          queryClient.invalidateQueries({ 
+            queryKey: websiteSectionsKey(websiteId) 
+          });
+          queryClient.invalidateQueries({ 
+            queryKey: websiteSectionsCompleteKey(websiteId) 
+          });
+        });
       },
     });
   };
 
-  // Return all hooks, including the new user-section related hooks
+  // Add a manual function to clear all section-related cache for a user
+  const clearUserSectionsCache = () => {
+    // This can be called when a user logs out or switches
+    queryClient.invalidateQueries({ queryKey: sectionsKey });
+  };
+
+  // Return all hooks, including the new website-specific ones and the cache clearing function
   return {
     useGetAll,
     useGetById,
     useGetWithCompleteData,        
     useGetAllWithCompleteData,
-    useGetUserActiveSections,     // NEW
-    useToggleSectionForUser,      // NEW
+    useGetByWebsiteId,             
+    useGetCompleteByWebsiteId,      
     useCreate,
     useUpdate,
     useToggleActive,
     useDelete,
-    useUpdateOrder
+    useUpdateOrder,
+    clearUserSectionsCache  // New helper to explicitly clear cache between users
   };
 }

@@ -2,14 +2,19 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
 import { WebSiteProps } from '@/src/api/types/hooks/WebSite.types';
 import { Roles } from '@/src/api/user.types';
+import { useAuth } from '@/src/context/AuthContext'; // Import your auth context
 
 // Base WebSite hook
 export function useWebSite() {
   const queryClient = useQueryClient();
   const endpoint = '/websites';
-
-  // Query keys
-  const websitesKey = ['websites'];
+  
+  // Get current user ID from auth context to include in query keys
+  const { user } = useAuth();
+  const userId = user?.id || 'anonymous';
+  
+  // Query keys now include user ID to prevent cross-user cache conflicts
+  const websitesKey = ['websites', userId];
   const websiteKey = (id: string) => [...websitesKey, id];
   const myWebsitesKey = [...websitesKey, 'my'];
   const websiteUsersKey = (websiteId: string) => [...websitesKey, websiteId, 'users'];
@@ -22,6 +27,8 @@ export function useWebSite() {
         const { data } = await apiClient.get(endpoint);
         return data?.data?.websites || [];
       },
+      // Shorter stale time to ensure data freshness
+      staleTime: 30 * 1000, // 30 seconds
     });
   };
 
@@ -34,6 +41,7 @@ export function useWebSite() {
         return data?.data?.website;
       },
       enabled: !!id,
+      staleTime: 30 * 1000, // 30 seconds
     });
   };
 
@@ -45,6 +53,10 @@ export function useWebSite() {
         const { data } = await apiClient.get(`${endpoint}/my`);
         return data?.data?.websites || [];
       },
+      // Always refetch when component mounts
+      refetchOnMount: true,
+      // Short stale time for user data
+      staleTime: 10 * 1000, // 10 seconds
     });
   };
 
@@ -196,6 +208,12 @@ export function useWebSite() {
     });
   };
 
+  // Function to manually reset all website caches
+  // Can be called explicitly if needed
+  const resetWebsiteCache = () => {
+    queryClient.invalidateQueries({ queryKey: ['websites'] });
+  };
+
   // Return all hooks
   return {
     useGetAll,
@@ -208,5 +226,6 @@ export function useWebSite() {
     useDelete,
     useAddUser,
     useRemoveUser,
+    resetWebsiteCache, // Export for manual cache resets
   };
 }

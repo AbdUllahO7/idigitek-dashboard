@@ -32,14 +32,17 @@ import { Label } from "../../ui/label"
 import { Input } from "../../ui/input"
 import { Checkbox } from "../../ui/checkbox"
 import { Button } from "../../ui/button"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 interface ManagementProps {
-hasWebsite: boolean
+  hasWebsite: boolean
 }
 
 export function LanguageManagement({ hasWebsite }: ManagementProps) {
+  const { websiteId } = useWebsiteContext();
+  
   const { 
-    useGetAll: useGetAllLanguages,
+    useGetByWebsite,
     useCreate: useCreateLanguage,
     useUpdate: useUpdateLanguage,
     useDelete: useDeleteLanguage,
@@ -51,7 +54,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
     isLoading: isLoadingLanguages,
     error: languagesError,
     refetch: refetchLanguages
-  } = useGetAllLanguages();
+  } = useGetByWebsite(websiteId);
 
   const createLanguageMutation = useCreateLanguage();
   const updateLanguageMutation = useUpdateLanguage();
@@ -63,9 +66,20 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
     languageID: "", 
     language: "", 
     subSections: [],
-    isActive: false
+    isActive: false,
+    websiteId: ""
   });
   
+  // Update newLanguage when websiteId changes
+  useEffect(() => {
+    if (websiteId) {
+      setNewLanguage(prev => ({
+        ...prev,
+        websiteId
+      }));
+    }
+  }, [websiteId]);
+
   const [editItem, setEditItem] = useState<EditItemData | null>(null);
   const [itemToDelete, setItemToDelete] = useState<DeleteItemData | null>(null);
   const { toast } = useToast();
@@ -94,18 +108,40 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
       return;
     }
 
-    if (languageArray?.some((lang: Language) => lang.languageID === newLanguage.languageID)) {
+    if (!websiteId) {
       toast({
-        title: "Duplicate ID",
-        description: "A language with this ID already exists.",
+        title: "Website required",
+        description: "Please select a website first.",
         variant: "destructive",
       });
       return;
     }
 
-    createLanguageMutation.mutate(newLanguage, {
+    if (languageArray?.some((lang: Language) => lang.languageID === newLanguage.languageID)) {
+      toast({
+        title: "Duplicate ID",
+        description: "A language with this ID already exists for this website.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create language with websiteId
+    const languageToCreate = {
+      ...newLanguage,
+      websiteId
+    };
+
+    createLanguageMutation.mutate(languageToCreate, {
       onSuccess: () => {
-        setNewLanguage({_id: "", languageID: "", language: "", subSections: [], isActive: false });
+        setNewLanguage({
+          _id: "", 
+          languageID: "", 
+          language: "", 
+          subSections: [], 
+          isActive: false,
+          websiteId
+        });
         toast({
           title: "Language added",
           description: `${newLanguage.language} has been added successfully.`,
@@ -128,7 +164,8 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
       languageID: language.languageID,
       language: language.language,
       isActive: language.isActive,
-      type: "language"
+      type: "language",
+      websiteId: language.websiteId
     });
   };
 
@@ -177,7 +214,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
         languageArray.some((item: Language) => item.languageID === editItem.languageID)) {
       toast({
         title: "Duplicate ID",
-        description: "A language with this ID already exists.",
+        description: "A language with this ID already exists for this website.",
         variant: "destructive",
       });
       return;
@@ -188,7 +225,9 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
       data: {
         languageID: editItem.languageID,
         language: editItem.language,
-        isActive: editItem.isActive
+        isActive: editItem.isActive,
+        // Keep the same websiteId
+        websiteId: editItem.websiteId
       }
     };
 
@@ -241,8 +280,13 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
   };
 
   const languageArray = languages?.data || [];
+  
+  // Display a message if no website is selected
+  const noWebsiteSelected = !websiteId || websiteId === "";
+  
   if (isLoadingLanguages) return <div className="text-center py-8">Loading languages...</div>;
   if (languagesError) return <div className="text-center py-8 text-red-500">Error: {(languagesError as Error).message}</div>;
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -252,6 +296,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
       },
     },
   };
+  
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
@@ -260,6 +305,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
       transition: { type: "spring", stiffness: 300, damping: 15 },
     },
   };
+  
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
       <AnimatePresence>
@@ -287,11 +333,11 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {!hasWebsite && (
+          {!hasWebsite || noWebsiteSelected ? (
             <div className="mb-4 p-4 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-lg">
-              Please create a website first before adding languages.
+              {!hasWebsite ? "Please create a website first before adding languages." : "Please select a website before adding languages."}
             </div>
-          )}
+          ) : null}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="new-language-id">Language ID (code)</Label>
@@ -301,7 +347,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
                 value={newLanguage.languageID}
                 onChange={(e) => setNewLanguage({ ...newLanguage, languageID: e.target.value.toLowerCase() })}
                 className="w-full"
-                disabled={!hasWebsite}
+                disabled={!hasWebsite || noWebsiteSelected}
               />
               <p className="text-xs text-slate-500">
                 Use a standard language code (e.g., "en" for English)
@@ -315,7 +361,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
                 value={newLanguage.language}
                 onChange={(e) => setNewLanguage({ ...newLanguage, language: e.target.value })}
                 className="w-full"
-                disabled={!hasWebsite}
+                disabled={!hasWebsite || noWebsiteSelected}
               />
             </div>
           </div>
@@ -327,7 +373,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
                 onCheckedChange={(checked) => 
                   setNewLanguage({ ...newLanguage, isActive: checked === true })
                 }
-                disabled={!hasWebsite}
+                disabled={!hasWebsite || noWebsiteSelected}
               />
               <Label htmlFor="new-language-active">Active</Label>
             </div>
@@ -337,7 +383,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
           <Button 
             onClick={handleAddLanguage} 
             className="flex items-center gap-2"
-            disabled={createLanguageMutation.isPending || !hasWebsite}
+            disabled={createLanguageMutation.isPending || !hasWebsite || noWebsiteSelected}
           >
             {createLanguageMutation.isPending ? 
               <Loader2 className="h-4 w-4 animate-spin" /> : 
@@ -355,11 +401,18 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
             Manage Languages
           </CardTitle>
           <CardDescription>
-            Edit or remove existing languages ({languageArray.length} total)
+            {websiteId ? 
+              `Edit or remove existing languages (${languageArray.length} total)` : 
+              "Select a website to manage its languages"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {languageArray.length > 0 ? (
+          {noWebsiteSelected ? (
+            <div className="text-center py-8 text-slate-500">
+              <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-yellow-500" />
+              <p>No website selected. Please select a website to view its languages.</p>
+            </div>
+          ) : languageArray.length > 0 ? (
             <motion.div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3" variants={containerVariants}>
               {languageArray.map((language: Language) => (
                 <motion.div key={language._id || `lang-${language.languageID}`} variants={itemVariants}>
@@ -436,6 +489,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
                                     <Checkbox 
                                       id="edit-language-active"
                                       checked={editItem.isActive || false}
+                                      
                                       onCheckedChange={(checked) => 
                                         setEditItem({ ...editItem, isActive: checked === true })
                                       }
@@ -509,7 +563,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
           ) : (
             <div className="text-center py-8 text-slate-500">
               <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-yellow-500" />
-              <p>No languages found. Add your first language above.</p>
+              <p>No languages found for this website. Add your first language above.</p>
             </div>
           )}
         </CardContent>

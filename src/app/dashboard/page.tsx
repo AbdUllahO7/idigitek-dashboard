@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Activity, ArrowUpRight, EllipsisIcon, FileText, Globe, Layers, UserCircle,  } from "lucide-react"
+import { Activity, AlertTriangle, ArrowUpRight, EllipsisIcon, FileText, Globe, Layers, UserCircle } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { CardLoader } from "@/src/components/ui/loader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/src/components/ui/card"
@@ -12,9 +12,10 @@ import {
 } from 'recharts'
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
-import { useUsers } from "@/src/hooks/users/use-users"
 import { Language } from "@/src/api/types/hooks/language.types"
 import { Section } from "@/src/api/types/hooks/section.types"
+import { useWebSite } from "@/src/hooks/webConfiguration/use-WebSite"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 /**
  * Dashboard overview page
@@ -22,35 +23,44 @@ import { Section } from "@/src/api/types/hooks/section.types"
  */
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
-
-  // get users
+  const { websiteId } = useWebsiteContext()
+  
+  // Get website data
   const { 
-    useGetAll: useGetAllUsers
-  } = useUsers();
+    useGetMyWebsites,
+    useGetWebsiteUsers
+  } = useWebSite();
 
+  // Get user's websites
   const { 
-    data: users, 
-    isLoading: isLoadingUsers,
-  } = useGetAllUsers();
+    data: websites, 
+    isLoading: isLoadingWebsites
+  } = useGetMyWebsites();
+
+  // Get users for the current website
+  const { 
+    data: websiteUsers, 
+    isLoading: isLoadingWebsiteUsers,
+  } = useGetWebsiteUsers(websiteId);
 
   // Get data from API hooks
   const { 
-    useGetAll: useGetAllSections
+    useGetByWebsiteId: useGetAllSections
   } = useSections();
   
   const { 
-    useGetAll: useGetAllLanguages
+    useGetByWebsite: useGetWebsiteLanguages
   } = useLanguages();
 
   const { 
     data: sections, 
     isLoading: isLoadingSections,
-  } = useGetAllSections();
+  } = useGetAllSections(websiteId);
 
   const { 
     data: languages, 
     isLoading: isLoadingLanguages,
-  } = useGetAllLanguages();
+  } = useGetWebsiteLanguages(websiteId);
 
   // Extract active sections and languages from the API response
   const sectionsData = sections?.data || [];
@@ -59,8 +69,7 @@ export default function DashboardPage() {
   const activeLanguages = languagesData.filter((lang: Language) => lang.isActive) || [];
 
   // Get user role counts
-  const usersData = users?.data || [];
-
+  const usersData = websiteUsers || [];
   
   const userRoleCounts = usersData.reduce((acc: Record<string, number>, user: any) => {
     const role = user.role || 'user';
@@ -97,10 +106,13 @@ export default function DashboardPage() {
   
   // Set loading state based on API data loading
   useEffect(() => {
-    if (!isLoadingSections && !isLoadingLanguages && !isLoadingUsers) {
+    if (!isLoadingSections && !isLoadingLanguages && !isLoadingWebsiteUsers && !isLoadingWebsites) {
       setLoading(false);
     }
-  }, [isLoadingSections, isLoadingLanguages, isLoadingUsers]);
+  }, [isLoadingSections, isLoadingLanguages, isLoadingWebsiteUsers, isLoadingWebsites]);
+  
+  // Check if website is selected
+  const noWebsiteSelected = !websiteId || websiteId === "";
   
   return (
     <div className="space-y-6">
@@ -112,6 +124,18 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Website selection notice */}
+      {noWebsiteSelected && (
+        <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
+          <CardContent className="py-4">
+            <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+              <AlertTriangle className="h-5 w-5" />
+              <p>Please select a website to view its dashboard data.</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Dashboard tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="w-full justify-start">
@@ -122,7 +146,7 @@ export default function DashboardPage() {
         <TabsContent value="overview" className="space-y-6">
           {/* Metric cards */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {loading ? (
+            {loading || noWebsiteSelected ? (
               <>
                 <CardLoader />
                 <CardLoader />
@@ -222,7 +246,7 @@ export default function DashboardPage() {
                   </div>
                 </Card>
 
-                {/* Active Languages card - RESTORED */}
+                {/* Active Languages card */}
                 <Card className="overflow-hidden">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Active Languages</CardTitle>
@@ -265,13 +289,13 @@ export default function DashboardPage() {
             )}
           </div>
           
-          {/* Add Total Users card in a separate row */}
-          {!loading && (
+          {/* Add Website Users card in a separate row */}
+          {!loading && !noWebsiteSelected && (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {/* Total Users card */}
+              {/* Website Users card */}
               <Card className="overflow-hidden">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                  <CardTitle className="text-sm font-medium">Website Users</CardTitle>
                   <div className="rounded-full bg-red-100 p-1.5 text-red-600 dark:bg-red-900/40">
                     <UserCircle className="h-4 w-4" />
                   </div>
@@ -315,7 +339,7 @@ export default function DashboardPage() {
           )}
           
           {/* Charts section */}
-          {!loading && (
+          {!loading && !noWebsiteSelected && (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {/* Section Distribution Chart */}
               <Card>
@@ -397,7 +421,7 @@ export default function DashboardPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>User Role Distribution</CardTitle>
-                  <CardDescription>User Types</CardDescription>
+                  <CardDescription>Website User Types</CardDescription>
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="h-80 w-full">
@@ -428,7 +452,7 @@ export default function DashboardPage() {
                 </CardContent>
                 <CardFooter className="border-t px-6 py-4">
                   <div className="flex justify-between w-full text-sm text-muted-foreground">
-                    <div>Total Users: {usersData.length}</div>
+                    <div>Total Website Users: {usersData.length}</div>
                     <div>Updated: {new Date().toLocaleDateString()}</div>
                   </div>
                 </CardFooter>
@@ -439,7 +463,7 @@ export default function DashboardPage() {
 
         {/* Users tab content */}
         <TabsContent value="users" className="space-y-6">
-          {loading ? (
+          {loading || noWebsiteSelected ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {[1, 2, 3, 4, 5, 6].map((_, index) => (
                 <CardLoader key={index} />
@@ -448,14 +472,14 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h2 className="text-xl font-bold">User Management</h2>
+                <h2 className="text-xl font-bold">Website User Management</h2>
                 <Button size="sm">
                   Add User
                 </Button>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {usersData.map((user: any) => (
-                  <Card key={user._id} className="overflow-hidden">
+                  <Card key={user._id || user.userId} className="overflow-hidden">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium truncate">{user.name || user.email}</CardTitle>
                       <div className={`rounded-full p-1.5 ${

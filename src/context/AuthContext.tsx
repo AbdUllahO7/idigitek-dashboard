@@ -1,10 +1,10 @@
-// src/context/AuthContext.tsx
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLogin, useLogout, useRegister, useCurrentUser } from '../api/auth';
 import apiClient from '../lib/api-client';
+import { useQueryClient } from '@tanstack/react-query'; // Add this import
 
 // Define user type
 interface User {
@@ -12,7 +12,7 @@ interface User {
   name: string;
   email: string;
   role: string;
-  firstName : string
+  firstName: string
 }
 
 // Define auth context type
@@ -45,17 +45,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   
+  // Get query client for cache management
+  const queryClient = useQueryClient();
+  
   // Refs for stabilizing state and preventing double updates
   const userRef = useRef<User | null>(null);
   const isAuthCheckedRef = useRef(false);
   const stateLockRef = useRef(false);
   const stateVersionRef = useRef(0);
-
+  const prevUserIdRef = useRef<string | null>(null);
   
   const loginMutation = useLogin();
   const registerMutation = useRegister();
   const logoutMutation = useLogout();
   const currentUserMutation = useCurrentUser();
+
+  // Function to reset the React Query cache
+  const resetQueryCache = () => {
+    console.log(`[Auth ${CONTEXT_ID}] Resetting query cache`);
+    
+    // This marks all queries as stale, forcing them to refetch
+    queryClient.invalidateQueries();
+    
+    // For critical user-specific data, consider removing them entirely
+    queryClient.removeQueries({ queryKey: ['websites'] });
+    queryClient.removeQueries({ queryKey: ['website'] });
+    queryClient.removeQueries({ queryKey: ['languages'] });
+    queryClient.removeQueries({ queryKey: ['sections'] });
+  };
 
   // Persist user data to both refs and sessionStorage
   const persistUser = (userData: User | null) => {
@@ -63,6 +80,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    // Check if user has changed - if so, reset cache
+    const currentUserId = userRef.current?.id;
+    const newUserId = userData?.id;
+    
+    if (currentUserId !== newUserId) {
+      // User has changed - clear the cache
+      resetQueryCache();
+      prevUserIdRef.current = newUserId;
+    }
     
     // Lock the state to prevent rapid changes
     stateLockRef.current = true;
@@ -81,6 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         };
         sessionStorage.setItem('userData', JSON.stringify(userStore));
       } catch (e) {
+        // Handle storage error silently
       }
     } else if (typeof window !== 'undefined') {
       // Clear sessionStorage when user is null
@@ -112,7 +139,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    
     const checkAuth = async () => {
       try {
         // First, try to restore from sessionStorage (faster than API call)
@@ -157,7 +183,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setupAuthHeader(token);
         
         // Always verify with API for security, even if restored from session
-        
         try {
           const userData = await currentUserMutation.mutateAsync();
           
@@ -171,7 +196,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             persistUser(null);
           }
         } catch (apiError) {
-          
           if (restoredFromSession) {
             // Keep the session data if API fails but we restored from session
           } else {
@@ -199,7 +223,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     // Listen for storage events (in case another tab logs out)
     const handleStorageChange = (e: StorageEvent) => {
-      
       if (e.key === 'token') {
         if (!e.newValue) {
           console.log(`[Auth ${CONTEXT_ID}] Token removed in another tab, clearing user`);
@@ -219,9 +242,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   // Login function
   const login = async (email: string, password: string) => {
-    
     try {
       setIsLoading(true);
+      
+      // First, clear previous user's cache data before login
+      resetQueryCache();
       
       // Call login mutation
       const response = await loginMutation.mutateAsync({ email, password });
@@ -275,9 +300,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   // Register function
   const register = async (name: string, email: string, password: string) => {
-    
     try {
       setIsLoading(true);
+      
+      // Clear cache before registration
+      resetQueryCache();
+      
       const response = await registerMutation.mutateAsync({ name, email, password });
       
       // Get token from response or localStorage
@@ -318,11 +346,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   // Logout function
   const logout = async () => {
-    
     try {
       setIsLoading(true);
+      
+      // Clear cache immediately when logging out
+      resetQueryCache();
+      
       await logoutMutation.mutateAsync();
     } catch (error) {
+      // Silent catch
     } finally {
       // Always clear everything, even if server-side logout fails
       localStorage.removeItem('token');
@@ -338,7 +370,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Calculate authentication status
   const isAuthenticated = user !== null;
   
-
   return (
     <AuthContext.Provider
       value={{

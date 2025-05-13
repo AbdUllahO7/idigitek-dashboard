@@ -5,11 +5,14 @@ import apiClient from '@/src/lib/api-client';
 export function useUserSections() {
   const queryClient = useQueryClient();
   const endpoint = '/user-sections';
+  const sectionsEndpoint = '/sections'; // For direct section-related endpoints
 
   // Query keys
   const userSectionsKey = ['user-sections'];
   const userSectionKey = (userId: string) => [...userSectionsKey, userId];
   const sectionUsersKey = (sectionId: string) => [...userSectionsKey, 'section', sectionId];
+  const sectionsKey = ['sections'];
+  const currentUserSectionsKey = ['current-user-sections'];
   
   /**
    * Get all active sections for a specific user
@@ -28,6 +31,25 @@ export function useUserSections() {
         }
       },
       enabled: !!userId,
+    });
+  };
+
+  /**
+   * Get sections for the currently authenticated user
+   * This uses the new endpoint added to SectionController
+   */
+  const useGetCurrentUserSections = () => {
+    return useQuery({
+      queryKey: currentUserSectionsKey,
+      queryFn: async () => {
+        try {
+          const { data } = await apiClient.get(`${sectionsEndpoint}/user`);
+          return data;
+        } catch (error: any) {
+          console.error('Error fetching sections for current user:', error);
+          throw error;
+        }
+      },
     });
   };
 
@@ -69,6 +91,7 @@ export function useUserSections() {
         // Invalidate relevant queries
         queryClient.invalidateQueries({ queryKey: userSectionKey(userId) });
         queryClient.invalidateQueries({ queryKey: sectionUsersKey(sectionId) });
+        queryClient.invalidateQueries({ queryKey: currentUserSectionsKey });
       },
     });
   };
@@ -91,6 +114,7 @@ export function useUserSections() {
         // Invalidate relevant queries
         queryClient.invalidateQueries({ queryKey: userSectionKey(userId) });
         queryClient.invalidateQueries({ queryKey: sectionUsersKey(sectionId) });
+        queryClient.invalidateQueries({ queryKey: currentUserSectionsKey });
       },
     });
   };
@@ -113,15 +137,78 @@ export function useUserSections() {
         // Invalidate relevant queries
         queryClient.invalidateQueries({ queryKey: userSectionKey(userId) });
         queryClient.invalidateQueries({ queryKey: sectionUsersKey(sectionId) });
+        queryClient.invalidateQueries({ queryKey: currentUserSectionsKey });
+      },
+    });
+  };
+
+  /**
+   * Create a section and automatically activate it for the current user
+   * This uses the updated endpoint in SectionController that handles auto-relationship creation
+   */
+  const useCreateUserSection = () => {
+    return useMutation({
+      mutationFn: async (sectionData: any) => {
+        try {
+          const { data } = await apiClient.post(`${sectionsEndpoint}`, sectionData);
+          return data;
+        } catch (error: any) {
+          console.error(`Error creating section:`, error);
+          throw error;
+        }
+      },
+      onSuccess: () => {
+        // Invalidate sections and user-sections queries
+        queryClient.invalidateQueries({ queryKey: sectionsKey });
+        queryClient.invalidateQueries({ queryKey: userSectionsKey });
+        queryClient.invalidateQueries({ queryKey: currentUserSectionsKey });
+      },
+    });
+  };
+
+  /**
+   * Batch activate multiple sections for a user
+   */
+  const useBatchActivateSections = () => {
+    return useMutation({
+      mutationFn: async ({ userId, sectionIds }: { userId: string; sectionIds: string[] }) => {
+        try {
+          // Execute all activation requests in parallel
+          const promises = sectionIds.map(sectionId => 
+            apiClient.post(`${endpoint}/${userId}/${sectionId}/activate`)
+          );
+          
+          const results = await Promise.all(promises);
+          return results.map(result => result.data);
+        } catch (error: any) {
+          console.error(`Error batch activating sections for user ${userId}:`, error);
+          throw error;
+        }
+      },
+      onSuccess: (_, { userId }) => {
+        // Invalidate relevant queries
+        queryClient.invalidateQueries({ queryKey: userSectionKey(userId) });
+        queryClient.invalidateQueries({ queryKey: userSectionsKey });
+        queryClient.invalidateQueries({ queryKey: currentUserSectionsKey });
+        // Also invalidate any section users queries that might be affected
+        queryClient.invalidateQueries({ 
+          predicate: (query) => query.queryKey[0] === userSectionsKey[0] && query.queryKey[1] === 'section'
+        });
       },
     });
   };
 
   return {
+    // Original hooks
     useGetUserSections,
     useGetSectionUsers,
     useActivateSection,
     useDeactivateSection,
-    useToggleSection
+    useToggleSection,
+    
+    // New hooks
+    useGetCurrentUserSections,
+    useCreateUserSection,
+    useBatchActivateSections
   };
 }

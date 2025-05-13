@@ -32,6 +32,7 @@ export interface Resource {
     originalId?: string;
     subSections?: string[] | any[];
     isActive?: boolean;
+    webSiteId : string,
   }
   
   export interface DeleteItemData {
