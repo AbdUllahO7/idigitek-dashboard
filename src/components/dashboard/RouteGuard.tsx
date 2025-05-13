@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useAuth } from "@/src/context/AuthContext"
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
-import { Section } from "@/src/api/types"
+import { Section } from "@/src/api/types/hooks/section.types"
 
 // Define route permissions map
 interface RoutePermission {
@@ -14,9 +14,9 @@ interface RoutePermission {
 
 // Map routes to their required permissions
 const routePermissions: Record<string, RoutePermission> = {
-  "/dashboard": { roles: ["superAdmin", "owner"] },
-  "/dashboard/users": { roles: ["superAdmin", "owner"] }, 
-  "/dashboard/userDashboard": { roles: ["user", "admin", "superAdmin", "owner"] }, 
+  "/dashboard": { roles: ["superAdmin", "owner"] }, // const 
+  "/dashboard/users": { roles: ["superAdmin", "owner"] }, // const 
+  "/dashboard/userDashboard": { roles: ["user", "admin", "superAdmin", "owner"] }, // const 
   "/dashboard/features": {},
   "/dashboard/hero": { sectionId: "hero" },
   "/dashboard/services": {},
@@ -34,7 +34,9 @@ const routePermissions: Record<string, RoutePermission> = {
   "/dashboard/team": {},
   "/dashboard/technology-stack": {},
   "/dashboard/testimonials": {},
-  "/dashboard/addWebSiteConfiguration": { roles: ["superAdmin", "owner"] },
+  "/dashboard/addWebSiteConfiguration": { roles: ["superAdmin", "owner"] }, // const 
+  "/dashboard/idigitekAdmin": { roles: ["idigitekAdmin"] }, // const 
+
 }
 
 export function RouteGuard({ children }: { children: React.ReactNode }) {
@@ -62,16 +64,24 @@ export function RouteGuard({ children }: { children: React.ReactNode }) {
     if (userIsLoading || isLoadingSections || pathname === "/sign-in") {
       return
     }
+    
 
     // Handle initial dashboard access based on role
     if (pathname === "/dashboard" && user?.role) {
       const userRole = user.role.toLowerCase()
-      
+
+        if (userRole === "idigitekadmin") {
+        router.push("/dashboard/idigitekAdmin")
+        return
+      }
+
       // Redirect non-owner/non-superAdmin roles to user dashboard
       if (userRole === "admin" || userRole === "user") {
         router.push("/dashboard/userDashboard")
         return
       }
+        
+    
     }
 
     // Skip permission checks for routes not in the map

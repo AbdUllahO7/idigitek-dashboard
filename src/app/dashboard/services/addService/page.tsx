@@ -16,6 +16,7 @@ import BenefitsForm from "./Components/BenefitsForm/BenefitsForm"
 import ProcessStepsForm from "./Components/ProcessStepsForm/process-steps-form"
 import FaqForm from "./Components/FaqForm/faq-form"
 import FeaturesForm from "./Components/FeaturesForm/features-form"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 // Form sections to collect data from
 const FORM_SECTIONS = ["hero", "benefits", "features", "processSteps", "faq"]
@@ -30,15 +31,16 @@ export default function AddService() {
   const isCreateMode = mode === 'create'
   
   // API hooks
-  const { useGetAll: useGetAllLanguages } = useLanguages()
+  const { useGetByWebsite: useGetAllLanguages } = useLanguages()
   const { useGetById: useGetSectionItemById } = useSectionItems()
   const { useGetBySectionItemId: useGetSubSectionsBySectionItemId } = useSubSections()
-  
+  const { websiteId } = useWebsiteContext();
+
   // Get languages
   const { 
     data: languagesData, 
     isLoading: isLoadingLanguages 
-  } = useGetAllLanguages()
+  } = useGetAllLanguages(websiteId)
   
   // Get section item data if in edit mode
   const {
@@ -93,7 +95,6 @@ export default function AddService() {
     );
     
     if (subsection) {
-      console.log(`Found subsection for ${baseSlug} using slug: ${subsection.slug}`);
       return subsection;
     }
     
@@ -107,15 +108,10 @@ export default function AddService() {
     });
     
     if (partialMatch) {
-      console.log(`Found partial match for ${baseSlug} with slug: ${partialMatch.slug}`);
       return partialMatch;
     }
     
-    console.log(`No subsection found for ${baseSlug}. Available slugs:`, 
-      subsectionsData.data.map((s: {slug: string}) => s.slug).join(', ')
-    );
-    
-    return undefined;
+      return undefined;
   };
   
   // Generate proper slugs for subsections
@@ -212,22 +208,7 @@ export default function AddService() {
       )
     }
   ]
-  
-  // Debugging effects to see what's happening
-  useEffect(() => {
-    if (subsectionsData?.data && sectionItemId && !isCreateMode) {
-      console.log("Subsections loaded:", subsectionsData.data.length);
-      console.log("All subsection slugs:", subsectionsData.data.map((s: { slug: string }) => s.slug));
-      
-      // Check what we find for each section
-      console.log("hero-section subsection:", findSubsection('hero-section'));
-      console.log("benefits subsection:", findSubsection('benefits'));
-      console.log("features subsection:", findSubsection('features'));
-      console.log("process-steps subsection:", findSubsection('process-steps'));
-      console.log("faq-section subsection:", findSubsection('faq-section'));
-    }
-  }, [subsectionsData, sectionItemId, isCreateMode]);
-  
+   
   // Define save handler for the service
   const handleSaveService = async (formData: FormData) => {
     // Extract service info from hero data for title/description

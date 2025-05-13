@@ -8,25 +8,34 @@ import { Textarea } from "@/src/components/ui/textarea"
 import { Label } from "@/src/components/ui/label"
 import { Loader2 } from "lucide-react"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
+import { useWebSite } from "@/src/hooks/webConfiguration/use-WebSite"
 import { useToast } from "../hooks/use-toast"
+import useUsers from "../hooks/users/use-users"
+import { useWebsiteContext } from "../providers/WebsiteContext"
 
 interface DialogCreateSectionItemProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   sectionId: string;
   onServiceCreated: (serviceId: string) => void;
+  title:string,
 }
 
 export default function DialogCreateSectionItem({ 
   open, 
   onOpenChange, 
   sectionId, 
-  onServiceCreated 
+  onServiceCreated,
+  title ,
+
 }: DialogCreateSectionItemProps) {
   const [name, setName] = useState<string>("")
   const [description, setDescription] = useState<string>("")
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const { toast } = useToast()
+  const { useGetCurrentUser } = useUsers()
+  const { data: userData, isLoading: isLoadingUser, error: userError } = useGetCurrentUser()
+  const { websiteId  , websites , isLoadingWebsites , websitesError} = useWebsiteContext();
 
   // Get create hook from useSectionItems
   const { useCreate: useCreateSectionItem } = useSectionItems()
@@ -44,6 +53,46 @@ export default function DialogCreateSectionItem({
       return
     }
 
+    // Check localStorage first
+    let websiteId = localStorage.getItem('websiteId')
+    
+    // If no websiteId in localStorage, try to get it from useGetMyWebsites
+    if (!websiteId) {
+      if (isLoadingWebsites || isLoadingUser) {
+        toast({
+          title: "Loading",
+          description: "Please wait while we fetch your website information",
+          variant: "default"
+        })
+        return
+      }
+
+      if (userError || websitesError) {
+        toast({
+          title: "Error",
+          description: userError?.message || websitesError?.message || "Failed to fetch website information",
+          variant: "destructive"
+        })
+        return
+      }
+
+      if (websites.length === 0) {
+        toast({
+          title: "Validation Error",
+          description: "Please create a website first before adding a service",
+          variant: "destructive"
+        })
+        return
+      }
+
+      // Use the first website's ID
+      websiteId = websites[0]._id
+      // Optionally store in localStorage to avoid future API calls
+      if(websiteId) {
+        localStorage.setItem('websiteId', websiteId)
+      }
+    }
+
     setIsSubmitting(true)
     try {
       // Create basic service section item
@@ -51,12 +100,12 @@ export default function DialogCreateSectionItem({
         name: name.trim(),
         description: description.trim(),
         isActive: true,
-        section: sectionId
+        section: sectionId,
+        WebSiteId: websiteId
       }
 
       // Create the service
       const result = await createSectionItem.mutateAsync(sectionItemPayload)
-      console.log("Created new service:", result)
 
       toast({
         title: "Service created",
@@ -68,7 +117,6 @@ export default function DialogCreateSectionItem({
         onServiceCreated(result.data._id)
       }
     } catch (error: any) {
-      console.error("Failed to create service:", error)
       toast({
         title: "Error creating service",
         description: error.message || "An error occurred while creating the service",
@@ -93,7 +141,7 @@ export default function DialogCreateSectionItem({
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create New Service</DialogTitle>
+            <DialogTitle>Create New {title}</DialogTitle>
             <DialogDescription>
               Enter the basic information for your new service. You'll be able to add more details after creating it.
             </DialogDescription>
@@ -102,7 +150,7 @@ export default function DialogCreateSectionItem({
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="name" className="font-medium">
-                Service Name <span className="text-red-500">*</span>
+                {title} Name <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="name"
@@ -146,7 +194,7 @@ export default function DialogCreateSectionItem({
                   Creating...
                 </>
               ) : (
-                "Create Service"
+                `Create ${title}`
               )}
             </Button>
           </DialogFooter>

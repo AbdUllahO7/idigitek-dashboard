@@ -5,10 +5,9 @@ import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { Loader2 } from "lucide-react"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
-import type { FieldConfig, MultilingualSectionData } from "@/src/api/types"
+import { FieldConfig, MultilingualSectionData } from "@/src/api/types/hooks/MultilingualSection.types"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
-// Define types for better TypeScript support
-// Interface for section configuration
 interface SectionConfig {
   name: string // Section name used for display
   slug: string // Section slug used in API calls
@@ -19,7 +18,6 @@ interface SectionConfig {
   isMain: boolean // Flag to indicate if this is a main section
 }
 
-// Define props interface
 interface GenericSectionIntegrationProps {
   onSectionChange?: (data: MultilingualSectionData) => void
   config: SectionConfig // Configuration for this specific section
@@ -32,7 +30,6 @@ interface GenericSectionIntegrationProps {
   ParentSectionId: string // The ID of the parent entity (section or sectionItem)
   createMainService?: boolean // Whether to create a main-service section item
 }
-
 
 
 // Helper function to extract ID from various response formats
@@ -68,6 +65,7 @@ function GenericSectionIntegration({
   const [sectionData, setSectionData] = useState<MultilingualSectionData | null>(null)
   const [isDataProcessed, setIsDataProcessed] = useState(false)
   const [mainServiceId, setMainServiceId] = useState<string | null>(null)
+  const { websiteId } = useWebsiteContext();
 
   // Get hooks for API calls
   const {
@@ -76,10 +74,7 @@ function GenericSectionIntegration({
     useGetBySectionItemId,
   } = useSubSections()
 
-
-
-
-  const { useGetAll: useGetAllLanguages } = useLanguages()
+  const { useGetByWebsite: useGetAllLanguages } = useLanguages()
 
   // Section Items hooks for main-service creation
   const { useGetBySectionId: useGetSectionItemsBySectionId, useCreate: useCreateSectionItem } = useSectionItems()
@@ -109,7 +104,6 @@ function GenericSectionIntegration({
 
         // If main-service exists, use its ID
         if (existingMainService?._id) {
-          console.log("Found existing main-service:", existingMainService._id)
           setMainServiceId(existingMainService._id)
           return
         }
@@ -133,7 +127,6 @@ function GenericSectionIntegration({
           }
         }
 
-        console.log("Creating main-service for section:", ParentSectionId)
 
         // Create the main-service section item
         const sectionItemData = {
@@ -143,11 +136,12 @@ function GenericSectionIntegration({
           isActive: true,
           order: 0,
           isMain: true,
+          WibSite : "1",
           // Optional image from section data if available
           image: sectionData?.imageUrl || null,
+
         }
 
-        console.log("Creating section item with data:", sectionItemData)
 
         const response = await createSectionItem.mutateAsync(sectionItemData)
 
@@ -155,7 +149,6 @@ function GenericSectionIntegration({
         const newServiceId = extractId(response)
 
         if (newServiceId) {
-          console.log("Created main-service with ID:", newServiceId)
           setMainServiceId(newServiceId)
 
           // Refetch section items to include the new one
@@ -185,8 +178,6 @@ function GenericSectionIntegration({
   // Determine the actual parent ID to use (section ID or main-service ID)
   const effectiveParentId = createMainService && mainServiceId ? mainServiceId : ParentSectionId
 
-  // Check if ParentSectionId looks like a section ID or a section item ID
-  // For now, just fetch subsections by both methods to ensure we find them
   const { data: sectionItemSubSections, isLoading: isLoadingSectionItemSubSections } = useGetBySectionItemId(
     effectiveParentId,
     true,
@@ -214,16 +205,7 @@ function GenericSectionIntegration({
     isLoading: isLoadingSectionData,
   } = getCompleteSectionQuery
 
-  const { data: languagesData, isLoading: isLoadingLanguages } = useGetAllLanguages()
-
-
-
-  // Log the content elements for debugging
-  useEffect(() => {
-    if (completeSectionData?.data?.contentElements) {
-      console.log(`${config.name} Content Elements:`, completeSectionData.data.contentElements)
-    }
-  }, [completeSectionData, config.name])
+  const { data: languagesData, isLoading: isLoadingLanguages } = useGetAllLanguages(websiteId)
 
   // Build section data when complete service data loads
   useEffect(() => {
@@ -374,9 +356,6 @@ function GenericSectionIntegration({
       </div>
     )
   }
-
-  // Use provided values or generate defaults from config
-
 
   return (
     <>

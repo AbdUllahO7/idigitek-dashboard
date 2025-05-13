@@ -29,6 +29,11 @@ const schemaDefinitions = {
       description: z.string().min(1, { message: "Description is required" }),
       backLinkText: z.string().min(1, { message: "Back link text is required" }),
     }),
+
+      industry: (z: any) => z.object({
+      title: z.string().min(1, { message: "Title is required" }),
+      description: z.string().min(1, { message: "Description is required" }),
+    }),
     
     processStep: (z: any) => z.array(
       z.object({
@@ -71,13 +76,20 @@ const schemaDefinitions = {
 
 export const createHeroSchema = (languageIds: string[], activeLanguages: Language[]) => {
     const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.hero);
-    // Add any hero-specific fields
     return z.object({
       ...schema.shape,
       backgroundImage: z.string().optional(),
     });
 };
-  
+
+export const createIndustrySchema = (languageIds: string[], activeLanguages: Language[]) => {
+    const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.industry);
+    return z.object({
+      ...schema.shape,
+      backgroundImage: z.string().optional(),
+    });
+};
+
 export const createProcessStepsSchema = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.processStep);
 };
@@ -93,6 +105,9 @@ export const createFaqSchema = (languageIds: string[], activeLanguages: Language
 export const createFeaturesSchema = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.feature);
 };
-  
+
+
+
+
 // Usage remains the same
 // const formSchema = createHeroSchema(languageIds, activeLanguages);

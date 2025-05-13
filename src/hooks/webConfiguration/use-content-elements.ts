@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
-import { ContentElement } from '@/src/api/types';
+import { ContentElement } from '@/src/api/types/hooks/content.types';
 
 // Base content element hook
 export function useContentElements() {

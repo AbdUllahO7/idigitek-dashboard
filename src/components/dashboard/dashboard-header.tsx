@@ -23,21 +23,12 @@ interface DashboardHeaderProps {
  * Contains the top navigation bar with search, notifications, and user menu
  */
 export default function DashboardHeader({ isSidebarOpen, toggleSidebar }: DashboardHeaderProps) {
-
-
     const { logout  } = useAuth();
-
-
-     const handleSubmit = async (e: React.FormEvent) => {
-
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-
-    
         try {
-
           // Call the login function from our auth context
           await logout()
-          
           // Trigger navigation event manually (if needed for your app)
           document.dispatchEvent(new Event("navigationstart"))
           

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
-import { SubSection } from '@/src/api/types';
+import { SubSection } from '@/src/api/types/hooks/section.types';
 
 // Base subsection hook
 export function useSubSections() {
@@ -9,13 +9,53 @@ export function useSubSections() {
 
   // Query keys
   const subsectionsKey = ['subsections']; 
-  const subsectionKey = (id: string) => [...subsectionsKey, id];
+  const subsectionKey = (id: string | null ) => [...subsectionsKey, id];
   const subsectionSlugKey = (slug: string) => [...subsectionsKey, 'slug', slug];
   const subsectionBySectionItemKey = (sectionItemId: string) => [...subsectionsKey, 'sectionItem', sectionItemId];
   const subsectionBySectionKey = (sectionId: string) => [...subsectionsKey, 'section', sectionId];
   const mainSubsectionBySectionKey = (sectionId: string) => [...subsectionBySectionKey(sectionId), 'main'];
   const completeSubsectionBySectionKey = (sectionId: string) => [...subsectionBySectionKey(sectionId), 'complete'];
+  const subsectionsByWebSiteKey = (websiteId: string) => [...subsectionsKey, 'website', websiteId];
+  const completeSubsectionsByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'complete'];
+  const mainSubsectionByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'main'];
+
+  const useGetByWebSiteId = (
+    websiteId: string,
+    activeOnly = true,
+    limit = 100,
+    skip = 0,
+    includeContentCount = false
+  ) => {
+    return useQuery({
+      queryKey: [...subsectionsByWebSiteKey(websiteId), { activeOnly, limit, skip, includeContentCount }],
+      queryFn: async () => {
+        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}`, {
+          params: { activeOnly, limit, skip, includeContentCount }
+        });
+        return data;
+      },
+      enabled: !!websiteId && websiteId !== "null"
+    });
+  };
   
+  // Get complete subsections by WebSite ID with all content elements and translations
+  const useGetCompleteByWebSiteId = (
+    websiteId: string,
+    activeOnly = true,
+    limit = 100,
+    skip = 0
+  ) => {
+    return useQuery({
+      queryKey: [...completeSubsectionsByWebSiteKey(websiteId), { activeOnly, limit, skip }],
+      queryFn: async () => {
+        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/complete`, {
+          params: { activeOnly, limit, skip }
+        });
+        return data;
+      },
+      enabled: !!websiteId && websiteId !== "null"
+    });
+  };
   // Get all subsections
   const useGetAll = (activeOnly = true, limit = 100, skip = 0, includeContentCount = false) => {
     return useQuery({
@@ -162,6 +202,11 @@ export function useSubSections() {
             queryKey: subsectionBySectionKey(typeof data.section === 'string' ? data.section : data.section._id)
           });
         }
+        if (data.WebSite) {
+          queryClient.invalidateQueries({ 
+            queryKey: subsectionsByWebSiteKey(typeof data.WebSite === 'string' ? data.WebSiteId : data.WebSite._id) 
+          });
+        }
       },
     });
   };
@@ -169,7 +214,7 @@ export function useSubSections() {
   // Update a subsection
   const useUpdate = () => {
     return useMutation({
-      mutationFn: async ({ id, data }: { id: string; data: Partial<SubSection> }) => {
+      mutationFn: async ({ id, data }: { id: string | null ; data: Partial<SubSection> }) => {
         try {
           const { data: responseData } = await apiClient.put(`${endpoint}/${id}`, data);
           return responseData;
@@ -202,6 +247,14 @@ export function useSubSections() {
             queryKey: completeSubsectionBySectionKey(typeof data.section === 'string' ? data.section : data.section._id)
           });
         }
+        if (data.WebSite) {
+          queryClient.invalidateQueries({ 
+            queryKey: subsectionsByWebSiteKey(typeof data.WebSite === 'string' ? data.WebSiteId : data.WebSite._id) 
+          });
+          queryClient.invalidateQueries({ 
+            queryKey: completeSubsectionsByWebSiteKey(typeof data.WebSite === 'string' ? data.WebSiteId : data.WebSite._id) 
+          });
+        } 
         queryClient.invalidateQueries({ queryKey: subsectionsKey });
       },
     });
@@ -288,6 +341,21 @@ export function useSubSections() {
       enabled: !!slug && slug !== ""
     });
   };
+  // Add new query key
+
+  // Get main subsection for a WebSite
+  const useGetMainByWebSiteId = (websiteId: string) => {
+      return useQuery({
+          queryKey: mainSubsectionByWebSiteKey(websiteId),
+          queryFn: async () => {
+              const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/main`);
+              return data;
+          },
+          enabled: !!websiteId && websiteId !== "null"
+      });
+  };
+
+
 
   // Return all hooks including section-related ones
   return {
@@ -303,6 +371,10 @@ export function useSubSections() {
     useDelete,
     useUpdateOrder,
     useGetCompleteById,
-    useGetCompleteBySlug
+    useGetCompleteBySlug,
+    useGetByWebSiteId,
+    useGetCompleteByWebSiteId,
+    useGetMainByWebSiteId 
+
   };
 }

@@ -17,6 +17,7 @@ import { Skeleton } from "@/src/components/ui/skeleton"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
 import Link from "next/link"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 // Define interfaces for the data structures
 interface User {
@@ -57,15 +58,16 @@ interface ApiResponse<T> {
 export default function UserDashboard() {
   const [loading, setLoading] = useState(true)
   const { user } = useAuth() as { user: User | null }
-  
+  const { websiteId } = useWebsiteContext();
+
   const { 
-    useGetAll: useGetAllLanguages
+    useGetByWebsite: useGetAllLanguages
   } = useLanguages();
 
   const { 
     data: languages, 
     isLoading: isLoadingLanguages,
-  } = useGetAllLanguages() as { 
+  } = useGetAllLanguages(websiteId) as { 
     data?: ApiResponse<Language>, 
     isLoading: boolean 
   };

@@ -21,7 +21,7 @@ export const LanguageCard = memo(({ langCode, form } : LanguageCardProps) => {
           <span className="uppercase font-bold text-sm bg-primary text-primary-foreground rounded-md px-2 py-1 mr-2">
             {langCode}
           </span>
-          Hero Section
+            Hero Section
         </CardTitle>
         <CardDescription>Manage hero content for {langCode.toUpperCase()}</CardDescription>
       </CardHeader>

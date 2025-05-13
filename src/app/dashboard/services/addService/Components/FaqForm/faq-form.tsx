@@ -11,7 +11,6 @@ import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
 import { useToast } from "@/src/hooks/use-toast"
-import DeleteServiceDialog from "@/src/components/DeleteServiceDialog"
 import { createFaqSchema } from "../../Utils/language-specifi-schemas"
 import { createFaqDefaultValues} from "../../Utils/Language-default-values"
 import { createFormRef } from "../../Utils/Expose-form-data"
@@ -22,6 +21,8 @@ import { LoadingDialog } from "@/src/utils/MainSectionComponents"
 import { FaqFormProps } from "@/src/api/types/sections/service/serviceSections.types"
 import { SubSection } from "@/src/api/types/hooks/section.types"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
+import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 
 
 
@@ -33,6 +34,7 @@ const FaqForm = forwardRef<any, FaqFormProps>(
       createFaqSchema(languageIds, activeLanguages), 
       [languageIds, activeLanguages]
     );
+    const { websiteId } = useWebsiteContext();
     
     const defaultValues = useMemo(() => 
       createFaqDefaultValues(languageIds, activeLanguages), 
@@ -248,7 +250,6 @@ const FaqForm = forwardRef<any, FaqFormProps>(
           await Promise.all(faqElements.map(async (element) => {
             try {
               await deleteContentElement.mutateAsync(element._id);
-              console.log(`Deleted content element: ${element.name}`);
             } catch (error) {
               console.error(`Failed to delete content element ${element.name}:`, error);
             }
@@ -292,7 +293,6 @@ const FaqForm = forwardRef<any, FaqFormProps>(
                     order: newOrder,
                   },
                 });
-                console.log(`Updated element ${element.name} to ${newName}`);
               } catch (error) {
                 console.error(`Failed to update element ${element.name}:`, error);
               }
@@ -365,7 +365,6 @@ const FaqForm = forwardRef<any, FaqFormProps>(
       try {
         // Get current form values before any processing
         const allFormValues = form.getValues();
-        console.log("Form values at save:", allFormValues);
 
         let sectionId = existingSubSectionId;
 
@@ -380,6 +379,8 @@ const FaqForm = forwardRef<any, FaqFormProps>(
             order: 0,
             sectionItem: ParentSectionId,
             languages: languageIds,
+            WebSiteId : websiteId
+
           };
 
           toast({
@@ -786,7 +787,7 @@ const FaqForm = forwardRef<any, FaqFormProps>(
         </Dialog>
 
         {/* Delete FAQ Confirmation Dialog */}
-        <DeleteServiceDialog
+        <DeleteSectionDialog
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
           serviceName={faqToDelete ? `FAQ ${faqToDelete.index + 1}` : ''}

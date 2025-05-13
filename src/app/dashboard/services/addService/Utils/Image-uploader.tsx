@@ -461,7 +461,7 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
   
   export const useImageUploader = ({ form, fieldPath, initialImageUrl, onUpload, onRemove, validate }: ImageUploaderOptions) => {
     const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | undefined>(undefined);
     
     // Handle image upload
     const handleImageUpload = useCallback((e: { target: { files: any[]; }; }) => {
@@ -491,7 +491,7 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
     // Handle image removal
     const handleImageRemove = useCallback(() => {
       setImageFile(null);
-      setImagePreview(null);
+      setImagePreview(undefined);
       form.setValue(fieldPath, '', { shouldDirty: true });
       
       // Call onRemove callback if provided

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/src/hooks/use-toast"
 import { UseGenericListOptions } from "../api/types/hooks/UseGenericList.types"
+import { useWebsiteContext } from "../providers/WebsiteContext"
 
 
 export function useGenericList({
@@ -25,10 +26,11 @@ export function useGenericList({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false)
   const [itemToDelete, setItemToDelete] = useState<{id: string; name: string} | null>(null)
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
-
+    const { websiteId } = useWebsiteContext();
+  
   // API hooks for fetching and deleting items
-  const { useGetBySectionId, useDelete } = apiHooks
-
+  const { useGetByWebSiteId, useDelete , useGetBySectionId } = apiHooks
+  
   // Query for items with the parent section ID
   const {
     data: itemsData,
@@ -42,7 +44,7 @@ export function useGenericList({
     true, // includeSubSectionCount
   )
 
-  console.log("Items data:", itemsData)
+
 
   // Delete mutation
   const deleteItem = useDelete()
@@ -129,12 +131,12 @@ export function useGenericList({
 
   // Handle editing an item
   const handleEdit = (itemId: string) => {
-    if (sectionId) {
+    if (sectionId && itemId) {
       router.push(`${editPath}?sectionId=${sectionId}&sectionItemId=${itemId}&mode=edit`)
     } else {
       toast({
         title: "Error",
-        description: "Section ID is missing. Cannot edit item.",
+        description: "Section ID or section item id  is missing. Cannot edit item.",
         variant: "destructive",
       })
     }

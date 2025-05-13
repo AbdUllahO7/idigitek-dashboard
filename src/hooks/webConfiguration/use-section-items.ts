@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
-import { SectionItem } from '@/src/api/types';
+import { SectionItem } from '@/src/api/types/hooks/section.types';
 
 // Base section item hook
 export function useSectionItems() {
@@ -11,6 +11,7 @@ export function useSectionItems() {
   const sectionItemsKey = ['sectionItems'];
   const sectionItemKey = (id: string) => [...sectionItemsKey, id];
   const sectionItemsBySectionKey = (sectionId: string) => [...sectionItemsKey, 'section', sectionId];
+  const sectionItemsByWebSiteKey = (websiteId: string) => [...sectionItemsKey, 'website', websiteId];
 
   // Get all section items
   const useGetAll = (activeOnly = true, limit = 100, skip = 0, includeSubSectionCount = false) => {
@@ -59,6 +60,26 @@ export function useSectionItems() {
     });
   };
 
+  // Get section items by WebSite ID - NEW FUNCTION
+  const useGetByWebSiteId = (
+    websiteId: string,
+    activeOnly = true,
+    limit = 100,
+    skip = 0,
+    includeSubSectionCount = false
+  ) => {
+    return useQuery({
+      queryKey: [...sectionItemsByWebSiteKey(websiteId), { activeOnly, limit, skip, includeSubSectionCount }],
+      queryFn: async () => {
+        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}`, {
+          params: { activeOnly, limit, skip, includeSubSectionCount }
+        });
+        return data;
+      },
+      enabled: !!websiteId && websiteId !== "null"
+    });
+  };
+
   // Create a new section item
   const useCreate = () => {
     return useMutation({
@@ -83,6 +104,10 @@ export function useSectionItems() {
         }
         if (data.section) {
           queryClient.invalidateQueries({ queryKey: sectionItemsBySectionKey(data.section) });
+        }
+        // Add invalidation for WebSite
+        if (data.WebSite) {
+          queryClient.invalidateQueries({ queryKey: sectionItemsByWebSiteKey(data.WebSite) });
         }
       },
     });
@@ -113,6 +138,11 @@ export function useSectionItems() {
         if (data.section) {
           queryClient.invalidateQueries({ queryKey: sectionItemsBySectionKey(data.section) });
         }
+        
+        // Invalidate WebSite queries
+        if (data.WebSite) {
+          queryClient.invalidateQueries({ queryKey: sectionItemsByWebSiteKey(data.WebSite) });
+        }
       },
     });
   };
@@ -127,7 +157,7 @@ export function useSectionItems() {
         return data;
       },
       onSuccess: (_, id) => {
-        // Get the cached data to find the parent section
+        // Get the cached data to find the parent section and WebSite
         const cachedData = queryClient.getQueryData(sectionItemKey(id)) as SectionItem | undefined;
         
         queryClient.removeQueries({ queryKey: sectionItemKey(id) });
@@ -137,6 +167,13 @@ export function useSectionItems() {
         if (cachedData?.section) {
           if (typeof cachedData.section === 'string') {
             queryClient.invalidateQueries({ queryKey: sectionItemsBySectionKey(cachedData.section) });
+          }
+        }
+        
+        // Invalidate WebSite queries
+        if (cachedData?.WebSite) {
+          if (typeof cachedData.WebSite === 'string') {
+            queryClient.invalidateQueries({ queryKey: sectionItemsByWebSiteKey(cachedData.WebSite) });
           }
         }
       },
@@ -161,6 +198,7 @@ export function useSectionItems() {
     useGetAll,
     useGetById,
     useGetBySectionId,
+    useGetByWebSiteId, 
     useCreate,
     useUpdate,
     useDelete,

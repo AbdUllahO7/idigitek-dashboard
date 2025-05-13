@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Globe, Layout, Sparkles, ListChecks, ArrowRight, HelpCircle, Save, Loader2 } from "lucide-react"
-import { Language } from "@/src/api/types"
+import { Language } from "@/src/api/types/hooks/language.types"
 
 // Define the tab configuration
 interface TabConfig {

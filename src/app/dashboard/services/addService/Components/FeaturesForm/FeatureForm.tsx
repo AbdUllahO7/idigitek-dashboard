@@ -138,17 +138,17 @@ export const FeatureForm = memo(({
                   Add Feature
                 </Button>
               </div>
-              {feature.content.features.map((featureItem, featureItemIndex) => (
-                <FeatureItem
-                  key={`${langCode}-${index}-feature-${featureItemIndex}`}
-                  featureItemIndex={featureItemIndex}
-                  langCode={langCode}
-                  index={index}
-                  form={form}
-                  onRemoveFeatureItem={onRemoveFeatureItem}
-                />
-              ))}
-            </div>
+                {feature.content.features.map((featureItem, featureItemIndex) => (
+                  <FeatureItem
+                    key={`${langCode}-${index}-feature-${featureItemIndex}`}
+                    featureItemIndex={featureItemIndex}
+                    langCode={langCode}
+                    index={index}
+                    form={form}
+                    onRemoveFeatureItem={onRemoveFeatureItem}
+                  />
+                ))}
+                </div>
             {langId === languageIds[0] && (
               <div className="grid grid-cols-1 gap-4">
                 <FeatureImageUploader featureIndex={index} />
