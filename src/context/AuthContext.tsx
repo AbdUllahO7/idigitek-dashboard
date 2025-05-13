@@ -62,7 +62,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Function to reset the React Query cache
   const resetQueryCache = () => {
-    console.log(`[Auth ${CONTEXT_ID}] Resetting query cache`);
     
     // This marks all queries as stale, forcing them to refetch
     queryClient.invalidateQueries();
@@ -225,7 +224,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'token') {
         if (!e.newValue) {
-          console.log(`[Auth ${CONTEXT_ID}] Token removed in another tab, clearing user`);
           persistUser(null);
           setupAuthHeader(null);
         } else if (e.newValue !== localStorage.getItem('token')) {
@@ -280,7 +278,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         
         // Navigate to dashboard or redirect URL
-        console.log(`[Auth ${CONTEXT_ID}] Login successful, redirecting to dashboard`);
         router.push('/dashboard');
       } else {
         throw new Error("Authentication failed - no token received");

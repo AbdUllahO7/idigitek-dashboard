@@ -157,21 +157,31 @@ export default function HeaderPage() {
     let foundMainSubSection = false;
     let mainSubSection = null;
     
+    // Get expected name from configuration
+    const expectedName = headerSectionConfig.subSectionName;
+    console.log("Expected subsection name:", expectedName);
+    
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
       const sectionData = sectionSubsections.data;
       
       if (Array.isArray(sectionData)) {
-        // Find the main subsection in the array
-        mainSubSection = sectionData.find(sub => sub.isMain === true);
+        // Find the main subsection in the array with correct name
+        mainSubSection = sectionData.find(sub => 
+          sub.isMain === true && sub.name === expectedName
+        );
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-        foundMainSubSection = sectionData.isMain === true;
+        foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedName;
         mainSubSection = foundMainSubSection ? sectionData : null;
       }
       
-      console.log("Section subsections check:", { foundMainSubSection, mainSubSection });
+      console.log("Section subsections check:", { 
+        foundMainSubSection, 
+        mainSubSection,
+        matchesName: mainSubSection ? mainSubSection.name === expectedName : false
+      });
     }
     
     // If we didn't find anything in the section-specific data, check the website-wide data
@@ -179,19 +189,30 @@ export default function HeaderPage() {
       const websiteData = mainSubSectionData.data;
       
       if (Array.isArray(websiteData)) {
-        // Find the main subsection in the array
-        mainSubSection = websiteData.find(sub => sub.isMain === true);
+        // Find the main subsection in the array with correct name
+        mainSubSection = websiteData.find(sub => 
+          sub.isMain === true && sub.name === expectedName
+        );
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-        foundMainSubSection = websiteData.isMain === true;
+        foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedName;
         mainSubSection = foundMainSubSection ? websiteData : null;
       }
       
-      console.log("Website subsections check:", { foundMainSubSection, mainSubSection });
+      console.log("Website subsections check:", { 
+        foundMainSubSection, 
+        mainSubSection,
+        matchesName: mainSubSection ? mainSubSection.name === expectedName : false
+      });
     }
     
-    console.log("Final subsection result:", { foundMainSubSection, mainSubSection });
+    console.log("Final subsection result:", { 
+      foundMainSubSection, 
+      mainSubSection,
+      name: mainSubSection?.name,
+      expectedName
+    });
     
     // Update state based on what we found
     setHasMainSubSection(foundMainSubSection);
@@ -228,8 +249,19 @@ export default function HeaderPage() {
   const handleMainSubSectionCreated = (subsection: any) => {
     console.log("Main subsection created:", subsection);
     
-    // Set that we have a main subsection now
-    setHasMainSubSection(subsection.isMain === true);
+    // Check if subsection has the correct name
+    const expectedName = headerSectionConfig.subSectionName;
+    const hasCorrectName = subsection.name === expectedName;
+    
+    // Set that we have a main subsection now (only if it also has the correct name)
+    setHasMainSubSection(subsection.isMain === true && hasCorrectName);
+    
+    // Log the name check
+    console.log("Main subsection name check:", {
+      actualName: subsection.name,
+      expectedName,
+      isCorrect: hasCorrectName
+    });
     
     // If we have section data from the subsection, update it
     if (subsection.section) {
@@ -309,8 +341,6 @@ export default function HeaderPage() {
       confirmText="Confirm"
     />
   );
-
-
 
   return (
     <div className="space-y-6">

@@ -352,7 +352,6 @@ export function useUserManagement() {
     try {
       // Step 1: Create the user
       const newUser = await createUserMutation.mutateAsync(userData as any);
-      console.log("User created successfully:", newUser);
       
       // Get the user ID from the response
       createdUserId = newUser?.data?.id || newUser?.data?._id || newUser?.id || newUser?._id;
@@ -360,14 +359,7 @@ export function useUserManagement() {
       if (!createdUserId) {
         throw new Error("Failed to get new user ID from response");
       }
-      
       userCreated = true;
-      console.log("Adding user to website with ID:", createdUserId);
-      console.log("userData.role",userData.role)
-      // Step 2: Map role to expected values for the API
-      
-      console.log("userData.role" , userData.role)
-      // Step 3: Add the user to the website
       try {
         await createWebSiteUser.mutateAsync({ 
           websiteId, 
@@ -376,13 +368,7 @@ export function useUserManagement() {
         });
         
         websiteUserCreated = true;
-        
-        // Success! Both operations completed
-        console.log("User successfully added to website");
-        
-        // Refresh users list
         await refetchUsers();
-        
         toast({
           title: "User added",
           description: "The new user has been added successfully and assigned to this website",

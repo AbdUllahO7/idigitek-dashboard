@@ -150,8 +150,6 @@ export function FormContextProvider({
           }
         }
         
-        console.log("All data collected:", allData)
-        
         // Use the provided onSave callback or handle saving internally
         if (onSave) {
           await onSave(allData)

@@ -208,8 +208,7 @@ export function useWebSite() {
     });
   };
 
-  // Function to manually reset all website caches
-  // Can be called explicitly if needed
+
   const resetWebsiteCache = () => {
     queryClient.invalidateQueries({ queryKey: ['websites'] });
   };

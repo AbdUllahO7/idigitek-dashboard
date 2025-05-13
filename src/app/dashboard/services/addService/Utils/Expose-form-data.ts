@@ -96,7 +96,6 @@ export const validateBenefitCounts = (values: { [s: string]: unknown; } | ArrayL
   const firstCount = counts[0];
   const allEqual = counts.every(count => count === firstCount);
 
-  console.log("Benefit counts validation:", { counts, allEqual, validLangEntries: validLangEntries.length });
 
   return allEqual;
 };

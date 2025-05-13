@@ -123,9 +123,16 @@ export default function ServicesPage() {
   // Determine if main subsection exists when data loads & set section data if needed
   useEffect(() => {
     console.log("Checking for main subsection...");
+    console.log("Subsection data state:", { 
+      mainSubSectionData, 
+      sectionSubsections,
+      isLoadingCompleteSubsections,
+      isLoadingSectionSubsections
+    });
     
     // First check if we are still loading
     if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
+      console.log("Still loading subsection data...");
       setIsLoadingMainSubSection(true);
       return;
     }
@@ -134,21 +141,31 @@ export default function ServicesPage() {
     let foundMainSubSection = false;
     let mainSubSection = null;
     
+    // Get expected name from configuration
+    const expectedName = serviceSectionConfig.name;
+    console.log("Expected subsection name:", expectedName);
+    
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
       const sectionData = sectionSubsections.data;
       
       if (Array.isArray(sectionData)) {
-        // Find the main subsection in the array
-        mainSubSection = sectionData.find(sub => sub.isMain === true);
+        // Find the main subsection in the array with correct name
+        mainSubSection = sectionData.find(sub => 
+          sub.isMain === true && sub.name === expectedName
+        );
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-        foundMainSubSection = sectionData.isMain === true;
+        foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedName;
         mainSubSection = foundMainSubSection ? sectionData : null;
       }
       
-      console.log("Section subsections check:", { foundMainSubSection, mainSubSection });
+      console.log("Section subsections check:", { 
+        foundMainSubSection, 
+        mainSubSection,
+        matchesSlug: mainSubSection ? mainSubSection.name === expectedName : false
+      });
     }
     
     // If we didn't find anything in the section-specific data, check the website-wide data
@@ -156,17 +173,30 @@ export default function ServicesPage() {
       const websiteData = mainSubSectionData.data;
       
       if (Array.isArray(websiteData)) {
-        // Find the main subsection in the array
-        mainSubSection = websiteData.find(sub => sub.isMain === true);
+        // Find the main subsection in the array with correct name
+        mainSubSection = websiteData.find(sub => 
+          sub.isMain === true && sub.name === expectedName
+        );
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-        foundMainSubSection = websiteData.isMain === true;
+        foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedName;
         mainSubSection = foundMainSubSection ? websiteData : null;
       }
       
-      console.log("Website subsections check:", { foundMainSubSection, mainSubSection });
+      console.log("Website subsections check:", { 
+        foundMainSubSection, 
+        mainSubSection,
+        matchesSlug: mainSubSection ? mainSubSection.name === expectedName : false
+      });
     }
+    
+    console.log("Final subsection result:", { 
+      foundMainSubSection, 
+      mainSubSection,
+      name: mainSubSection?.name,
+      expectedName
+    });
     
     // Update state based on what we found
     setHasMainSubSection(foundMainSubSection);
@@ -177,6 +207,8 @@ export default function ServicesPage() {
       const sectionInfo = typeof mainSubSection.section === 'string' 
         ? { _id: mainSubSection.section } 
         : mainSubSection.section;
+      
+      console.log("Setting section data:", sectionInfo);
       
       // Set local section data
       setSectionData(sectionInfo);
@@ -201,8 +233,19 @@ export default function ServicesPage() {
   const handleMainSubSectionCreated = (subsection: any) => {
     console.log("Main subsection created:", subsection);
     
-    // Set that we have a main subsection now
-    setHasMainSubSection(subsection.isMain === true);
+    // Check if subsection has the correct name
+    const expectedSlug = serviceSectionConfig.name;
+    const hasCorrectSlug = subsection.name === expectedSlug;
+    
+    // Set that we have a main subsection now (only if it also has the correct name)
+    setHasMainSubSection(subsection.isMain === true && hasCorrectSlug);
+    
+    // Log the name check
+    console.log("Main subsection name check:", {
+      actualSlug: subsection.name,
+      expectedSlug,
+      isCorrect: hasCorrectSlug
+    });
     
     // If we have section data from the subsection, update it
     if (subsection.section) {
@@ -223,10 +266,21 @@ export default function ServicesPage() {
   // 1. Default disabled (no section selected)
   // 2. We're still loading subsection data
   // 3. We need a main subsection and don't have one
-  const isAddButtonDisabled = 
-    defaultAddButtonDisabled || 
+ const isAddButtonDisabled: boolean = 
+    Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
-    (sectionId && !hasMainSubSection);  // Only require main subsection when we have a section
+    (Boolean(sectionId) && !hasMainSubSection);
+
+  // Debug logging for button disabling conditions
+  useEffect(() => {
+    console.log("BUTTON DISABLED LOGIC:", {
+      defaultAddButtonDisabled,
+      isLoadingMainSubSection,
+      sectionId: sectionId || "none",
+      hasMainSubSection,
+      finalIsAddButtonDisabled: isAddButtonDisabled
+    });
+  }, [defaultAddButtonDisabled, isLoadingMainSubSection, sectionId, hasMainSubSection, isAddButtonDisabled]);
 
   // Tooltip logic - keep it simple
   const addButtonTooltip = !serviceSection && !sectionData 
@@ -273,13 +327,6 @@ export default function ServicesPage() {
       confirmText="Confirm"
     />
   );
-
-  console.log("Current state:", {
-    hasMainSubSection,
-    isLoadingMainSubSection,
-    isAddButtonDisabled,
-    sectionId: sectionId || "none"
-  });
 
   return (
     <div className="space-y-6">

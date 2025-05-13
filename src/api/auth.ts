@@ -81,7 +81,6 @@ const storeTokens = (tokens: AuthTokens | undefined | null) => {
     if (tokens.refreshToken) {
       localStorage.setItem('refreshToken', tokens.refreshToken);
     }
-    console.log(`[AuthAPI ${API_ID}] Tokens stored successfully`);
     return true;
   } catch (e) {
     console.error(`[AuthAPI ${API_ID}] Failed to store tokens:`, e);
@@ -145,13 +144,11 @@ export const useLogin = () => {
 export const useRegister = () => {
   return useMutation({
     mutationFn: async (userData: RegisterData): Promise<AuthResponse> => {
-      console.log(`[AuthAPI ${API_ID}] Register attempt:`, userData.email);
       
       try {
         const response = await apiClient.post('/auth/register', userData);
         const responseData = response.data;
         
-        console.log(`[AuthAPI ${API_ID}] Register response:`, responseData);
         
         // Store tokens in localStorage
         if (responseData?.data?.tokens) {

@@ -9,9 +9,7 @@ import { Button } from "@/src/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
-import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
 import { useToast } from "@/src/hooks/use-toast"
-import { createFaqSchema } from "../../Utils/language-specifi-schemas"
 import { createFaqDefaultValues} from "../../Utils/Language-default-values"
 import { createFormRef } from "../../Utils/Expose-form-data"
 import { processAndLoadData } from "../../Utils/load-form-data"
@@ -23,6 +21,8 @@ import { SubSection } from "@/src/api/types/hooks/section.types"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
+import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations"
+import { createFaqSchema } from "../../Utils/language-specific-schemas"
 
 
 

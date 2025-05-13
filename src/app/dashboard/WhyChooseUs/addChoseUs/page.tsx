@@ -1,25 +1,23 @@
+// Updated AddIndustry.tsx to fix the edit mode data display issue
 
 "use client"
 
-import { useRef, useEffect } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
-import { Layout, Sparkles, ListChecks, ArrowRight, HelpCircle } from "lucide-react"
+import { Layout } from "lucide-react"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
+
 import { FormData } from "@/src/api/types/sections/service/serviceSections.types"
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
-import HeroForm from "./Components/Hero/HeroForm"
-import BenefitsForm from "./Components/BenefitsForm/BenefitsForm"
-import ProcessStepsForm from "./Components/ProcessStepsForm/process-steps-form"
-import FaqForm from "./Components/FaqForm/faq-form"
-import FeaturesForm from "./Components/FeaturesForm/features-form"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
+import { useSearchParams } from "next/navigation"
+import ChooseUsForm from "./ChooseUsForm"
+
 
 // Form sections to collect data from
-const FORM_SECTIONS = ["hero", "benefits", "features", "processSteps", "faq"]
+const FORM_SECTIONS = ["Industry Items"]
 
-export default function AddService() {
+export default function AddIndustry() {
   const searchParams = useSearchParams()
   
   // Get URL parameters
@@ -32,8 +30,8 @@ export default function AddService() {
   const { useGetByWebsite: useGetAllLanguages } = useLanguages()
   const { useGetById: useGetSectionItemById } = useSectionItems()
   const { useGetBySectionItemId: useGetSubSectionsBySectionItemId } = useSubSections()
-  const { websiteId } = useWebsiteContext();
-
+    const { websiteId } = useWebsiteContext();
+  
   // Get languages
   const { 
     data: languagesData, 
@@ -50,7 +48,7 @@ export default function AddService() {
     false,
   )
   
-  // Get subsections for this service if in edit mode
+  // Get subsections for this ChoseUs if in edit mode
   const {
     data: subsectionsData,
     isLoading: isLoadingSubsections
@@ -74,11 +72,7 @@ export default function AddService() {
     
     // Create a mapping for known slug patterns
     const slugMappings: Record<string, string> = {
-      'process-steps': 'process-steps',
-      'hero-section': 'hero-section',
-      'benefits': 'benefits',
-      'features': 'features',
-      'faq-section': 'faq-section'
+      'ChoseUs-section': 'ChoseUs-section',
     };
     
     // Get the normalized version of the slug
@@ -136,95 +130,39 @@ export default function AddService() {
   // Define tabs configuration
   const tabs = [
     {
-      id: "hero",
-      label: "Hero",
+      id: "ChoseUsItems",
+      label: "Industry Items",
       icon: <Layout className="h-4 w-4" />,
       component: (
-        <HeroForm
+        <ChooseUsForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
-          slug={getSlug('hero-section')}
+          slug={getSlug('ChoseUsItems')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('hero-section')}
-        />
-      )
-    },
-    {
-      id: "benefits",
-      label: "Benefits",
-      icon: <Sparkles className="h-4 w-4" />,
-      component: (
-        <BenefitsForm
-          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
-          activeLanguages={activeLanguages}
-          slug={getSlug('benefits')}
-          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('benefits')}
-        />
-      )
-    },
-    {
-      id: "features",
-      label: "Features",
-      icon: <ListChecks className="h-4 w-4" />,
-      component: (
-        <FeaturesForm
-          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
-          activeLanguages={activeLanguages}
-          slug={getSlug('features')}
-          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('features')}
-        />
-      )
-    },
-    {
-      id: "process",
-      label: "Process",
-      icon: <ArrowRight className="h-4 w-4" />,
-      component: (
-        <ProcessStepsForm
-          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
-          activeLanguages={activeLanguages}
-          slug={getSlug('process-steps')}  // Fixed: now using lowercase 's'
-          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('process-steps')} // Fixed: now using lowercase 's'
-        />
-      )
-    },
-    {
-      id: "faq",
-      label: "FAQ",
-      icon: <HelpCircle className="h-4 w-4" />,
-      component: (
-        <FaqForm
-          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
-          activeLanguages={activeLanguages}
-          slug={getSlug('faq-section')}
-          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('faq-section')}
+          initialData={findSubsection('ChoseUsItems')}
         />
       )
     }
   ]
    
-  // Define save handler for the service
-  const handleSaveService = async (formData: FormData) => {
-    // Extract service info from hero data for title/description
+  // Define save handler for the ChoseUs
+  const handleSaveIndustry = async (formData: FormData) => {
+    // Extract ChoseUs info from hero data for title/description
     const heroData = formData.hero || {}
     
     // Get English title and description values or fallback to the first language
-    let serviceName = "New Service"
-    let serviceDescription = ""
+    let ChoseUsName = "New Industry"
+    let ChoseUsDescription = ""
     
     // Loop through languages to find title and description
     for (const langCode in heroData) {
       if (langCode !== 'backgroundImage' && typeof heroData[langCode] === 'object') {
         const langValues = heroData[langCode] as Record<string, any>
         if (langValues?.title) {
-          serviceName = langValues.title
+          ChoseUsName = langValues.title
         }
         if (langValues?.description) {
-          serviceDescription = langValues.description
+          ChoseUsDescription = langValues.description
         }
         // Prefer English if available
         if (langCode === 'en') {
@@ -233,17 +171,17 @@ export default function AddService() {
       }
     }
     
-    // Create the service payload
-    const servicePayload = {
-      name: serviceName,
-      description: serviceDescription,
+    // Create the ChoseUs payload
+    const ChoseUsPayload = {
+      name: ChoseUsName,
+      description: ChoseUsDescription,
       image: heroData.backgroundImage || null,
       isActive: true,
       section: sectionId
     }
     
     // Return data for saving
-    return servicePayload
+    return ChoseUsPayload
   }
   
   // Loading state
@@ -251,17 +189,17 @@ export default function AddService() {
   
   return (
     <FormShell
-      title={isCreateMode ? "Create New Service" : "Edit Service"}
+      title={isCreateMode ? "Create New ChoseUs item " : "Edit ChoseUs item "}
       subtitle={isCreateMode 
-        ? "Create a new service with multilingual content" 
-        : `Editing "${sectionItemData?.data?.name || 'Service'}" content across multiple languages`}
-      backUrl={`/dashboard/services?sectionId=${sectionId}`}
+        ? "Create a new ChoseUs item with multilingual content" 
+        : `Editing "${sectionItemData?.data?.name || 'ChoseUs item'}" content across multiple languages`}
+      backUrl={`/dashboard/IndustrySolutions?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}
       sectionId={sectionId}
       sectionItemId={sectionItemId}
       mode={mode}
-      onSave={handleSaveService}
+      onSave={handleSaveIndustry}
       tabs={tabs}
       formSections={FORM_SECTIONS}
       isLoading={isLoading}

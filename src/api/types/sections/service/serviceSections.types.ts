@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { ContentElement } from "../../hooks/content.types";
 import { MultilingualSectionData } from "../../hooks/MultilingualSection.types";
-import { Language } from "../../utils/MainSectionComponents.types";
+import { Language } from "../../hooks/language.types";
 
 
 export interface BenefitsFormState {
@@ -25,6 +25,7 @@ export interface FaqFormProps {
     onDataChange?: (data: any) => void;
     slug?: string;
     ParentSectionId: string;
+    initialData?:any
   }
 
 

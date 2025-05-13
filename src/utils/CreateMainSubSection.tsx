@@ -20,12 +20,12 @@ import { TabsContent } from "@/src/components/ui/tabs"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
-import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
 import { ActionButton, CancelButton, ErrorCard,LanguageTabs, LoadingCard, MainFormCard, SuccessCard, WarningCard } from "./MainSectionComponents"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { CreateMainSubSectionProps } from "../api/types/utils/CreateMainSubSection.types"
 import { useWebsiteContext } from "../providers/WebsiteContext"
+import { useContentTranslations } from "../hooks/webConfiguration/use-content-translations"
 
 // Types 
 
@@ -101,7 +101,6 @@ export default function CreateMainSubSection({
     refetch: refetchCompleteSubsections
   } = useGetBySectionId(sectionId)
 
-  console.log(completeSubsectionsData)
 
   // Mutations
   const createMutation = useCreate();
@@ -451,7 +450,6 @@ export default function CreateMainSubSection({
         setTimeout(async () => {
           try {
             await refetchCompleteSubsections()
-            console.log("Refetched data after creation")
           } catch (refetchError) {
             console.error("Error refetching data after creation:", refetchError)
           }
@@ -570,7 +568,6 @@ export default function CreateMainSubSection({
       setTimeout(async () => {
         try {
           await refetchCompleteSubsections()
-          console.log("Refetched data after update")
         } catch (refetchError) {
           console.error("Error refetching data after update:", refetchError)
         }

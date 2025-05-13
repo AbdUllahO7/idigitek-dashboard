@@ -14,9 +14,7 @@ import { Button } from "@/src/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
-import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
 import { useToast } from "@/src/hooks/use-toast"
-import { createProcessStepsSchema } from "../../Utils/language-specifi-schemas"
 import { createProcessStepsDefaultValues } from "../../Utils/Language-default-values"
 import { createFormRef } from "../../Utils/Expose-form-data"
 import { processAndLoadData } from "../../Utils/load-form-data"
@@ -27,6 +25,9 @@ import { HeroFormProps, HeroFormRef } from "@/src/api/types/sections/service/ser
 import { SubSection } from "@/src/api/types/hooks/section.types"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
+import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations"
+import { createProcessStepsSchema } from "../../Utils/language-specific-schemas"
+import { ContentElement } from "@/src/api/types/hooks/content.types"
 
 
 
@@ -129,11 +130,11 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
         {
           // Group elements by step number
           groupElements: (elements) => {
-            const stepGroups: Record<number, Array<{  name: string ; defaultContent?: string  ; type : string  }>> = {};
+            const stepGroups: Record<string, ContentElement[]> = {};
             elements.forEach((element) => {
               const match = element.name.match(/Step (\d+)/i);
               if (match) {
-                const stepNumber = Number.parseInt(match[1]);
+                const stepNumber = match[1];
                 if (!stepGroups[stepNumber]) {
                   stepGroups[stepNumber] = [];
                 }
@@ -269,7 +270,6 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
             await Promise.all(stepElements.map(async (element) => {
               try {
                 await deleteContentElement.mutateAsync(element._id);
-                console.log(`Deleted content element: ${element.name}`);
               } catch (error) {
                 console.error(`Failed to delete content element ${element.name}:`, error);
               }
@@ -310,7 +310,6 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
                     order: newOrder,
                   },
                 });
-                console.log(`Updated element ${element.name} to ${newName}`);
               } catch (error) {
                 console.error(`Failed to update element ${element.name}:`, error);
               }
@@ -372,7 +371,6 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
       
       try {
         const allFormValues = form.getValues();
-        console.log("Form values at save:", allFormValues);
 
         // If we don't have a subsection ID, create one
         let sectionId = existingSubSectionId;

@@ -43,7 +43,6 @@ export async function createMainServiceItem(
   
   // If main-service exists, return its ID
   if (existingMainService?._id) {
-    console.log("Found existing main-service:", existingMainService._id);
     return existingMainService._id;
   }
   

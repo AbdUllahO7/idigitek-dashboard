@@ -7,7 +7,6 @@ import { Form } from "@/src/components/ui/form";
 import { Button } from "@/src/components/ui/button";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
-import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions";
 import apiClient from "@/src/lib/api-client";
 import { useToast } from "@/src/hooks/use-toast";
 import { Loader2, Save } from "lucide-react";
@@ -15,7 +14,7 @@ import { LoadingDialog } from "@/src/utils/MainSectionComponents";
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
 import { SubSection } from "@/src/api/types/hooks/section.types";
 import { useWebsiteContext } from "@/src/providers/WebsiteContext";
-import {  createIndustrySchema } from "../../services/addService/Utils/language-specifi-schemas";
+import {  createIndustrySchema } from "../../services/addService/Utils/language-specific-schemas";
 import { createHeroDefaultValues, createLanguageCodeMap } from "../../services/addService/Utils/Language-default-values";
 import { useImageUploader } from "../../services/addService/Utils/Image-uploader";
 import { processAndLoadData } from "../../services/addService/Utils/load-form-data";
@@ -23,6 +22,7 @@ import { createFormRef } from "../../services/addService/Utils/Expose-form-data"
 import { BackgroundImageSection } from "../../services/addService/Components/Hero/SimpleImageUploader";
 import { IndustryFormProps } from "@/src/api/types/sections/industry/industrySections.types";
 import { IndustryLanguageCard } from "./IndustryLanguageCard";
+import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
 
 
 
@@ -297,7 +297,6 @@ const IndustryForm = forwardRef<any, IndustryFormProps>((props, ref) => {
     
     try {
       const allFormValues = form.getValues();
-      console.log("Form values at save:", allFormValues);
 
       // Step 1: Create or update subsection
       let sectionId = existingSubSectionId;

@@ -10,7 +10,6 @@ import { Button } from "@/src/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
-import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
 import { useToast } from "@/src/hooks/use-toast"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { createFormRef } from "../../services/addService/Utils/Expose-form-data"
@@ -25,6 +24,7 @@ import { Language } from "@/src/api/types/hooks/language.types"
 import { SubSection } from "@/src/api/types/hooks/section.types"
 import { ContentElement } from "@/src/api/types/hooks/content.types"
 import { createSectionsDefaultValues, createSectionsSchema, processAndLoadNavData, sectionsFormData } from "../../../../utils/sections/utils"
+import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations"
 
 
 interface NavFormProps {

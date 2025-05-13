@@ -269,7 +269,6 @@ function GenericSectionIntegration({
         }
 
         if (!fieldId) {
-          console.log(`Could not find field mapping for element: ${element.name}`)
           continue
         }
 

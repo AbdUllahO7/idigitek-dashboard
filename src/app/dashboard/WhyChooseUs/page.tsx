@@ -11,27 +11,27 @@ import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
-import { industrySectionConfig } from "./industrySectionConfig"
+import { whyChooseUsSectionConfig } from "./whyChooseUsSectionConfig"
 
-// Configuration for the Industry page
-const INDUSTRY_CONFIG = {
-  title: "Industry Management",
-  description: "Manage your Industry inventory and multilingual content",
-  addButtonLabel: "Add New Industry item",
-  emptyStateMessage: "No Industry found. Create your first Industry by clicking the \"Add New Industry\" button.",
-  noSectionMessage: "Please create a Industry section first before adding Industry.",
-  mainSectionRequiredMessage: "Please enter your main section data before adding Industry.",
-  emptyFieldsMessage: "Please complete all required fields in the main section before adding Industry.",
-  sectionIntegrationTitle: "Industry Section Content",
-  sectionIntegrationDescription: "Manage your Industry section content in multiple languages.",
-  addSectionButtonLabel: "Add Industry Section",
-  editSectionButtonLabel: "Edit Industry Section",
-  saveSectionButtonLabel: "Save Industry Section",
-  listTitle: "Industry List",
-  editPath: "IndustrySolutions/addIndustry"
+// Configuration for the Chose Us page
+const ChoseUs_CONFIG = {
+  title: "Chose Us Management",
+  description: "Manage your Chose Us inventory and multilingual content",
+  addButtonLabel: "Add New Chose Us item",
+  emptyStateMessage: "No Chose Us found. Create your first Chose Us by clicking the \"Add New Chose Us\" button.",
+  noSectionMessage: "Please create a Chose Us section first before adding Chose Us.",
+  mainSectionRequiredMessage: "Please enter your main section data before adding Chose Us.",
+  emptyFieldsMessage: "Please complete all required fields in the main section before adding Chose Us.",
+  sectionIntegrationTitle: "Chose Us Section Content",
+  sectionIntegrationDescription: "Manage your Chose Us section content in multiple languages.",
+  addSectionButtonLabel: "Add Chose Us Section",
+  editSectionButtonLabel: "Edit Chose Us Section",
+  saveSectionButtonLabel: "Save Chose Us Section",
+  listTitle: "Chose Us List",
+  editPath: "WhyChooseUs/addChoseUs"
 }
 // Column definitions
-const INDUSTRY_COLUMNS = [
+const ChoseUs_COLUMNS = [
   {
     header: "Name",
     accessor: "name",
@@ -69,7 +69,7 @@ const INDUSTRY_COLUMNS = [
   }
 ]
 
-export default function IndustryPage() {
+export default function ChoseUsPage() {
   const searchParams = useSearchParams()
   const sectionId = searchParams.get("sectionId")
   const [hasMainSubSection, setHasMainSubSection] = useState<boolean>(false)
@@ -96,11 +96,11 @@ export default function IndustryPage() {
     isLoading: isLoadingSectionSubsections
   } = useGetBySectionId(sectionId || "")
 
-  // Use the generic list hook for Industry management
+  // Use the generic list hook for Chose Us management
   const {
     section: industrySection,
     items: navItems,
-    isLoadingItems: isLoadingIndustryItems,
+    isLoadingItems: isLoadingChoseUs,
     isCreateDialogOpen,
     isDeleteDialogOpen,
     itemToDelete,
@@ -118,15 +118,11 @@ export default function IndustryPage() {
   } = useGenericList({
     sectionId,
     apiHooks: useSectionItems(),
-    editPath: INDUSTRY_CONFIG.editPath
+    editPath: ChoseUs_CONFIG.editPath
   })
 
   // Debug changes in hasMainSubSection
   useEffect(() => {
-    if (!isFirstRender.current && prevHasMainSubSection.current !== hasMainSubSection) {
-      console.log(`hasMainSubSection changed from ${prevHasMainSubSection.current} to ${hasMainSubSection}`);
-    }
-    
     prevHasMainSubSection.current = hasMainSubSection;
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -135,28 +131,12 @@ export default function IndustryPage() {
 
   // Determine if main subsection exists when data loads & set section data if needed
   useEffect(() => {
-    console.log("Checking for main subsection...");
-    console.log("Subsection data state:", { 
-      mainSubSectionData, 
-      sectionSubsections,
-      isLoadingCompleteSubsections,
-      isLoadingSectionSubsections
-    });
-    
-    // First check if we are still loading
-    if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
-      console.log("Still loading subsection data...");
-      setIsLoadingMainSubSection(true);
-      return;
-    }
-    
     // We're done loading, now check the data
     let foundMainSubSection = false;
     let mainSubSection = null;
-    
+  
     // Get expected name from configuration
-    const expectedName = industrySectionConfig.subSectionName;
-    console.log("Expected subsection name:", expectedName);
+    const expectedSlug = whyChooseUsSectionConfig.name;
     
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
@@ -165,20 +145,16 @@ export default function IndustryPage() {
       if (Array.isArray(sectionData)) {
         // Find the main subsection in the array with correct name
         mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedName
+          sub.isMain === true && sub.name === expectedSlug
         );
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-        foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedName;
+        foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedSlug;
         mainSubSection = foundMainSubSection ? sectionData : null;
       }
       
-      console.log("Section subsections check:", { 
-        foundMainSubSection, 
-        mainSubSection,
-        matchesName: mainSubSection ? mainSubSection.name === expectedName : false
-      });
+
     }
     
     // If we didn't find anything in the section-specific data, check the website-wide data
@@ -188,28 +164,18 @@ export default function IndustryPage() {
       if (Array.isArray(websiteData)) {
         // Find the main subsection in the array with correct name
         mainSubSection = websiteData.find(sub => 
-          sub.isMain === true && sub.name === expectedName
+          sub.isMain === true && sub.name === expectedSlug
         );
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-        foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedName;
+        foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedSlug;
         mainSubSection = foundMainSubSection ? websiteData : null;
       }
       
-      console.log("Website subsections check:", { 
-        foundMainSubSection, 
-        mainSubSection,
-        matchesName: mainSubSection ? mainSubSection.name === expectedName : false
-      });
+   
     }
-    
-    console.log("Final subsection result:", { 
-      foundMainSubSection, 
-      mainSubSection,
-      name: mainSubSection?.name,
-      expectedName
-    });
+
     
     // Update state based on what we found
     setHasMainSubSection(foundMainSubSection);
@@ -221,7 +187,6 @@ export default function IndustryPage() {
         ? { _id: mainSubSection.section } 
         : mainSubSection.section;
       
-      console.log("Setting section data:", sectionInfo);
       
       // Set local section data
       setSectionData(sectionInfo);
@@ -244,21 +209,15 @@ export default function IndustryPage() {
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
-    console.log("Main subsection created:", subsection);
     
     // Check if subsection has the correct name
-    const expectedName = industrySectionConfig.subSectionName;
-    const hasCorrectName = subsection.name === expectedName;
+    const expectedSlug = whyChooseUsSectionConfig.name;
+    const hasCorrectSlug = subsection.name === expectedSlug;
     
     // Set that we have a main subsection now (only if it also has the correct name)
-    setHasMainSubSection(subsection.isMain === true && hasCorrectName);
+    setHasMainSubSection(subsection.isMain === true && hasCorrectSlug);
     
-    // Log the name check
-    console.log("Main subsection name check:", {
-      actualName: subsection.name,
-      expectedName,
-      isCorrect: hasCorrectName
-    });
+
     
     // If we have section data from the subsection, update it
     if (subsection.section) {
@@ -282,35 +241,25 @@ export default function IndustryPage() {
     isLoadingMainSubSection ||
     (Boolean(sectionId) && !hasMainSubSection);
   
-  // Debug logging specifically for our button disabling conditions
-  useEffect(() => {
-    console.log("BUTTON DISABLED LOGIC:", {
-      defaultAddButtonDisabled,
-      isLoadingMainSubSection,
-      sectionId: sectionId || "none",
-      hasMainSubSection,
-      finalIsAddButtonDisabled: isAddButtonDisabled
-    });
-  }, [defaultAddButtonDisabled, isLoadingMainSubSection, sectionId, hasMainSubSection, isAddButtonDisabled]);
   
   // Custom tooltip message based on condition
   const addButtonTooltip = !industrySection && !sectionData 
-    ? INDUSTRY_CONFIG.noSectionMessage 
+    ? ChoseUs_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
-      ? INDUSTRY_CONFIG.mainSectionRequiredMessage
+      ? ChoseUs_CONFIG.mainSectionRequiredMessage
       : defaultAddButtonTooltip;
 
   // Custom message for empty state 
   const emptyStateMessage = !industrySection && !sectionData 
-    ? INDUSTRY_CONFIG.noSectionMessage 
+    ? ChoseUs_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
-      ? INDUSTRY_CONFIG.mainSectionRequiredMessage
-      : INDUSTRY_CONFIG.emptyStateMessage;
+      ? ChoseUs_CONFIG.mainSectionRequiredMessage
+      : ChoseUs_CONFIG.emptyStateMessage;
 
   // Components
-  const IndustryItemsTable = (
+  const ChoseUsItemsTable = (
     <GenericTable
-      columns={INDUSTRY_COLUMNS}
+      columns={ChoseUs_COLUMNS}
       data={navItems}
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
@@ -323,7 +272,7 @@ export default function IndustryPage() {
       onOpenChange={setIsCreateDialogOpen}
       sectionId={sectionId || ""}
       onServiceCreated={handleItemCreated}
-      title="Industry"
+      title="Chose Us"
     />
   );
 
@@ -343,16 +292,16 @@ export default function IndustryPage() {
     <div className="space-y-6">
       {/* Main list page with table and section integration */}
       <GenericListPage
-        config={INDUSTRY_CONFIG}
+        config={ChoseUs_CONFIG}
         sectionId={sectionId}
-        sectionConfig={industrySectionConfig}
+        sectionConfig={whyChooseUsSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
         addButtonTooltip={addButtonTooltip}
-        tableComponent={IndustryItemsTable}
+        tableComponent={ChoseUsItemsTable}
         createDialogComponent={CreateDialog}
         deleteDialogComponent={DeleteDialog}
         onAddNew={handleAddNew}
-        isLoading={isLoadingIndustryItems || isLoadingMainSubSection}
+        isLoading={isLoadingChoseUs || isLoadingMainSubSection}
         emptyCondition={navItems.length === 0}
         noSectionCondition={!industrySection && !sectionData}
         customEmptyMessage={emptyStateMessage}
@@ -362,7 +311,7 @@ export default function IndustryPage() {
       {sectionId && (
         <CreateMainSubSection 
           sectionId={sectionId}
-          sectionConfig={industrySectionConfig}
+          sectionConfig={whyChooseUsSectionConfig}
           onSubSectionCreated={handleMainSubSectionCreated}
           onFormValidityChange={() => {/* We don't need to track form validity */}}
         />

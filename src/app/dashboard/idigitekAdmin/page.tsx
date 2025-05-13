@@ -344,7 +344,6 @@ export default function OwnerUsersPage() {
     try {
         // Create the user without adding to website
         const newUser = await createUserMutation.mutateAsync(userData as any);
-        console.log("Owner user created successfully:", newUser);
         
         // Refresh users list
         await refetchUsers();

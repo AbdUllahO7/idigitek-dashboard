@@ -94,6 +94,10 @@ export const createBenefitsDefaultValues = (languageIds: string[], activeLanguag
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.benefit);
 };
 
+export const createChooseUsDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.benefit);
+};
+
 export  const createFaqDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.faq);
 };

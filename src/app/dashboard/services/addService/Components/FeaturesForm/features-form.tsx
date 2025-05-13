@@ -15,10 +15,8 @@ import { Accordion } from "@/src/components/ui/accordion"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
-import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions"
 import apiClient from "@/src/lib/api-client"
 import { useToast } from "@/src/hooks/use-toast"
-import { createFeaturesSchema } from "../../Utils/language-specifi-schemas"
 import { createFeaturesDefaultValues } from "../../Utils/Language-default-values"
 import { createFormRef } from "../../Utils/Expose-form-data"
 import { processAndLoadData } from "../../Utils/load-form-data"
@@ -38,6 +36,8 @@ type FeaturesSchemaType = ReturnType<typeof createFeaturesSchema>
 import { FormControl, FormField, FormItem, FormMessage } from "@/src/components/ui/form"
 import { Input } from "@/src/components/ui/input"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
+import { createFeaturesSchema } from "../../Utils/language-specific-schemas"
+import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations"
 
 interface FeatureItemProps {
   featureItemIndex: number;
@@ -195,6 +195,7 @@ interface FeaturesFormProps {
   onDataChange?: (value: any) => void;
   slug?: string;
   ParentSectionId?: string;
+  initialData?:any
 }
 
 const FeaturesForm = forwardRef<any, FeaturesFormProps>(

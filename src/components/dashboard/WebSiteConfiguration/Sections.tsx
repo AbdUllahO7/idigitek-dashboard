@@ -72,9 +72,15 @@ const PREDEFINED_SECTIONS = [
     image: "/sections/news.jpg",
     icon: <LayoutGrid className="h-10 w-10 text-blue-600" />
   },
- {
+  {
     name: "industry Solutions",
     description: "Latest industry solutions and updates",
+    image: "/sections/news.jpg",
+    icon: <LayoutGrid className="h-10 w-10 text-blue-600" />
+  },
+  {
+    name: "Chose Us",
+    description: "Latest Choose Us solutions and updates",
     image: "/sections/news.jpg",
     icon: <LayoutGrid className="h-10 w-10 text-blue-600" />
   },
@@ -165,9 +171,6 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
     activateSectionMutation.mutate(
       { userId, sectionId },
       {
-        onSuccess: (data) => {
-          console.log("User-section relationship created:", data);
-        },
         onError: (error: any) => {
           console.error("Error creating user-section relationship:", error);
           // Don't show error to user since this is an automatic background process

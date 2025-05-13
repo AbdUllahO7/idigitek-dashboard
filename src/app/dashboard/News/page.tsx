@@ -119,11 +119,18 @@ export default function NewsPage() {
   })
 
   // Determine if main subsection exists when data loads & set section data if needed
-  useEffect(() => {
+  useEffect(() => {    
     console.log("Checking for main subsection...");
+    console.log("Subsection data state:", { 
+      mainSubSectionData, 
+      sectionSubsections,
+      isLoadingCompleteSubsections,
+      isLoadingSectionSubsections
+    });
     
     // First check if we are still loading
     if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
+      console.log("Still loading subsection data...");
       setIsLoadingMainSubSection(true);
       return;
     }
@@ -132,21 +139,31 @@ export default function NewsPage() {
     let foundMainSubSection = false;
     let mainSubSection = null;
     
+    // Get expected name from configuration
+    const expectedSlug = newsSectionConfig.name;
+    console.log("Expected subsection name:", expectedSlug);
+    
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
       const sectionData = sectionSubsections.data;
       
       if (Array.isArray(sectionData)) {
-        // Find the main subsection in the array
-        mainSubSection = sectionData.find(sub => sub.isMain === true);
+        // Find the main subsection in the array with correct name
+        mainSubSection = sectionData.find(sub => 
+          sub.isMain === true && sub.name === expectedSlug
+        );
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-        foundMainSubSection = sectionData.isMain === true;
+        foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedSlug;
         mainSubSection = foundMainSubSection ? sectionData : null;
       }
       
-      console.log("Section subsections check:", { foundMainSubSection, mainSubSection });
+      console.log("Section subsections check:", { 
+        foundMainSubSection, 
+        mainSubSection,
+        matchesSlug: mainSubSection ? mainSubSection.name === expectedSlug : false
+      });
     }
     
     // If we didn't find anything in the section-specific data, check the website-wide data
@@ -154,17 +171,30 @@ export default function NewsPage() {
       const websiteData = mainSubSectionData.data;
       
       if (Array.isArray(websiteData)) {
-        // Find the main subsection in the array
-        mainSubSection = websiteData.find(sub => sub.isMain === true);
+        // Find the main subsection in the array with correct name
+        mainSubSection = websiteData.find(sub => 
+          sub.isMain === true && sub.name === expectedSlug
+        );
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-        foundMainSubSection = websiteData.isMain === true;
+        foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedSlug;
         mainSubSection = foundMainSubSection ? websiteData : null;
       }
       
-      console.log("Website subsections check:", { foundMainSubSection, mainSubSection });
+      console.log("Website subsections check:", { 
+        foundMainSubSection, 
+        mainSubSection,
+        matchesSlug: mainSubSection ? mainSubSection.name === expectedSlug : false
+      });
     }
+    
+    console.log("Final subsection result:", { 
+      foundMainSubSection, 
+      mainSubSection,
+      name: mainSubSection?.name,
+      expectedSlug
+    });
     
     // Update state based on what we found
     setHasMainSubSection(foundMainSubSection);
@@ -175,6 +205,8 @@ export default function NewsPage() {
       const sectionInfo = typeof mainSubSection.section === 'string' 
         ? { _id: mainSubSection.section } 
         : mainSubSection.section;
+      
+      console.log("Setting section data:", sectionInfo);
       
       // Set local section data
       setSectionData(sectionInfo);
@@ -199,8 +231,19 @@ export default function NewsPage() {
   const handleMainSubSectionCreated = (subsection: any) => {
     console.log("Main subsection created:", subsection);
     
-    // Set that we have a main subsection now
-    setHasMainSubSection(subsection.isMain === true);
+    // Check if subsection has the correct name
+    const expectedSlug = newsSectionConfig.name;
+    const hasCorrectSlug = subsection.name === expectedSlug;
+    
+    // Set that we have a main subsection now (only if it also has the correct name)
+    setHasMainSubSection(subsection.isMain === true && hasCorrectSlug);
+    
+    // Log the name check
+    console.log("Main subsection name check:", {
+      actualSlug: subsection.name,
+      expectedSlug,
+      isCorrect: hasCorrectSlug
+    });
     
     // If we have section data from the subsection, update it
     if (subsection.section) {
@@ -218,11 +261,22 @@ export default function NewsPage() {
     }
   };
 
-  // Custom add button logic - simplified to only care about having a main subsection
-  const isAddButtonDisabled = 
-    defaultAddButtonDisabled || 
+  // Logic for disabling the add button
+  const isAddButtonDisabled: boolean = 
+    Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
-    (sectionId && !hasMainSubSection);  // Only require main subsection when we have a section
+    (Boolean(sectionId) && !hasMainSubSection);
+  
+  // Debug logging for button disabling conditions
+  useEffect(() => {
+    console.log("BUTTON DISABLED LOGIC:", {
+      defaultAddButtonDisabled,
+      isLoadingMainSubSection,
+      sectionId: sectionId || "none",
+      hasMainSubSection,
+      finalIsAddButtonDisabled: isAddButtonDisabled
+    });
+  }, [defaultAddButtonDisabled, isLoadingMainSubSection, sectionId, hasMainSubSection, isAddButtonDisabled]);
   
   // Custom tooltip message based on condition
   const addButtonTooltip = !newsSection && !sectionData 
@@ -238,15 +292,6 @@ export default function NewsPage() {
       ? NEWS_CONFIG.mainSectionRequiredMessage
       : NEWS_CONFIG.emptyStateMessage;
 
-  // Debug logging
-  useEffect(() => {
-    console.log("Current state:", {
-      hasMainSubSection,
-      isLoadingMainSubSection,
-      isAddButtonDisabled,
-      sectionId: sectionId || "none"
-    });
-  }, [hasMainSubSection, isLoadingMainSubSection, isAddButtonDisabled, sectionId]);
 
   // Components
   const NewsTable = (

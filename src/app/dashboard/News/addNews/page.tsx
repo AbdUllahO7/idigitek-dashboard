@@ -1,10 +1,8 @@
 // Updated AddNews.tsx to fix the edit mode data display issue
 
 "use client"
-
-import { useRef, useEffect } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
-import { Layout, Sparkles, ListChecks, ArrowRight, HelpCircle } from "lucide-react"
+import { useSearchParams } from "next/navigation"
+import { Layout } from "lucide-react"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"

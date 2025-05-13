@@ -6,11 +6,11 @@ import { FieldConfig } from "@/src/api/types/hooks/MultilingualSection.types";
 
 
 // Define industry section configuration
-export const industrySectionConfig = {
-    name: "Industry Section Basic",
-    slug: "industry-main",
-    subSectionName: "Industry Section Basic",
-    description: "Industry section for managing industry information",
+export const whyChooseUsSectionConfig = {
+    name: "Chose Us Section Basic",
+    slug: "Choose-main",
+    subSectionName: "Chose Us Section Basic",
+    description: "Chose Us section for managing industry information",
     isMain: true,
     type: 'industry',
     // Define fields with proper typing
@@ -25,6 +25,6 @@ export const industrySectionConfig = {
         "sectionBadge": "Badge",
         "sectionTitle": "Title", 
         "sectionDescription": "Description",
-        "industryDetails": "IndustryDetails"
+        "industryDetails": "Chose UsDetails"
     }
 };

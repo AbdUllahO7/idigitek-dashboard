@@ -86,7 +86,13 @@ const allNavItems: NavItem[] = [
     title: "Industry Solutions",
     href: "/dashboard/IndustrySolutions",
     icon: Building,
-    sectionId: "industrysolutions", // Show when "idustrySolutionsSection" section is selected
+    sectionId: "industrysolutions", 
+  },
+  {
+    title: "Chose Us",
+    href: "/dashboard/WhyChooseUs",
+    icon: Handshake,
+    sectionId: "choseus", 
   },
   {
     title: "Settings",
@@ -175,7 +181,6 @@ export default function DashboardSidebar() {
     const handleStorageChange = (event: StorageEvent) => {
       // Check if the event is related to sections
       if (event.key?.includes('section') || event.key?.includes('website')) {
-        console.log("Storage change detected, refreshing sections", event.key)
         handleManualRefresh()
       }
     }

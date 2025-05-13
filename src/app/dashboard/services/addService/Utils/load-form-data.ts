@@ -44,13 +44,11 @@ export const processAndLoadData = (
   }
 ) => {
   if (!subsectionData) {
-    console.log("No subsection data to process");
     if (callbacks.setIsLoadingData) callbacks.setIsLoadingData(false);
     return false;
   }
 
   try {
-    console.log(`Processing subsection data:`, subsectionData);
     callbacks.setExistingSubSectionId(subsectionData._id);
 
     // Check if we have elements directly in the subsection data
@@ -71,7 +69,6 @@ export const processAndLoadData = (
       // Group elements based on the provided function
       const elementGroups = options.groupElements(elements);
 
-      console.log("Element groups:", elementGroups);
 
       // Initialize form values for each language
       const languageValues: Record<string, any> = {};
@@ -150,8 +147,6 @@ export const processAndLoadData = (
           }
         });
       });
-
-      console.log("Form values after processing:", languageValues);
 
       // Set all values in form
       Object.entries(languageValues).forEach(([langCode, values]) => {

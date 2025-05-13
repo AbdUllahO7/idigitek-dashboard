@@ -4,8 +4,8 @@
   import { Plus } from "lucide-react";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
   import { Button } from "@/src/components/ui/button";
-  import { BenefitCard } from "./BenefitCard";
 import { IconNames } from "@/src/utils/MainSectionComponents";
+import { ChooseUsCard } from "./ChooseUsCard";
 
 interface LanguageCardProps {
   langCode: string;
@@ -18,7 +18,7 @@ interface LanguageCardProps {
   onDeleteStep: ( langCode : any , index: number ) => void;
 }
   
-export const LanguageCard = memo(({ 
+export const ChooseUsLanguageCard = memo(({ 
   langCode, 
   isFirstLanguage, 
   form, 
@@ -35,10 +35,9 @@ export const LanguageCard = memo(({
           <span className="uppercase font-bold text-sm bg-primary text-primary-foreground rounded-md px-2 py-1 mr-2">
             {langCode}
           </span>
-          Benefits Section
+          choseUs Section
           {isFirstLanguage && (
             <span className="ml-2 text-xs bg-amber-100 text-amber-800 rounded-md px-2 py-1">
-              Primary Language (Icon Control)
             </span>
           )}
         </CardTitle>
@@ -46,7 +45,7 @@ export const LanguageCard = memo(({
       </CardHeader>
       <CardContent className="space-y-4">
         {benefits.map((_: any, index: number) => (
-          <BenefitCard
+          <ChooseUsCard
             key={`${langCode}-benefit-${index}`}
             langCode={langCode}
             index={index}
@@ -74,4 +73,4 @@ export const LanguageCard = memo(({
   );
 });
 
-  LanguageCard.displayName = "LanguageCard";
+  ChooseUsLanguageCard.displayName = "ChooseUsLanguageCard";

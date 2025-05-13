@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ForwardedRef,
   forwardRef,
   useEffect,
   useState,
@@ -14,33 +15,38 @@ import { Save, AlertTriangle, Loader2 } from "lucide-react";
 import { Form } from "@/src/components/ui/form";
 import { Button } from "@/src/components/ui/button";
 import { useToast } from "@/src/hooks/use-toast";
-import { createBenefitsSchema } from "../../Utils/language-specific-schemas";
-import { createBenefitsDefaultValues } from "../../Utils/Language-default-values";
-import { createFormRef, getAvailableIcons, getBenefitCountsByLanguage, getSafeIconValue, useForceUpdate, validateBenefitCounts } from "../../Utils/Expose-form-data";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
-import { processAndLoadData } from "../../Utils/load-form-data";
-import { ValidationDialog } from "./ValidationDialog";
-import { LanguageCard } from "./LanguageCard";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
-import { BenefitsFormState, HeroFormProps, HeroFormRef, StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
+import {  HeroFormProps, HeroFormRef, StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
-import { createLanguageCodeMap } from "../../Utils/language-utils";
 import { SubSection } from "@/src/api/types/hooks/section.types";
 import { useWebsiteContext } from "@/src/providers/WebsiteContext";
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog";
+import {  createChooseUsSchema } from "../../services/addService/Utils/language-specific-schemas";
+import { createBenefitsDefaultValues, createChooseUsDefaultValues, createLanguageCodeMap } from "../../services/addService/Utils/Language-default-values";
+import { createFormRef, getAvailableIcons, getBenefitCountsByLanguage, getSafeIconValue, useForceUpdate, validateBenefitCounts } from "../../services/addService/Utils/Expose-form-data";
+import { processAndLoadData } from "../../services/addService/Utils/load-form-data";
+import { ValidationDialog } from "../../services/addService/Components/BenefitsForm/ValidationDialog";
+import { ChooseUsLanguageCard } from "./ChooseUsLanguageCard";
+import { ChooseUsFormProps, ChooseUsFormRef, ChoseUsFormState } from "@/src/api/types/sections/choseUS/ChooseUs.type";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
 
 
 // Main Component
-const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
+const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId },ref) => {
     const { websiteId } = useWebsiteContext();
-    const formSchema = createBenefitsSchema(languageIds, activeLanguages);
-    const defaultValues = createBenefitsDefaultValues(
+    const formSchema = createChooseUsSchema(languageIds, activeLanguages);
+
+
+
+    const defaultValues = createChooseUsDefaultValues(
       languageIds,
       activeLanguages
     );
+
+
     interface FormData {
       [key: string]: Array<{
         icon: string;
@@ -57,7 +63,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
         });
 
     // State management
-    const [state, setState] = useState<BenefitsFormState>({
+    const [state, setState] = useState<ChoseUsFormState>({
       isLoadingData: !slug,
       dataLoaded: !slug,
       hasUnsavedChanges: false,
@@ -73,7 +79,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     const updateState = useCallback(
-      (newState: Partial<BenefitsFormState>) => {
+      (newState: Partial<ChoseUsFormState>) => {
         setState((prev) => ({ ...prev, ...newState }));
       },
       []
@@ -153,7 +159,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
       [form]
     );
 
-    // Validate benefit counts
+    // Validate choseUs counts
     const validateFormBenefitCounts = useCallback(() => {
       const values = form.getValues();
       const isValid = validateBenefitCounts(values);
@@ -183,7 +189,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
         try {
           const stepNumber = index + 1;
           const stepElements = contentElements.filter((element) => {
-            const match = element.name.match(/Benefit (\d+)/i);
+            const match = element.name.match(/ChoseUs (\d+)/i);
             return match && Number.parseInt(match[1]) === stepNumber;
           });
 
@@ -196,7 +202,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
 
             updateState({
               contentElements: contentElements.filter((element) => {
-                const match = element.name.match(/Benefit (\d+)/i);
+                const match = element.name.match(/ChoseUs (\d+)/i);
                 return !(match && Number.parseInt(match[1]) === stepNumber);
               }),
             });
@@ -208,19 +214,19 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
           }
 
           const remainingElements = contentElements.filter((element) => {
-            const match = element.name.match(/Benefit (\d+)/i);
+            const match = element.name.match(/ChoseUs (\d+)/i);
             return match && Number.parseInt(match[1]) > stepNumber;
           });
 
           await Promise.all(
             remainingElements.map(async (element) => {
-              const match = element.name.match(/Benefit (\d+)/i);
+              const match = element.name.match(/ChoseUs (\d+)/i);
               if (match) {
                 const oldNumber = Number.parseInt(match[1]);
                 const newNumber = oldNumber - 1;
                 const newName = element.name.replace(
-                  `Benefit ${oldNumber}`,
-                  `Benefit ${newNumber}`
+                  `ChoseUs ${oldNumber}`,
+                  `ChoseUs ${newNumber}`
                 );
                 const newOrder = element.order - 3;
 
@@ -262,8 +268,8 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
       updateState,
     ]);
 
-    // Process benefits data
-    const processBenefitsData = useCallback(
+    // Process choseUs data
+    const processChoseUsData = useCallback(
       (subsectionData: SubSection) => {
         processAndLoadData(
           subsectionData,
@@ -274,7 +280,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
             groupElements: (elements ) => {
               const benefitGroups: { [key: number]: ContentElement[] } = {};
               elements.forEach((element : any) => {
-                const match = element.name.match(/Benefit (\d+)/i);
+                const match = element.name.match(/ChoseUs (\d+)/i);
                 if (match) {
                   const benefitNumber = parseInt(match[1], 10);
                   if (!benefitGroups[benefitNumber]) {
@@ -338,13 +344,13 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
       }
 
       updateState({ isLoadingData: true });
-      processBenefitsData(completeSubsectionData.data);
+      processChoseUsData(completeSubsectionData.data);
     }, [
       completeSubsectionData,
       isLoadingSubsection,
       dataLoaded,
       slug,
-      processBenefitsData,
+      processChoseUsData,
     ]);
 
     // Track form changes
@@ -369,11 +375,11 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
     ]);
 
     // Add benefit
-    const addBenefit = useCallback(
+    const addChoseUs = useCallback(
       (langCode: string) => {
-        const currentBenefits = form.getValues()[langCode] || [];
+        const currentChoseUs = form.getValues()[langCode] || [];
         form.setValue(langCode, [
-          ...currentBenefits,
+          ...currentChoseUs,
           { icon: "Clock", title: "", description: "" },
         ]);
 
@@ -384,9 +390,9 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
         if (langCode === firstLang) {
           allLanguages.forEach((lang) => {
             if (lang !== firstLang) {
-              const otherLangBenefits = formValues[lang] || [];
+              const otherLangChoseUs = formValues[lang] || [];
               form.setValue(lang, [
-                ...otherLangBenefits,
+                ...otherLangChoseUs,
                 { icon: "Clock", title: "", description: "" },
               ]);
             }
@@ -405,10 +411,10 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
     );
 
     // Remove benefit
-    const removeBenefit = useCallback(
+    const removeChoseUs = useCallback(
       async (langCode: string, index: number) => {
-        const currentBenefits = form.getValues()[langCode] || [];
-        if (currentBenefits.length <= 1) {
+        const currentChoseUs = form.getValues()[langCode] || [];
+        if (currentChoseUs.length <= 1) {
           toast({
             title: "Cannot remove",
             description: "You need at least one benefit",
@@ -426,7 +432,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
           try {
             const benefitNumber = index + 1;
             const benefitElements = contentElements.filter((element) => {
-              const match = element.name.match(/Benefit (\d+)/i);
+              const match = element.name.match(/ChoseUs (\d+)/i);
               return match && Number.parseInt(match[1]) === benefitNumber;
             });
 
@@ -437,30 +443,30 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
 
               updateState({
                 contentElements: contentElements.filter((element) => {
-                  const match = element.name.match(/Benefit (\d+)/i);
+                  const match = element.name.match(/ChoseUs (\d+)/i);
                   return !(match && Number.parseInt(match[1]) === benefitNumber);
                 }),
               });
 
               toast({
-                title: "Benefit deleted",
-                description: `Benefit ${benefitNumber} has been deleted from the database`,
+                title: "ChoseUs deleted",
+                description: `ChoseUs ${benefitNumber} has been deleted from the database`,
               });
             }
 
             const remainingElements = contentElements.filter((element) => {
-              const match = element.name.match(/Benefit (\d+)/i);
+              const match = element.name.match(/ChoseUs (\d+)/i);
               return match && Number.parseInt(match[1]) > benefitNumber;
             });
 
             for (const element of remainingElements) {
-              const match = element.name.match(/Benefit (\d+)/i);
+              const match = element.name.match(/ChoseUs (\d+)/i);
               if (match) {
                 const oldNumber = Number.parseInt(match[1]);
                 const newNumber = oldNumber - 1;
                 const newName = element.name.replace(
-                  `Benefit ${oldNumber}`,
-                  `Benefit ${newNumber}`
+                  `ChoseUs ${oldNumber}`,
+                  `ChoseUs ${newNumber}`
                 );
                 const newOrder = element.order - 3;
 
@@ -473,10 +479,10 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
               }
             }
           } catch (error) {
-            console.error("Error removing benefit elements:", error);
+            console.error("Error removing choseUs elements:", error);
             toast({
               title: "Error removing benefit",
-              description: "There was an error removing the benefit from the database",
+              description: "There was an error removing the choseUs from the database",
               variant: "destructive",
             });
           }
@@ -484,18 +490,18 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
 
         if (isFirstLanguage) {
           allLanguages.forEach((lang) => {
-            const langBenefits = form.getValues()[lang] || [];
-            if (langBenefits.length > index) {
-              const updatedBenefits = [...langBenefits];
-              updatedBenefits.splice(index, 1);
-              form.setValue(lang, updatedBenefits);
+            const langChoseUs = form.getValues()[lang] || [];
+            if (langChoseUs.length > index) {
+              const updatedChoseUs = [...langChoseUs];
+              updatedChoseUs.splice(index, 1);
+              form.setValue(lang, updatedChoseUs);
               form.trigger(lang);
             }
           });
         } else {
-          const updatedBenefits = [...currentBenefits];
-          updatedBenefits.splice(index, 1);
-          form.setValue(langCode, updatedBenefits);
+          const updatedChoseUs = [...currentChoseUs];
+          updatedChoseUs.splice(index, 1);
+          form.setValue(langCode, updatedChoseUs);
           form.trigger(langCode);
         }
 
@@ -542,9 +548,9 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
           }
 
           const subsectionData = {
-            name: "Benefits Section",
-            slug: slug || `benefits-section-${Date.now()}`,
-            description: "Benefits section for the website",
+            name: "ChoseUs Section",
+            slug: slug || `ChoseUs-section-${Date.now()}`,
+            description: "ChoseUs section for the website",
             defaultContent :'',
             isActive: true,
             order: 0,
@@ -575,9 +581,9 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
 
         for (let i = 0; i < benefitCount; i++) {
           const benefitIndex = i + 1;
-          const iconElementName = `Benefit ${benefitIndex} - Icon`;
-          const titleElementName = `Benefit ${benefitIndex} - Title`;
-          const descElementName = `Benefit ${benefitIndex} - Description`;
+          const iconElementName = `ChoseUs ${benefitIndex} - Icon`;
+          const titleElementName = `ChoseUs ${benefitIndex} - Title`;
+          const descElementName = `ChoseUs ${benefitIndex} - Description`;
 
           const iconValue = getSafeIconValue(allFormValues, i);
 
@@ -646,16 +652,16 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
             }
           }
 
-          Object.entries(allFormValues).forEach(([langCode, benefits]) => {
-            if (!Array.isArray(benefits) || !benefits[i]) return;
+          Object.entries(allFormValues).forEach(([langCode, ChoseUs]) => {
+            if (!Array.isArray(ChoseUs) || !ChoseUs[i]) return;
             const langId = langCodeToIdMap[langCode];
             if (!langId) return;
 
-            const benefit = benefits[i];
+            const choseUs = ChoseUs[i];
             if (titleElement) {
               translations.push({
-                _id : String(benefit.id),
-                content: benefit.title,
+                _id : String(choseUs.id),
+                content: choseUs.title,
                 language: langId,
                 contentElement: titleElement._id,
                 isActive: true,
@@ -663,8 +669,8 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
             }
             if (descElement) {
               translations.push({
-                _id : String(benefit.id),
-                content: benefit.description,
+                _id : String(choseUs.id),
+                content: choseUs.description,
                 language: langId,
                 contentElement: descElement._id,
                 isActive: true,
@@ -679,8 +685,8 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
 
         toast({
           title: existingSubSectionId
-            ? "Benefits section updated successfully!"
-            : "Benefits section created successfully!",
+            ? "ChoseUs section updated successfully!"
+            : "ChoseUs section created successfully!",
         });
 
         if (slug) {
@@ -688,7 +694,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
             updateState({ isLoadingData: true, dataLoaded: false });
             const result = await refetch();
             if (result.data?.data) {
-              processBenefitsData(result.data.data);
+              processChoseUsData(result.data.data);
             } else {
               updateState({ isLoadingData: false });
             }
@@ -703,8 +709,8 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
         console.error("Operation failed:", error);
         toast({
           title: existingSubSectionId
-            ? "Error updating benefits section"
-            : "Error creating benefits section",
+            ? "Error updating choseUs section"
+            : "Error creating choseUs section",
           variant: "destructive",
           description:
             error instanceof Error ? error.message : "Unknown error occurred",
@@ -728,7 +734,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
       bulkUpsertTranslations,
       toast,
       refetch,
-      processBenefitsData,
+      processChoseUsData,
       updateState,
     ]);
 
@@ -739,7 +745,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
       setHasUnsavedChanges: (value) => updateState({ hasUnsavedChanges: value }),
       existingSubSectionId,
       contentElements,
-      componentName: "Benefits",
+      componentName: "ChoseUs",
     });
 
     // Get language codes
@@ -761,7 +767,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
       return (
         <div className="flex items-center justify-center p-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary mr-2" />
-          <p className="text-muted-foreground">Loading benefits section data...</p>
+          <p className="text-muted-foreground">Loading choseUs section data...</p>
         </div>
       );
     }
@@ -775,7 +781,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
       <div className="space-y-6">
         <LoadingDialog
           isOpen={isSaving}
-          title={existingSubSectionId ? "Updating Benefits" : "Creating Benefits"}
+          title={existingSubSectionId ? "Updating ChoseUs" : "Creating ChoseUs"}
           description="Please wait while we save your changes..."
         />
 
@@ -786,13 +792,13 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
               const isFirstLanguage = langIndex === 0;
 
               return (
-                <LanguageCard
+                <ChooseUsLanguageCard
                   key={langId}
                   langCode={langCode}
                   isFirstLanguage={isFirstLanguage}
                   form={form}
-                  addBenefit={addBenefit}
-                  removeBenefit={removeBenefit}
+                  addBenefit={addChoseUs}
+                  removeBenefit={removeChoseUs}
                   syncIcons={syncIcons}
                   availableIcons={getAvailableIcons()}
                   onDeleteStep={confirmDeleteStep}
@@ -807,7 +813,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
             <div className="flex items-center text-amber-500 mr-4">
               <AlertTriangle className="h-4 w-4 mr-2" />
               <span className="text-sm">
-                Each language must have the same number of benefits
+                Each language must have the same number of choseUs
               </span>
             </div>
           )}
@@ -825,7 +831,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                {existingSubSectionId ? "Update Benefits" : "Save Benefits"}
+                {existingSubSectionId ? "Update ChoseUs" : "Save ChoseUs"}
               </>
             )}
           </Button>
@@ -853,5 +859,5 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
   }
 );
 
-BenefitsForm.displayName = "BenefitsForm";
-export default BenefitsForm;
+ChooseUsForm.displayName = "ChooseUsForm";
+export default ChooseUsForm;

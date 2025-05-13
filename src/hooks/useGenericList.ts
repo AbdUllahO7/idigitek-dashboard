@@ -56,10 +56,8 @@ export function useGenericList({
       const mainItem = itemsData.data.find((item: any) => item.isMain === true)
       
       if (mainItem) {
-        console.log("Found main item with ID:", mainItem._id)
         setMainItemId(mainItem._id)
       } else {
-        console.log("No main item found in the data")
         setMainItemId(null)
       }
       

@@ -34,7 +34,6 @@ export function useContentElements() {
         const { data } = await apiClient.get(`${endpoint}/subsection/${subsectionId}`, {
           params: { translations: includeTranslations }
         });
-        console.log("data",data)
         return data;
       },
 

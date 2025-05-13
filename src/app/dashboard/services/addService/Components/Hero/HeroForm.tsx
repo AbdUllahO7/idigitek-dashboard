@@ -7,7 +7,6 @@ import { Form } from "@/src/components/ui/form";
 import { Button } from "@/src/components/ui/button";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
-import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions";
 import apiClient from "@/src/lib/api-client";
 import { useToast } from "@/src/hooks/use-toast";
 import { createLanguageCodeMap } from "../../Utils/language-utils";
@@ -15,7 +14,6 @@ import { BackgroundImageSection } from "./SimpleImageUploader";
 import { LanguageCard } from "./LanguageCard";
 import { processAndLoadData } from "../../Utils/load-form-data";
 import { Loader2, Save } from "lucide-react";
-import { createHeroSchema } from "../../Utils/language-specifi-schemas";
 import { createHeroDefaultValues } from "../../Utils/Language-default-values";
 import {  useImageUploader } from "../../Utils/Image-uploader";
 import { createFormRef } from "../../Utils/Expose-form-data";
@@ -24,6 +22,8 @@ import { HeroFormProps } from "@/src/api/types/sections/service/serviceSections.
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
 import { SubSection } from "@/src/api/types/hooks/section.types";
 import { useWebsiteContext } from "@/src/providers/WebsiteContext";
+import { createHeroSchema } from "../../Utils/language-specific-schemas";
+import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
 
 
 const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
@@ -97,7 +97,7 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
   const { 
     imageFile, 
     imagePreview, 
-    handleImageUpload, 
+    handleImageUpload : handleOriginalImageUpload, 
     handleImageRemove 
   } = useImageUploader({
     form,
@@ -300,7 +300,6 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
     
     try {
       const allFormValues = form.getValues();
-      console.log("Form values at save:", allFormValues);
 
       // Step 1: Create or update subsection
       let sectionId = existingSubSectionId;
@@ -567,8 +566,11 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
         <BackgroundImageSection 
           imagePreview={imagePreview || undefined} 
           imageValue={form.getValues().backgroundImage}
-          onUpload={handleImageUpload}
-          onRemove={handleImageRemove}
+              onUpload={(event: React.ChangeEvent<HTMLInputElement>) => {
+              if (event.target.files && event.target.files.length > 0) {
+                handleOriginalImageUpload({ target: { files: Array.from(event.target.files) } });
+              }
+            }}          onRemove={handleImageRemove}
         />
         
         {/* Language Cards Grid */}

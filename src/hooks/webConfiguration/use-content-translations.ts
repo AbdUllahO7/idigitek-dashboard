@@ -35,7 +35,6 @@ export function useContentTranslations() {
         const { data } = await apiClient.get(`${endpoint}/content-elements/${elementId}`, {
           params: { activeOnly }
         });
-        console.log("useGetByElement" , data)
         return data;
       },
       enabled: !!elementId,

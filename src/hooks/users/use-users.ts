@@ -180,7 +180,6 @@ export const useUsers = () => {
       queryKey: ownerUsersKey,
       queryFn: async () => {
         const { data: responseData } = await apiClient.get(`${endpoint}/owners`);
-        console.log("responseData" , responseData)
         // Transform response to match frontend expected format
         if (responseData && responseData.data) {
           responseData.data = responseData.data.map((user: User) => ({
