@@ -199,7 +199,7 @@ export function GenericTable({
 
       {/* Pagination example - can be implemented as needed */}
       {data.length > 0 && (
-        <div className="flex justify-between items-center pt-4">
+        <div className="flex justify-between items-center py-4 px-4 space-y-6 space">
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Showing <span className="font-medium text-gray-900 dark:text-gray-100">{data.length}</span> results
           </p>

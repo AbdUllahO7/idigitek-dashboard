@@ -12,6 +12,7 @@ import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { FormData, FormDataNews } from "@/src/api/types/sections/service/serviceSections.types"
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
 import NewsForm from "./News/NewsForm"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 
 // Form sections to collect data from
@@ -25,9 +26,10 @@ export default function AddNews() {
   const sectionItemId = searchParams.get('sectionItemId')
   const mode = searchParams.get('mode') || 'edit'
   const isCreateMode = mode === 'create'
-  
+    const { websiteId } = useWebsiteContext();
+
   // API hooks
-  const { useGetAll: useGetAllLanguages } = useLanguages()
+  const { useGetByWebsite: useGetAllLanguages } = useLanguages()
   const { useGetById: useGetSectionItemById } = useSectionItems()
   const { useGetBySectionItemId: useGetSubSectionsBySectionItemId } = useSubSections()
   
@@ -35,7 +37,7 @@ export default function AddNews() {
   const { 
     data: languagesData, 
     isLoading: isLoadingLanguages 
-  } = useGetAllLanguages()
+  } = useGetAllLanguages(websiteId)
   
   // Get section item data if in edit mode
   const {

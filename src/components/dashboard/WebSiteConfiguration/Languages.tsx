@@ -171,7 +171,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
 
   const handleToggleActive = (id: string, isActive: boolean) => {
     toggleLanguageActiveMutation.mutate(
-      { id, isActive: !isActive },
+      { id },
       {
         onSuccess: () => {
           toast({

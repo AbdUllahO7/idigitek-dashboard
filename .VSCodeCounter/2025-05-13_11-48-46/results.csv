@@ -1,0 +1,202 @@
+"filename", "language", "JavaScript", "JSON with Comments", "JSON", "Markdown", "TypeScript", "CSS", "YAML", "XML", "TypeScript JSX", "comment", "blank", "total"
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\README.md", "Markdown", 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 14, 37
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\components.json", "JSON", 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 21
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\eslint.config.mjs", "JavaScript", 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 17
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\next.config.mjs", "JavaScript", 42, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 52
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\next.config.ts", "TypeScript", 0, 0, 0, 0, 4, 0, 0, 0, 0, 1, 3, 8
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\package-lock.json", "JSON", 0, 0, 5025, 0, 0, 0, 0, 0, 0, 0, 1, 5026
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\package.json", "JSON", 0, 0, 77, 0, 0, 0, 0, 0, 0, 0, 1, 78
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\pnpm-lock.yaml", "YAML", 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 5
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\postcss.config.mjs", "JavaScript", 6, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 9
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\public\file.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\public\globe.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\public\next.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\public\placeholder-logo.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\public\placeholder.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\public\vercel.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\public\window.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\auth.ts", "TypeScript", 0, 0, 0, 0, 184, 0, 0, 0, 0, 37, 33, 254
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\index.ts", "TypeScript", 0, 0, 0, 0, 1, 0, 0, 0, 0, 3, 3, 7
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\contact\contactSection.types.ts", "TypeScript", 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 1, 30
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\hooks\Common.types.ts", "TypeScript", 0, 0, 0, 0, 41, 0, 0, 0, 0, 3, 4, 48
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\hooks\MultilingualSection.types.ts", "TypeScript", 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 6, 49
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\hooks\UseGenericList.types.ts", "TypeScript", 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 1, 12
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\hooks\WebSite.types.ts", "TypeScript", 0, 0, 0, 0, 47, 0, 0, 0, 0, 6, 9, 62
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\hooks\content.types.ts", "TypeScript", 0, 0, 0, 0, 33, 0, 0, 0, 0, 3, 6, 42
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\hooks\form.types.ts", "TypeScript", 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 1, 30
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\hooks\language.types.ts", "TypeScript", 0, 0, 0, 0, 26, 0, 0, 0, 0, 3, 7, 36
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\hooks\section.types.ts", "TypeScript", 0, 0, 0, 0, 60, 0, 0, 0, 0, 3, 7, 70
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\sections\news\newsSections.types.ts", "TypeScript", 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 1, 11
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\sections\service\serviceSections.types.ts", "TypeScript", 0, 0, 0, 0, 71, 0, 0, 0, 0, 0, 11, 82
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\useUserSection.ts", "TypeScript", 0, 0, 0, 0, 32, 0, 0, 0, 0, 5, 3, 40
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\utils\CreateMainSubSection.types.ts", "TypeScript", 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 2, 25
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\types\utils\MainSectionComponents.types.ts", "TypeScript", 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 18, 80
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\api\user.types.ts", "TypeScript", 0, 0, 0, 0, 29, 0, 0, 0, 0, 4, 6, 39
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\News\NewsSectionConfig.ts", "TypeScript", 0, 0, 0, 0, 21, 0, 0, 0, 0, 4, 6, 31
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\News\addNews\News\LanguageCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 78, 3, 7, 88
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\News\addNews\News\NewsForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 503, 34, 78, 615
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\News\addNews\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 146, 30, 35, 211
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\News\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 248, 29, 36, 313
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\addWebSiteConfiguration\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 125, 1, 13, 139
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\header\HeaderSectionConfig.ts", "TypeScript", 0, 0, 0, 0, 14, 0, 0, 0, 0, 4, 8, 26
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\header\addNavItems\NavItemsForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 785, 2, 123, 910
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\header\addNavItems\NavLanguageCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 68, 0, 5, 73
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\header\addNavItems\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 142, 30, 35, 207
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\header\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 270, 31, 44, 345
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\idigitekAdmin\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 445, 44, 60, 549
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 72, 12, 10, 94
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 2, 10
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\middleware.ts", "TypeScript", 0, 0, 0, 0, 67, 0, 0, 0, 0, 16, 14, 97
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 470, 32, 30, 532
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\BenefitsForm\BenefitCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 125, 7, 8, 140
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\BenefitsForm\BenefitsForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 750, 20, 89, 859
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\BenefitsForm\LanguageCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 71, 0, 7, 78
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\BenefitsForm\ValidationDialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 43, 3, 4, 50
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\FaqForm\FaqItem.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 82, 2, 7, 91
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\FaqForm\LanguageCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 62, 2, 7, 71
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\FaqForm\faq-form.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 636, 64, 106, 806
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\FeaturesForm\FeatureForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 159, 1, 4, 164
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\FeaturesForm\FeatureItem.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 47, 1, 4, 52
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\FeaturesForm\LanguageCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 72, 1, 3, 76
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\FeaturesForm\features-form.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 1048, 115, 179, 1342
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\Hero\HeroForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 503, 34, 78, 615
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\Hero\LanguageCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 78, 3, 7, 88
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\Hero\SimpleImageUploader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 126, 6, 8, 140
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\ProcessStepsForm\LanguageCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 75, 2, 4, 81
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\ProcessStepsForm\StepCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 125, 1, 6, 132
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Components\ProcessStepsForm\process-steps-form.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 663, 54, 101, 818
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Utils\Expose-form-data.ts", "TypeScript", 0, 0, 0, 0, 114, 0, 0, 0, 0, 24, 22, 160
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Utils\FormImageUploader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 238, 99, 50, 387
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Utils\Image-uploader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 331, 115, 70, 516
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Utils\Language-default-values.ts", "TypeScript", 0, 0, 0, 0, 85, 0, 0, 0, 0, 3, 19, 107
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Utils\WebSiteImageUploader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 159, 57, 28, 244
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Utils\language-specifi-schemas.ts", "TypeScript", 0, 0, 0, 0, 78, 0, 0, 0, 0, 5, 15, 98
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Utils\language-utils.ts", "TypeScript", 0, 0, 0, 0, 7, 0, 0, 0, 0, 38, 6, 51
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\Utils\load-form-data.ts", "TypeScript", 0, 0, 0, 0, 136, 0, 0, 0, 0, 31, 32, 199
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\addService\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 206, 30, 34, 270
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 245, 33, 36, 314
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\services\serviceSectionConfig.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 21, 4, 6, 31
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\settings\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 4, 3, 2, 9
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\settings\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 260, 17, 22, 299
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\unauthorized\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 3, 33
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\userDashboard\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 417, 21, 42, 480
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\users\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 4, 3, 2, 9
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\dashboard\users\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 156, 17, 19, 192
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\globals.css", "CSS", 0, 0, 0, 0, 0, 57, 0, 0, 0, 0, 4, 61
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 40, 7, 4, 51
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 2, 10
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 4, 5, 1, 10
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\sign-in\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 2, 10
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\sign-in\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 619, 29, 52, 700
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\app\websiteConfiguration\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 467, 22, 46, 535
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\DeleteSectionDialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 70, 0, 6, 76
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\DialogCreateSectionItem.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 175, 9, 21, 205
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\Spinner.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 21, 1, 3, 25
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\auth\ProtectedRoute.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 65, 15, 18, 98
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\AddSectionlogic\FormContextProvider.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 174, 26, 34, 234
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\AddSectionlogic\FormShell.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 172, 9, 14, 195
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\AddSectionlogic\TabLayout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 172, 4, 17, 193
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\MainSections\GenericListPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 166, 9, 14, 189
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\MainSections\GenericSectionIntegration.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 270, 36, 59, 365
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\MainSections\GenericTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 246, 11, 15, 272
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\RouteGuard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 87, 10, 21, 118
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\WebSiteConfiguration\Languages.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 534, 5, 34, 573
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\WebSiteConfiguration\Sections.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 773, 42, 50, 865
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\WebSiteConfiguration\WebSite.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 561, 1, 33, 595
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\dashboard-header.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 76, 16, 13, 105
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\dashboard-sidebar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 593, 73, 56, 722
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\user\AddUserDialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 270, 1, 5, 276
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\user\DeleteUserDialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 82, 1, 3, 86
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\user\EditUserDialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 278, 2, 9, 289
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\user\UserAvatar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 24, 1, 3, 28
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\user\UserStats.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 99, 1, 6, 106
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\user\UserStatusBadge.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 45, 1, 2, 48
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\user\UserTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 204, 3, 4, 211
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\dashboard\user\ViewUserDialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 140, 5, 11, 156
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\image-uploader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 98, 9, 13, 120
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\navigation-events.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 29, 28, 11, 68
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\navigation-progress.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 73, 12, 13, 98
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\nprogress.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 73, 6, 13, 92
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\theme-provider.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 6, 4, 3, 13
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\theme-toggle.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 24, 6, 4, 34
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\accordion.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 50, 0, 9, 59
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\alert-dialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 127, 0, 15, 142
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\alert.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 53, 0, 7, 60
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\aspect-ratio.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 8
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\avatar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 7, 51
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\badge.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 6, 37
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\breadcrumb.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 105, 0, 11, 116
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\button.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 51, 0, 6, 57
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\calendar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 61, 0, 6, 67
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\card.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 71, 0, 9, 80
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\carousel.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 232, 0, 31, 263
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\chart.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 327, 2, 37, 366
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\checkbox.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 5, 31
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\collapsible.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6, 12
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\command.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 136, 0, 18, 154
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\context-menu.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 182, 0, 19, 201
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\dialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 109, 0, 14, 123
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\drawer.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 105, 0, 14, 119
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\dropdown-menu.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 182, 0, 19, 201
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\form.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 153, 0, 26, 179
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\hover-card.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 7, 30
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\input-otp.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 9, 72
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\input.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 4, 23
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\label.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 6, 27
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\loader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 70, 33, 11, 114
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\menubar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 217, 0, 20, 237
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\navigation-menu.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 117, 0, 12, 129
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\pagination.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 107, 0, 11, 118
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\popover.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 7, 32
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\progress.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 5, 29
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\radio-group.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 6, 45
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\resizable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 7, 46
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\scroll-area.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 6, 49
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\select.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 146, 0, 15, 161
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\separator.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 5, 32
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\sheet.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 125, 0, 16, 141
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\sidebar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 697, 12, 55, 764
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\skeleton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 3, 16
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\slider.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 5, 29
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\sonner.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 6, 32
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\switch.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 5, 30
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\table.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 107, 0, 11, 118
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\tabs.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 48, 0, 8, 56
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\textarea.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 4, 23
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\toast.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 116, 0, 14, 130
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\toaster.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 4, 29
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\toggle-group.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 52, 0, 10, 62
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\toggle.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 7, 46
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\tooltip.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 8, 31
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\components\ui\use-mobile.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 5, 20
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\context\AuthContext.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 285, 55, 56, 396
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\use-main-section.ts", "TypeScript", 0, 0, 0, 0, 62, 0, 0, 0, 0, 20, 14, 96
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\use-mobile.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 5, 20
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\use-toast.ts", "TypeScript", 0, 0, 0, 0, 157, 0, 0, 0, 0, 3, 33, 193
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\useGenericList.ts", "TypeScript", 0, 0, 0, 0, 157, 0, 0, 0, 0, 27, 34, 218
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\users\UserSectionsManager.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 87, 6, 18, 111
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\users\use-users.ts", "TypeScript", 0, 0, 0, 0, 155, 0, 0, 0, 0, 28, 27, 210
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\users\useUserManagement.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 376, 61, 79, 516
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\webConfiguration\use-WebSite.ts", "TypeScript", 0, 0, 0, 0, 176, 0, 0, 0, 0, 33, 22, 231
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\webConfiguration\use-conent-translitions.ts", "TypeScript", 0, 0, 0, 0, 192, 0, 0, 0, 0, 17, 16, 225
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\webConfiguration\use-content-elements.ts", "TypeScript", 0, 0, 0, 0, 103, 0, 0, 0, 0, 14, 12, 129
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\webConfiguration\use-language.ts", "TypeScript", 0, 0, 0, 0, 183, 0, 0, 0, 0, 33, 32, 248
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\webConfiguration\use-section-items.ts", "TypeScript", 0, 0, 0, 0, 174, 0, 0, 0, 0, 17, 16, 207
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\webConfiguration\use-section.ts", "TypeScript", 0, 0, 0, 0, 315, 0, 0, 0, 0, 59, 29, 403
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\webConfiguration\use-subSections.ts", "TypeScript", 0, 0, 0, 0, 337, 0, 0, 0, 0, 21, 22, 380
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\hooks\webConfiguration\useUserSections.ts", "TypeScript", 0, 0, 0, 0, 162, 0, 0, 0, 0, 39, 13, 214
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\lib\api-client.ts", "TypeScript", 0, 0, 0, 0, 62, 0, 0, 0, 0, 12, 22, 96
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\lib\service-validator.ts", "TypeScript", 0, 0, 0, 0, 249, 0, 0, 0, 0, 17, 60, 326
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\lib\utils.ts", "TypeScript", 0, 0, 0, 0, 5, 0, 0, 0, 0, 4, 2, 11
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\providers\QueryProvider.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 27, 2, 4, 33
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\providers\WebsiteContext.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 46, 6, 7, 59
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\providers\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 16, 1, 3, 20
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\utils\CreateMainSubSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 664, 41, 79, 784
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\utils\MainSectionComponents.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 321, 14, 39, 374
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\utils\form.ts", "TypeScript", 0, 0, 0, 0, 83, 0, 0, 0, 0, 19, 18, 120
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\src\utils\user-helpers.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 63, 8, 7, 78
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\styles\globals.css", "CSS", 0, 0, 0, 0, 0, 98, 0, 0, 0, 0, 6, 104
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\tailwind.config.ts", "TypeScript", 0, 0, 0, 0, 79, 0, 0, 0, 0, 0, 3, 82
+"d:\Web\Work\NextJs\idigitek\idigitek-dashboard\tsconfig.json", "JSON with Comments", 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 1, 28
+"Total", "-", 60, 27, 5123, 23, 3908, 155, 4, 7, 23119, 2188, 3547, 38161

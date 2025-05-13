@@ -123,17 +123,6 @@ export default function HeaderPage() {
     editPath: HEADER_CONFIG.editPath
   })
 
-  // Deep debug logging every render
-  console.log("RENDER HEADER PAGE", {
-    sectionId,
-    websiteId,
-    hasMainSubSection,
-    isLoadingMainSubSection,
-    defaultAddButtonDisabled,
-    mainSubSectionData: mainSubSectionData?.data,
-    headerSection,
-    sectionData
-  });
 
   // Debug changes in hasMainSubSection
   useEffect(() => {
@@ -259,10 +248,10 @@ export default function HeaderPage() {
   };
 
   // IMPORTANT: Here's the crux of the button enabling/disabling logic
-  const isAddButtonDisabled = 
-    defaultAddButtonDisabled || 
+  const isAddButtonDisabled: boolean = 
+    Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
-    (sectionId && !hasMainSubSection);
+    (Boolean(sectionId) && !hasMainSubSection);
   
   // Debug logging specifically for our button disabling conditions
   useEffect(() => {
@@ -321,21 +310,10 @@ export default function HeaderPage() {
     />
   );
 
-  // Log out all key properties that would affect rendering just before the return
-  console.log("Pre-render state:", {
-    hasMainSubSection,
-    isLoadingMainSubSection,
-    isAddButtonDisabled,
-    sectionId: sectionId || "none",
-    headerSection,
-    sectionData,
-    defaultAddButtonDisabled
-  });
+
 
   return (
     <div className="space-y-6">
-     
-      
       {/* Main list page with table and section integration */}
       <GenericListPage
         config={HEADER_CONFIG}

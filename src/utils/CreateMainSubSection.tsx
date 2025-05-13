@@ -91,7 +91,7 @@ export default function CreateMainSubSection({
     useUpdate: useUpdateTranslation 
   } = useContentTranslations()
   
-  const { useGetAll: useGetAllLanguages } = useLanguages()
+  const { useGetByWebsite: useGetAllLanguages } = useLanguages()
   
   // Data fetching with refetch capability
   const {
@@ -123,7 +123,7 @@ export default function CreateMainSubSection({
   const { 
     data: languagesData, 
     isLoading: isLoadingLanguages 
-  } = useGetAllLanguages()
+  } = useGetAllLanguages(websiteId)
   
   // Derived state
   const languages = languagesData?.data?.filter((lang: { isActive: any }) => lang.isActive) || []

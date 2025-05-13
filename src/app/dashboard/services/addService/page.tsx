@@ -16,6 +16,7 @@ import BenefitsForm from "./Components/BenefitsForm/BenefitsForm"
 import ProcessStepsForm from "./Components/ProcessStepsForm/process-steps-form"
 import FaqForm from "./Components/FaqForm/faq-form"
 import FeaturesForm from "./Components/FeaturesForm/features-form"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 // Form sections to collect data from
 const FORM_SECTIONS = ["hero", "benefits", "features", "processSteps", "faq"]
@@ -30,15 +31,16 @@ export default function AddService() {
   const isCreateMode = mode === 'create'
   
   // API hooks
-  const { useGetAll: useGetAllLanguages } = useLanguages()
+  const { useGetByWebsite: useGetAllLanguages } = useLanguages()
   const { useGetById: useGetSectionItemById } = useSectionItems()
   const { useGetBySectionItemId: useGetSubSectionsBySectionItemId } = useSubSections()
-  
+  const { websiteId } = useWebsiteContext();
+
   // Get languages
   const { 
     data: languagesData, 
     isLoading: isLoadingLanguages 
-  } = useGetAllLanguages()
+  } = useGetAllLanguages(websiteId)
   
   // Get section item data if in edit mode
   const {

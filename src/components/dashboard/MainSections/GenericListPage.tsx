@@ -54,7 +54,6 @@ interface GenericListPageProps {
   isAddButtonDisabled: boolean
   addButtonTooltip: string
   tableComponent: ReactNode
-  sectionIntegrationComponent: ReactNode
   createDialogComponent: ReactNode
   deleteDialogComponent: ReactNode
   onAddNew: () => void
@@ -71,7 +70,6 @@ export function GenericListPage({
   isAddButtonDisabled,
   addButtonTooltip,
   tableComponent,
-  sectionIntegrationComponent,
   createDialogComponent,
   deleteDialogComponent,
   onAddNew,
@@ -169,16 +167,7 @@ export function GenericListPage({
     </motion.div>
   );
 
-  // Render section integration card
-  const SectionIntegrationCard = (
-    <motion.div variants={animations.item}>
-      <Card className="border-none shadow-lg overflow-hidden mt-6">
-        <CardContent className="">
-          {sectionIntegrationComponent}
-        </CardContent>
-      </Card>
-    </motion.div>
-  );
+
 
   return (
     <>
@@ -190,7 +179,6 @@ export function GenericListPage({
       >
         {PageHeader}
         {TableCard}
-        {SectionIntegrationCard}
       </motion.div>
 
       {/* Dialogs */}

@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { FieldConfig, MultilingualSectionData } from "@/src/api/types/hooks/MultilingualSection.types"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 interface SectionConfig {
   name: string // Section name used for display
@@ -64,6 +65,7 @@ function GenericSectionIntegration({
   const [sectionData, setSectionData] = useState<MultilingualSectionData | null>(null)
   const [isDataProcessed, setIsDataProcessed] = useState(false)
   const [mainServiceId, setMainServiceId] = useState<string | null>(null)
+  const { websiteId } = useWebsiteContext();
 
   // Get hooks for API calls
   const {
@@ -72,7 +74,7 @@ function GenericSectionIntegration({
     useGetBySectionItemId,
   } = useSubSections()
 
-  const { useGetAll: useGetAllLanguages } = useLanguages()
+  const { useGetByWebsite: useGetAllLanguages } = useLanguages()
 
   // Section Items hooks for main-service creation
   const { useGetBySectionId: useGetSectionItemsBySectionId, useCreate: useCreateSectionItem } = useSectionItems()
@@ -203,7 +205,7 @@ function GenericSectionIntegration({
     isLoading: isLoadingSectionData,
   } = getCompleteSectionQuery
 
-  const { data: languagesData, isLoading: isLoadingLanguages } = useGetAllLanguages()
+  const { data: languagesData, isLoading: isLoadingLanguages } = useGetAllLanguages(websiteId)
 
   // Build section data when complete service data loads
   useEffect(() => {
