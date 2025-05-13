@@ -103,5 +103,6 @@ export const createFeaturesDefaultValues = (languageIds: string[], activeLanguag
 };
 
 
+
 // ex : 
 // const defaultValues = createHeroDefaultValues(languageIds, activeLanguages)

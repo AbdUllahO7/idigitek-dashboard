@@ -162,7 +162,7 @@ export function TabLayout({
 
           <div className="flex-1" />
 
-          {!isLastTab ? (
+          {/* {!isLastTab ? (
             <Button
               onClick={goToNextTab}
               className="flex items-center bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20"
@@ -185,7 +185,7 @@ export function TabLayout({
                 saveButtonLabel
               )}
             </Button>
-          )}
+          )} */}
         </motion.div>
       </div>
     </motion.div>

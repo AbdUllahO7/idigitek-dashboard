@@ -18,154 +18,36 @@ import apiClient from "@/src/lib/api-client"
 import { createLanguageCodeMap } from "../../services/addService/Utils/Language-default-values"
 import { useImageUploader } from "../../services/addService/Utils/Image-uploader"
 import { LoadingDialog } from "@/src/utils/MainSectionComponents"
-import { z } from "zod"
 import { NavLanguageCard } from "./NavLanguageCard"
 import { BackgroundImageSection } from "../../services/addService/Components/Hero/SimpleImageUploader"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
+import { Language } from "@/src/api/types/hooks/language.types"
+import { SubSection } from "@/src/api/types/hooks/section.types"
+import { ContentElement } from "@/src/api/types/hooks/content.types"
+import { createSectionsDefaultValues, createSectionsSchema, processAndLoadNavData, sectionsFormData } from "../../../../utils/sections/utils"
 
-// Define interfaces for props and data structures
-interface Language {
-  _id: string
-  languageID: string
-}
 
 interface NavFormProps {
   languageIds: string[]
   activeLanguages: Language[]
   onDataChange?: (data: any) => void
   slug?: string
-  ParentSectionId: string
+  ParentSectionId: string,
+  initialData:any,
 }
 
-interface ContentElement {
-  _id: string
-  name: string
-  type: 'text' | 'image'
-  order: number
-  defaultContent: string
-  imageUrl?: string
-  translations?: Array<{
-    _id?: string
-    language: string | { _id: string }
-    content: string
-    isActive: boolean
-  }>
-}
 
-interface SubSection {
-  _id: string
-  elements?: ContentElement[]
-}
-
-// Define the Zod schema and infer its type
-const createNavItemsSchema = (languageIds: string[], activeLanguages: Language[]) => {
-  const schema: Record<string, z.ZodTypeAny> = {
-    logo: z.string().optional(),
-  }
-
-  languageIds.forEach(langId => {
-    const langCode = activeLanguages.find(lang => lang._id === langId)?.languageID || langId
-    schema[langCode] = z.array(
-      z.object({
-        navItemName: z.string().min(1, "Navigation item name is required"),
-      })
-    ).min(1, "At least one navigation item is required")
-  })
-
-  return z.object(schema)
-}
-
-type NavItemsFormData = z.infer<ReturnType<typeof createNavItemsSchema>>
-
-const createNavItemsDefaultValues = (languageIds: string[], activeLanguages: Language[]): NavItemsFormData => {
-  const defaultValues: NavItemsFormData = {
-    logo: "",
-  }
-
-  languageIds.forEach(langId => {
-    const langCode = activeLanguages.find(lang => lang._id === langId)?.languageID || langId
-    defaultValues[langCode] = [{ navItemName: "" }]
-  })
-
-  return defaultValues
-}
-
-const processAndLoadNavData = (
-  subsectionData: SubSection | null,
-  form: any,
-  languageIds: string[],
-  activeLanguages: Language[],
-  callbacks: {
-    setIsLoadingData: (value: boolean) => void
-    setDataLoaded: (value: boolean) => void
-    setHasUnsavedChanges: (value: boolean) => void
-    setExistingSubSectionId: (value: string | null) => void
-    setContentElements: (value: ContentElement[]) => void
-  }
-) => {
-  if (!subsectionData) {
-    callbacks.setIsLoadingData(false)
-    callbacks.setDataLoaded(true)
-    return
-  }
-
-  if (subsectionData._id) {
-    callbacks.setExistingSubSectionId(subsectionData._id)
-  }
-
-  const elements = subsectionData.elements || []
-  if (elements.length > 0) {
-    callbacks.setContentElements(elements)
-  }
-
-  const langCodeMap: Record<string, string> = {}
-  activeLanguages.forEach(lang => {
-    langCodeMap[lang._id] = lang.languageID
-  })
-
-  const logoElement = elements.find(el => el.name === "Logo" && el.type === "image")
-  const navItemElements = elements
-    .filter(el => el.type === "text" && el.name.startsWith("Nav Item"))
-    .sort((a, b) => a.order - b.order)
-
-  if (logoElement?.imageUrl) {
-    form.setValue("logo", logoElement.imageUrl, { shouldDirty: false })
-  }
-
-  languageIds.forEach(langId => {
-    const langCode = langCodeMap[langId] || langId
-
-    const navItems = navItemElements.map(element => {
-      const translation = element.translations?.find(
-        t => (typeof t.language === 'string' ? t.language === langId : t.language?._id === langId) && t.isActive
-      )
-
-      return translation
-        ? { navItemName: translation.content || element.defaultContent || "" }
-        : { navItemName: element.defaultContent || "" }
-    })
-
-    if (navItems.length === 0) {
-      navItems.push({ navItemName: "" })
-    }
-
-    form.setValue(langCode, navItems, { shouldDirty: false })
-  })
-
-  callbacks.setDataLoaded(true)
-  callbacks.setHasUnsavedChanges(false)
-  callbacks.setIsLoadingData(false)
-}
 
 const NavItemsForm = forwardRef<unknown, NavFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId }, ref) => {
+
     const formSchema = useMemo(
-      () => createNavItemsSchema(languageIds, activeLanguages),
+      () => createSectionsSchema(languageIds, activeLanguages),
       [languageIds, activeLanguages]
     )
 
     const defaultValues = useMemo(
-      () => createNavItemsDefaultValues(languageIds, activeLanguages),
+      () => createSectionsDefaultValues(languageIds, activeLanguages),
       [languageIds, activeLanguages]
     )
 
@@ -186,7 +68,7 @@ const NavItemsForm = forwardRef<unknown, NavFormProps>(
 
     const { toast } = useToast()
 
-    const form = useForm<NavItemsFormData>({
+    const form = useForm<sectionsFormData>({
       resolver: zodResolver(formSchema),
       defaultValues,
     })
@@ -220,7 +102,7 @@ const NavItemsForm = forwardRef<unknown, NavFormProps>(
     const {
       imageFile,
       imagePreview,
-      handleImageUpload,
+      handleImageUpload: handleOriginalImageUpload,
       handleImageRemove,
     } = useImageUploader({
       form,
@@ -270,7 +152,7 @@ const NavItemsForm = forwardRef<unknown, NavFormProps>(
       if (isLoadingData || !dataLoaded) return
 
       const timeoutId = setTimeout(() => {
-        const subscription = form.watch((value: NavItemsFormData) => {
+        const subscription = form.watch((value: sectionsFormData) => {
           setHasUnsavedChanges(true)
           validateNavItemCounts()
           if (onDataChangeRef.current) {
@@ -550,7 +432,7 @@ const NavItemsForm = forwardRef<unknown, NavFormProps>(
 
           logoElementId = logoElement.data._id
 
-          if (imageFile) {
+          if (imageFile && logoElementId) {
             const logoUrl = await uploadLogo(logoElementId, imageFile)
             if (logoUrl) {
               form.setValue("logo", logoUrl, { shouldDirty: false })
@@ -805,7 +687,11 @@ const NavItemsForm = forwardRef<unknown, NavFormProps>(
           <BackgroundImageSection
             imagePreview={imagePreview}
             imageValue={form.getValues().logo}
-            onUpload={handleImageUpload}
+            onUpload={(event: React.ChangeEvent<HTMLInputElement>) => {
+              if (event.target.files && event.target.files.length > 0) {
+                handleOriginalImageUpload({ target: { files: Array.from(event.target.files) } });
+              }
+            }}
             onRemove={handleImageRemove}
             imageType="logo"
           />
@@ -818,11 +704,12 @@ const NavItemsForm = forwardRef<unknown, NavFormProps>(
                   key={langId}
                   langCode={langCode}
                   form={form}
-                  renderFields={(control, langCode) => renderNavItemsFields(control, langCode)}
+                  renderFields={(control: any, langCode: string) => renderNavItemsFields(control, langCode)}
                   onRemoveItem={(index: number) => confirmRemoveNavItem(langCode, index)}
                 />
               )
             })}
+            
           </div>
 
           <div className="flex justify-center mt-6">

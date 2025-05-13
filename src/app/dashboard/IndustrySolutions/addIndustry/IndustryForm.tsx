@@ -10,22 +10,23 @@ import { useContentElements } from "@/src/hooks/webConfiguration/use-content-ele
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-conent-translitions";
 import apiClient from "@/src/lib/api-client";
 import { useToast } from "@/src/hooks/use-toast";
-import { LanguageCard } from "./LanguageCard";
 import { Loader2, Save } from "lucide-react";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
 import { SubSection } from "@/src/api/types/hooks/section.types";
 import { useWebsiteContext } from "@/src/providers/WebsiteContext";
-import { createHeroSchema } from "../../../services/addService/Utils/language-specifi-schemas";
-import { createHeroDefaultValues, createLanguageCodeMap } from "../../../services/addService/Utils/Language-default-values";
-import { useImageUploader } from "../../../services/addService/Utils/Image-uploader";
-import { processAndLoadData } from "../../../services/addService/Utils/load-form-data";
-import { createFormRef } from "../../../services/addService/Utils/Expose-form-data";
-import { BackgroundImageSection } from "../../../services/addService/Components/Hero/SimpleImageUploader";
-import { NewsFormProps } from "@/src/api/types/sections/news/newsSections.types";
+import {  createIndustrySchema } from "../../services/addService/Utils/language-specifi-schemas";
+import { createHeroDefaultValues, createLanguageCodeMap } from "../../services/addService/Utils/Language-default-values";
+import { useImageUploader } from "../../services/addService/Utils/Image-uploader";
+import { processAndLoadData } from "../../services/addService/Utils/load-form-data";
+import { createFormRef } from "../../services/addService/Utils/Expose-form-data";
+import { BackgroundImageSection } from "../../services/addService/Components/Hero/SimpleImageUploader";
+import { IndustryFormProps } from "@/src/api/types/sections/industry/industrySections.types";
+import { IndustryLanguageCard } from "./IndustryLanguageCard";
 
 
-const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
+
+const IndustryForm = forwardRef<any, IndustryFormProps>((props, ref) => {
   const { 
     languageIds, 
     activeLanguages, 
@@ -38,7 +39,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
   const { websiteId } = useWebsiteContext();
 
   // Setup form with schema validation
-  const formSchema = createHeroSchema(languageIds, activeLanguages);
+  const formSchema = createIndustrySchema(languageIds, activeLanguages);
   const defaultValues = createHeroDefaultValues(languageIds, activeLanguages);
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -148,7 +149,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
   }, [initialData, dataLoaded, defaultLangCode, form]);
 
   // Process hero data from API
-  const processNewsData = useCallback((subsectionData: SubSection | null) => {
+  const processIndustryData = useCallback((subsectionData: SubSection | null) => {
     processAndLoadData(
       subsectionData,
       form,
@@ -162,13 +163,11 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
           const elementKeyMap: Record<string, keyof typeof result> = {
             'Title': 'title',
             'Description': 'description',
-            'Back Link Text': 'backLinkText'
           };
           
           const result = {
             title: '',
             description: '',
-            backLinkText: ''
           };
           
           elements.filter(el => el.type === 'text').forEach(element => {
@@ -183,7 +182,6 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
         getDefaultValue: () => ({
           title: '',
           description: '',
-          backLinkText: ''
         })
       },
       {
@@ -220,14 +218,14 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
     
     if (completeSubsectionData?.data) {
       updateState({ isLoadingData: true });
-      processNewsData(completeSubsectionData.data);
+      processIndustryData(completeSubsectionData.data);
       updateState({ 
         dataLoaded: true,
         isLoadingData: false
       });
       dataProcessed.current = true;
     }
-  }, [completeSubsectionData, isLoadingSubsection, slug, processNewsData]);
+  }, [completeSubsectionData, isLoadingSubsection, slug, processIndustryData]);
 
   // Form watch effect for unsaved changes
   useEffect(() => {
@@ -309,7 +307,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
         }
         
         const subsectionData = {
-          name: "News Section",
+          name: "Industry Section",
           slug: slug || `hero-section-${Date.now()}`,
           description: "",
           isActive: true,
@@ -342,7 +340,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
       }
 
       // Step 2: Map language codes to IDs
-      const langCodeToIdMap = activeLanguages.reduce<Record<string, string>>((acc, lang) => {
+      const langCodeToIdMap = activeLanguages.reduce<Record<string, string>>((acc: { [x: string]: any; }, lang: { languageID: string | number; _id: any; }) => {
         acc[lang.languageID] = lang._id;
         return acc;
       }, {});
@@ -360,10 +358,9 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
         // Update translations for text elements
         const textElements = contentElements.filter((e) => e.type === "text");
         const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] | { content: any; language: string; contentElement: string; isActive: boolean; }[] = [];
-        const elementNameToKeyMap: Record<string, 'title' | 'description' | 'backLinkText'> = {
+        const elementNameToKeyMap: Record<string, 'title' | 'description' > = {
           'Title': 'title',
           'Description': 'description',
-          'Back Link Text': 'backLinkText'
         };
 
         Object.entries(allFormValues).forEach(([langCode, values]) => {
@@ -394,7 +391,6 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
           { type: "image", key: "backgroundImage", name: "Background Image" },
           { type: "text", key: "title", name: "Title" },
           { type: "text", key: "description", name: "Description" },
-          { type: "text", key: "backLinkText", name: "Back Link Text" }
         ];
 
         const createdElements = [];
@@ -459,7 +455,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
 
       // Show success message
       toast({
-        title: existingSubSectionId ? "News section updated successfully!" : "News section created successfully!",
+        title: existingSubSectionId ? "Industry section updated successfully!" : "Industry section created successfully!",
         description: "All content has been saved."
       });
 
@@ -470,7 +466,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
         const result = await refetch();
         if (result.data?.data) {
           updateState({ dataLoaded: false });
-          await processNewsData(result.data.data);
+          await processIndustryData(result.data.data);
         }
       } else {
         // For new subsections, manually update form
@@ -515,7 +511,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
     createSubSection, 
     defaultLangCode, 
     languageIds, 
-    processNewsData, 
+    processIndustryData, 
     refetch, 
     updateState, 
     updateSubSection, 
@@ -530,7 +526,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
     setHasUnsavedChanges: (value) => updateState({ hasUnsavedChanges: value }),
     existingSubSectionId,
     contentElements,
-    componentName: 'News',
+    componentName: 'Industry',
     extraMethods: {
       getImageFile: () => imageFile,
       saveData: handleSave
@@ -557,7 +553,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
     <div className="space-y-6">
       <LoadingDialog 
         isOpen={isSaving} 
-        title={existingSubSectionId ? "Updating News Section" : "Creating News Section"}
+        title={existingSubSectionId ? "Updating Industry Section" : "Creating Industry Section"}
         description="Please wait while we save your changes..."
       />
       
@@ -580,7 +576,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
           {languageIds.map((langId) => {
             const langCode = languageCodes[langId] || langId;
             return (
-              <LanguageCard 
+              <IndustryLanguageCard 
                 key={langId}
                 langCode={langCode}
                 form={form}
@@ -606,7 +602,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
           ) : (
             <>
               <Save className="mr-2 h-4 w-4" />
-              {existingSubSectionId ? "Update News Content" : "Save News Content"}
+              {existingSubSectionId ? "Update Industry Content" : "Save Industry Content"}
             </>
           )}
         </Button>
@@ -615,5 +611,5 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
   );
 });
 
-NewsForm.displayName = "NewsForm";
-export default NewsForm;
+IndustryForm.displayName = "IndustryForm";
+export default IndustryForm;

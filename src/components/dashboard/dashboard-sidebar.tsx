@@ -65,18 +65,6 @@ const allNavItems: NavItem[] = [
     // Users is always shown
   },
   {
-    title: "Features",
-    href: "/dashboard/features",
-    icon: Package,
-    sectionId: "features", // Show when "features" section is selected 
-  },
-  {
-    title: "Hero",
-    href: "/dashboard/hero",
-    icon: Package,
-    sectionId: "hero", 
-  },
-  {
     title: "Services",
     href: "/dashboard/services",
     icon: Package,
@@ -89,88 +77,16 @@ const allNavItems: NavItem[] = [
     sectionId: "header", 
   },
   {
-    title: "Blog",
-    href: "/dashboard/blog",
-    icon: FileText,
-    sectionId: "blog", // Show when "blog" section is selected
-  },
-  {
-    title: "Case Studies",
-    href: "/dashboard/case-studies",
-    icon: Briefcase,
-    sectionId: "casestudies", // Show when "caseStudiesSection" section is selected
-  },
-  {
-    title: "Clients",
-    href: "/dashboard/clients",
-    icon: Building,
-    sectionId: "clients", // Show when "clientsSection" section is selected
-  },
-  {
-    title: "Contact",
-    href: "/dashboard/contact",
-    icon: Contact,
-    sectionId: "contact", // Show when "contactSection" section is selected
-  },
-  {
-    title: "CTA",
-    href: "/dashboard/cta",
-    icon: Send,
-    sectionId: "cta", // Show when "ctaSection" section is selected
-  },
-  {
-    title: "FAQ",
-    href: "/dashboard/faq",
-    icon: HelpCircle,
-    sectionId: "faq", // Show when "faqSection" section is selected
-  },
-  {
-    title: "Industry Solutions",
-    href: "/dashboard/industry-solutions",
-    icon: Building,
-    sectionId: "industrysolutions", // Show when "idustrySolutionsSection" section is selected
-  },
-  {
     title: "News",
     href: "/dashboard/News",
     icon: Megaphone,
     sectionId: "news", // Show when "newsSection" section is selected
   },
   {
-    title: "Partners",
-    href: "/dashboard/partners",
-    icon: Handshake,
-    sectionId: "partners", // Show when "partnerSection" section is selected
-  },
-  {
-    title: "Process",
-    href: "/dashboard/process",
-    icon: Workflow,
-    sectionId: "process", // Show when "ProcessSection" section is selected
-  },
-  {
-    title: "Projects",
-    href: "/dashboard/projects",
-    icon: FolderKanban,
-    sectionId: "projects", // Show when "projectsSection" section is selected
-  },
-  {
-    title: "Team",
-    href: "/dashboard/team",
-    icon: UserCircle,
-    sectionId: "team", // Show when "teamSection" section is selected 
-  },
-  {
-    title: "Technology Stack",
-    href: "/dashboard/technology-stack",
-    icon: Server,
-    sectionId: "technologystack", // Show when "technologyStackSection" section is selected
-  },
-  {
-    title: "Testimonials",
-    href: "/dashboard/testimonials",
-    icon: MessageSquare,
-    sectionId: "testimonials", // Show when "testimonialsSection" section is selected
+    title: "Industry Solutions",
+    href: "/dashboard/IndustrySolutions",
+    icon: Building,
+    sectionId: "industrysolutions", // Show when "idustrySolutionsSection" section is selected
   },
   {
     title: "Settings",
@@ -272,7 +188,7 @@ export default function DashboardSidebar() {
   
   // When user changes, we need to reset our processing flags
   useEffect(() => {
-    const currentUserId = user?.id || user?._id
+    const currentUserId = user?.id || user?.id
     if (currentUserId !== processedUserRef.current) {
       // If the user has changed, reset the processing flags
       processedUserRef.current = currentUserId as string
@@ -373,7 +289,7 @@ export default function DashboardSidebar() {
     }
     
     // Get the current user ID
-    const currentUserId = user?.id || user?._id
+    const currentUserId = user?.id || user?.id
     
     // Check if we've already processed this website for this user on this data update
     // The dataUpdatedAt timestamp is key here - it will change whenever the data refreshes
@@ -408,7 +324,7 @@ export default function DashboardSidebar() {
       // We now include the user ID in the key to avoid conflicts between users
       const storageKey = currentUserId ? `selectedSections_${currentUserId}` : 'selectedSections'
       
-      const activeSectionIds = activeSections.map(section => 
+      const activeSectionIds = activeSections.map((section: { name: string }) => 
         section.name.toLowerCase().replace(/\s/g, "")
       )
       localStorage.setItem(storageKey, JSON.stringify(activeSectionIds))

@@ -1,6 +1,6 @@
 import { Language } from "../../hooks/language.types";
 
-export interface NewsFormProps {
+export interface IndustryFormProps {
     languageIds: string[];
     activeLanguages: Language[]
     onDataChange?: (data: any) => void;

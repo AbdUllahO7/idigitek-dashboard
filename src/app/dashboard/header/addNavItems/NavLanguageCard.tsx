@@ -11,8 +11,10 @@ import { UseFormReturn } from "react-hook-form";
 interface NavLanguageCardProps {
   langCode: string;
   form: UseFormReturn<any>;
-  onAddItem: () => void;
+  onAddItem?: () => void;
   onRemoveItem: (index: number) => void;
+  renderFields: (control: any, langCode: string) => React.ReactNode
+
 }
 
 export const NavLanguageCard = memo(({ langCode, form, onAddItem, onRemoveItem }: NavLanguageCardProps) => {
@@ -56,15 +58,7 @@ export const NavLanguageCard = memo(({ langCode, form, onAddItem, onRemoveItem }
             </Button>
           </div>
         ))}
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onAddItem}
-          className="w-full"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Add Nav Item
-        </Button>
+     
       </CardContent>
     </Card>
   );

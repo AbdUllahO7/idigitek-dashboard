@@ -1,7 +1,7 @@
-// Updated AddHeader.tsx to fix the edit mode data display issue
+// Updated AddIndustry.tsx to fix the edit mode data display issue
 
 "use client"
-import { useSearchParams } from "next/navigation"
+
 import { Layout } from "lucide-react"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
@@ -9,14 +9,15 @@ import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 
 import { FormData } from "@/src/api/types/sections/service/serviceSections.types"
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
-import NavItemsForm from "./NavItemsForm"
+import IndustryItemsForm from "./IndustryForm"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
+import { useSearchParams } from "next/navigation"
 
 
 // Form sections to collect data from
-const FORM_SECTIONS = ["Nav Items"]
+const FORM_SECTIONS = ["Industry Items"]
 
-export default function AddHeader() {
+export default function AddIndustry() {
   const searchParams = useSearchParams()
   
   // Get URL parameters
@@ -47,7 +48,7 @@ export default function AddHeader() {
     false,
   )
   
-  // Get subsections for this header if in edit mode
+  // Get subsections for this industry if in edit mode
   const {
     data: subsectionsData,
     isLoading: isLoadingSubsections
@@ -71,7 +72,7 @@ export default function AddHeader() {
     
     // Create a mapping for known slug patterns
     const slugMappings: Record<string, string> = {
-      'nav-section': 'nav-section',
+      'industry-section': 'industry-section',
     };
     
     // Get the normalized version of the slug
@@ -129,39 +130,39 @@ export default function AddHeader() {
   // Define tabs configuration
   const tabs = [
     {
-      id: "navItems",
-      label: "Nav Items",
+      id: "industryItems",
+      label: "Industry Items",
       icon: <Layout className="h-4 w-4" />,
       component: (
-        <NavItemsForm
+        <IndustryItemsForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
-          slug={getSlug('navItems')}
+          slug={getSlug('industryItems')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('navItems')}
+          initialData={findSubsection('industryItems')}
         />
       )
     }
   ]
    
-  // Define save handler for the header
-  const handleSaveHeader = async (formData: FormData) => {
-    // Extract header info from hero data for title/description
+  // Define save handler for the industry
+  const handleSaveIndustry = async (formData: FormData) => {
+    // Extract industry info from hero data for title/description
     const heroData = formData.hero || {}
     
     // Get English title and description values or fallback to the first language
-    let headerName = "New Header"
-    let headerDescription = ""
+    let industryName = "New Industry"
+    let industryDescription = ""
     
     // Loop through languages to find title and description
     for (const langCode in heroData) {
       if (langCode !== 'backgroundImage' && typeof heroData[langCode] === 'object') {
         const langValues = heroData[langCode] as Record<string, any>
         if (langValues?.title) {
-          headerName = langValues.title
+          industryName = langValues.title
         }
         if (langValues?.description) {
-          headerDescription = langValues.description
+          industryDescription = langValues.description
         }
         // Prefer English if available
         if (langCode === 'en') {
@@ -170,17 +171,17 @@ export default function AddHeader() {
       }
     }
     
-    // Create the header payload
-    const headerPayload = {
-      name: headerName,
-      description: headerDescription,
+    // Create the industry payload
+    const industryPayload = {
+      name: industryName,
+      description: industryDescription,
       image: heroData.backgroundImage || null,
       isActive: true,
       section: sectionId
     }
     
     // Return data for saving
-    return headerPayload
+    return industryPayload
   }
   
   // Loading state
@@ -188,17 +189,17 @@ export default function AddHeader() {
   
   return (
     <FormShell
-      title={isCreateMode ? "Create New nav item " : "Edit nav item "}
+      title={isCreateMode ? "Create New industry item " : "Edit industry item "}
       subtitle={isCreateMode 
-        ? "Create a new nav item with multilingual content" 
-        : `Editing "${sectionItemData?.data?.name || 'nav item'}" content across multiple languages`}
-      backUrl={`/dashboard/header?sectionId=${sectionId}`}
+        ? "Create a new industry item with multilingual content" 
+        : `Editing "${sectionItemData?.data?.name || 'industry item'}" content across multiple languages`}
+      backUrl={`/dashboard/IndustrySolutions?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}
       sectionId={sectionId}
       sectionItemId={sectionItemId}
       mode={mode}
-      onSave={handleSaveHeader}
+      onSave={handleSaveIndustry}
       tabs={tabs}
       formSections={FORM_SECTIONS}
       isLoading={isLoading}

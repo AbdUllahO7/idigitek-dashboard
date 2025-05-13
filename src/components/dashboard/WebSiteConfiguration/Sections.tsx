@@ -11,15 +11,11 @@ import { motion, AnimatePresence } from "framer-motion"
 import { 
   AlertTriangle, 
   Check, 
-  Edit, 
   LayoutGrid, 
   Loader2, 
   Plus, 
   PlusCircle,
-  ToggleLeft, 
-  ToggleRight, 
   Trash,
-  Image as ImageIcon
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../ui/card"
 import { Button } from "../../ui/button"
@@ -76,60 +72,18 @@ const PREDEFINED_SECTIONS = [
     image: "/sections/news.jpg",
     icon: <LayoutGrid className="h-10 w-10 text-blue-600" />
   },
-  {
-    name: "About",
-    description: "Tell your visitors about your company or brand",
-    image: "/sections/about.jpg",
-    icon: <LayoutGrid className="h-10 w-10 text-green-600" />
+ {
+    name: "industry Solutions",
+    description: "Latest industry solutions and updates",
+    image: "/sections/news.jpg",
+    icon: <LayoutGrid className="h-10 w-10 text-blue-600" />
   },
-  {
-    name: "Team",
-    description: "Showcase your team members",
-    image: "/sections/team.jpg",
-    icon: <LayoutGrid className="h-10 w-10 text-yellow-600" />
-  },
-  {
-    name: "Testimonials",
-    description: "Display customer reviews and testimonials",
-    image: "/sections/testimonials.jpg",
-    icon: <LayoutGrid className="h-10 w-10 text-red-600" />
-  },
-  {
-    name: "Pricing",
-    description: "Show your product or service pricing plans",
-    image: "/sections/pricing.jpg",
-    icon: <LayoutGrid className="h-10 w-10 text-purple-600" />
-  },
-  {
-    name: "FAQ",
-    description: "Answer frequently asked questions",
-    image: "/sections/faq.jpg",
-    icon: <LayoutGrid className="h-10 w-10 text-pink-600" />
-  },
-  {
-    name: "Contact",
-    description: "Provide contact information or a contact form",
-    image: "/sections/contact.jpg",
-    icon: <LayoutGrid className="h-10 w-10 text-teal-600" />
-  },
-  {
-    name: "Gallery",
-    description: "Display a collection of images or products",
-    image: "/sections/gallery.jpg",
-    icon: <ImageIcon className="h-10 w-10 text-cyan-600" />
-  },
-  {
-    name: "Footer",
-    description: "Website footer with links and copyright information",
-    image: "/sections/footer.jpg",
-    icon: <LayoutGrid className="h-10 w-10 text-gray-600" />
-  }
 ];
 
 export function SectionManagement({ hasWebsite }: ManagementProps) {
   const { websiteId } = useWebsiteContext()
   const { user } = useAuth() // Get the current user
-  const userId = user?.id || user?._id // Get the user ID
+  const userId = user?.id || user?.id // Get the user ID
 
   // Get section hooks
   const { 

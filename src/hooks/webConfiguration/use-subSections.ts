@@ -9,7 +9,7 @@ export function useSubSections() {
 
   // Query keys
   const subsectionsKey = ['subsections']; 
-  const subsectionKey = (id: string) => [...subsectionsKey, id];
+  const subsectionKey = (id: string | null ) => [...subsectionsKey, id];
   const subsectionSlugKey = (slug: string) => [...subsectionsKey, 'slug', slug];
   const subsectionBySectionItemKey = (sectionItemId: string) => [...subsectionsKey, 'sectionItem', sectionItemId];
   const subsectionBySectionKey = (sectionId: string) => [...subsectionsKey, 'section', sectionId];
@@ -214,7 +214,7 @@ export function useSubSections() {
   // Update a subsection
   const useUpdate = () => {
     return useMutation({
-      mutationFn: async ({ id, data }: { id: string; data: Partial<SubSection> }) => {
+      mutationFn: async ({ id, data }: { id: string | null ; data: Partial<SubSection> }) => {
         try {
           const { data: responseData } = await apiClient.put(`${endpoint}/${id}`, data);
           return responseData;
