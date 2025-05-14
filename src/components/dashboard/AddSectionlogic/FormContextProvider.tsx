@@ -7,8 +7,6 @@ import { useRouter } from "next/navigation"
 import { FormContextType, FormRef } from "@/src/api/types/hooks/form.types"
 import { Language } from "@/src/api/types/hooks/language.types"
 
-// Define form ref type
-
 // Define form data type (adjust as needed)
 export interface FormData {
   [key: string]: any
@@ -37,7 +35,6 @@ export function FormContextProvider({
   activeLanguages,
   serviceData,
   sectionId,
-  sectionItemId,
   mode,
   backUrl,
   onSave
@@ -80,9 +77,7 @@ export function FormContextProvider({
     setFormData(prev => ({
       ...prev,
       [section]: data,
-    }))
-    
-    // We'll handle checking for unsaved changes through useEffect instead of calling it here
+    }))    
   }
   
   // Add useEffect to check for unsaved changes when formData changes

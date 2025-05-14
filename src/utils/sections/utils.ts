@@ -86,6 +86,8 @@ export const createSectionsSchema = (languageIds: string[], activeLanguages: Lan
 
   return z.object(schema)
 }
+
+
 export type sectionsFormData = z.infer<ReturnType<typeof createSectionsSchema>>
 
 

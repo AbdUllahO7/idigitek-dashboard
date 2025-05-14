@@ -56,7 +56,6 @@ export interface HeroFormProps {
   }
  export type FormDataNews = {
     news: MultilingualSectionData | Record<string, any>;
-
   }
   export interface BenefitItem {
     icon: string;

@@ -94,6 +94,12 @@ const allNavItems: NavItem[] = [
     icon: Handshake,
     sectionId: "choseus", 
   },
+    {
+    title: "Projects",
+    href: "/dashboard/projects",
+    icon: Handshake,
+    sectionId: "projects", 
+  },
   {
     title: "Settings",
     href: "/dashboard/settings", // const  
@@ -113,6 +119,7 @@ const allNavItems: NavItem[] = [
     icon: Settings,
     roles: ['idigitekAdmin'], 
   },
+  
 ]
 
 /**

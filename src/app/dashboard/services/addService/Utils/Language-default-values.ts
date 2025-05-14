@@ -86,6 +86,26 @@ export const createHeroDefaultValues = (languageIds: string[], activeLanguages: 
     );
 };
 
+export const createProjectDefaultValues = (languageIds: string[], activeLanguages: any[]) => {
+  const defaultValues: Record<string, any> = {};
+
+  languageIds.forEach((langId) => {
+    defaultValues[langId] = {
+      clientName: "",
+      client: "",
+      industryName: "",
+      industry: "",
+      yearName: "",
+      year: "",
+      technologiesName: "",
+      technologies: "",
+    };
+  });
+
+  return defaultValues;
+};
+
+
 export const createProcessStepsDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.processStep);
 };
@@ -102,11 +122,22 @@ export  const createFaqDefaultValues = (languageIds: string[], activeLanguages: 
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.faq);
 };
 
+
 export const createFeaturesDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.feature);
 };
 
-
+export const createSectionsDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
+  return {
+    logo: "",
+    ...Object.fromEntries(
+      languageIds.map((langId) => {
+        const langCode = activeLanguages.find((lang) => lang._id === langId)?.languageID || langId;
+        return [langCode, []];
+      })
+    ),
+  };
+};
 
 // ex : 
 // const defaultValues = createHeroDefaultValues(languageIds, activeLanguages)
