@@ -101,6 +101,12 @@ const allNavItems: NavItem[] = [
     sectionId: "projects", 
   },
   {
+    title: "Our Process",
+    href: "/dashboard/ourProcess",
+    icon: HelpCircle,
+    sectionId: "ourprocess", 
+  },
+  {
     title: "Settings",
     href: "/dashboard/settings", // const  
     icon: Settings,

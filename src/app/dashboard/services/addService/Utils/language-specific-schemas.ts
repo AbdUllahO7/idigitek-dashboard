@@ -29,7 +29,10 @@ const schemaDefinitions = {
       description: z.string().min(1, { message: "Description is required" }),
       backLinkText: z.string().min(1, { message: "Back link text is required" }),
     }),
-
+    process: (z: any) => z.object({
+      title: z.string().min(1, { message: "Title is required" }),
+      description: z.string().min(1, { message: "Description is required" }),
+    }),
     industry: (z: any) => z.object({
       title: z.string().min(1, { message: "Title is required" }),
       description: z.string().min(1, { message: "Description is required" }),
@@ -79,7 +82,7 @@ const schemaDefinitions = {
       year: z.string().min(1, { message: "Year is required" }),
       technologies: z.string().min(1, { message: "Technologies  is required" }),
     }),
-      projectImageForm: (z: any) => z.object({
+    projectImageForm: (z: any) => z.object({
       client: z.string().min(1, { message: "client is required" }),
       industry: z.string().min(1, { message: "Industry is required" }),
       year: z.string().min(1, { message: "Year is required" }),
@@ -123,7 +126,13 @@ export const createHeroSchema = (languageIds: string[], activeLanguages: Languag
       backgroundImage: z.string().optional(),
     });
 };
-
+export const createProcessSchema = (languageIds: string[], activeLanguages: Language[]) => {
+    const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.process);
+    return z.object({
+      ...schema.shape,
+      backgroundImage: z.string().optional(),
+    });
+};
 export const createProjectBasicInfoSchema = (languageIds: string[], activeLanguages: Language[]) => {
     const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.projectBasicInfo);
     return z.object({

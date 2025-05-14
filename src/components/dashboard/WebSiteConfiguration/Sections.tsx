@@ -90,6 +90,12 @@ const PREDEFINED_SECTIONS = [
     image: "/sections/news.jpg",
     icon: <LayoutGrid className="h-10 w-10 text-blue-600" />
   },
+    {
+    name: "Our Process",
+    description: "Latest Our Process and updates",
+    image: "/sections/news.jpg",
+    icon: <LayoutGrid className="h-10 w-10 text-blue-600" />
+  },
 ];
 
 export function SectionManagement({ hasWebsite }: ManagementProps) {
