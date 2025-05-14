@@ -10,6 +10,7 @@ import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { FormDataProject } from "@/src/api/types/sections/project/porjectSection.type"
 import MoreInfoForm from "./tabs/MoreInfo/MoreInfoForm"
 import BasicForm from "./tabs/BasicForm/BasicForm"
+import MultiImageForm from "./tabs/MultiImageForm"
 
 
 // Form sections to collect data from
@@ -144,6 +145,20 @@ export default function AddProject() {
       icon: <Sparkles className="h-4 w-4" />,
       component: (
         <MoreInfoForm
+          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
+          activeLanguages={activeLanguages}
+          slug={getSlug('project-moreInfo-section')}
+          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
+          initialData={findSubsection('project-moreInfo-section')}
+        />
+      )
+    },
+     {
+      id: "images",
+      label: "Images",
+      icon: <Sparkles className="h-4 w-4" />,
+      component: (
+        <MultiImageForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
           slug={getSlug('project-moreInfo-section')}
