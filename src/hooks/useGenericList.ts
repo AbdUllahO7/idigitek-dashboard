@@ -181,13 +181,7 @@ export function useGenericList({
   // Determine if "Add" button should be disabled
   const isAddButtonDisabled = !sectionId || !section
   
-  // Generate tooltip message for disabled button
-  const addButtonTooltip = !sectionId 
-    ? "Please select a section first" 
-    : !section 
-    ? "Please create a section first"
-    : "Add a new item"
-
+ 
   return {
     // State
     section,
@@ -198,7 +192,6 @@ export function useGenericList({
     itemToDelete,
     isDeleting,
     isAddButtonDisabled,
-    addButtonTooltip,
     mainItemId,
     
     // Actions

@@ -103,7 +103,6 @@ export default function NewsPage() {
     itemToDelete,
     isDeleting,
     isAddButtonDisabled: defaultAddButtonDisabled,
-    addButtonTooltip: defaultAddButtonTooltip,
     handleEdit,
     handleDelete,
     handleAddNew,
@@ -120,13 +119,7 @@ export default function NewsPage() {
 
   // Determine if main subsection exists when data loads & set section data if needed
   useEffect(() => {    
-    console.log("Checking for main subsection...");
-    console.log("Subsection data state:", { 
-      mainSubSectionData, 
-      sectionSubsections,
-      isLoadingCompleteSubsections,
-      isLoadingSectionSubsections
-    });
+
     
     // First check if we are still loading
     if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
@@ -267,24 +260,6 @@ export default function NewsPage() {
     isLoadingMainSubSection ||
     (Boolean(sectionId) && !hasMainSubSection);
   
-  // Debug logging for button disabling conditions
-  useEffect(() => {
-    console.log("BUTTON DISABLED LOGIC:", {
-      defaultAddButtonDisabled,
-      isLoadingMainSubSection,
-      sectionId: sectionId || "none",
-      hasMainSubSection,
-      finalIsAddButtonDisabled: isAddButtonDisabled
-    });
-  }, [defaultAddButtonDisabled, isLoadingMainSubSection, sectionId, hasMainSubSection, isAddButtonDisabled]);
-  
-  // Custom tooltip message based on condition
-  const addButtonTooltip = !newsSection && !sectionData 
-    ? NEWS_CONFIG.noSectionMessage 
-    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
-      ? NEWS_CONFIG.mainSectionRequiredMessage
-      : defaultAddButtonTooltip;
-
   // Custom message for empty state 
   const emptyStateMessage = !newsSection && !sectionData 
     ? NEWS_CONFIG.noSectionMessage 
@@ -333,7 +308,6 @@ export default function NewsPage() {
         sectionId={sectionId}
         sectionConfig={newsSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
-        addButtonTooltip={addButtonTooltip}
         tableComponent={NewsTable}
         createDialogComponent={CreateDialog}
         deleteDialogComponent={DeleteDialog}

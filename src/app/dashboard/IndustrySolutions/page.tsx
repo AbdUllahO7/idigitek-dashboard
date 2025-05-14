@@ -106,7 +106,6 @@ export default function IndustryPage() {
     itemToDelete,
     isDeleting,
     isAddButtonDisabled: defaultAddButtonDisabled,
-    addButtonTooltip: defaultAddButtonTooltip,
     handleEdit,
     handleDelete,
     handleAddNew,
@@ -293,12 +292,7 @@ export default function IndustryPage() {
     });
   }, [defaultAddButtonDisabled, isLoadingMainSubSection, sectionId, hasMainSubSection, isAddButtonDisabled]);
   
-  // Custom tooltip message based on condition
-  const addButtonTooltip = !industrySection && !sectionData 
-    ? INDUSTRY_CONFIG.noSectionMessage 
-    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
-      ? INDUSTRY_CONFIG.mainSectionRequiredMessage
-      : defaultAddButtonTooltip;
+
 
   // Custom message for empty state 
   const emptyStateMessage = !industrySection && !sectionData 
@@ -347,7 +341,6 @@ export default function IndustryPage() {
         sectionId={sectionId}
         sectionConfig={industrySectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
-        addButtonTooltip={addButtonTooltip}
         tableComponent={IndustryItemsTable}
         createDialogComponent={CreateDialog}
         deleteDialogComponent={DeleteDialog}

@@ -404,7 +404,6 @@ export function useUserManagement() {
           try {
             if (createdUserId) {
               await deleteUserMutation.mutateAsync(createdUserId);
-              console.log("Rolled back user creation due to failure to add to website");
             }
           } catch (rollbackError) {
             console.error("Failed to roll back user creation:", rollbackError);

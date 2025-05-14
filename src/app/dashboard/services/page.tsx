@@ -104,7 +104,6 @@ export default function ServicesPage() {
     itemToDelete,
     isDeleting,
     isAddButtonDisabled: defaultAddButtonDisabled,
-    addButtonTooltip: defaultAddButtonTooltip,
     handleSectionChange,
     handleEdit,
     handleDelete,
@@ -282,12 +281,7 @@ export default function ServicesPage() {
     });
   }, [defaultAddButtonDisabled, isLoadingMainSubSection, sectionId, hasMainSubSection, isAddButtonDisabled]);
 
-  // Tooltip logic - keep it simple
-  const addButtonTooltip = !serviceSection && !sectionData 
-    ? SERVICES_CONFIG.noSectionMessage 
-    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
-      ? SERVICES_CONFIG.mainSectionRequiredMessage
-      : defaultAddButtonTooltip;
+
 
   // Custom message for empty state - keep it simple
   const emptyStateMessage = !serviceSection && !sectionData 
@@ -336,7 +330,6 @@ export default function ServicesPage() {
         sectionId={sectionId}
         sectionConfig={serviceSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
-        addButtonTooltip={addButtonTooltip}
         tableComponent={ServicesTable}
         createDialogComponent={CreateDialog}
         deleteDialogComponent={DeleteDialog}

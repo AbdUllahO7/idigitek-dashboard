@@ -1,6 +1,6 @@
 "use client"
 
-import React, { ReactNode } from "react"
+import React, { ReactNode, useCallback } from "react"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Button } from "@/src/components/ui/button"
@@ -52,7 +52,6 @@ interface GenericListPageProps {
   sectionId: string | null
   sectionConfig: any
   isAddButtonDisabled: boolean
-  addButtonTooltip: string
   tableComponent: ReactNode
   createDialogComponent: ReactNode
   deleteDialogComponent: ReactNode
@@ -68,7 +67,6 @@ interface GenericListPageProps {
 export function GenericListPage({
   config,
   isAddButtonDisabled,
-  addButtonTooltip,
   tableComponent,
   createDialogComponent,
   deleteDialogComponent,
@@ -83,56 +81,14 @@ export function GenericListPage({
               (noSectionCondition 
                 ? config.noSectionMessage 
                 : config.emptyStateMessage);
-
-  // Render add button with tooltip
-  const AddButton = (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span>
-            <Button
-              className={`group transition-all duration-300 ${
-                isAddButtonDisabled ? "opacity-70 cursor-not-allowed" : "hover:scale-105"
-              }`}
-              disabled={isAddButtonDisabled}
-              onClick={onAddNew}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              {config.addButtonLabel}
-              <motion.span
-                className="ml-1 opacity-0 group-hover:opacity-100 group-hover:ml-2"
-                initial={{ width: 0 }}
-                animate={{ width: "auto" }}
-                transition={{ duration: 0.3 }}
-              >
-                <ArrowRight className="h-4 w-4" />
-              </motion.span>
-            </Button>
-          </span>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{addButtonTooltip}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-
-  // Render page header with title, description and add button
-  const PageHeader = (
-    <motion.div 
-      className="flex flex-col md:flex-row md:items-center justify-between gap-4" 
-      variants={animations.item}
-    >
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-teal-500 to-emerald-500 bg-clip-text text-transparent">
-          {config.title}
-        </h1>
-        <p className="text-muted-foreground mt-1">{config.description}</p>
-      </div>
-      {AddButton}
-    </motion.div>
-  );
-
+  
+  // Use useCallback to prevent recreating the function on every render
+  const handleAddNew = useCallback(() => {
+    if (!isAddButtonDisabled) {
+      onAddNew();
+    }
+  }, [isAddButtonDisabled, onAddNew]);
+  
   // Loading state component
   const LoadingState = (
     <div className="flex justify-center items-center py-8">
@@ -150,24 +106,8 @@ export function GenericListPage({
     </div>
   );
 
-  // Render table card with loading or empty states
-  const TableCard = (
-    <motion.div variants={animations.item}>
-      <Card className="border-none shadow-lg overflow-hidden">
-        <CardContent className="p-0">
-          {isLoading ? (
-            LoadingState
-          ) : emptyCondition ? (
-            EmptyState
-          ) : (
-            tableComponent
-          )}
-        </CardContent>
-      </Card>
-    </motion.div>
-  );
-
-
+  // Render content based on loading and empty conditions
+  const cardContent = isLoading ? LoadingState : (emptyCondition ? EmptyState : tableComponent);
 
   return (
     <>
@@ -177,8 +117,42 @@ export function GenericListPage({
         animate="visible" 
         variants={animations.container}
       >
-        {PageHeader}
-        {TableCard}
+        <motion.div 
+          className="flex flex-col md:flex-row md:items-center justify-between gap-4" 
+          variants={animations.item}
+        >
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-teal-500 to-emerald-500 bg-clip-text text-transparent">
+              {config.title}
+            </h1>
+            <p className="text-muted-foreground mt-1">{config.description}</p>
+          </div>
+          
+          {/* Fixed Add Button with Tooltip */}
+                <Button
+                  className={`group transition-all duration-300 ${
+                    isAddButtonDisabled ? "opacity-70 cursor-not-allowed" : "hover:scale-105"
+                  }`}
+                  disabled={isAddButtonDisabled}
+                  onClick={handleAddNew}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  {config.addButtonLabel}
+                  {!isAddButtonDisabled && (
+                    <span className="ml-1 group-hover:ml-2">
+                      <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100" />
+                    </span>
+                  )}
+                </Button>
+        </motion.div>
+
+        <motion.div variants={animations.item}>
+          <Card className="border-none shadow-lg overflow-hidden">
+            <CardContent className="p-0">
+              {cardContent}
+            </CardContent>
+          </Card>
+        </motion.div>
       </motion.div>
 
       {/* Dialogs */}

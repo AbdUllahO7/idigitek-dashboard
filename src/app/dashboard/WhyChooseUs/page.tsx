@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useGenericList } from "@/src/hooks/useGenericList"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
@@ -72,15 +72,18 @@ const ChoseUs_COLUMNS = [
 export default function ChoseUsPage() {
   const searchParams = useSearchParams()
   const sectionId = searchParams.get("sectionId")
-  const [hasMainSubSection, setHasMainSubSection] = useState<boolean>(false)
-  const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
-  const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
   
-  // Refs to track previous values for debugging
-  const prevHasMainSubSection = useRef(hasMainSubSection);
-  const isFirstRender = useRef(true);
+  // State management - simplified to reduce circular dependencies
+  const [pageState, setPageState] = useState({
+    hasMainSubSection: false,
+    isLoadingMainSubSection: true,
+    sectionData: null
+  });
 
+  // Destructure for easier access
+  const { hasMainSubSection, isLoadingMainSubSection, sectionData } = pageState;
+  
   // Check if main subsection exists
   const { useGetMainByWebSiteId, useGetBySectionId } = useSubSections()
   
@@ -106,7 +109,6 @@ export default function ChoseUsPage() {
     itemToDelete,
     isDeleting,
     isAddButtonDisabled: defaultAddButtonDisabled,
-    addButtonTooltip: defaultAddButtonTooltip,
     handleEdit,
     handleDelete,
     handleAddNew,
@@ -121,16 +123,13 @@ export default function ChoseUsPage() {
     editPath: ChoseUs_CONFIG.editPath
   })
 
-  // Debug changes in hasMainSubSection
-  useEffect(() => {
-    prevHasMainSubSection.current = hasMainSubSection;
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
+  // Process subsection data - Moved to a stable, memoized function to reduce rerenders
+  const processSubsectionData = useCallback(() => {
+    // Skip processing if still loading
+    if (isLoadingCompleteSubsections || isLoadingSectionSubsections) {
+      return;
     }
-  }, [hasMainSubSection]);
-
-  // Determine if main subsection exists when data loads & set section data if needed
-  useEffect(() => {
+    
     // We're done loading, now check the data
     let foundMainSubSection = false;
     let mainSubSection = null;
@@ -138,65 +137,56 @@ export default function ChoseUsPage() {
     // Get expected name from configuration
     const expectedSlug = whyChooseUsSectionConfig.name;
     
-    // If we have a sectionId, prioritize checking the section-specific subsections
+    // First check if section-specific subsections exist
     if (sectionId && sectionSubsections?.data) {
       const sectionData = sectionSubsections.data;
       
       if (Array.isArray(sectionData)) {
-        // Find the main subsection in the array with correct name
         mainSubSection = sectionData.find(sub => 
           sub.isMain === true && sub.name === expectedSlug
         );
         foundMainSubSection = !!mainSubSection;
       } else {
-        // Single object response
         foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedSlug;
         mainSubSection = foundMainSubSection ? sectionData : null;
       }
-      
-
     }
     
-    // If we didn't find anything in the section-specific data, check the website-wide data
+    // If not found, check website-wide data
     if (!foundMainSubSection && mainSubSectionData?.data) {
       const websiteData = mainSubSectionData.data;
       
       if (Array.isArray(websiteData)) {
-        // Find the main subsection in the array with correct name
         mainSubSection = websiteData.find(sub => 
           sub.isMain === true && sub.name === expectedSlug
         );
         foundMainSubSection = !!mainSubSection;
       } else {
-        // Single object response
         foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedSlug;
         mainSubSection = foundMainSubSection ? websiteData : null;
       }
-      
-   
     }
 
-    
-    // Update state based on what we found
-    setHasMainSubSection(foundMainSubSection);
-    setIsLoadingMainSubSection(false);
-    
-    // Extract section data from the main subsection if we found one
+    // Extract section data from the main subsection if found
+    let newSectionData = null;
     if (foundMainSubSection && mainSubSection && mainSubSection.section) {
-      const sectionInfo = typeof mainSubSection.section === 'string' 
+      newSectionData = typeof mainSubSection.section === 'string' 
         ? { _id: mainSubSection.section } 
         : mainSubSection.section;
-      
-      
-      // Set local section data
-      setSectionData(sectionInfo);
-      
-      // Update the industrySection in useGenericList hook if not already set
-      if (industrySection === null) {
-        setSection(sectionInfo);
-      }
     }
     
+    // Update all state in a single batch to prevent multiple rerenders
+    setPageState(prev => ({
+      ...prev,
+      hasMainSubSection: foundMainSubSection,
+      isLoadingMainSubSection: false,
+      sectionData: newSectionData
+    }));
+    
+    // Only update section in generic list hook if needed
+    if (newSectionData && (!industrySection || industrySection._id !== newSectionData._id)) {
+      setSection(newSectionData);
+    }
   }, [
     mainSubSectionData, 
     sectionSubsections, 
@@ -204,59 +194,61 @@ export default function ChoseUsPage() {
     isLoadingSectionSubsections, 
     sectionId, 
     industrySection, 
-    setSection
+    setSection,
+    whyChooseUsSectionConfig.name
   ]);
 
-  // Handle main subsection creation
-  const handleMainSubSectionCreated = (subsection: any) => {
-    
+  // Process data only when dependencies change
+  useEffect(() => {
+    processSubsectionData();
+  }, [processSubsectionData]);
+
+  // Handle main subsection creation - converted to useCallback to stabilize function reference
+  const handleMainSubSectionCreated = useCallback((subsection: any) => {
     // Check if subsection has the correct name
     const expectedSlug = whyChooseUsSectionConfig.name;
     const hasCorrectSlug = subsection.name === expectedSlug;
+    const isMainSubSection = subsection.isMain === true && hasCorrectSlug;
     
-    // Set that we have a main subsection now (only if it also has the correct name)
-    setHasMainSubSection(subsection.isMain === true && hasCorrectSlug);
-    
-
-    
-    // If we have section data from the subsection, update it
+    // If we have section data from the subsection, prepare it
+    let newSectionData = null;
     if (subsection.section) {
-      const sectionInfo = typeof subsection.section === 'string' 
+      newSectionData = typeof subsection.section === 'string' 
         ? { _id: subsection.section } 
         : subsection.section;
-        
-      setSectionData(sectionInfo);
-      setSection(sectionInfo);
     }
     
-    // Refetch the main subsection data to ensure we have the latest
+    // Update state in a single batch
+    setPageState(prev => ({
+      ...prev,
+      hasMainSubSection: isMainSubSection,
+      sectionData: newSectionData || prev.sectionData
+    }));
+    
+    // Only update the hook section if we have new data
+    if (newSectionData) {
+      setSection(newSectionData);
+    }
+    
+    // Refetch to ensure we have the latest data
     if (refetchMainSubSection) {
       refetchMainSubSection();
     }
-  };
+  }, [refetchMainSubSection, setSection, whyChooseUsSectionConfig.name]);
 
-  // IMPORTANT: Here's the crux of the button enabling/disabling logic
-  const isAddButtonDisabled: boolean = 
+  // Compute derived values ONCE per render - not during render
+  const isAddButtonDisabled = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
     (Boolean(sectionId) && !hasMainSubSection);
-  
-  
-  // Custom tooltip message based on condition
-  const addButtonTooltip = !industrySection && !sectionData 
-    ? ChoseUs_CONFIG.noSectionMessage 
-    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
-      ? ChoseUs_CONFIG.mainSectionRequiredMessage
-      : defaultAddButtonTooltip;
 
-  // Custom message for empty state 
   const emptyStateMessage = !industrySection && !sectionData 
     ? ChoseUs_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
       ? ChoseUs_CONFIG.mainSectionRequiredMessage
       : ChoseUs_CONFIG.emptyStateMessage;
 
-  // Components
+  // Memoize component references to prevent recreation on each render
   const ChoseUsItemsTable = (
     <GenericTable
       columns={ChoseUs_COLUMNS}
@@ -296,7 +288,6 @@ export default function ChoseUsPage() {
         sectionId={sectionId}
         sectionConfig={whyChooseUsSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
-        addButtonTooltip={addButtonTooltip}
         tableComponent={ChoseUsItemsTable}
         createDialogComponent={CreateDialog}
         deleteDialogComponent={DeleteDialog}
