@@ -25,6 +25,7 @@ import {
   ChevronRight,
   Menu,
   X,
+  Component,
 } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "@/src/lib/utils"
@@ -108,8 +109,14 @@ const allNavItems: NavItem[] = [
     sectionId: "ourprocess",
   },
   {
-    title: "Settings",
-    href: "/dashboard/settings",
+    title: "Team",
+    href: "/dashboard/team",
+    icon: Component,
+    sectionId: "team",
+  },
+  {
+    title: "Profile",
+    href: "/dashboard/profile",
     icon: Settings,
     roles: ["superAdmin", "owner", "admin", "user"],
   },
@@ -513,7 +520,7 @@ export default function DashboardSidebar() {
           href={`https://wa.me/905465234640`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 mx-3 p-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium shadow-lg hover:shadow-xl transition-all"
+          className="flex items-center justify-center gap-2 mx-3 p-3 rounded-lg bg-primary text-primary-foreground font-medium shadow-sm hover:bg-primary/90 transition-all"
         >
           <LifeBuoy className="h-5 w-5" />
           <span>Help & Support</span>

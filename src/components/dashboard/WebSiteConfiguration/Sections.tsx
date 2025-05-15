@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { 
   AlertTriangle, 
   Check, 
+  Component, 
   LayoutGrid, 
   Loader2, 
   Plus, 
@@ -90,11 +91,17 @@ const PREDEFINED_SECTIONS = [
     image: "/sections/news.jpg",
     icon: <LayoutGrid className="h-10 w-10 text-blue-600" />
   },
-    {
+  {
     name: "Our Process",
     description: "Latest Our Process and updates",
     image: "/sections/news.jpg",
     icon: <LayoutGrid className="h-10 w-10 text-blue-600" />
+  },
+  {
+    name: "team",
+    description: "Latest Team and updates",
+    image: "/sections/news.jpg",
+    icon: <Component className="h-10 w-10 text-blue-600" />
   },
 ];
 

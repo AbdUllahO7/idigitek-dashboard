@@ -1,4 +1,3 @@
-// Updated AddNews.tsx to fix the edit mode data display issue
 
 "use client"
 import { useSearchParams } from "next/navigation"
@@ -7,16 +6,16 @@ import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 
-import { FormData, FormDataNews } from "@/src/api/types/sections/service/serviceSections.types"
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import ProcessForm from "./Process/ProcessForm"
+import { FormDataProcess } from "@/src/api/types/sections/Process/processSection.type"
 
 
 // Form sections to collect data from
-const FORM_SECTIONS = ["news"]
+const FORM_SECTIONS = ["process"]
 
-export default function AddNews() {
+export default function AddProcess() {
   const searchParams = useSearchParams()
   
   // Get URL parameters
@@ -147,14 +146,13 @@ export default function AddNews() {
       )
     }
   ]
-   
   // Define save handler for the service
-  const handleSaveNews = async (formData: FormDataNews) => {
+  const handleSaveProcess = async (formData: FormDataProcess) => {
     // Extract service info from news data for title/description
-    const newsData = formData.news || {}
+    const newsData = formData.process || {}
     
     // Get English title and description values or fallback to the first language
-    let serviceName = "New News"
+    let serviceName = "New Process"
     let serviceDescription = ""
     
     // Loop through languages to find title and description
@@ -192,17 +190,17 @@ export default function AddNews() {
   
   return (
     <FormShell
-      title={isCreateMode ? "Create New News" : "Edit News"}
+      title={isCreateMode ? "Create New Process" : "Edit Process"}
       subtitle={isCreateMode 
         ? "Create a new service with multilingual content" 
-        : `Editing "${sectionItemData?.data?.name || 'News'}" content across multiple languages`}
-      backUrl={`/dashboard/News?sectionId=${sectionId}`}
+        : `Editing "${sectionItemData?.data?.name || 'Process'}" content across multiple languages`}
+      backUrl={`/dashboard/Process?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}
       sectionId={sectionId}
       sectionItemId={sectionItemId}
       mode={mode}
-      onSave={handleSaveNews}
+      onSave={handleSaveProcess}
       tabs={tabs}
       formSections={FORM_SECTIONS}
       isLoading={isLoading}

@@ -17,7 +17,7 @@ import { useToast } from "@/src/hooks/use-toast"
  * Settings page component
  * Allows users to configure their account and application settings
  */
-export default function SettingsPage() {
+export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const { useGetCurrentUser, useUpdateProfile } = useUsers()

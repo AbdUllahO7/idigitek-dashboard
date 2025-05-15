@@ -1,24 +1,22 @@
+// Updated AddTeam.tsx to fix the edit mode data display issue
 
 "use client"
-
 import { useSearchParams } from "next/navigation"
-import { Layout, Sparkles, ListChecks, ArrowRight, HelpCircle } from "lucide-react"
+import { Layout } from "lucide-react"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
-import { FormData } from "@/src/api/types/sections/service/serviceSections.types"
+
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
-import HeroForm from "./Components/Hero/HeroForm"
-import BenefitsForm from "./Components/BenefitsForm/BenefitsForm"
-import ProcessStepsForm from "./Components/ProcessStepsForm/process-steps-form"
-import FaqForm from "./Components/FaqForm/faq-form"
-import FeaturesForm from "./Components/FeaturesForm/features-form"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
+import TeamForm from "./Team/TeamForm"
+import { FormDataTeam } from "@/src/api/types/sections/team/teamSection.type"
+
 
 // Form sections to collect data from
-const FORM_SECTIONS = ["hero", "benefits", "features", "processSteps", "faq"]
+const FORM_SECTIONS = ["team"]
 
-export default function AddService() {
+export default function AddTeam() {
   const searchParams = useSearchParams()
   
   // Get URL parameters
@@ -26,13 +24,13 @@ export default function AddService() {
   const sectionItemId = searchParams.get('sectionItemId')
   const mode = searchParams.get('mode') || 'edit'
   const isCreateMode = mode === 'create'
-  
+    const { websiteId } = useWebsiteContext();
+
   // API hooks
   const { useGetByWebsite: useGetAllLanguages } = useLanguages()
   const { useGetById: useGetSectionItemById } = useSectionItems()
   const { useGetBySectionItemId: useGetSubSectionsBySectionItemId } = useSubSections()
-  const { websiteId } = useWebsiteContext();
-
+  
   // Get languages
   const { 
     data: languagesData, 
@@ -73,11 +71,7 @@ export default function AddService() {
     
     // Create a mapping for known slug patterns
     const slugMappings: Record<string, string> = {
-      'process-steps': 'process-steps',
-      'hero-section': 'hero-section',
-      'benefits': 'benefits',
-      'features': 'features',
-      'faq-section': 'faq-section'
+      'team-steps': 'team-steps',
     };
     
     // Get the normalized version of the slug
@@ -115,9 +109,9 @@ export default function AddService() {
   const getSlug = (baseSlug: string) => {
     if (isCreateMode) return "";
     
-    // Special case handling for processSteps - correct the capitalization
-    if (baseSlug === "process-Steps") {
-      baseSlug = "process-steps";
+    // Special case handling for teamSteps - correct the capitalization
+    if (baseSlug === "team-Steps") {
+      baseSlug = "team-steps";
     }
     
     // Find the subsection
@@ -135,90 +129,34 @@ export default function AddService() {
   // Define tabs configuration
   const tabs = [
     {
-      id: "hero",
-      label: "Hero",
+      id: "team",
+      label: "Team",
       icon: <Layout className="h-4 w-4" />,
       component: (
-        <HeroForm
+        <TeamForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
-          slug={getSlug('hero-section')}
+          slug={getSlug('team-section')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('hero-section')}
-        />
-      )
-    },
-    {
-      id: "benefits",
-      label: "Benefits",
-      icon: <Sparkles className="h-4 w-4" />,
-      component: (
-        <BenefitsForm
-          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
-          activeLanguages={activeLanguages}
-          slug={getSlug('benefits')}
-          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('benefits')}
-        />
-      )
-    },
-    {
-      id: "features",
-      label: "Features",
-      icon: <ListChecks className="h-4 w-4" />,
-      component: (
-        <FeaturesForm
-          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
-          activeLanguages={activeLanguages}
-          slug={getSlug('features')}
-          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('features')}
-        />
-      )
-    },
-    {
-      id: "process",
-      label: "Process",
-      icon: <ArrowRight className="h-4 w-4" />,
-      component: (
-        <ProcessStepsForm
-          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
-          activeLanguages={activeLanguages}
-          slug={getSlug('process-steps')}  // Fixed: now using lowercase 's'
-          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('process-steps')} // Fixed: now using lowercase 's'
-        />
-      )
-    },
-    {
-      id: "faq",
-      label: "FAQ",
-      icon: <HelpCircle className="h-4 w-4" />,
-      component: (
-        <FaqForm
-          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
-          activeLanguages={activeLanguages}
-          slug={getSlug('faq-section')}
-          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('faq-section')}
+          initialData={findSubsection('team-section')}
         />
       )
     }
   ]
    
   // Define save handler for the service
-  const handleSaveService = async (formData: FormData) => {
-    // Extract service info from hero data for title/description
-    const heroData = formData.hero || {}
+  const handleSaveTeam = async (formData: FormDataTeam) => {
+    // Extract service info from team data for title/description
+    const teamData = formData.team || {}
     
     // Get English title and description values or fallback to the first language
-    let serviceName = "New Service"
+    let serviceName = "New Team"
     let serviceDescription = ""
     
     // Loop through languages to find title and description
-    for (const langCode in heroData) {
-      if (langCode !== 'backgroundImage' && typeof heroData[langCode] === 'object') {
-        const langValues = heroData[langCode] as Record<string, any>
+    for (const langCode in teamData) {
+      if (langCode !== 'backgroundImage' && typeof teamData[langCode] === 'object') {
+        const langValues = teamData[langCode] as Record<string, any>
         if (langValues?.title) {
           serviceName = langValues.title
         }
@@ -236,7 +174,7 @@ export default function AddService() {
     const servicePayload = {
       name: serviceName,
       description: serviceDescription,
-      image: heroData.backgroundImage || null,
+      image: teamData.backgroundImage || null,
       isActive: true,
       section: sectionId
     }
@@ -250,17 +188,17 @@ export default function AddService() {
   
   return (
     <FormShell
-      title={isCreateMode ? "Create New Service" : "Edit Service"}
+      title={isCreateMode ? "Create New Team" : "Edit Team"}
       subtitle={isCreateMode 
         ? "Create a new service with multilingual content" 
-        : `Editing "${sectionItemData?.data?.name || 'Service'}" content across multiple languages`}
-      backUrl={`/dashboard/services?sectionId=${sectionId}`}
+        : `Editing "${sectionItemData?.data?.name || 'Team'}" content across multiple languages`}
+      backUrl={`/dashboard/team?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}
       sectionId={sectionId}
       sectionItemId={sectionItemId}
       mode={mode}
-      onSave={handleSaveService}
+      onSave={handleSaveTeam}
       tabs={tabs}
       formSections={FORM_SECTIONS}
       isLoading={isLoading}

@@ -7,25 +7,22 @@ import { Form } from "@/src/components/ui/form";
 import { Button } from "@/src/components/ui/button";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
-import apiClient from "@/src/lib/api-client";
 import { useToast } from "@/src/hooks/use-toast";
 import { Loader2, Save } from "lucide-react";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
 import { SubSection } from "@/src/api/types/hooks/section.types";
 import { useWebsiteContext } from "@/src/providers/WebsiteContext";
-import { createProcessSchema } from "../../../services/addService/Utils/language-specific-schemas";
+import { createTeamSchema } from "../../../services/addService/Utils/language-specific-schemas";
 import { createHeroDefaultValues, createLanguageCodeMap } from "../../../services/addService/Utils/Language-default-values";
-import { useImageUploader } from "../../../services/addService/Utils/Image-uploader";
-import { processAndLoadData } from "../../../services/addService/Utils/load-form-data";
 import { createFormRef } from "../../../services/addService/Utils/Expose-form-data";
-import { BackgroundImageSection } from "../../../services/addService/Components/Hero/SimpleImageUploader";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
-import { ProcessLanguageCard } from "./ProcessLanguageCard";
-import { processFormProps } from "@/src/api/types/sections/Process/processSection.type";
+import { teamFormProps } from "@/src/api/types/sections/team/teamSection.type";
+import { processAndLoadData } from "../../../services/addService/Utils/load-form-data";
+import { TeamLanguageCard } from "./TeamLanguageCard";
 
 
-const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
+const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
   const { 
     languageIds, 
     activeLanguages, 
@@ -38,7 +35,7 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
   const { websiteId } = useWebsiteContext();
 
   // Setup form with schema validation
-  const formSchema = createProcessSchema(languageIds, activeLanguages);
+  const formSchema = createTeamSchema(languageIds, activeLanguages);
   const defaultValues = createHeroDefaultValues(languageIds, activeLanguages);
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -73,7 +70,7 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
 
   // Hooks
   const { toast } = useToast();
-  const dataProcessed = useRef(false);
+  const dataTeamed = useRef(false);
   const onDataChangeRef = useRef(onDataChange);
   const defaultLangCode = activeLanguages[0]?.languageID || 'en';
   
@@ -92,29 +89,7 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
   const createContentElement = useCreateContentElement();
   const bulkUpsertTranslations = useBulkUpsertTranslations();
 
-  // Image upload hook
-  const { 
-    imageFile, 
-    imagePreview, 
-    handleImageUpload : handleOriginalImageUpload, 
-    handleImageRemove 
-  } = useImageUploader({
-    form,
-    fieldPath: 'backgroundImage',
-    initialImageUrl: initialData?.image || form.getValues().backgroundImage,
-    onUpload: () => updateState({
-      hasUnsavedChanges: true,
 
-    }),
-    onRemove: () => updateState({
-      hasUnsavedChanges: true,
-
-    }),
-    validate: (file: { type: string; }) => {
-      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
-      return validTypes.includes(file.type) || 'Only JPEG, PNG, GIF, or SVG files are allowed';
-    }
-  });
 
   // Data fetching from API
   const { 
@@ -128,17 +103,15 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
     onDataChangeRef.current = onDataChange;
   }, [onDataChange]);
 
-  // Process initial data from parent
-  const processInitialData = useCallback(() => {
+  // Team initial data from parent
+  const teamInitialData = useCallback(() => {
     if (initialData && !dataLoaded) {
       
       if (initialData.description) {
         form.setValue(`${defaultLangCode}.description`, initialData.description);
       }
       
-      if (initialData.image) {
-        form.setValue('backgroundImage', initialData.image);
-      }
+     
       
       updateState({ 
         dataLoaded: true, 
@@ -147,25 +120,27 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
     }
   }, [initialData, dataLoaded, defaultLangCode, form]);
 
-  // Process hero data from API
+  // Team hero data from API
   const processProcessData = useCallback((subsectionData: SubSection | null) => {
-    processAndLoadData(
+      processAndLoadData(
       subsectionData,
       form,
       languageIds,
       activeLanguages,
       {
         groupElements: (elements) => ({
-          'hero': elements.filter(el => el.type === 'text' || (el.name === 'Background Image' && el.type === 'image'))
+          'team': elements.filter(el => el.type === 'text' || (el.name === 'Background Image' && el.type === 'image'))
         }),
         processElementGroup: (groupId, elements, langId, getTranslationContent) => {
           const elementKeyMap: Record<string, keyof typeof result> = {
             'Title': 'title',
+            'Job' :'job',
             'Description': 'description',
           };
           
           const result = {
             title: '',
+            job:'',
             description: '',
           };
           
@@ -180,6 +155,7 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
         },
         getDefaultValue: () => ({
           title: '',
+          job: '',
           description: '',
         })
       },
@@ -192,28 +168,19 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
       }
     );
 
-    // Handle background image
-    const bgImageElement = subsectionData?.elements?.find(
-      (el) => el.name === 'Background Image' && el.type === 'image'
-    ) || subsectionData?.contentElements?.find(
-      (el) => el.name === 'Background Image' && el.type === 'image'
-    );
-    
-    if (bgImageElement?.imageUrl) {
-      form.setValue('backgroundImage', bgImageElement.imageUrl);
-    }
+  
   }, [form, languageIds, activeLanguages]);
 
-  // Process initial data effect
+  // Team initial data effect
   useEffect(() => {
     if (!dataLoaded && initialData) {
-      processInitialData();
+      teamInitialData();
     }
-  }, [initialData, dataLoaded, processInitialData]);
+  }, [initialData, dataLoaded, teamInitialData]);
 
-  // Process API data effect
+  // Team API data effect
   useEffect(() => {
-    if (!slug || isLoadingSubsection || dataProcessed.current) return;
+    if (!slug || isLoadingSubsection || dataTeamed.current) return;
     
     if (completeSubsectionData?.data) {
       updateState({ isLoadingData: true });
@@ -222,7 +189,7 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
         dataLoaded: true,
         isLoadingData: false
       });
-      dataProcessed.current = true;
+      dataTeamed.current = true;
     }
   }, [completeSubsectionData, isLoadingSubsection, slug, processProcessData]);
 
@@ -241,45 +208,8 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
   }, [form, isLoadingData, dataLoaded, updateState]);
 
   // Image upload handler
-  const uploadImage = useCallback(async (elementId: any, file: string | Blob) => {
-    if (!file) return null;
-    
-    try {
-      const formData = new FormData();
-      formData.append("image", file);
-      
-      const uploadResult = await apiClient.post(
-        `/content-elements/${elementId}/image`, 
-        formData, 
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      
-      const imageUrl = uploadResult.data?.imageUrl || 
-                      uploadResult.data?.url || 
-                      uploadResult.data?.data?.imageUrl;
-      
-      if (imageUrl) {
-        form.setValue("backgroundImage", imageUrl, { shouldDirty: false });
-        toast({
-          title: "Image Uploaded",
-          description: "Background image has been successfully uploaded."
-        });
-        return imageUrl;
-      } 
-      
-      throw new Error("No image URL returned from server. Response: " + JSON.stringify(uploadResult.data));
-    } catch (error) {
-      console.error("Image upload failed:", error);
-      toast({
-        title: "Image Upload Failed",
-        description: error instanceof Error ? error.message : "Failed to upload image",
-        variant: "destructive"
-      });
-      throw error;
-    }
-  }, [form, toast]);
 
-  // Save handler with optimized process
+  // Save handler with optimized team
   const handleSave = useCallback(async () => {
     // Validate form
     const isValid = await form.trigger();
@@ -305,7 +235,7 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
         }
         
         const subsectionData = {
-          name: "Process Section",
+          name: "Team Section",
           slug: slug || `hero-section-${Date.now()}`,
           description: "",
           isActive: true,
@@ -345,19 +275,13 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
 
       // Step 3: Handle existing content or create new content
       if (contentElements.length > 0) {
-        // Handle existing content elements
-        if (imageFile) {
-          const imageElement = contentElements.find((e) => e.type === "image");
-          if (imageElement) {
-            await uploadImage(imageElement._id, imageFile);
-          }
-        }
 
         // Update translations for text elements
         const textElements = contentElements.filter((e) => e.type === "text");
         const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] | { content: any; language: string; contentElement: string; isActive: boolean; }[] = [];
-        const elementNameToKeyMap: Record<string, 'title' | 'description' > = {
+        const elementNameToKeyMap: Record<string, 'title' | 'description' | 'job' > = {
           'Title': 'title',
+          "Job" : 'job',
           'Description': 'description',
         };
 
@@ -386,17 +310,15 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
       } else {
         // Create new content elements
         const elementTypes = [
-          { type: "image", key: "backgroundImage", name: "Background Image" },
           { type: "text", key: "title", name: "Title" },
+          { type: "text", key: "job", name: "Job" },
           { type: "text", key: "description", name: "Description" },
         ];
 
         const createdElements = [];
         for (const [index, el] of elementTypes.entries()) {
           let defaultContent = "";
-          if (el.type === "image") {
-            defaultContent = "image-placeholder";
-          } else if (el.type === "text" && typeof allFormValues[defaultLangCode] === "object") {
+          if (el.type === "text" && typeof allFormValues[defaultLangCode] === "object") {
             const langValues = allFormValues[defaultLangCode];
             defaultContent = langValues && typeof langValues === "object" && el.key in langValues
               ? langValues[el.key]
@@ -417,12 +339,6 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
         }
 
         updateState({ contentElements: createdElements.map((e) => ({ ...e, translations: [] })) });
-
-        // Handle image upload for new elements
-        const bgImageElement = createdElements.find((e) => e.key === "backgroundImage");
-        if (bgImageElement && imageFile) {
-          await uploadImage(bgImageElement._id, imageFile);
-        }
 
         // Create translations for new elements
         const textElements = createdElements.filter((e) => e.key !== "backgroundImage");
@@ -453,7 +369,7 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
 
       // Show success message
       toast({
-        title: existingSubSectionId ? "Process section updated successfully!" : "Process section created successfully!",
+        title: existingSubSectionId ? "Team section updated successfully!" : "Team section created successfully!",
         description: "All content has been saved."
       });
 
@@ -499,7 +415,6 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
   }, [
     existingSubSectionId, 
     form, 
-    imageFile, 
     ParentSectionId, 
     slug, 
     toast, 
@@ -513,7 +428,6 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
     refetch, 
     updateState, 
     updateSubSection, 
-    uploadImage, 
     activeLanguages
   ]);
 
@@ -524,13 +438,11 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
     setHasUnsavedChanges: (value) => updateState({ hasUnsavedChanges: value }),
     existingSubSectionId,
     contentElements,
-    componentName: 'Process',
+    componentName: 'Team',
     extraMethods: {
-      getImageFile: () => imageFile,
       saveData: handleSave
     },
     extraData: {
-      imageFile,
       existingSubSectionId
     }
   });
@@ -551,30 +463,17 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
     <div className="space-y-6">
       <LoadingDialog 
         isOpen={isSaving} 
-        title={existingSubSectionId ? "Updating Process Section" : "Creating Process Section"}
+        title={existingSubSectionId ? "Updating Team Section" : "Creating Team Section"}
         description="Please wait while we save your changes..."
       />
       
       <Form {...form}>
-        {/* Background Image Section */}
-        <BackgroundImageSection 
-          imagePreview={imagePreview || undefined} 
-          imageValue={form.getValues().backgroundImage}
-          onUpload={(event: React.ChangeEvent<HTMLInputElement>) => {
-              if (event.target.files && event.target.files.length > 0) {
-                handleOriginalImageUpload({ target: { files: Array.from(event.target.files) } });
-            }
-            }}
-          onRemove={handleImageRemove}
-          imageType="logo"
-        />
-        
         {/* Language Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {languageIds.map((langId) => {
             const langCode = languageCodes[langId] || langId;
             return (
-              <ProcessLanguageCard 
+              <TeamLanguageCard 
                 key={langId}
                 langCode={langCode}
                 form={form}
@@ -600,7 +499,7 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
           ) : (
             <>
               <Save className="mr-2 h-4 w-4" />
-              {existingSubSectionId ? "Update Process Content" : "Save Process Content"}
+              {existingSubSectionId ? "Update Team Content" : "Save Team Content"}
             </>
           )}
         </Button>
@@ -609,5 +508,5 @@ const ProcessForm = forwardRef<any, processFormProps>((props, ref) => {
   );
 });
 
-ProcessForm.displayName = "ProcessForm";
-export default ProcessForm;
+TeamForm.displayName = "TeamForm";
+export default TeamForm;

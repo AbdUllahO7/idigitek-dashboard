@@ -9,6 +9,7 @@ import { ThemeToggle } from "../theme-toggle"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { useAuth } from "@/src/context/AuthContext"
+import { useRouter } from "next/navigation"
 
 /**
  * Props for the DashboardHeader component
@@ -24,6 +25,7 @@ interface DashboardHeaderProps {
  */
 export default function DashboardHeader({ isSidebarOpen, toggleSidebar }: DashboardHeaderProps) {
     const { logout  } = useAuth();
+    const router = useRouter()
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
@@ -36,6 +38,10 @@ export default function DashboardHeader({ isSidebarOpen, toggleSidebar }: Dashbo
         } catch (err: any) {
         console.log(err)
         }
+      }
+
+      const handleProfileToggle = () => {
+        router.push('/dashboard/profile')
       }
   
   return (
@@ -50,31 +56,13 @@ export default function DashboardHeader({ isSidebarOpen, toggleSidebar }: Dashbo
         <Menu className="h-5 w-5" />
       </Button>
 
-      {/* Search input - hidden on mobile */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="relative hidden md:flex"
-      >
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search..."
-          className="w-64 rounded-full bg-muted pl-8 focus-visible:ring-slate-400"
-        />
-      </motion.div>
+  
 
       {/* Right side actions */}
       <div className="ml-auto flex items-center gap-2">
         {/* Theme toggle */}
         <ThemeToggle />
 
-        {/* Notifications */}
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <Bell className="h-5 w-5" />
-          <span className="sr-only">Notifications</span>
-        </Button>
 
         {/* User menu */}
         <DropdownMenu>
@@ -89,11 +77,10 @@ export default function DashboardHeader({ isSidebarOpen, toggleSidebar }: Dashbo
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleProfileToggle}>
               <User className="mr-2 h-4 w-4" />
-              Profile
+                Profile
             </DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSubmit}>Log out</DropdownMenuItem>
           </DropdownMenuContent>

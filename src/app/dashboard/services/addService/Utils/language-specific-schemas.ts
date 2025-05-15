@@ -33,6 +33,11 @@ const schemaDefinitions = {
       title: z.string().min(1, { message: "Title is required" }),
       description: z.string().min(1, { message: "Description is required" }),
     }),
+     team: (z: any) => z.object({
+      title: z.string().min(1, { message: "Title is required" }),
+      job: z.string().min(1, { message: "Job is required" }),
+      description: z.string().min(1, { message: "Description is required" }),
+    }),
     industry: (z: any) => z.object({
       title: z.string().min(1, { message: "Title is required" }),
       description: z.string().min(1, { message: "Description is required" }),
@@ -128,6 +133,13 @@ export const createHeroSchema = (languageIds: string[], activeLanguages: Languag
 };
 export const createProcessSchema = (languageIds: string[], activeLanguages: Language[]) => {
     const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.process);
+    return z.object({
+      ...schema.shape,
+      backgroundImage: z.string().optional(),
+    });
+};
+export const createTeamSchema = (languageIds: string[], activeLanguages: Language[]) => {
+    const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.team);
     return z.object({
       ...schema.shape,
       backgroundImage: z.string().optional(),
