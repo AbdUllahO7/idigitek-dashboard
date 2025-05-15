@@ -76,7 +76,7 @@ export const useForceUpdate = () => {
 /**
  * Check if all languages have the same number of benefits
  */
-export const validateBenefitCounts = (values: { [s: string]: unknown; } | ArrayLike<unknown>) => {
+export const validateSubSectionCounts = (values: { [s: string]: unknown; } | ArrayLike<unknown>) => {
   // Filter out any non-array values that might be causing issues
   const validLangEntries = Object.entries(values).filter(
     ([_, langBenefits]) => Array.isArray(langBenefits)
@@ -103,7 +103,7 @@ export const validateBenefitCounts = (values: { [s: string]: unknown; } | ArrayL
 /**
  * Get benefit counts by language
  */
-export const getBenefitCountsByLanguage = (values: ArrayLike<unknown> | { [s: string]: unknown; }) => {
+export const getSubSectionCountsByLanguage = (values: ArrayLike<unknown> | { [s: string]: unknown; }) => {
   return Object.entries(values).map(([langCode, benefits]) => ({
     language: langCode,
     count: Array.isArray(benefits) ? benefits.length : 0,

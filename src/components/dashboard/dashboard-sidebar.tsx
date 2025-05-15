@@ -26,6 +26,7 @@ import {
   Menu,
   X,
   Component,
+  MessageCircle,
 } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "@/src/lib/utils"
@@ -114,6 +115,12 @@ const allNavItems: NavItem[] = [
     icon: Component,
     sectionId: "team",
   },
+    {
+    title: "Client Comments",
+    href: "/dashboard/clientComments",
+    icon: MessageCircle,
+    sectionId: "clientcomments",
+  },
   {
     title: "Profile",
     href: "/dashboard/profile",
@@ -127,6 +134,12 @@ const allNavItems: NavItem[] = [
     roles: ["superAdmin", "owner"],
   },
   {
+    title: "Idigitek Admin",
+    href: "/dashboard/idigitekAdmin",
+    icon: Settings,
+    roles: ["idigitekAdmin"],
+  },
+    {
     title: "Idigitek Admin",
     href: "/dashboard/idigitekAdmin",
     icon: Settings,

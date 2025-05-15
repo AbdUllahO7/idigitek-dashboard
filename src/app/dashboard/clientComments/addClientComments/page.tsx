@@ -11,11 +11,10 @@ import { FormData } from "@/src/api/types/sections/service/serviceSections.types
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useSearchParams } from "next/navigation"
-import ChooseUsForm from "./ChooseUsForm"
-
+import ClientCommentsForm from "./ClientCommentsForm"
 
 // Form sections to collect data from
-const FORM_SECTIONS = ["Why Chose us "]
+const FORM_SECTIONS = ["Client Comments"]
 
 export default function AddIndustry() {
   const searchParams = useSearchParams()
@@ -48,7 +47,7 @@ export default function AddIndustry() {
     false,
   )
   
-  // Get subsections for this ChoseUs if in edit mode
+  // Get subsections for this Client Comment if in edit mode
   const {
     data: subsectionsData,
     isLoading: isLoadingSubsections
@@ -72,7 +71,7 @@ export default function AddIndustry() {
     
     // Create a mapping for known slug patterns
     const slugMappings: Record<string, string> = {
-      'ChoseUs-section': 'ChoseUs-section',
+      'ClientComments-section': 'ClientComments-section',
     };
     
     // Get the normalized version of the slug
@@ -112,7 +111,7 @@ export default function AddIndustry() {
     
     // Special case handling for processSteps - correct the capitalization
     if (baseSlug === "process-Steps") {
-      baseSlug = "process-steps";
+      baseSlug = "ClientComments";
     }
     
     // Find the subsection
@@ -130,39 +129,39 @@ export default function AddIndustry() {
   // Define tabs configuration
   const tabs = [
     {
-      id: "ChoseUsItems",
-      label: "Chose Us",
+      id: "ClientComments",
+      label: "Client Comments",
       icon: <Layout className="h-4 w-4" />,
       component: (
-        <ChooseUsForm
+        <ClientCommentsForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
-          slug={getSlug('ChoseUsItems')}
+          slug={getSlug('ClientComments')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('ChoseUsItems')}
+          initialData={findSubsection('ClientComments')}
         />
       )
     }
   ]
    
-  // Define save handler for the ChoseUs
+  // Define save handler for the Client Comment
   const handleSaveIndustry = async (formData: FormData) => {
-    // Extract ChoseUs info from hero data for title/description
+    // Extract Client Comment info from hero data for title/description
     const heroData = formData.hero || {}
     
     // Get English title and description values or fallback to the first language
-    let ChoseUsName = "New Industry"
-    let ChoseUsDescription = ""
+    let ClientCommentName = "New Comment"
+    let ClientCommentDescription = ""
     
     // Loop through languages to find title and description
     for (const langCode in heroData) {
       if (langCode !== 'backgroundImage' && typeof heroData[langCode] === 'object') {
         const langValues = heroData[langCode] as Record<string, any>
         if (langValues?.title) {
-          ChoseUsName = langValues.title
+          ClientCommentName = langValues.title
         }
         if (langValues?.description) {
-          ChoseUsDescription = langValues.description
+          ClientCommentDescription = langValues.description
         }
         // Prefer English if available
         if (langCode === 'en') {
@@ -171,17 +170,17 @@ export default function AddIndustry() {
       }
     }
     
-    // Create the ChoseUs payload
-    const ChoseUsPayload = {
-      name: ChoseUsName,
-      description: ChoseUsDescription,
+    // Create the Client Comment payload
+    const ClientCommentPayload = {
+      name: ClientCommentName,
+      description: ClientCommentDescription,
       image: heroData.backgroundImage || null,
       isActive: true,
       section: sectionId
     }
     
     // Return data for saving
-    return ChoseUsPayload
+    return ClientCommentPayload
   }
   
   // Loading state
@@ -189,11 +188,11 @@ export default function AddIndustry() {
   
   return (
     <FormShell
-      title={isCreateMode ? "Create New ChoseUs item " : "Edit ChoseUs item "}
+      title={isCreateMode ? "Create New Client Comment item " : "Edit Client Comment item "}
       subtitle={isCreateMode 
-        ? "Create a new ChoseUs item with multilingual content" 
-        : `Editing "${sectionItemData?.data?.name || 'ChoseUs item'}" content across multiple languages`}
-      backUrl={`/dashboard/IndustrySolutions?sectionId=${sectionId}`}
+        ? "Create a new Client Comment item with multilingual content" 
+        : `Editing "${sectionItemData?.data?.name || 'Client Comment item'}" content across multiple languages`}
+      backUrl={`/dashboard/clientComments?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}
       sectionId={sectionId}

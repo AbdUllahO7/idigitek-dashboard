@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ForwardedRef,
   forwardRef,
   useEffect,
   useState,
@@ -18,34 +17,31 @@ import { useToast } from "@/src/hooks/use-toast";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
-import {  HeroFormProps, HeroFormRef, StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
+import {  StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
 import { SubSection } from "@/src/api/types/hooks/section.types";
 import { useWebsiteContext } from "@/src/providers/WebsiteContext";
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog";
 import {  createChooseUsSchema } from "../../services/addService/Utils/language-specific-schemas";
 import { createChooseUsDefaultValues, createLanguageCodeMap } from "../../services/addService/Utils/Language-default-values";
-import { createFormRef, getAvailableIcons, getSubSectionCountsByLanguage , getSafeIconValue, useForceUpdate, validateSubSectionCounts } from "../../services/addService/Utils/Expose-form-data";
+import { createFormRef, getAvailableIcons, getSubSectionCountsByLanguage ,  getSafeIconValue, useForceUpdate, validateSubSectionCounts } from "../../services/addService/Utils/Expose-form-data";
 import { processAndLoadData } from "../../services/addService/Utils/load-form-data";
-import { ValidationDialog } from "../../services/addService/Components/BenefitsForm/ValidationDialog";
-import { ChooseUsLanguageCard } from "./ChooseUsLanguageCard";
-import { ChooseUsFormProps, ChooseUsFormRef, ChoseUsFormState } from "@/src/api/types/sections/choseUS/ChooseUs.type";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
+import { clientCommentFormRef, clientCommentsFormProps, ClientCommentsFormState } from "@/src/api/types/sections/clientComments/clientComments.type";
+import { ClientCommentsLanguageCardCard } from "./ClientCommentsLanguageCard";
+import { ValidationDialog } from "../../services/addService/Components/BenefitsForm/ValidationDialog";
 
 
 // Main Component
-const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
+const ClientCommentsForm = forwardRef<clientCommentFormRef, clientCommentsFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId },ref) => {
     const { websiteId } = useWebsiteContext();
     const formSchema = createChooseUsSchema(languageIds, activeLanguages);
-
-
 
     const defaultValues = createChooseUsDefaultValues(
       languageIds,
       activeLanguages
     );
-
 
     interface FormData {
       [key: string]: Array<{
@@ -63,7 +59,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         });
 
     // State management
-    const [state, setState] = useState<ChoseUsFormState>({
+    const [state, setState] = useState<ClientCommentsFormState>({
       isLoadingData: !slug,
       dataLoaded: !slug,
       hasUnsavedChanges: false,
@@ -79,7 +75,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     const updateState = useCallback(
-      (newState: Partial<ChoseUsFormState>) => {
+      (newState: Partial<ClientCommentsFormState>) => {
         setState((prev) => ({ ...prev, ...newState }));
       },
       []
@@ -159,8 +155,8 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
       [form]
     );
 
-    // Validate choseUs counts
-    const validateFormBenefitCounts = useCallback(() => {
+    // Validate clientComments counts
+    const validateFormClientCommentCounts = useCallback(() => {
       const values = form.getValues();
       const isValid = validateSubSectionCounts(values);
       updateState({ benefitCountMismatch: !isValid });
@@ -255,7 +251,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
 
       setIsDeleting(false);
       setDeleteDialogOpen(false);
-      validateFormBenefitCounts();
+      validateFormClientCommentCounts();
     }, [
       stepToDelete,
       form,
@@ -264,11 +260,11 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
       deleteContentElement,
       updateContentElement,
       toast,
-      validateFormBenefitCounts,
+      validateFormClientCommentCounts,
       updateState,
     ]);
 
-    // Process choseUs data
+    // Process clientComments data
     const processChoseUsData = useCallback(
       (subsectionData: SubSection) => {
         processAndLoadData(
@@ -330,11 +326,11 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
               updateState({ hasUnsavedChanges: hasChanges }),
             setIsLoadingData: (loading) =>
               updateState({ isLoadingData: loading }),
-            validateCounts: validateFormBenefitCounts,
+            validateCounts: validateFormClientCommentCounts,
           }
         );
       },
-      [form, languageIds, activeLanguages, updateState, validateFormBenefitCounts]
+      [form, languageIds, activeLanguages, updateState, validateFormClientCommentCounts]
     );
 
     // Load existing data
@@ -359,7 +355,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
 
       const subscription = form.watch((value) => {
         updateState({ hasUnsavedChanges: true });
-        validateFormBenefitCounts();
+        validateFormClientCommentCounts();
         if (onDataChangeRef.current) {
           onDataChangeRef.current(value as FormData);
         }
@@ -370,12 +366,12 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
       form,
       isLoadingData,
       dataLoaded,
-      validateFormBenefitCounts,
+      validateFormClientCommentCounts,
       updateState,
     ]);
 
     // Add benefit
-    const addChoseUs = useCallback(
+    const addClientComment = useCallback(
       (langCode: string) => {
         const currentChoseUs = form.getValues()[langCode] || [];
         form.setValue(langCode, [
@@ -403,11 +399,11 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         forceUpdate();
 
         setTimeout(() => {
-          const isValid = validateFormBenefitCounts();
+          const isValid = validateFormClientCommentCounts();
           updateState({ benefitCountMismatch: !isValid });
         }, 0);
       },
-      [form, forceUpdate, validateFormBenefitCounts, updateState]
+      [form, forceUpdate, validateFormClientCommentCounts, updateState]
     );
 
     // Remove benefit
@@ -479,10 +475,10 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
               }
             }
           } catch (error) {
-            console.error("Error removing choseUs elements:", error);
+            console.error("Error removing clientComments elements:", error);
             toast({
               title: "Error removing benefit",
-              description: "There was an error removing the choseUs from the database",
+              description: "There was an error removing the clientComments from the database",
               variant: "destructive",
             });
           }
@@ -508,7 +504,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         forceUpdate();
 
         setTimeout(() => {
-          const isValid = validateFormBenefitCounts();
+          const isValid = validateFormClientCommentCounts();
           updateState({ benefitCountMismatch: !isValid });
         }, 0);
       },
@@ -520,7 +516,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         updateContentElement,
         toast,
         forceUpdate,
-        validateFormBenefitCounts,
+        validateFormClientCommentCounts,
         updateState,
       ]
     );
@@ -528,9 +524,9 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
     // Save handler
     const handleSave = useCallback(async () => {
       const isValid = await form.trigger();
-      const hasEqualBenefitCounts = validateFormBenefitCounts();
+      const hasEqualClientCommentCounts = validateFormClientCommentCounts();
 
-      if (!hasEqualBenefitCounts) {
+      if (!hasEqualClientCommentCounts) {
         updateState({ isValidationDialogOpen: true });
         return;
       }
@@ -657,11 +653,11 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
             const langId = langCodeToIdMap[langCode];
             if (!langId) return;
 
-            const choseUs = ChoseUs[i];
+            const clientComments = ChoseUs[i];
             if (titleElement) {
               translations.push({
-                _id : String(choseUs.id),
-                content: choseUs.title,
+                _id : String(clientComments.id),
+                content: clientComments.title,
                 language: langId,
                 contentElement: titleElement._id,
                 isActive: true,
@@ -669,8 +665,8 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
             }
             if (descElement) {
               translations.push({
-                _id : String(choseUs.id),
-                content: choseUs.description,
+                _id : String(clientComments.id),
+                content: clientComments.description,
                 language: langId,
                 contentElement: descElement._id,
                 isActive: true,
@@ -709,8 +705,8 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         console.error("Operation failed:", error);
         toast({
           title: existingSubSectionId
-            ? "Error updating choseUs section"
-            : "Error creating choseUs section",
+            ? "Error updating clientComments section"
+            : "Error creating clientComments section",
           variant: "destructive",
           description:
             error instanceof Error ? error.message : "Unknown error occurred",
@@ -721,7 +717,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
       }
     }, [
       form,
-      validateFormBenefitCounts,
+      validateFormClientCommentCounts,
       existingSubSectionId,
       ParentSectionId,
       slug,
@@ -755,19 +751,19 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
     useEffect(() => {
       const subscription = form.watch(() => {
         if (dataLoaded && !isLoadingData) {
-          validateFormBenefitCounts();
+          validateFormClientCommentCounts();
         }
       });
 
       return () => subscription.unsubscribe();
-    }, [dataLoaded, isLoadingData, form, validateFormBenefitCounts]);
+    }, [dataLoaded, isLoadingData, form, validateFormClientCommentCounts]);
 
     // Loading state
     if (slug && (isLoadingData || isLoadingSubsection) && !dataLoaded) {
       return (
         <div className="flex items-center justify-center p-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary mr-2" />
-          <p className="text-muted-foreground">Loading choseUs section data...</p>
+          <p className="text-muted-foreground">Loading clientComments section data...</p>
         </div>
       );
     }
@@ -792,12 +788,12 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
               const isFirstLanguage = langIndex === 0;
 
               return (
-                <ChooseUsLanguageCard
+                <ClientCommentsLanguageCardCard
                   key={langId}
                   langCode={langCode}
                   isFirstLanguage={isFirstLanguage}
                   form={form}
-                  addBenefit={addChoseUs}
+                  addBenefit={addClientComment}
                   removeBenefit={removeChoseUs}
                   syncIcons={syncIcons}
                   availableIcons={getAvailableIcons()}
@@ -813,7 +809,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
             <div className="flex items-center text-amber-500 mr-4">
               <AlertTriangle className="h-4 w-4 mr-2" />
               <span className="text-sm">
-                Each language must have the same number of choseUs
+                Each language must have the same number of clientComments
               </span>
             </div>
           )}
@@ -859,5 +855,5 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
   }
 );
 
-ChooseUsForm.displayName = "ChooseUsForm";
-export default ChooseUsForm;
+ClientCommentsForm.displayName = "ClientCommentsForm";
+export default ClientCommentsForm;
