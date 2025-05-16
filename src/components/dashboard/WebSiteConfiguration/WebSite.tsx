@@ -15,7 +15,7 @@ const WebsiteImageExampleFixed: React.FC = () => {
     name: "",
     description: "",
     logo: "",
-    job: "",
+    sector: "",
   })
   const [editingWebsite, setEditingWebsite] = useState<WebSiteProps | null>(null)
   const [uploadingLogo, setUploadingLogo] = useState<Record<string, boolean>>({})
@@ -42,7 +42,7 @@ const WebsiteImageExampleFixed: React.FC = () => {
           handleLogoUpload(createdWebsite._id, newLogoFile)
         }
         setShowCreateForm(false)
-        setNewWebsite({ name: "", description: "", logo: "", job: "" })
+        setNewWebsite({ name: "", description: "", logo: "", sector: "" })
         setNewLogoFile(null)
         toast({
           title: "Website Created",
@@ -61,7 +61,7 @@ const WebsiteImageExampleFixed: React.FC = () => {
           data: {
             name: editingWebsite.name,
             description: editingWebsite.description,
-            job: editingWebsite.job,
+            sector: editingWebsite.sector,
           },
         },
         {
@@ -249,9 +249,9 @@ const WebsiteImageExampleFixed: React.FC = () => {
               <input
                 type="text"
                 className="w-full p-3 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                value={newWebsite.job || ""}
-                onChange={(e) => setNewWebsite({ ...newWebsite, job: e.target.value })}
-                placeholder="Enter job title"
+                value={newWebsite.sector || ""}
+                onChange={(e) => setNewWebsite({ ...newWebsite, sector: e.target.value })}
+                placeholder="Enter sector title"
               />
             </div>
             <div className="flex justify-end space-x-3 pt-4">
@@ -263,7 +263,7 @@ const WebsiteImageExampleFixed: React.FC = () => {
                     URL.revokeObjectURL(newWebsite.logo)
                   }
                   setShowCreateForm(false)
-                  setNewWebsite({ name: "", description: "", logo: "", job: "" })
+                  setNewWebsite({ name: "", description: "", logo: "", sector: "" })
                   setNewLogoFile(null)
                 }}
               >
@@ -330,8 +330,8 @@ const WebsiteImageExampleFixed: React.FC = () => {
               <input
                 type="text"
                 className="w-full p-3 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                value={editingWebsite.job || ""}
-                onChange={(e) => setEditingWebsite({ ...editingWebsite, job: e.target.value })}
+                value={editingWebsite.sector || ""}
+                onChange={(e) => setEditingWebsite({ ...editingWebsite, sector: e.target.value })}
               />
             </div>
 
@@ -507,10 +507,10 @@ const WebsiteImageExampleFixed: React.FC = () => {
                           {website.description}
                         </p>
                       )}
-                      {website.job && (
+                      {website.sector && (
                         <div className="mt-2">
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
-                            {website.job}
+                            {website.sector}
                           </span>
                         </div>
                       )}

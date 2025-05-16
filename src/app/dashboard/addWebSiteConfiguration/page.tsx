@@ -15,8 +15,6 @@ import WebsiteList from "@/src/components/dashboard/WebSiteConfiguration/WebSite
 import { LanguageManagement } from "@/src/components/dashboard/WebSiteConfiguration/Languages"
 import { SectionManagement } from "@/src/components/dashboard/WebSiteConfiguration/Sections"
 
-
-
 // Main Component
 export default function AdminManagementPage() {
   const { useGetMyWebsites } = useWebSite();

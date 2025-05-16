@@ -16,7 +16,7 @@ import { Button } from "@/src/components/ui/button";
 import { useToast } from "@/src/hooks/use-toast";
 import { createBenefitsSchema } from "../../Utils/language-specific-schemas";
 import { createBenefitsDefaultValues } from "../../Utils/Language-default-values";
-import { createFormRef, getAvailableIcons, getBenefitCountsByLanguage, getSafeIconValue, useForceUpdate, validateBenefitCounts } from "../../Utils/Expose-form-data";
+import { createFormRef, getAvailableIcons, getSafeIconValue, getSubSectionCountsByLanguage, useForceUpdate, validateSubSectionCounts } from "../../Utils/Expose-form-data";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
 import { processAndLoadData } from "../../Utils/load-form-data";
@@ -156,7 +156,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
     // Validate benefit counts
     const validateFormBenefitCounts = useCallback(() => {
       const values = form.getValues();
-      const isValid = validateBenefitCounts(values);
+      const isValid = validateSubSectionCounts(values);
       updateState({ benefitCountMismatch: !isValid });
       return isValid;
     }, [form, updateState]);
@@ -846,7 +846,7 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
           onOpenChange={(isOpen: any) =>
             updateState({ isValidationDialogOpen: isOpen })
           }
-          benefitCounts={getBenefitCountsByLanguage(form.getValues())}
+          benefitCounts={getSubSectionCountsByLanguage(form.getValues())}
         />
       </div>
     );

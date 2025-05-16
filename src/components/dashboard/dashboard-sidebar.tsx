@@ -92,7 +92,7 @@ const allNavItems: NavItem[] = [
     sectionId: "industrysolutions",
   },
   {
-    title: "Chose Us",
+    title: "Choose Us",
     href: "/dashboard/WhyChooseUs",
     icon: Briefcase,
     sectionId: "choseus",

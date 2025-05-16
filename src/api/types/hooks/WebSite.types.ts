@@ -5,7 +5,7 @@ export interface WebSiteProps {
   name: string;
   description?: string;
   logo?: string;
-  job?: string;
+  sector?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

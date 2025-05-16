@@ -124,6 +124,8 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
   } = useGetCompleteBySlug(slug || '', Boolean(slug));
 
 
+  console.log("completeSubsectionData", completeSubsectionData)
+
   // Update reference when onDataChange changes
   useEffect(() => {
     onDataChangeRef.current = onDataChange;
