@@ -11,7 +11,7 @@ import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
-import { headerSectionConfig } from "./HeaderSectionConfig"
+import { partnersSectionConfig } from "./PartnersSectionConfig"
 
 
 
@@ -54,7 +54,7 @@ const HEADER_COLUMNS = [
   }
 ]
 
-export default function HeaderPage() {
+export default function PartnersPage() {
   const searchParams = useSearchParams()
   const sectionId = searchParams.get("sectionId")
   const [hasMainSubSection, setHasMainSubSection] = useState<boolean>(false)
@@ -63,20 +63,20 @@ export default function HeaderPage() {
   const { websiteId } = useWebsiteContext();
 
   const HEADER_CONFIG = useMemo (() => ({
-    title: "Header Management",
-    description: "Manage your Header inventory and multilingual content",
+    title: "Partners Management",
+    description: "Manage your Partners inventory and multilingual content",
       addButtonLabel: "Add New Nav Item",
-    emptyStateMessage: "No Header found. Create your first Header by clicking the \"Add New Header\" button.",
-    noSectionMessage: "Please create a Header section first before adding Header.",
-    mainSectionRequiredMessage: "Please enter your main section data before adding Header.",
-    emptyFieldsMessage: "Please complete all required fields in the main section before adding Header.",
-    sectionIntegrationTitle: "Header Section Content",
-    sectionIntegrationDescription: "Manage your Header section content in multiple languages.",
-    addSectionButtonLabel: "Add Header Section",
-    editSectionButtonLabel: "Edit Header Section",
-    saveSectionButtonLabel: "Save Header Section",
-    listTitle: "Header List",
-    editPath: "header/addNavItems"
+    emptyStateMessage: "No Partners found. Create your first Partners by clicking the \"Add New Partners\" button.",
+    noSectionMessage: "Please create a Partners section first before adding Partners.",
+    mainSectionRequiredMessage: "Please enter your main section data before adding Partners.",
+    emptyFieldsMessage: "Please complete all required fields in the main section before adding Partners.",
+    sectionIntegrationTitle: "Partners Section Content",
+    sectionIntegrationDescription: "Manage your Partners section content in multiple languages.",
+    addSectionButtonLabel: "Add Partners Section",
+    editSectionButtonLabel: "Edit Partners Section",
+    saveSectionButtonLabel: "Save Partners Section",
+    listTitle: "Partners List",
+    editPath: "partners/addPartners"
   }), [] );
   // Refs to track previous values for debugging
   const prevHasMainSubSection = useRef(hasMainSubSection);
@@ -97,9 +97,9 @@ export default function HeaderPage() {
     isLoading: isLoadingSectionSubsections
   } = useGetBySectionId(sectionId || "")
 
-  // Use the generic list hook for Header management
+  // Use the generic list hook for Partners management
   const {
-    section: headerSection,
+    section: partnersSection,
     items: navItems,
     isLoadingItems: isLoadingNavItems,
     isCreateDialogOpen,
@@ -148,7 +148,7 @@ export default function HeaderPage() {
     let mainSubSection = null;
     
     // Get expected name from configuration
-    const expectedName = headerSectionConfig.subSectionName;
+    const expectedName = partnersSectionConfig.subSectionName;
     
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
@@ -207,8 +207,8 @@ export default function HeaderPage() {
       // Set local section data
       setSectionData(sectionInfo);
       
-      // Update the headerSection in useGenericList hook if not already set
-      if (headerSection === null) {
+      // Update the partnersSection in useGenericList hook if not already set
+      if (partnersSection === null) {
         setSection(sectionInfo);
       }
     }
@@ -219,7 +219,7 @@ export default function HeaderPage() {
     isLoadingCompleteSubsections, 
     isLoadingSectionSubsections, 
     sectionId, 
-    headerSection, 
+    partnersSection, 
     setSection
   ]);
 
@@ -228,7 +228,7 @@ export default function HeaderPage() {
     console.log("Main subsection created:", subsection);
     
     // Check if subsection has the correct name
-    const expectedName = headerSectionConfig.subSectionName;
+    const expectedName = partnersSectionConfig.subSectionName;
     const hasCorrectName = subsection.name === expectedName;
     
     // Set that we have a main subsection now (only if it also has the correct name)
@@ -266,10 +266,11 @@ export default function HeaderPage() {
     (navItems.length > 0); // This disables the button if there's already at least one NavItem
 
 
+    console.log("navItems.length", navItems.length)
 
 
   // Custom message for empty state 
-  const emptyStateMessage = !headerSection && !sectionData 
+  const emptyStateMessage = !partnersSection && !sectionData 
     ? HEADER_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
       ? HEADER_CONFIG.mainSectionRequiredMessage
@@ -291,7 +292,7 @@ export default function HeaderPage() {
       onOpenChange={setIsCreateDialogOpen}
       sectionId={sectionId || ""}
       onServiceCreated={handleItemCreated}
-      title="Header"
+      title="Partners"
     />
   );
 
@@ -313,7 +314,7 @@ export default function HeaderPage() {
       <GenericListPage
         config={HEADER_CONFIG}
         sectionId={sectionId}
-        sectionConfig={headerSectionConfig}
+        sectionConfig={partnersSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
         tableComponent={NavItemsTable}
         createDialogComponent={CreateDialog}
@@ -321,7 +322,7 @@ export default function HeaderPage() {
         onAddNew={handleAddNew}
         isLoading={isLoadingNavItems || isLoadingMainSubSection}
         emptyCondition={navItems.length === 0}
-        noSectionCondition={!headerSection && !sectionData}
+        noSectionCondition={!partnersSection && !sectionData}
         customEmptyMessage={emptyStateMessage}
       />
       
@@ -329,7 +330,7 @@ export default function HeaderPage() {
       {sectionId && (
         <CreateMainSubSection 
           sectionId={sectionId}
-          sectionConfig={headerSectionConfig}
+          sectionConfig={partnersSectionConfig}
           onSubSectionCreated={handleMainSubSectionCreated}
           onFormValidityChange={() => {/* We don't need to track form validity */}}
         />

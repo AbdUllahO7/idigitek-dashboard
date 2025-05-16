@@ -14,7 +14,7 @@ import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { clientCommentsSectionConfig } from "./clientCommentsSectionConfig"
 
 // Configuration for the Client Comments page
-const ChoseUs_CONFIG = {
+const ClientComments_CONFIG = {
   title: "Client Comments Management",
   description: "Manage your Client Comments inventory and multilingual content",
   addButtonLabel: "Add New Client Comments item",
@@ -120,7 +120,7 @@ export default function ChoseUsPage() {
   } = useGenericList({
     sectionId,
     apiHooks: useSectionItems(),
-    editPath: ChoseUs_CONFIG.editPath
+    editPath: ClientComments_CONFIG.editPath
   })
 
   // Process subsection data - Moved to a stable, memoized function to reduce rerenders
@@ -243,10 +243,10 @@ export default function ChoseUsPage() {
     (Boolean(sectionId) && !hasMainSubSection);
 
   const emptyStateMessage = !industrySection && !sectionData 
-    ? ChoseUs_CONFIG.noSectionMessage 
+    ? ClientComments_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
-      ? ChoseUs_CONFIG.mainSectionRequiredMessage
-      : ChoseUs_CONFIG.emptyStateMessage;
+      ? ClientComments_CONFIG.mainSectionRequiredMessage
+      : ClientComments_CONFIG.emptyStateMessage;
 
   // Memoize component references to prevent recreation on each render
   const ChoseUsItemsTable = (
@@ -284,7 +284,7 @@ export default function ChoseUsPage() {
     <div className="space-y-6">
       {/* Main list page with table and section integration */}
       <GenericListPage
-        config={ChoseUs_CONFIG}
+        config={ClientComments_CONFIG}
         sectionId={sectionId}
         sectionConfig={clientCommentsSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}

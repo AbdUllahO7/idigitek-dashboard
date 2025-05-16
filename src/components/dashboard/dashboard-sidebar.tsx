@@ -27,6 +27,7 @@ import {
   X,
   Component,
   MessageCircle,
+  HeartHandshake,
 } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "@/src/lib/utils"
@@ -115,11 +116,17 @@ const allNavItems: NavItem[] = [
     icon: Component,
     sectionId: "team",
   },
-    {
+  {
     title: "Client Comments",
     href: "/dashboard/clientComments",
     icon: MessageCircle,
     sectionId: "clientcomments",
+  },
+  {
+    title: "Partners",
+    href: "/dashboard/partners",
+    icon: HeartHandshake,
+    sectionId: "partners",
   },
   {
     title: "Profile",
