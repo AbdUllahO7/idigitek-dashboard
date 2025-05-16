@@ -91,6 +91,12 @@ const PREDEFINED_SECTIONS = [
     image: "/sections/news.jpg",
     icon: <Component className="h-10 w-10" />,
   },
+    {
+    name: "FAQ",
+    description: "FAQ from your clients",
+    image: "/sections/news.jpg",
+    icon: <Component className="h-10 w-10" />,
+  },
 ]
 
 export function SectionManagement({ hasWebsite }: ManagementProps) {

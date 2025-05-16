@@ -6,13 +6,13 @@ import { FieldConfig } from "@/src/api/types/hooks/MultilingualSection.types";
 
 
 // Define service section configuration
-export const teamSectionConfig = {
-    name: "Team Section Basic",
-    slug: "Team-main",
-    subSectionName: "Team Section Basic",
-    description: "Team section for managing service information",
+export const faqSectionConfig = {
+    name: "Faq Section Basic",
+    slug: "Faq-main",
+    subSectionName: "Faq Section Basic",
+    description: "Faq section for managing service information",
     isMain: true,
-    type: 'Team',
+    type: 'Faq',
     // Define fields with proper typing
     fields: [
         { id: "sectionBadge", label: "Section Badge", type: "text", required: true },
@@ -25,6 +25,5 @@ export const teamSectionConfig = {
         "sectionBadge": "Badge",
         "sectionTitle": "Title", 
         "sectionDescription": "Description",
-        "serviceDetails": "ServiceDetails"
     }
 };

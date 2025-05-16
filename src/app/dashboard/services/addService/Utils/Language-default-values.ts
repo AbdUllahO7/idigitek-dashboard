@@ -42,7 +42,12 @@ const defaultValueDefinitions = {
       title: "",
       description: "",
     }],
-    
+    faqHaveQuestions: () => [{
+      icon: "Car",
+      title: "",
+      description: "",
+      buttonText : "",
+    }],
     faq: () => [{
       question: "",
       answer: "",
@@ -114,6 +119,9 @@ export const createBenefitsDefaultValues = (languageIds: string[], activeLanguag
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.benefit);
 };
 
+export const createHaveFaqQuestionsDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.benefit);
+};
 export const createChooseUsDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.benefit);
 };

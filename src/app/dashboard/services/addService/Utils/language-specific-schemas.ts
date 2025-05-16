@@ -59,6 +59,16 @@ const schemaDefinitions = {
       })
     ).min(1, { message: "At least one benefit is required" }),
 
+    faqQuestions: (z: any) => z.array(
+      z.object({
+        icon: z.string().min(1, { message: "Icon is required" }),
+        title: z.string().min(1, { message: "Title is required" }),
+        description: z.string().min(1, { message: "Description is required" }),
+        buttonText: z.string().min(1, { message: "Button Text is required" }),
+
+      })
+    ).min(1, { message: "At least one benefit is required" }),
+
     chooseUs: (z: any) => z.array(
       z.object({
         icon: z.string().min(1, { message: "Icon is required" }),
@@ -172,7 +182,6 @@ export const createProjectMoreInfoInfoSchema = (languageIds: string[], activeLan
 };
 
 
-
 export const createIndustrySchema = (languageIds: string[], activeLanguages: Language[]) => {
     const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.industry);
     return z.object({
@@ -207,7 +216,9 @@ export const createProcessStepsSchema = (languageIds: string[], activeLanguages:
 export const createBenefitsSchema = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.benefit);
 };
-  
+  export const createHaveFaqQuestionsSchema = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.faqQuestions);
+};
 export const createChooseUsSchema = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.chooseUs);
 };

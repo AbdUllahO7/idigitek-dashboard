@@ -28,6 +28,7 @@ import {
   Component,
   MessageCircle,
   HeartHandshake,
+  ShieldQuestion,
 } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "@/src/lib/utils"
@@ -128,6 +129,12 @@ const allNavItems: NavItem[] = [
     icon: HeartHandshake,
     sectionId: "partners",
   },
+    {
+    title: "FAQ",
+    href: "/dashboard/FAQ",
+    icon: ShieldQuestion,
+    sectionId: "faq",
+  },
   {
     title: "Profile",
     href: "/dashboard/profile",
@@ -152,6 +159,7 @@ const allNavItems: NavItem[] = [
     icon: Settings,
     roles: ["idigitekAdmin"],
   },
+  
 ]
 
 /**
