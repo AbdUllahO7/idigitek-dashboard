@@ -54,8 +54,6 @@ export const QuestionsLanguageCard = memo(({
 
           />
         ))}
-
-     
       </CardContent>
     </Card>
   );

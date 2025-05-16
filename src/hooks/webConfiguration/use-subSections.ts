@@ -2,6 +2,46 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
 import { SubSection } from '@/src/api/types/hooks/section.types';
 
+// Define interface for activation options
+export interface SubSectionActivationOptions {
+  isActive: boolean;
+  affectChildren?: boolean;
+  recursive?: boolean;
+  reason?: string;
+}
+
+// Define interface for bulk activation
+export interface BulkActivationRequest {
+  ids: string[];
+  isActive: boolean;
+  affectChildren?: boolean;
+  recursive?: boolean;
+  reason?: string;
+}
+
+// Define interface for scheduling activation
+export interface ScheduleActivationRequest {
+  id: string;
+  scheduledDate: Date | string;
+  options: SubSectionActivationOptions;
+}
+
+// Define interface for activation results
+export interface ActivationResult {
+  subsection: SubSection;
+  contentElementsAffected: number;
+  childSubsectionsAffected?: number;
+  previousMainId?: string;
+  newMainId?: string;
+  statusChangeLog?: {
+    timestamp: Date;
+    action: string;
+    reason?: string;
+    performedBy?: string;
+  };
+  error?: string;
+}
+
 // Base subsection hook
 export function useSubSections() {
   const queryClient = useQueryClient();
@@ -18,6 +58,10 @@ export function useSubSections() {
   const subsectionsByWebSiteKey = (websiteId: string) => [...subsectionsKey, 'website', websiteId];
   const completeSubsectionsByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'complete'];
   const mainSubsectionByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'main'];
+  // New keys for activation-related queries
+  const activationKey = (id: string) => [...subsectionKey(id), 'activation'];
+  const bulkActivationKey = [...subsectionsKey, 'bulk-activation'];
+  const scheduledActivationsKey = [...subsectionsKey, 'scheduled-activations'];
 
   const useGetByWebSiteId = (
     websiteId: string,
@@ -341,30 +385,163 @@ export function useSubSections() {
       enabled: !!slug && slug !== ""
     });
   };
-  // Add new query key
 
   // Get main subsection for a WebSite
   const useGetMainByWebSiteId = (websiteId: string) => {
-      return useQuery({
-          queryKey: mainSubsectionByWebSiteKey(websiteId),
-          queryFn: async () => {
-              const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/main`);
-              return data;
-          },
-          enabled: !!websiteId && websiteId !== "null"
-      });
+    return useQuery({
+      queryKey: mainSubsectionByWebSiteKey(websiteId),
+      queryFn: async () => {
+        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/main`);
+        return data;
+      },
+      enabled: !!websiteId && websiteId !== "null"
+    });
   };
 
+  // NEW FUNCTIONS FOR SUBSECTION ACTIVATION
 
+  // Manage subsection activation state
+  const useManageActivation = () => {
+    return useMutation({
+      mutationFn: async ({ id, options }: { id: string; options: SubSectionActivationOptions }) => {
+        const { data } = await apiClient.patch(`${endpoint}/${id}/activation`, options);
+        return data;
+      },
+      onSuccess: (data) => {
+        // Get the updated subsection from the result
+        const updatedSubsection = data.subsection;
+        
+        // Update cached data
+        if (updatedSubsection._id) {
+          queryClient.setQueryData(subsectionKey(updatedSubsection._id), updatedSubsection);
+        }
+        
+        if (updatedSubsection.slug) {
+          queryClient.setQueryData(subsectionSlugKey(updatedSubsection.slug), updatedSubsection);
+        }
+        
+        // Invalidate related queries
+        if (updatedSubsection.sectionItem) {
+          queryClient.invalidateQueries({ 
+            queryKey: subsectionBySectionItemKey(
+              typeof updatedSubsection.sectionItem === 'string' 
+                ? updatedSubsection.sectionItem 
+                : updatedSubsection.sectionItem._id
+            ) 
+          });
+        }
+        
+        if (updatedSubsection.section) {
+          const sectionId = typeof updatedSubsection.section === 'string' 
+            ? updatedSubsection.section 
+            : updatedSubsection.section._id;
+            
+          queryClient.invalidateQueries({
+            queryKey: subsectionBySectionKey(sectionId)
+          });
+          
+          queryClient.invalidateQueries({
+            queryKey: completeSubsectionBySectionKey(sectionId)
+          });
+          
+          // If main subsection changed, invalidate main subsection query
+          if (data.previousMainId || data.newMainId) {
+            queryClient.invalidateQueries({
+              queryKey: mainSubsectionBySectionKey(sectionId)
+            });
+          }
+        }
+        
+        if (updatedSubsection.WebSiteId) {
+          const websiteId = typeof updatedSubsection.WebSiteId === 'string'
+            ? updatedSubsection.WebSiteId
+            : updatedSubsection.WebSiteId._id;
+            
+          queryClient.invalidateQueries({ 
+            queryKey: subsectionsByWebSiteKey(websiteId) 
+          });
+          
+          queryClient.invalidateQueries({ 
+            queryKey: completeSubsectionsByWebSiteKey(websiteId) 
+          });
+          
+          // If main subsection changed, invalidate main subsection query
+          if (data.previousMainId || data.newMainId) {
+            queryClient.invalidateQueries({
+              queryKey: mainSubsectionByWebSiteKey(websiteId)
+            });
+          }
+        }
+        
+        // Invalidate all subsections queries to ensure lists are updated
+        queryClient.invalidateQueries({ queryKey: subsectionsKey });
+      },
+    });
+  };
+  
+  // Simple toggle active status for a subsection (original simpler implementation)
+  const useToggleActive = () => {
+    return useMutation({
+      mutationFn: async ({ id, status }: { id: string; status: boolean }) => {
+        const { data } = await apiClient.patch(`${endpoint}/${id}/toggle-active`, { status });
+        return data;
+      },
+      onSuccess: (data) => {
+        if (data._id) {
+          queryClient.setQueryData(subsectionKey(data._id), data);
+        }
+        
+        if (data.slug) {
+          queryClient.setQueryData(subsectionSlugKey(data.slug), data);
+        }
+        
+        // Invalidate related queries
+        if (data.sectionItem) {
+          queryClient.invalidateQueries({ 
+            queryKey: subsectionBySectionItemKey(
+              typeof data.sectionItem === 'string' ? data.sectionItem : data.sectionItem._id
+            ) 
+          });
+        }
+        
+        if (data.section) {
+          const sectionId = typeof data.section === 'string' ? data.section : data.section._id;
+          
+          queryClient.invalidateQueries({
+            queryKey: subsectionBySectionKey(sectionId)
+          });
+          
+          queryClient.invalidateQueries({
+            queryKey: completeSubsectionBySectionKey(sectionId)
+          });
+        }
+        
+        if (data.WebSiteId) {
+          const websiteId = typeof data.WebSiteId === 'string' ? data.WebSiteId : data.WebSiteId._id;
+          
+          queryClient.invalidateQueries({ 
+            queryKey: subsectionsByWebSiteKey(websiteId) 
+          });
+          
+          queryClient.invalidateQueries({ 
+            queryKey: completeSubsectionsByWebSiteKey(websiteId) 
+          });
+        }
+        
+        // Invalidate all subsections queries
+        queryClient.invalidateQueries({ queryKey: subsectionsKey });
+      },
+    });
+  };
 
-  // Return all hooks including section-related ones
+  // Return all hooks including the new activation hooks
   return {
     useGetAll,
     useGetById,
     useGetBySlug,
     useGetBySectionItemId,
     useGetBySectionId,
-    useGetCompleteBySectionId,  // Added new hook for complete section data
+    useGetCompleteBySectionId,
     useGetMainBySectionId,
     useCreate,
     useUpdate,
@@ -374,7 +551,8 @@ export function useSubSections() {
     useGetCompleteBySlug,
     useGetByWebSiteId,
     useGetCompleteByWebSiteId,
-    useGetMainByWebSiteId 
-
+    useGetMainByWebSiteId,
+    useManageActivation,
+    useToggleActive,
   };
 }

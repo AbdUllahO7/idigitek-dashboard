@@ -54,9 +54,7 @@ export interface HeroFormProps {
     processSteps: Record<string, any>;
     faq: Record<string, any>;
   }
- export type FormDataNews = {
-    news: MultilingualSectionData | Record<string, any>;
-  }
+
   export interface BenefitItem {
     icon: string;
     title: string;

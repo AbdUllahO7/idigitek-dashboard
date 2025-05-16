@@ -30,7 +30,14 @@ const defaultValueDefinitions = {
       description: "",
       backLinkText: "",
     }),
-    
+    blog: () => ({
+      title: "",
+      description: "",
+      content : "",
+      category : "",
+      date : "",
+      backLinkText: "",
+    }),
     processStep: () => [{
       icon: "Clock",
       title: "",
@@ -145,6 +152,9 @@ export const createSectionsDefaultValues = (languageIds: string[], activeLanguag
       })
     ),
   };
+};
+export const createBlogDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.blog);
 };
 
 // ex : 

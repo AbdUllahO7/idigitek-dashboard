@@ -1,7 +1,7 @@
 import { Language } from "../../hooks/language.types";
 import { MultilingualSectionData } from "../../hooks/MultilingualSection.types";
 
-export interface NewsFormProps {
+export interface BlogsFormProps {
     languageIds: string[];
     activeLanguages: Language[]
     onDataChange?: (data: any) => void;
@@ -10,6 +10,6 @@ export interface NewsFormProps {
     initialData?: any;
   }
 
- export type FormDataNews = {
-    news: MultilingualSectionData | Record<string, any>;
+ export type FormDataBlog = {
+    blog: MultilingualSectionData | Record<string, any>;
   }

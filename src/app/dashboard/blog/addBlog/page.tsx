@@ -1,4 +1,4 @@
-// Updated AddNews.tsx to fix the edit mode data display issue
+// Updated AddBlog.tsx to fix the edit mode data display issue
 
 "use client"
 import { useSearchParams } from "next/navigation"
@@ -8,15 +8,15 @@ import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
-import NewsForm from "./News/NewsForm"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
-import { FormDataNews } from "@/src/api/types/sections/news/newsSections.types"
+import { FormDataBlog } from "@/src/api/types/sections/blog/blogSection.types"
+import BlogForm from "./Blog/BlogForm"
 
 
 // Form sections to collect data from
-const FORM_SECTIONS = ["news"]
+const FORM_SECTIONS = ["blog"]
 
-export default function AddNews() {
+export default function AddBlog() {
   const searchParams = useSearchParams()
   
   // Get URL parameters
@@ -71,7 +71,11 @@ export default function AddNews() {
     
     // Create a mapping for known slug patterns
     const slugMappings: Record<string, string> = {
-      'news-section': 'news-section',
+      'process-steps': 'process-steps',
+      'blog-section': 'blog-section',
+      'benefits': 'benefits',
+      'features': 'features',
+      'faq-section': 'faq-section'
     };
     
     // Get the normalized version of the slug
@@ -110,8 +114,8 @@ export default function AddNews() {
     if (isCreateMode) return "";
     
     // Special case handling for processSteps - correct the capitalization
-    if (baseSlug === "process-Steps") {
-      baseSlug = "process-steps";
+    if (baseSlug === "blog-") {
+      baseSlug = "blog-";
     }
     
     // Find the subsection
@@ -129,34 +133,34 @@ export default function AddNews() {
   // Define tabs configuration
   const tabs = [
     {
-      id: "news",
-      label: "News",
+      id: "blog",
+      label: "Blog",
       icon: <Layout className="h-4 w-4" />,
       component: (
-        <NewsForm
+        <BlogForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
-          slug={getSlug('news-section')}
+          slug={getSlug('blog-section')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('news-section')}
+          initialData={findSubsection('blog-section')}
         />
       )
     }
   ]
    
   // Define save handler for the service
-  const handleSaveNews = async (formData: FormDataNews) => {
-    // Extract service info from news data for title/description
-    const newsData = formData.news || {}
+  const handleSaveBlog = async (formData: FormDataBlog) => {
+    // Extract service info from blog data for title/description
+    const blogData = formData.blog || {}
     
     // Get English title and description values or fallback to the first language
-    let serviceName = "New News"
+    let serviceName = "New Blog"
     let serviceDescription = ""
     
     // Loop through languages to find title and description
-    for (const langCode in newsData) {
-      if (langCode !== 'backgroundImage' && typeof newsData[langCode] === 'object') {
-        const langValues = newsData[langCode] as Record<string, any>
+    for (const langCode in blogData) {
+      if (langCode !== 'backgroundImage' && typeof blogData[langCode] === 'object') {
+        const langValues = blogData[langCode] as Record<string, any>
         if (langValues?.title) {
           serviceName = langValues.title
         }
@@ -174,7 +178,7 @@ export default function AddNews() {
     const servicePayload = {
       name: serviceName,
       description: serviceDescription,
-      image: newsData.backgroundImage || null,
+      image: blogData.backgroundImage || null,
       isActive: true,
       section: sectionId
     }
@@ -188,17 +192,17 @@ export default function AddNews() {
   
   return (
     <FormShell
-      title={isCreateMode ? "Create New News" : "Edit News"}
+      title={isCreateMode ? "Create New Blog" : "Edit Blog"}
       subtitle={isCreateMode 
         ? "Create a new service with multilingual content" 
-        : `Editing "${sectionItemData?.data?.name || 'News'}" content across multiple languages`}
-      backUrl={`/dashboard/News?sectionId=${sectionId}`}
+        : `Editing "${sectionItemData?.data?.name || 'Blog'}" content across multiple languages`}
+      backUrl={`/dashboard/blog?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}
       sectionId={sectionId}
       sectionItemId={sectionItemId}
       mode={mode}
-      onSave={handleSaveNews}
+      onSave={handleSaveBlog}
       tabs={tabs}
       formSections={FORM_SECTIONS}
       isLoading={isLoading}
