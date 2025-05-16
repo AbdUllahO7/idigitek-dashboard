@@ -116,7 +116,25 @@ export const createProjectDefaultValues = (languageIds: string[], activeLanguage
 
   return defaultValues;
 };
+export const createContactInformationDefaultValues = (languageIds: string[], activeLanguages: any[]) => {
+  const defaultValues: Record<string, any> = {};
 
+  languageIds.forEach((langId) => {
+    defaultValues[langId] = {
+      title: "",
+      fullname: "",
+      fullnamePlaceHolder: "",
+      email: "",
+      emailPlaceHolder: "",
+      message: "",
+      messagePlaceHolder: "",
+      subjects: [""],
+      buttonText: "",
+    };
+  });
+
+  return defaultValues;
+};
 
 export const createProcessStepsDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.processStep);

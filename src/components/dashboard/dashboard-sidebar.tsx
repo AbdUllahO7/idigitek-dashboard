@@ -30,6 +30,7 @@ import {
   HeartHandshake,
   ShieldQuestion,
   PenBoxIcon,
+  Contact,
 } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "@/src/lib/utils"
@@ -141,6 +142,12 @@ const allNavItems: NavItem[] = [
     href: "/dashboard/blog",
     icon: PenBoxIcon,
     sectionId: "blog",
+  },
+    {
+    title: "Contact",
+    href: "/dashboard/contact",
+    icon: Contact,
+    sectionId: "contact",
   },
   {
     title: "Profile",

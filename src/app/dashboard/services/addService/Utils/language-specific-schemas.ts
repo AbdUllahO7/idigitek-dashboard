@@ -90,7 +90,20 @@ const schemaDefinitions = {
       year: z.string().optional(),
       technologies: z.string().optional(),
     }),
+    ContactInformationInfo: (z: any) => z.object({
+        title: z.string().min(1, { message: "Title is required" }),
+    fullname: z.string().min(1, { message: "Full name text is required" }),
+    fullnamePlaceHolder: z.string().optional(),
+    email: z.string().min(1, { message: "Email text is required" }),
+    emailPlaceHolder: z.string().optional(),
+    message: z.string().min(1, { message: "Message text is required" }),
+    messagePlaceHolder: z.string().optional(),
+    subjects: z
+      .array(z.string().min(1, { message: "Subject cannot be empty" }))
+      .min(1, { message: "At least one subject is required" }),
+    buttonText: z.string().min(1, { message: "Button text is required" }),
 
+    }),
     projectMoreInfo: (z: any) => z.object({
       client: z.string().min(1, { message: "client is required" }),
       industry: z.string().min(1, { message: "Industry is required" }),
@@ -172,6 +185,15 @@ export const createProjectBasicInfoSchema = (languageIds: string[], activeLangua
       backgroundImage: z.string().optional(),
     });
 };
+
+export const createContactInformationInfoSchema = (languageIds: string[], activeLanguages: Language[]) => {
+    const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.ContactInformationInfo);
+    return z.object({
+      ...schema.shape,
+      backgroundImage: z.string().optional(),
+    });
+};
+
 export const createProjectMoreInfoInfoSchema = (languageIds: string[], activeLanguages: any[]) => {
   const languageSchemas: Record<string, z.ZodObject<any>> = {};
 
