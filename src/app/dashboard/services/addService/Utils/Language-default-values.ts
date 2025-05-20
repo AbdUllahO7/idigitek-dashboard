@@ -56,7 +56,18 @@ const defaultValueDefinitions = {
         requestButton: "",
         image :""
     }],
-    
+      footerSection: () => [
+        {
+          description: "",
+          socialLinks: [],
+        },
+      ],
+     specialLink: () => [
+        {
+        image: "",
+        url: "",
+        },
+      ],
     faqHaveQuestions: () => [{
       icon: "Car",
       title: "",
@@ -78,7 +89,11 @@ const defaultValueDefinitions = {
         image: "",
       },
     }],
-
+   footer: () => ({
+      icon : "Car",
+      title: "",
+      description: "",
+    }),
 };
 
 const createLanguageDefaultValues = <T>(
@@ -106,6 +121,7 @@ export const createHeroDefaultValues = (languageIds: string[], activeLanguages: 
       { backgroundImage: "" }
     );
 };
+
 
 export const createProjectDefaultValues = (languageIds: string[], activeLanguages: any[]) => {
   const defaultValues: Record<string, any> = {};
@@ -186,6 +202,13 @@ export const createBlogDefaultValues = (languageIds: string[], activeLanguages: 
 };
 export const createHeroSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.heroSection);
+};
+export const createFooterSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.footerSection);
+};
+
+export const createFooterSpecialLinkSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.specialLink);
 };
 
 // ex : 

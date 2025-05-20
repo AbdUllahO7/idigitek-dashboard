@@ -38,6 +38,7 @@ const schemaDefinitions = {
       job: z.string().min(1, { message: "Job is required" }),
       description: z.string().min(1, { message: "Description is required" }),
     }),
+
     industry: (z: any) => z.object({
       title: z.string().min(1, { message: "Title is required" }),
       description: z.string().min(1, { message: "Description is required" }),
@@ -148,7 +149,35 @@ const schemaDefinitions = {
         image : z.string().min(1, "Request Button text is required"),
       })
     ).min(1, { message: "At least one feature is required" }),
-    
+    footerSection: (z: any) =>
+          z.array(
+
+            z.object({
+              id: z.string().optional(),
+              description: z.string().min(1, "Description is required"),
+              socialLinks: z
+                .array(
+                  z.object({
+                    id: z.string().optional(),
+                    image: z.string().min(1, "Social link image is required"),
+                    url: z.string().url("Invalid URL").min(1, "Social link URL is required"),
+                  })
+                )
+                .optional()
+                .default([]),
+            })
+    ).min(1, { message: "At least one hero is required" }),
+      specialLink: (z: any) =>
+           z.array(
+                  z.object({
+                    id: z.string().optional(),
+                    image: z.string().min(1, "Social link image is required"),
+                    url: z.string().url("Invalid URL").min(1, "Social link URL is required"),
+                  })
+                )
+                .optional()
+                .default([]),
+  
     ChooseUs: (z: any) => z.object({
       title: z.string().min(1, { message: "Title is required" }),
       description: z.string().min(1, { message: "Description is required" }),
@@ -188,6 +217,8 @@ export const createTeamSchema = (languageIds: string[], activeLanguages: Languag
       backgroundImage: z.string().optional(),
     });
 };
+
+
 export const createProjectBasicInfoSchema = (languageIds: string[], activeLanguages: Language[]) => {
     const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.projectBasicInfo);
     return z.object({
@@ -263,6 +294,8 @@ export const createHaveFaqQuestionsSchema = (languageIds: string[], activeLangua
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.faqQuestions);
 };
 
+
+
 export const createChooseUsSchema = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.chooseUs);
 };
@@ -289,6 +322,12 @@ export const createBlogSchema = (languageIds: string[], activeLanguages: Languag
 
 export const createHeroSectionSchema = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.heroSection);
+};
+export const createFooterSectionSchema = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.footerSection);
+};
+export const createFooterSpecialLinkSectionSchema = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.specialLink);
 };
 
 // Usage remains the same

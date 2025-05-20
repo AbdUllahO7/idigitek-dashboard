@@ -157,6 +157,12 @@ const allNavItems: NavItem[] = [
     icon: TouchpadOff,
     sectionId: "hero",
   },
+   {
+    title: "Footer",
+    href: "/dashboard/footer",
+    icon: TouchpadOff,
+    sectionId: "footer",
+  },
   {
     title: "Profile",
     href: "/dashboard/profile",

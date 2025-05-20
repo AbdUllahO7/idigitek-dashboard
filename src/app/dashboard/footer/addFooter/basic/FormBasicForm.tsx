@@ -1,4 +1,5 @@
 "use client";
+
 import {
   forwardRef,
   useEffect,
@@ -17,37 +18,37 @@ import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
 import { ValidationDialog } from "./ValidationDialog";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
-import { HeroFormProps, HeroFormRef, StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
 import { SubSection } from "@/src/api/types/hooks/section.types";
 import { useWebsiteContext } from "@/src/providers/WebsiteContext";
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
-import { createHeroSectionSchema } from "../../services/addService/Utils/language-specific-schemas";
-import { createHeroSectionDefaultValues, createLanguageCodeMap } from "../../services/addService/Utils/Language-default-values";
-import { createFormRef, getSubSectionCountsByLanguage, useForceUpdate, validateSubSectionCounts } from "../../services/addService/Utils/Expose-form-data";
-import { LanguageCard } from "./HeroLanguageCard";
-import { HeroesFormState } from "@/src/api/types/sections/heroSection/HeroSection.type";
-import { processAndLoadData } from "../../services/addService/Utils/load-form-data";
 import apiClient from "@/src/lib/api-client";
-import { useHeroImages } from "./utils/useHeroImages";
+import { createFooterSectionSchema } from "../../../services/addService/Utils/language-specific-schemas";
+import { createFooterSectionDefaultValues, createLanguageCodeMap } from "../../../services/addService/Utils/Language-default-values";
+import { createFormRef, getSubSectionCountsByLanguage, useForceUpdate, validateSubSectionCounts } from "../../../services/addService/Utils/Expose-form-data";
+import { processAndLoadData } from "../../../services/addService/Utils/load-form-data";
+import { FooterLanguageCard } from "./FooterLanguageCard";
+import { FooteresFormState, FooterFormProps } from "@/src/api/types/sections/footer/footerSection.type";
+import { StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
+import { useHeroImages } from "../utils/FooterImageUploader";
 
 interface FormData {
   [key: string]: Array<{
-    title: string;
     description: string;
-    requestButton: string;
-    exploreButton: string;
-    image: string;
+    socialLinks: Array<{
+      image: string;
+      url: string;
+    }>;
     id?: string;
   }>;
 }
 
-const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
+const FormBasicForm = forwardRef<any, FooterFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId }, ref) => {
     const { websiteId } = useWebsiteContext();
-    const formSchema = createHeroSectionSchema(languageIds, activeLanguages);
-    const defaultValues = createHeroSectionDefaultValues(languageIds, activeLanguages);
+    const formSchema = createFooterSectionSchema(languageIds, activeLanguages);
+    const defaultValues = createFooterSectionDefaultValues(languageIds, activeLanguages);
 
     const form = useForm<FormData>({
       resolver: zodResolver(formSchema),
@@ -55,12 +56,12 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       mode: "onChange",
     });
 
-    const [state, setState] = useState<HeroesFormState>({
+    const [state, setState] = useState<FooteresFormState>({
       isLoadingData: !!slug,
       dataLoaded: !slug,
       hasUnsavedChanges: false,
       isValidationDialogOpen: false,
-      heroCountMismatch: false,
+      footerCountMismatch: false,
       existingSubSectionId: null,
       contentElements: [],
       isSaving: false,
@@ -71,7 +72,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     const updateState = useCallback(
-      (newState: Partial<HeroesFormState>) => {
+      (newState: Partial<FooteresFormState>) => {
         setState((prev) => ({ ...prev, ...newState }));
       },
       []
@@ -102,7 +103,8 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       refetch,
     } = useGetCompleteBySlug(slug || "", Boolean(slug));
 
-    const { heroImages, handleHeroImageRemove, updateHeroImageIndices, HeroImageUploader } = useHeroImages(form);
+const { heroImages, socialLinkImages, handleHeroImageRemove, updateHeroImageIndices, HeroImageUploader, SocialLinkImageUploader } = useHeroImages(form);
+
 
     useEffect(() => {
       onDataChangeRef.current = onDataChange;
@@ -114,10 +116,10 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       }
     }, [languageIds]);
 
-    const validateFormHeroCounts = useCallback(() => {
+    const validateFormFooterCounts = useCallback(() => {
       const values = form.getValues();
       const isValid = validateSubSectionCounts(values);
-      updateState({ heroCountMismatch: !isValid });
+      updateState({ footerCountMismatch: !isValid });
       return isValid;
     }, [form, updateState]);
 
@@ -131,7 +133,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       if (currentSteps.length <= 1) {
         toast({
           title: "Cannot remove",
-          description: "You need at least one hero",
+          description: "You need at least one footer",
           variant: "destructive",
         });
         setIsDeleting(false);
@@ -141,44 +143,43 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
 
       try {
         if (state.existingSubSectionId && state.contentElements.length > 0) {
-          const heroNumber = index + 1;
-          const heroElements = state.contentElements.filter((element) => {
-            const match = element.name.match(/Hero (\d+)/i);
-            return match && Number.parseInt(match[1]) === heroNumber;
+          const footerNumber = index + 1;
+          const footerElements = state.contentElements.filter((element) => {
+            const match = element.name.match(/Footer (\d+)/i);
+            return match && Number.parseInt(match[1]) === footerNumber;
           });
 
-          if (heroElements.length > 0) {
+          if (footerElements.length > 0) {
             await Promise.all(
-              heroElements.map((element) => deleteContentElement.mutateAsync(element._id))
+              footerElements.map((element) => deleteContentElement.mutateAsync(element._id))
             );
 
             updateState({
               contentElements: state.contentElements.filter((element) => {
-                const match = element.name.match(/Hero (\d+)/i);
-                return !(match && Number.parseInt(match[1]) === heroNumber);
+                const match = element.name.match(/Footer (\d+)/i);
+                return !(match && Number.parseInt(match[1]) === footerNumber);
               }),
             });
 
             toast({
-              title: "Hero deleted",
-              description: `Hero ${heroNumber} has been deleted from the database`,
+              title: "Footer deleted",
+              description: `Footer ${footerNumber} has been deleted from the database`,
             });
           }
 
           const remainingElements = state.contentElements.filter((element) => {
-            const match = element.name.match(/Hero (\d+)/i);
-            return match && Number.parseInt(match[1]) > heroNumber;
+            const match = element.name.match(/Footer (\d+)/i);
+            return match && Number.parseInt(match[1]) > footerNumber;
           });
 
           await Promise.all(
             remainingElements.map(async (element) => {
-              const match = element.name.match(/Hero (\d+)/i);
+              const match = element.name.match(/Footer (\d+)/i);
               if (match) {
                 const oldNumber = Number.parseInt(match[1]);
                 const newNumber = oldNumber - 1;
-                const newName = element.name.replace(`Hero ${oldNumber}`, `Hero ${newNumber}`);
-                const newOrder = element.order - 5; // Adjusted for five fields (including image)
-
+                const newName = element.name.replace(`Footer ${oldNumber}`, `Footer ${newNumber}`);
+                const newOrder = element.order - (5 + (currentSteps[index].socialLinks?.length || 0) * 2);
                 await updateContentElement.mutateAsync({
                   id: element._id,
                   data: { name: newName, order: newOrder },
@@ -200,17 +201,17 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
         });
 
         toast({
-          title: "Hero removed",
-          description: "The hero has been removed successfully.",
+          title: "Footer removed",
+          description: "The footer has been removed successfully.",
         });
 
-        validateFormHeroCounts();
+        validateFormFooterCounts();
         updateState({ hasUnsavedChanges: true });
       } catch (error) {
-        console.error("Error removing hero:", error);
+        console.error("Error removing footer:", error);
         toast({
           title: "Error",
-          description: "There was an error removing the hero.",
+          description: "There was an error removing the footer.",
           variant: "destructive",
         });
       } finally {
@@ -228,11 +229,11 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       handleHeroImageRemove,
       updateHeroImageIndices,
       toast,
-      validateFormHeroCounts,
+      validateFormFooterCounts,
       updateState,
     ]);
 
-    const processHeroesData = useCallback(
+    const processFooteresData = useCallback(
       (subsectionData: SubSection) => {
         updateState({ isLoadingData: true });
         try {
@@ -243,48 +244,52 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             activeLanguages,
             {
               groupElements: (elements) => {
-                const heroGroups: { [key: number]: ContentElement[] } = {};
+                const footerGroups: { [key: number]: ContentElement[] } = {};
                 elements.forEach((element: any) => {
-                  const match = element.name.match(/Hero (\d+)/i);
-                  if (match) {
-                    const heroNumber = parseInt(match[1], 10);
-                    if (!heroGroups[heroNumber]) {
-                      heroGroups[heroNumber] = [];
+                  const footerMatch = element.name.match(/Footer (\d+)/i);
+                  if (footerMatch) {
+                    const footerNumber = parseInt(footerMatch[1], 10);
+                    if (!footerGroups[footerNumber]) {
+                      footerGroups[footerNumber] = [];
                     }
-                    heroGroups[heroNumber].push(element);
+                    footerGroups[footerNumber].push(element);
                   }
                 });
-                return heroGroups;
+                return footerGroups;
               },
               processElementGroup: (
-                heroNumber,
+                footerNumber,
                 elements,
                 langId,
                 getTranslationContent
               ) => {
-                const titleElement = elements.find((el) => el.name.includes("Title"));
                 const descriptionElement = elements.find((el) => el.name.includes("Description"));
-                const exploreButtonElement = elements.find((el) => el.name.includes("ExploreButton"));
-                const requestButtonElement = elements.find((el) => el.name.includes("RequestButton"));
-                const imageElement = elements.find((el) => el.name.includes("Image") && el.type === "image");
+
+                const socialLinkElements = elements.filter((el) => el.name.match(/Footer \d+ - SocialLink \d+/i));
+                const socialLinks = socialLinkElements.reduce((acc, el) => {
+                  const match = el.name.match(/Footer \d+ - SocialLink (\d+)/i);
+                  if (match) {
+                    const socialLinkIndex = parseInt(match[1], 10) - 1;
+                    const isImage = el.type === "image";
+                    const isUrl = el.name.includes("Url");
+                    if (!acc[socialLinkIndex]) acc[socialLinkIndex] = { image: "", url: "" };
+                    if (isImage) acc[socialLinkIndex].image = el.imageUrl || "";
+                    if (isUrl) acc[socialLinkIndex].url = getTranslationContent(el, "");
+                  }
+                  return acc;
+                }, [] as { image: string; url: string }[]);
 
                 return {
-                  id: `hero-${heroNumber}`,
-                  title: getTranslationContent(titleElement, ""),
+                  id: `footer-${footerNumber}`,
                   description: getTranslationContent(descriptionElement, ""),
-                  exploreButton: getTranslationContent(exploreButtonElement, ""),
-                  requestButton: getTranslationContent(requestButtonElement, ""),
-                  image: imageElement?.imageUrl || "",
+                  socialLinks,
                 };
               },
               getDefaultValue: () => [
                 {
-                  id: "hero-1",
-                  title: "",
+                  id: "footer-1",
                   description: "",
-                  exploreButton: "",
-                  requestButton: "",
-                  image: "",
+                  socialLinks: [],
                 },
               ],
             },
@@ -294,82 +299,77 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
               setDataLoaded: (loaded) => updateState({ dataLoaded: loaded }),
               setHasUnsavedChanges: (hasChanges) => updateState({ hasUnsavedChanges: hasChanges }),
               setIsLoadingData: (loading) => updateState({ isLoadingData: loading }),
-              validateCounts: validateFormHeroCounts,
+              validateCounts: validateFormFooterCounts,
             }
           );
-          console.log("Form values after processHeroesData:", form.getValues());
         } catch (error) {
-          console.error("Error processing hero data:", error);
+          console.error("Error processing footer data:", error);
           toast({
             title: "Error loading data",
-            description: "Failed to load hero data. Please try again.",
+            description: "Failed to load footer data. Please try again.",
             variant: "destructive",
           });
         } finally {
           updateState({ isLoadingData: false });
         }
       },
-      [form, languageIds, activeLanguages, updateState, validateFormHeroCounts, toast]
+      [form, languageIds, activeLanguages, updateState, validateFormFooterCounts, toast]
     );
 
     useEffect(() => {
       if (!slug || state.dataLoaded || isLoadingSubsection || !completeSubsectionData?.data) {
         return;
       }
-      console.log("Refetching data:", completeSubsectionData.data);
-      processHeroesData(completeSubsectionData.data);
-    }, [completeSubsectionData, isLoadingSubsection, state.dataLoaded, slug, processHeroesData]);
+      processFooteresData(completeSubsectionData.data);
+    }, [completeSubsectionData, isLoadingSubsection, state.dataLoaded, slug, processFooteresData]);
 
     useEffect(() => {
       if (state.isLoadingData || !state.dataLoaded) return;
 
       const subscription = form.watch((value) => {
         updateState({ hasUnsavedChanges: true });
-        validateFormHeroCounts();
+        validateFormFooterCounts();
         if (onDataChangeRef.current) {
           onDataChangeRef.current(value as FormData);
         }
       });
 
       return () => subscription.unsubscribe();
-    }, [form, state.isLoadingData, state.dataLoaded, validateFormHeroCounts, updateState]);
+    }, [form, state.isLoadingData, state.dataLoaded, validateFormFooterCounts, updateState]);
 
-    const addHero = useCallback(
+    const addFooter = useCallback(
       (langCode: string) => {
-        const newHeroId = `hero-${Date.now()}`;
-        const newHero = {
-          id: newHeroId,
-          title: "",
+        const newFooterId = `footer-${Date.now()}`;
+        const newFooter = {
+          id: newFooterId,
           description: "",
-          exploreButton: "",
-          requestButton: "",
-          image: "",
+          socialLinks: [],
         };
 
         Object.keys(form.getValues()).forEach((lang) => {
-          const currentHeroes = form.getValues()[lang] || [];
-          form.setValue(lang, [...currentHeroes, newHero], {
+          const currentFooteres = form.getValues()[lang] || [];
+          form.setValue(lang, [...currentFooteres, newFooter], {
             shouldDirty: true,
             shouldValidate: true,
           });
         });
 
-        validateFormHeroCounts();
+        validateFormFooterCounts();
         updateState({ hasUnsavedChanges: true });
         toast({
-          title: "Hero added",
-          description: "A new hero has been added. Please fill in the details and save your changes.",
+          title: "Footer added",
+          description: "A new footer has been added. Please fill in the details and save your changes.",
         });
       },
-      [form, validateFormHeroCounts, updateState, toast]
+      [form, validateFormFooterCounts, updateState, toast]
     );
 
     const confirmDeleteStep = useCallback((langCode: string, index: number) => {
-      const currentHeroes = form.getValues()[langCode] || [];
-      if (currentHeroes.length <= 1) {
+      const currentFooteres = form.getValues()[langCode] || [];
+      if (currentFooteres.length <= 1) {
         toast({
           title: "Cannot remove",
-          description: "You need at least one hero",
+          description: "You need at least one footer",
           variant: "destructive",
         });
         return;
@@ -380,13 +380,13 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
 
     const handleSave = useCallback(async () => {
       const isValid = await form.trigger();
-      const hasEqualHeroCounts = validateFormHeroCounts();
+      const hasEqualFooterCounts = validateFormFooterCounts();
 
-      if (!hasEqualHeroCounts) {
+      if (!hasEqualFooterCounts) {
         updateState({ isValidationDialogOpen: true });
         toast({
           title: "Validation Error",
-          description: "All languages must have the same number of heroes.",
+          description: "All languages must have the same number of footeres.",
           variant: "destructive",
         });
         return;
@@ -405,7 +405,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
 
       try {
         const allFormValues = form.getValues();
-        console.log("Form values before save:", allFormValues);
         let sectionId = state.existingSubSectionId;
 
         if (!sectionId) {
@@ -414,9 +413,9 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
           }
 
           const subsectionData = {
-            name: "Heroes Section",
-            slug: slug || `heroes-section-${Date.now()}`,
-            description: "Heroes section for the website",
+            name: "Footeres Section",
+            slug: slug || `footeres-section-${Date.now()}`,
+            description: "Footeres section for the website",
             defaultContent: "",
             isActive: true,
             order: 0,
@@ -440,34 +439,22 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
         }, {});
 
         const firstLangKey = Object.keys(allFormValues)[0];
-        const heroCount = Array.isArray(allFormValues[firstLangKey]) ? allFormValues[firstLangKey].length : 0;
+        const footerCount = Array.isArray(allFormValues[firstLangKey]) ? allFormValues[firstLangKey].length : 0;
         const translations: ContentTranslation[] = [];
         const processedElementIds = new Set<string>();
 
-        for (let i = 0; i < heroCount; i++) {
-          const heroIndex = i + 1;
+        for (let i = 0; i < footerCount; i++) {
+          const footerIndex = i + 1;
           const elementNames = {
-            title: `Hero ${heroIndex} - Title`,
-            description: `Hero ${heroIndex} - Description`,
-            exploreButton: `Hero ${heroIndex} - ExploreButton`,
-            requestButton: `Hero ${heroIndex} - RequestButton`,
-            image: `Hero ${heroIndex} - Image`,
+            description: `Footer ${footerIndex} - Description`,
           };
 
           const elements: Record<string, ContentElement | null> = {
-            title: state.contentElements.find((el) => el.name === elementNames.title) ?? null,
             description: state.contentElements.find((el) => el.name === elementNames.description) ?? null,
-            exploreButton: state.contentElements.find((el) => el.name === elementNames.exploreButton) ?? null,
-            requestButton: state.contentElements.find((el) => el.name === elementNames.requestButton) ?? null,
-            image: state.contentElements.find((el) => el.name === elementNames.image && el.type === "image") ?? null,
           };
 
           const elementTypes = [
-            { type: "text", key: "title", name: elementNames.title },
             { type: "text", key: "description", name: elementNames.description },
-            { type: "text", key: "exploreButton", name: elementNames.exploreButton },
-            { type: "text", key: "requestButton", name: elementNames.requestButton },
-            { type: "image", key: "image", name: elementNames.image },
           ];
 
           for (const { type, key, name } of elementTypes) {
@@ -490,86 +477,122 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             }
           }
 
-          Object.entries(allFormValues).forEach(([langCode, heroes]) => {
-            if (!Array.isArray(heroes) || !heroes[i]) return;
+          const socialLinks = allFormValues[firstLangKey][i]?.socialLinks || [];
+          const socialLinkElements: Record<string, ContentElement | null>[] = [];
+          for (let j = 0; j < socialLinks.length; j++) {
+            const socialLinkIndex = j + 1;
+            const socialLinkNames = {
+              url: `Footer ${footerIndex} - SocialLink ${socialLinkIndex} - Url`,
+              image: `Footer ${footerIndex} - SocialLink ${socialLinkIndex} - Image`,
+            };
+
+            socialLinkElements[j] = {
+              url: state.contentElements.find((el) => el.name === socialLinkNames.url) ?? null,
+              image: state.contentElements.find((el) => el.name === socialLinkNames.image && el.type === "image") ?? null,
+            };
+
+            if (!socialLinkElements[j].url) {
+              const newElement = await createContentElement.mutateAsync({
+                name: socialLinkNames.url,
+                type: "text",
+                parent: sectionId,
+                isActive: true,
+                order: i * 5 + elementTypes.length + j * 2,
+                defaultContent: "",
+              });
+              socialLinkElements[j].url = newElement.data;
+              updateState({
+                contentElements: [...state.contentElements, newElement.data],
+              });
+            }
+            if (!socialLinkElements[j].image) {
+              const newElement = await createContentElement.mutateAsync({
+                name: socialLinkNames.image,
+                type: "image",
+                parent: sectionId,
+                isActive: true,
+                order: i * 5 + elementTypes.length + j * 2 + 1,
+                defaultContent: "image-placeholder",
+              });
+              socialLinkElements[j].image = newElement.data;
+              updateState({
+                contentElements: [...state.contentElements, newElement.data],
+              });
+            }
+            processedElementIds.add(socialLinkElements[j].url!._id);
+            processedElementIds.add(socialLinkElements[j].image!._id);
+          }
+
+          Object.entries(allFormValues).forEach(([langCode, footeres]) => {
+            if (!Array.isArray(footeres) || !footeres[i]) return;
             const langId = langCodeToIdMap[langCode];
             if (!langId) return;
 
-            const hero = heroes[i];
-            if (elements.title) {
-              translations.push({
-                _id: "",
-                content: hero.title || "",
-                language: langId,
-                contentElement: elements.title._id,
-                isActive: true,
-              });
-            }
+            const footer = footeres[i];
+      
             if (elements.description) {
               translations.push({
                 _id: "",
-                content: hero.description || "",
+                content: footer.description || "",
                 language: langId,
                 contentElement: elements.description._id,
                 isActive: true,
               });
             }
-            if (elements.exploreButton) {
-              translations.push({
-                _id: "",
-                content: hero.exploreButton || "",
-                language: langId,
-                contentElement: elements.exploreButton._id,
-                isActive: true,
-              });
-            }
-            if (elements.requestButton) {
-              translations.push({
-                _id: "",
-                content: hero.requestButton || "",
-                language: langId,
-                contentElement: elements.requestButton._id,
-                isActive: true,
-              });
-            }
+
+            footer.socialLinks?.forEach((socialLink: any, j: number) => {
+              if (socialLinkElements[j].url) {
+                translations.push({
+                  _id: "",
+                  content: socialLink.url || "",
+                  language: langId,
+                  contentElement: socialLinkElements[j].url!._id,
+                  isActive: true,
+                });
+              }
+            });
           });
 
           const imageFile = heroImages[i];
           if (imageFile && elements.image) {
-            console.log("Uploading image for hero", i, imageFile);
-            try {
-              const formData = new FormData();
-              formData.append("image", imageFile);
-              const uploadResult = await apiClient.post(`/content-elements/${elements.image._id}/image`, formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-              });
-              console.log("Upload result:", uploadResult.data);
-
-              if (uploadResult.data?.imageUrl) {
-                Object.entries(allFormValues).forEach(([langCode]) => {
-                  if (allFormValues[langCode] && allFormValues[langCode][i]) {
-                    form.setValue(`${langCode}.${i}.image`, uploadResult.data.imageUrl, { shouldDirty: true });
-                  }
-                });
-              } 
-            } catch (uploadError) {
-              console.error("Image upload failed for hero", i, uploadError);
-              toast({
-                title: "Image Upload Error",
-                description: `Failed to upload image for Hero ${heroIndex}. Please try again.`,
-                variant: "destructive",
-              });
-            }
-          } else if (!imageFile && elements.image) {
-            console.log(`No image file provided for Hero ${heroIndex}`);
-          } else if (!elements.image) {
-            console.error(`Image content element not found for Hero ${heroIndex}`);
-            toast({
-              title: "Configuration Error",
-              description: `Image content element missing for Hero ${heroIndex}.`,
-              variant: "destructive",
+            const formData = new FormData();
+            formData.append("image", imageFile);
+            const uploadResult = await apiClient.post(`/content-elements/${elements.image._id}/image`, formData, {
+              headers: { "Content-Type": "multipart/form-data" },
             });
+          
           }
+
+          socialLinks.forEach((socialLink: any, j: number) => {
+            const socialLinkImage = socialLinkImages[i]?.[j];
+            if (socialLinkImage && socialLinkElements[j].image) {
+              const formData = new FormData();
+              formData.append("image", socialLinkImage);
+              apiClient
+                .post(`/content-elements/${socialLinkElements[j].image!._id}/image`, formData, {
+                  headers: { "Content-Type": "multipart/form-data" },
+                })
+                .then((uploadResult) => {
+                  if (uploadResult.data?.imageUrl) {
+                    Object.entries(allFormValues).forEach(([langCode]) => {
+                      if (allFormValues[langCode] && allFormValues[langCode][i]) {
+                        form.setValue(`${langCode}.${i}.socialLinks.${j}.image`, uploadResult.data.imageUrl, {
+                          shouldDirty: true,
+                        });
+                      }
+                    });
+                  }
+                })
+                .catch((uploadError) => {
+                  console.error(`Image upload failed for Social Link ${j + 1} of Footer ${footerIndex}`, uploadError);
+                  toast({
+                    title: "Image Upload Error",
+                    description: `Failed to upload image for Social Link ${j + 1} of Footer ${footerIndex}.`,
+                    variant: "destructive",
+                  });
+                });
+            }
+          });
         }
 
         if (translations.length > 0) {
@@ -590,9 +613,8 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
           });
         }
 
-        console.log("Form values after save:", form.getValues());
         toast({
-          title: state.existingSubSectionId ? "Heroes section updated successfully!" : "Heroes section created successfully!",
+          title: state.existingSubSectionId ? "Footeres section updated successfully!" : "Footeres section created successfully!",
           description: "All content has been saved.",
           duration: 5000,
         });
@@ -601,8 +623,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
           updateState({ isLoadingData: true, dataLoaded: false });
           const result = await refetch();
           if (result.data?.data) {
-            console.log("Refetched data:", result.data.data);
-            processHeroesData(result.data.data);
+            processFooteresData(result.data.data);
           } else {
             updateState({ isLoadingData: false });
             toast({
@@ -617,7 +638,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       } catch (error) {
         console.error("Save operation failed:", error);
         toast({
-          title: state.existingSubSectionId ? "Error updating heroes section" : "Error creating heroes section",
+          title: state.existingSubSectionId ? "Error updating footeres section" : "Error creating footeres section",
           description: error instanceof Error ? error.message : "An unknown error occurred",
           variant: "destructive",
           duration: 5000,
@@ -627,7 +648,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       }
     }, [
       form,
-      validateFormHeroCounts,
+      validateFormFooterCounts,
       state.existingSubSectionId,
       ParentSectionId,
       slug,
@@ -639,9 +660,10 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       deleteContentElement,
       bulkUpsertTranslations,
       heroImages,
+      socialLinkImages,
       toast,
       refetch,
-      processHeroesData,
+      processFooteresData,
       updateState,
     ]);
 
@@ -651,9 +673,10 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       setHasUnsavedChanges: (value) => updateState({ hasUnsavedChanges: value }),
       existingSubSectionId: state.existingSubSectionId,
       contentElements: state.contentElements,
-      componentName: "Heroes",
+      componentName: "Footeres",
       extraMethods: {
-        getHeroImages: () => heroImages,
+        getFooterImages: () => heroImages,
+        getSocialLinkImages: () => socialLinkImages,
       },
     });
 
@@ -662,17 +685,17 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
     useEffect(() => {
       const subscription = form.watch(() => {
         if (state.dataLoaded && !state.isLoadingData) {
-          validateFormHeroCounts();
+          validateFormFooterCounts();
         }
       });
       return () => subscription.unsubscribe();
-    }, [state.dataLoaded, state.isLoadingData, form, validateFormHeroCounts]);
+    }, [state.dataLoaded, state.isLoadingData, form, validateFormFooterCounts]);
 
-    if (slug && ( isLoadingSubsection) && !state.dataLoaded) {
+    if (slug && isLoadingSubsection && !state.dataLoaded) {
       return (
         <div className="flex items-center justify-center p-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary mr-2" />
-          <p className="text-muted-foreground">Loading heroes section data...</p>
+          <p className="text-muted-foreground">Loading footeres section data...</p>
         </div>
       );
     }
@@ -681,7 +704,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       <div className="space-y-6">
         <LoadingDialog
           isOpen={state.isSaving}
-          title={state.existingSubSectionId ? "Updating Heroes" : "Creating Heroes"}
+          title={state.existingSubSectionId ? "Updating Footeres" : "Creating Footeres"}
           description="Please wait while we save your changes..."
         />
 
@@ -692,15 +715,16 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
               const isFirstLanguage = langIndex === 0;
 
               return (
-                <LanguageCard
+                <FooterLanguageCard
                   key={langId}
                   langCode={langCode}
                   isFirstLanguage={isFirstLanguage}
                   form={form}
-                  addHero={addHero}
-                  removeHero={confirmDeleteStep}
+                  addFooter={addFooter}
+                  removeFooter={confirmDeleteStep}
                   onDeleteStep={confirmDeleteStep}
-                  HeroImageUploader={HeroImageUploader}
+                  FooterImageUploader={HeroImageUploader}
+                  SocialLinkImageUploader={SocialLinkImageUploader}
                 />
               );
             })}
@@ -708,16 +732,16 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
         </Form>
 
         <div className="flex justify-end mt-6">
-          {state.heroCountMismatch && (
+          {state.footerCountMismatch && (
             <div className="flex items-center text-amber-500 mr-4">
               <AlertTriangle className="h-4 w-4 mr-2" />
-              <span className="text-sm">Each language must have the same number of heroes</span>
+              <span className="text-sm">Each language must have the same number of footeres</span>
             </div>
           )}
           <Button
             type="button"
             onClick={handleSave}
-            disabled={ state.heroCountMismatch || state.isSaving}
+            disabled={state.footerCountMismatch || state.isSaving}
             className="flex items-center"
           >
             {state.isSaving ? (
@@ -728,7 +752,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                {state.existingSubSectionId ? "Update Heroes" : "Save Heroes"}
+                {state.existingSubSectionId ? "Update Footeres" : "Save Footeres"}
               </>
             )}
           </Button>
@@ -737,11 +761,11 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
         <DeleteSectionDialog
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
-          serviceName={stepToDelete ? `Hero ${stepToDelete.index + 1}` : ""}
+          serviceName={stepToDelete ? `Footer ${stepToDelete.index + 1}` : ""}
           onConfirm={removeProcessStep}
           isDeleting={isDeleting}
-          title="Delete Hero"
-          confirmText="Delete Hero"
+          title="Delete Footer"
+          confirmText="Delete Footer"
         />
 
         <ValidationDialog
@@ -754,5 +778,5 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
   }
 );
 
-HeroesForm.displayName = "HeroesForm";
-export default HeroesForm;
+FormBasicForm.displayName = "FooteresForm";
+export default FormBasicForm;

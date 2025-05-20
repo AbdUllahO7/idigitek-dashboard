@@ -117,6 +117,12 @@ const PREDEFINED_SECTIONS = [
     image: "/sections/hero.jpg",
     icon: <LayoutGrid className="h-10 w-10" />,
   },
+    {
+    name: "Footer",
+    description: "Main banner section with heading, subtext, and call to action",
+    image: "/sections/hero.jpg",
+    icon: <LayoutGrid className="h-10 w-10" />,
+  },
 ]
 
 export function SectionManagement({ hasWebsite }: ManagementProps) {
