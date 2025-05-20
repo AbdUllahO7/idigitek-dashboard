@@ -31,6 +31,7 @@ import {
   ShieldQuestion,
   PenBoxIcon,
   Contact,
+  TouchpadOff,
 } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "@/src/lib/utils"
@@ -83,6 +84,7 @@ const allNavItems: NavItem[] = [
     icon: Package,
     sectionId: "header",
   },
+
   {
     title: "News",
     href: "/dashboard/News",
@@ -148,6 +150,12 @@ const allNavItems: NavItem[] = [
     href: "/dashboard/contact",
     icon: Contact,
     sectionId: "contact",
+  },
+  {
+    title: "Hero",
+    href: "/dashboard/heroSection",
+    icon: TouchpadOff,
+    sectionId: "hero",
   },
   {
     title: "Profile",

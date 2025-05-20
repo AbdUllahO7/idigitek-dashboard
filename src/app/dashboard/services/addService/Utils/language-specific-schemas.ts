@@ -137,7 +137,18 @@ const schemaDefinitions = {
         }),
       })
     ).min(1, { message: "At least one feature is required" }),
-
+    
+    heroSection: (z: any) => z.array(
+        z.object({
+        id: z.string().optional(),
+        title: z.string().min(1, "Title is required"),
+        description: z.string().min(1, "Description is required"),
+        exploreButton: z.string().min(1, "Explore Button text is required"),
+        requestButton: z.string().min(1, "Request Button text is required"),
+        image : z.string().min(1, "Request Button text is required"),
+      })
+    ).min(1, { message: "At least one feature is required" }),
+    
     ChooseUs: (z: any) => z.object({
       title: z.string().min(1, { message: "Title is required" }),
       description: z.string().min(1, { message: "Description is required" }),
@@ -161,7 +172,6 @@ export const createHeroSchema = (languageIds: string[], activeLanguages: Languag
     const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.hero);
     return z.object({
       ...schema.shape,
-      backgroundImage: z.string().optional(),
     });
 };
 export const createProcessSchema = (languageIds: string[], activeLanguages: Language[]) => {
@@ -248,6 +258,7 @@ export const createBenefitsSchema = (languageIds: string[], activeLanguages: Lan
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.benefit);
 };
 
+
 export const createHaveFaqQuestionsSchema = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.faqQuestions);
 };
@@ -274,6 +285,10 @@ export const createBlogSchema = (languageIds: string[], activeLanguages: Languag
       ...schema.shape,
       backgroundImage: z.string().optional(),
     });
+};
+
+export const createHeroSectionSchema = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.heroSection);
 };
 
 // Usage remains the same

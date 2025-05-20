@@ -205,9 +205,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
     // Track feature item IDs to prevent duplicates
     const [featureItemIds, setFeatureItemIds] = useState<Record<string, Set<string>>>({});
     
-    // Debug mode for development
-    const [debugMode, setDebugMode] = useState(false);
-    
+
     // Memoize schema and default values
     const featuresSchema = useMemo(() => 
       createFeaturesSchema(languageIds, activeLanguages),
@@ -251,7 +249,7 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
     });
 
     // Initialize useFeatureImages hook
-    const { featureImages, handleFeatureImageUpload, handleFeatureImageRemove, updateFeatureImageIndices, FeatureImageUploader } = useFeatureImages(form);
+    const { featureImages,  handleFeatureImageRemove, updateFeatureImageIndices, FeatureImageUploader } = useFeatureImages(form);
 
     // Use ref to prevent unnecessary effect reruns
     const onDataChangeRef = useRef(onDataChange);
@@ -263,14 +261,12 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
     const { useCreate: useCreateSubSection, useGetCompleteBySlug } = useSubSections();
     const {
       useCreate: useCreateContentElement,
-      useUpdate: useUpdateContentElement,
       useDelete: useDeleteContentElement,
     } = useContentElements();
     const { useBulkUpsert: useBulkUpsertTranslations } = useContentTranslations();
 
     const createSubSection = useCreateSubSection();
     const createContentElement = useCreateContentElement();
-    const updateContentElement = useUpdateContentElement();
     const deleteContentElement = useDeleteContentElement();
     const bulkUpsertTranslations = useBulkUpsertTranslations();
 

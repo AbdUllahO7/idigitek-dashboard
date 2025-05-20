@@ -49,6 +49,14 @@ const defaultValueDefinitions = {
       title: "",
       description: "",
     }],
+      heroSection: () => [{
+        title: "",
+        description: "",
+        exploreButton: "",
+        requestButton: "",
+        image :""
+    }],
+    
     faqHaveQuestions: () => [{
       icon: "Car",
       title: "",
@@ -70,6 +78,7 @@ const defaultValueDefinitions = {
         image: "",
       },
     }],
+
 };
 
 const createLanguageDefaultValues = <T>(
@@ -160,6 +169,7 @@ export const createFeaturesDefaultValues = (languageIds: string[], activeLanguag
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.feature);
 };
 
+
 export const createSectionsDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
   return {
     logo: "",
@@ -173,6 +183,9 @@ export const createSectionsDefaultValues = (languageIds: string[], activeLanguag
 };
 export const createBlogDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.blog);
+};
+export const createHeroSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.heroSection);
 };
 
 // ex : 

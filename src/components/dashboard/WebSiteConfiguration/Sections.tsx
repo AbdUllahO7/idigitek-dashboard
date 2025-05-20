@@ -34,12 +34,13 @@ const PREDEFINED_SECTIONS = [
   {
     name: "Header",
     description: "Main banner section with heading, subtext, and call to action",
-    image: "/sections/hero.jpg",
+    image: "/sections/header.jpg",
     icon: <LayoutGrid className="h-10 w-10" />,
   },
+
   {
     name: "Services",
-    description: "Service listings and descriptions",
+    description: "Service listings and descriptions", 
     image: "/sections/services.jpg",
     icon: <LayoutGrid className="h-10 w-10" />,
   },
@@ -109,6 +110,12 @@ const PREDEFINED_SECTIONS = [
     description: "Contact from your clients",
     image: "/sections/news.jpg",
     icon: <Component className="h-10 w-10" />,
+  },
+  {
+    name: "Hero",
+    description: "Main banner section with heading, subtext, and call to action",
+    image: "/sections/hero.jpg",
+    icon: <LayoutGrid className="h-10 w-10" />,
   },
 ]
 

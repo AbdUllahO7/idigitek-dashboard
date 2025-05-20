@@ -177,7 +177,6 @@ function FormShellInner({ tabs, title, subtitle, isLoading = false }: Pick<FormS
 // Main FormShell component with context provider
 export function FormShell(props: FormShellProps) {
   const {  formSections, activeLanguages, serviceData, sectionId, sectionItemId, mode, onSave, backUrl } = props
-  console.log("formSections", formSections)
   return (
     <FormContextProvider
       initialFormSections={formSections}
