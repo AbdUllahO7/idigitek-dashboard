@@ -13,4 +13,5 @@ import { MultilingualSectionData } from "../../hooks/MultilingualSection.types";
       slug?: string;
       ParentSectionId?: string;
       initialData?: any;
+      sectionItemId?: string | null | undefined
     }

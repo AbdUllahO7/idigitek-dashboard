@@ -32,11 +32,12 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
     onDataChange, 
     slug, 
     ParentSectionId, 
-    initialData 
+    initialData, 
+    subSectionId
   } = props;
 
   const { websiteId } = useWebsiteContext();
-
+  console.log("blog form subSectionId" , subSectionId)
   // Setup form with schema validation
   const formSchema = createBlogSchema(languageIds, activeLanguages);
   const defaultValues = createBlogDefaultValues(languageIds, activeLanguages);
@@ -48,8 +49,8 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
 
   // State management
   const [state, setState] = useState({
-    isLoadingData: !slug,
-    dataLoaded: !slug,
+    isLoadingData: !subSectionId,
+    dataLoaded: !subSectionId,
     hasUnsavedChanges: false,
     existingSubSectionId: null as string | null ,
     contentElements: [] as ContentElement[],
@@ -80,8 +81,8 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
   // Services
   const { 
     useCreate: useCreateSubSection, 
-    useGetCompleteBySlug, 
-    useUpdate: useUpdateSubSection 
+    useUpdate: useUpdateSubSection,
+    useGetBySectionItemId
   } = useSubSections();
   
   const { useCreate: useCreateContentElement } = useContentElements();
@@ -121,7 +122,7 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
     data: completeSubsectionData, 
     isLoading: isLoadingSubsection, 
     refetch 
-  } = useGetCompleteBySlug(slug || '', Boolean(slug));
+  } = useGetBySectionItemId(subSectionId || '');
 
 
   console.log("completeSubsectionData", completeSubsectionData)
@@ -231,18 +232,18 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
 
   // Process API data effect
   useEffect(() => {
-    if (!slug || isLoadingSubsection || dataProcessed.current) return;
+    if (!subSectionId || isLoadingSubsection || dataProcessed.current) return;
     
-    if (completeSubsectionData?.data) {
+    if (completeSubsectionData?.data[0]) {
       updateState({ isLoadingData: true });
-      processBlogData(completeSubsectionData.data);
+      processBlogData(completeSubsectionData.data[0]);
       updateState({ 
         dataLoaded: true,
         isLoadingData: false
       });
       dataProcessed.current = true;
     }
-  }, [completeSubsectionData, isLoadingSubsection, slug, processBlogData]);
+  }, [completeSubsectionData[0], isLoadingSubsection, subSectionId, processBlogData]);
 
   // Form watch effect for unsaved changes
   useEffect(() => {
@@ -486,7 +487,7 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
       updateState({ hasUnsavedChanges: false });
 
       // Update form state with saved data
-      if (slug) {
+      if (subSectionId) {
         const result = await refetch();
         if (result.data?.data) {
           updateState({ dataLoaded: false });
@@ -527,7 +528,7 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
     form, 
     imageFile, 
     ParentSectionId, 
-    slug, 
+    subSectionId, 
     toast, 
     bulkUpsertTranslations, 
     contentElements, 
@@ -564,7 +565,7 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
   const languageCodes = createLanguageCodeMap(activeLanguages);
 
   // Loading state
-  if (slug && (isLoadingData || isLoadingSubsection) && !dataLoaded) {
+  if (subSectionId && (isLoadingData || isLoadingSubsection) && !dataLoaded) {
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

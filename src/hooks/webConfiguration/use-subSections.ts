@@ -83,23 +83,23 @@ export function useSubSections() {
   };
   
   // Get complete subsections by WebSite ID with all content elements and translations
-  const useGetCompleteByWebSiteId = (
-    websiteId: string,
-    activeOnly = true,
-    limit = 100,
-    skip = 0
-  ) => {
-    return useQuery({
-      queryKey: [...completeSubsectionsByWebSiteKey(websiteId), { activeOnly, limit, skip }],
-      queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/complete`, {
-          params: { activeOnly, limit, skip }
-        });
-        return data;
-      },
-      enabled: !!websiteId && websiteId !== "null"
-    });
-  };
+  // const useGetCompleteByWebSiteId = (
+  //   websiteId: string,
+  //   activeOnly = true,
+  //   limit = 100,
+  //   skip = 0
+  // ) => {
+  //   return useQuery({
+  //     queryKey: [...completeSubsectionsByWebSiteKey(websiteId), { activeOnly, limit, skip }],
+  //     queryFn: async () => {
+  //       const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/complete`, {
+  //         params: { activeOnly, limit, skip }
+  //       });
+  //       return data;
+  //     },
+  //     enabled: !!websiteId && websiteId !== "null"
+  //   });
+  // };
   // Get all subsections
   const useGetAll = (activeOnly = true, limit = 100, skip = 0, includeContentCount = false) => {
     return useQuery({
@@ -128,18 +128,18 @@ export function useSubSections() {
   };
 
   // Get subsection by slug
-  const useGetBySlug = (slug: string, populateSectionItem = true, includeContent = false) => {
-    return useQuery({
-      queryKey: [...subsectionSlugKey(slug), { populateSectionItem, includeContent }],
-      queryFn: async () => {
-        const { data } = await apiClient.get(`${endpoint}/slug/${slug}`, {
-          params: { populate: populateSectionItem, includeContent }
-        });
-        return data;
-      },
-      enabled: !!slug
-    });
-  };
+  // const useGetBySlug = (slug: string, populateSectionItem = true, includeContent = false) => {
+  //   return useQuery({
+  //     queryKey: [...subsectionSlugKey(slug), { populateSectionItem, includeContent }],
+  //     queryFn: async () => {
+  //       const { data } = await apiClient.get(`${endpoint}/slug/${slug}`, {
+  //         params: { populate: populateSectionItem, includeContent }
+  //       });
+  //       return data;
+  //     },
+  //     enabled: !!slug
+  //   });
+  // };
 
   // Get subsections by section item ID
   const useGetBySectionItemId = (
@@ -147,13 +147,15 @@ export function useSubSections() {
     activeOnly = true, 
     limit = 100, 
     skip = 0, 
-    includeContentCount = false
+    includeContentCount = false,
+    populateSectionItem = true
   ) => {
     return useQuery({
       queryKey: [...subsectionBySectionItemKey(sectionItemId), { activeOnly, limit, skip, includeContentCount }],
       queryFn: async () => {
         const { data } = await apiClient.get(`${endpoint}/sectionItem/${sectionItemId}`, {
-          params: { activeOnly, limit, skip, includeContentCount }
+          params: { activeOnly, limit, skip, includeContentCount ,populateSectionItem }
+
         });
         return data;
       },
@@ -538,7 +540,7 @@ export function useSubSections() {
   return {
     useGetAll,
     useGetById,
-    useGetBySlug,
+    // useGetBySlug,
     useGetBySectionItemId,
     useGetBySectionId,
     useGetCompleteBySectionId,
@@ -550,9 +552,9 @@ export function useSubSections() {
     useGetCompleteById,
     useGetCompleteBySlug,
     useGetByWebSiteId,
-    useGetCompleteByWebSiteId,
+    // useGetCompleteByWebSiteId,
     useGetMainByWebSiteId,
-    useManageActivation,
+    // useManageActivation,
     useToggleActive,
   };
 }

@@ -34,7 +34,7 @@ import { ValidationDialog } from "../../services/addService/Components/BenefitsF
 
 // Main Component
 const ClientCommentsForm = forwardRef<clientCommentFormRef, clientCommentsFormProps>(
-  ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId },ref) => {
+  ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId , subSectionId},ref) => {
     const { websiteId } = useWebsiteContext();
     const formSchema = createChooseUsSchema(languageIds, activeLanguages);
 
@@ -60,8 +60,8 @@ const ClientCommentsForm = forwardRef<clientCommentFormRef, clientCommentsFormPr
 
     // State management
     const [state, setState] = useState<ClientCommentsFormState>({
-      isLoadingData: !slug,
-      dataLoaded: !slug,
+      isLoadingData: !subSectionId,
+      dataLoaded: !subSectionId,
       hasUnsavedChanges: false,
       isValidationDialogOpen: false,
       benefitCountMismatch: false,
@@ -100,7 +100,7 @@ const ClientCommentsForm = forwardRef<clientCommentFormRef, clientCommentsFormPr
     const onDataChangeRef = useRef(onDataChange);
 
     // API hooks
-    const { useCreate: useCreateSubSection, useGetCompleteBySlug } =
+    const { useCreate: useCreateSubSection, useGetCompleteBySlug , useGetBySectionItemId } =
       useSubSections();
     const {
       useCreate: useCreateContentElement,
@@ -119,7 +119,9 @@ const ClientCommentsForm = forwardRef<clientCommentFormRef, clientCommentsFormPr
       data: completeSubsectionData,
       isLoading: isLoadingSubsection,
       refetch,
-    } = useGetCompleteBySlug(slug || "", Boolean(slug));
+    } = useGetBySectionItemId(subSectionId || '');
+
+    console.log(completeSubsectionData)
 
     // Update onDataChange ref
     useEffect(() => {
@@ -335,17 +337,17 @@ const ClientCommentsForm = forwardRef<clientCommentFormRef, clientCommentsFormPr
 
     // Load existing data
     useEffect(() => {
-      if (!slug || dataLoaded || isLoadingSubsection || !completeSubsectionData?.data) {
+      if (!subSectionId || dataLoaded || isLoadingSubsection || !completeSubsectionData?.data[0]) {
         return;
       }
 
       updateState({ isLoadingData: true });
-      processChoseUsData(completeSubsectionData.data);
+      processChoseUsData(completeSubsectionData.data[0]);
     }, [
       completeSubsectionData,
       isLoadingSubsection,
       dataLoaded,
-      slug,
+      subSectionId,
       processChoseUsData,
     ]);
 
@@ -685,7 +687,7 @@ const ClientCommentsForm = forwardRef<clientCommentFormRef, clientCommentsFormPr
             : "ChoseUs section created successfully!",
         });
 
-        if (slug) {
+        if (subSectionId) {
           try {
             updateState({ isLoadingData: true, dataLoaded: false });
             const result = await refetch();
@@ -720,7 +722,7 @@ const ClientCommentsForm = forwardRef<clientCommentFormRef, clientCommentsFormPr
       validateFormClientCommentCounts,
       existingSubSectionId,
       ParentSectionId,
-      slug,
+      subSectionId,
       contentElements,
       activeLanguages,
       languageIds,
@@ -759,7 +761,7 @@ const ClientCommentsForm = forwardRef<clientCommentFormRef, clientCommentsFormPr
     }, [dataLoaded, isLoadingData, form, validateFormClientCommentCounts]);
 
     // Loading state
-    if (slug && (isLoadingData || isLoadingSubsection) && !dataLoaded) {
+    if (subSectionId && (isLoadingData || isLoadingSubsection) && !dataLoaded) {
       return (
         <div className="flex items-center justify-center p-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary mr-2" />

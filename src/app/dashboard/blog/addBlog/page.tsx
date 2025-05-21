@@ -141,6 +141,7 @@ export default function AddBlog() {
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
           slug={getSlug('blog-section')}
+          subSectionId = {sectionItemId}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('blog-section')}
         />

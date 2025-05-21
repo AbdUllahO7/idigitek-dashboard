@@ -23,6 +23,7 @@ export interface clientCommentsFormProps {
     slug?: string;
     ParentSectionId?: string;
     initialData?: any;
+    subSectionId?:string | null | undefined,
 }
 
 export interface clientCommentFormRef {

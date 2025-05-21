@@ -142,6 +142,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
               phoneText: "",
               phoneTextValue: "",
               emailText: "",
+              buttonText : ""
             };
 
             elements
@@ -172,6 +173,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
             phoneText: "",
             phoneTextValue: "",
             emailText: "",
+            buttonText : ""
           }),
         },
         {
@@ -298,6 +300,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
           PhoneText: "phoneText",
           PhoneTextValue: "phoneTextValue",
           EmailText: "emailText",
+          ButtonText : "buttonText"
         };
 
         Object.entries(allFormValues).forEach(([langCode, values]) => {

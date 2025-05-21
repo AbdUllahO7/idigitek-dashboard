@@ -11,7 +11,7 @@ export function useSections() {
   
   // Get a user-specific prefix for cache keys
   const getUserPrefix = () => {
-    const userId = user?.id || user?._id;
+    const userId = user?.id || user?.id;
     return userId ? `user-${userId}` : 'anonymous';
   };
 

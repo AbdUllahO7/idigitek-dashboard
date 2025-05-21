@@ -8,6 +8,7 @@ export interface BlogsFormProps {
     slug?: string;
     ParentSectionId?: string;
     initialData?: any;
+    subSectionId?:string | null | undefined,
   }
 
  export type FormDataBlog = {
