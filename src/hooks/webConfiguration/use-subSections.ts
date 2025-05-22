@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
 import { SubSection } from '@/src/api/types/hooks/section.types';
+import { useAuth } from '@/src/context/AuthContext';
 
 // Define interface for activation options
 export interface SubSectionActivationOptions {
@@ -46,6 +47,9 @@ export interface ActivationResult {
 export function useSubSections() {
   const queryClient = useQueryClient();
   const endpoint = '/subsections';
+    const { user } = useAuth();
+
+  const userId = user?.id || 'anonymous';
 
   // Query keys
   const subsectionsKey = ['subsections']; 
@@ -58,10 +62,10 @@ export function useSubSections() {
   const subsectionsByWebSiteKey = (websiteId: string) => [...subsectionsKey, 'website', websiteId];
   const completeSubsectionsByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'complete'];
   const mainSubsectionByWebSiteKey = (websiteId: string) => [...subsectionsByWebSiteKey(websiteId), 'main'];
-  // New keys for activation-related queries
-  const activationKey = (id: string) => [...subsectionKey(id), 'activation'];
-  const bulkActivationKey = [...subsectionsKey, 'bulk-activation'];
-  const scheduledActivationsKey = [...subsectionsKey, 'scheduled-activations'];
+  const sectionsKey = ['sections'];
+  const sectionsByWebSiteKey = (websiteId: string) => [...sectionsKey, 'website', websiteId];
+    const websitesKey = ['websites', userId];
+    const myWebsitesKey = [...websitesKey, 'my'];
 
   const useGetByWebSiteId = (
     websiteId: string,
@@ -349,16 +353,21 @@ export function useSubSections() {
 
   // Update order of multiple subsections
   const useUpdateOrder = () => {
-    return useMutation({
-      mutationFn: async (subsections: { id: string; order: number }[]) => {
-        const { data } = await apiClient.put(`${endpoint}/order`, { subsections });
-        return data;
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: subsectionsKey });
-      },
-    });
-  };
+      return useMutation({
+        mutationFn: async (sections: { id: string; order: number }[]) => {
+          const { data } = await apiClient.put(`${endpoint}/order`, { sections });
+          return data;
+        },
+        onSuccess: () => {
+          // Invalidate queries to refresh section lists
+          queryClient.invalidateQueries({ queryKey: sectionsKey });
+          queryClient.invalidateQueries({ queryKey:  myWebsitesKey});
+        },
+        onError: (error: any) => {
+          console.error('Error updating section order:', error);
+        },
+      });
+    };
 
   // Get complete subsection by ID (with all elements and translations)
   const useGetCompleteById = (id: string, populateSectionItem = true) => {
@@ -556,5 +565,6 @@ export function useSubSections() {
     useGetMainByWebSiteId,
     // useManageActivation,
     useToggleActive,
+    
   };
 }

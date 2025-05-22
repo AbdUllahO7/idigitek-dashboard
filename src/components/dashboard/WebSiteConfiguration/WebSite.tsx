@@ -16,6 +16,9 @@ const WebsiteImageExampleFixed: React.FC = () => {
     description: "",
     logo: "",
     sector: "",
+    phoneNumber: "",
+    email: "",
+    address: ""
   })
   const [editingWebsite, setEditingWebsite] = useState<WebSiteProps | null>(null)
   const [uploadingLogo, setUploadingLogo] = useState<Record<string, boolean>>({})
@@ -42,7 +45,7 @@ const WebsiteImageExampleFixed: React.FC = () => {
           handleLogoUpload(createdWebsite._id, newLogoFile)
         }
         setShowCreateForm(false)
-        setNewWebsite({ name: "", description: "", logo: "", sector: "" })
+        setNewWebsite({ name: "", description: "", logo: "", sector: "", phoneNumber: "", email: "", address: "" })
         setNewLogoFile(null)
         toast({
           title: "Website Created",
@@ -62,6 +65,9 @@ const WebsiteImageExampleFixed: React.FC = () => {
             name: editingWebsite.name,
             description: editingWebsite.description,
             sector: editingWebsite.sector,
+            phoneNumber: editingWebsite.phoneNumber,
+            email: editingWebsite.email,
+            address: editingWebsite.address
           },
         },
         {
@@ -245,13 +251,43 @@ const WebsiteImageExampleFixed: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Job</label>
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Sector</label>
               <input
                 type="text"
                 className="w-full p-3 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 value={newWebsite.sector || ""}
                 onChange={(e) => setNewWebsite({ ...newWebsite, sector: e.target.value })}
                 placeholder="Enter sector title"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
+              <input
+                type="tel"
+                className="w-full p-3 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                value={newWebsite.phoneNumber || ""}
+                onChange={(e) => setNewWebsite({ ...newWebsite, phoneNumber: e.target.value })}
+                placeholder="Enter phone number"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+              <input
+                type="email"
+                className="w-full p-3 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                value={newWebsite.email || ""}
+                onChange={(e) => setNewWebsite({ ...newWebsite, email: e.target.value })}
+                placeholder="Enter email address"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
+              <textarea
+                className="w-full p-3 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                value={newWebsite.address || ""}
+                onChange={(e) => setNewWebsite({ ...newWebsite, address: e.target.value })}
+                rows={3}
+                placeholder="Enter physical address"
               />
             </div>
             <div className="flex justify-end space-x-3 pt-4">
@@ -263,7 +299,7 @@ const WebsiteImageExampleFixed: React.FC = () => {
                     URL.revokeObjectURL(newWebsite.logo)
                   }
                   setShowCreateForm(false)
-                  setNewWebsite({ name: "", description: "", logo: "", sector: "" })
+                  setNewWebsite({ name: "", description: "", logo: "", sector: "", phoneNumber: "", email: "", address: "" })
                   setNewLogoFile(null)
                 }}
               >
@@ -326,12 +362,42 @@ const WebsiteImageExampleFixed: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Job</label>
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Sector</label>
               <input
                 type="text"
                 className="w-full p-3 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                 value={editingWebsite.sector || ""}
                 onChange={(e) => setEditingWebsite({ ...editingWebsite, sector: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
+              <input
+                type="tel"
+                className="w-full p-3 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                value={editingWebsite.phoneNumber || ""}
+                onChange={(e) => setEditingWebsite({ ...editingWebsite, phoneNumber: e.target.value })}
+                placeholder="Enter phone number"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+              <input
+                type="email"
+                className="w-full p-3 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                value={editingWebsite.email || ""}
+                onChange={(e) => setEditingWebsite({ ...editingWebsite, email: e.target.value })}
+                placeholder="Enter email address"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
+              <textarea
+                className="w-full p-3 border border-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                value={editingWebsite.address || ""}
+                onChange={(e) => setEditingWebsite({ ...editingWebsite, address: e.target.value })}
+                rows={3}
+                placeholder="Enter physical address"
               />
             </div>
 
@@ -512,6 +578,13 @@ const WebsiteImageExampleFixed: React.FC = () => {
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
                             {website.sector}
                           </span>
+                        </div>
+                      )}
+                      {(website.phoneNumber || website.email || website.address) && (
+                        <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                          {website.phoneNumber && <p>Phone: {website.phoneNumber}</p>}
+                          {website.email && <p>Email: {website.email}</p>}
+                          {website.address && <p>Address: {website.address}</p>}
                         </div>
                       )}
                     </div>
