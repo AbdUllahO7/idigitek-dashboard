@@ -61,73 +61,6 @@ export function useSections() {
   };
 
   /**
-   * Get section with complete data (section items and subsections)
-   * @param id Section ID
-   * @param includeInactive Whether to include inactive items
-   * @param languageId Optional language ID for translations
-   */
-  const useGetWithCompleteData = (
-    id: string,
-    includeInactive = false,
-    languageId?: string,
-    enabled = true
-  ) => {
-    return useQuery({
-      queryKey: [...completeDataKey(id), { includeInactive, languageId }],
-      queryFn: async () => {
-        try {
-          const params = new URLSearchParams();
-          params.append('includeInactive', String(includeInactive));
-          if (languageId) {
-            params.append('languageId', languageId);
-          }
-          
-          const { data } = await apiClient.get(`${endpoint}/${id}/complete?${params.toString()}`);
-          return data;
-        } catch (error: any) {
-          console.error(`Error fetching complete section data for ${id}:`, error);
-          throw error;
-        }
-      },
-      enabled: !!id && enabled,
-    });
-  };
-
-  /**
-   * Get all sections with complete data
-   * @param isActive Filter by active status
-   * @param includeInactive Whether to include inactive items
-   * @param languageId Optional language ID for translations
-   */
-  const useGetAllWithCompleteData = (
-    isActive?: boolean,
-    includeInactive = false,
-    languageId?: string
-  ) => {
-    return useQuery({
-      queryKey: [...allCompleteDataKey, { isActive, includeInactive, languageId }],
-      queryFn: async () => {
-        try {
-          const params = new URLSearchParams();
-          if (isActive !== undefined) {
-            params.append('isActive', String(isActive));
-          }
-          params.append('includeInactive', String(includeInactive));
-          if (languageId) {
-            params.append('languageId', languageId);
-          }
-          
-          const { data } = await apiClient.get(`${endpoint}/all/complete?${params.toString()}`);
-          return data;
-        } catch (error: any) {
-          console.error("Error fetching all sections with complete data:", error);
-          throw error;
-        }
-      },
-    });
-  };
-  
-  /**
    * Get all sections for a specific website
    * @param websiteId Website ID
    * @param includeInactive Whether to include inactive sections
@@ -158,40 +91,34 @@ export function useSections() {
     });
   };
 
-  /**
-   * Get all sections with complete data for a specific website
-   * @param websiteId Website ID
-   * @param includeInactive Whether to include inactive items
-   * @param languageId Optional language ID for translations
-   */
-  const useGetCompleteByWebsiteId = (
-    websiteId: string,
-    includeInactive = false,
-    languageId?: string,
-    enabled = true
-  ) => {
-    return useQuery({
-      queryKey: [...websiteSectionsCompleteKey(websiteId), { includeInactive, languageId }],
-      queryFn: async () => {
-        try {
-          const params = new URLSearchParams();
-          params.append('includeInactive', String(includeInactive));
-          if (languageId) {
-            params.append('languageId', languageId);
-          }
+
+  //   websiteId: string,
+  //   includeInactive = false,
+  //   languageId?: string,
+  //   enabled = true
+  // ) => {
+  //   return useQuery({
+  //     queryKey: [...websiteSectionsCompleteKey(websiteId), { includeInactive, languageId }],
+  //     queryFn: async () => {
+  //       try {
+  //         const params = new URLSearchParams();
+  //         params.append('includeInactive', String(includeInactive));
+  //         if (languageId) {
+  //           params.append('languageId', languageId);
+  //         }
           
-          const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/complete?${params.toString()}`);
-          return data;
-        } catch (error: any) {
-          console.error(`Error fetching complete section data for website ${websiteId}:`, error);
-          throw error;
-        }
-      },
-      enabled: !!websiteId && enabled,
-      // Force refetching when user changes
-      staleTime: 0,
-    });
-  };
+  //         const { data } = await apiClient.get(`${endpoint}/website/${websiteId}/complete?${params.toString()}`);
+  //         return data;
+  //       } catch (error: any) {
+  //         console.error(`Error fetching complete section data for website ${websiteId}:`, error);
+  //         throw error;
+  //       }
+  //     },
+  //     enabled: !!websiteId && enabled,
+  //     // Force refetching when user changes
+  //     staleTime: 0,
+  //   });
+  // };
 
   // Create a new section
   const useCreate = () => {
@@ -388,10 +315,10 @@ export function useSections() {
   return {
     useGetAll,
     useGetById,
-    useGetWithCompleteData,        
-    useGetAllWithCompleteData,
+    // useGetWithCompleteData,        
+    // useGetAllWithCompleteData,
     useGetByWebsiteId,             
-    useGetCompleteByWebsiteId,      
+    // useGetCompleteByWebsiteId,      
     useCreate,
     useUpdate,
     useToggleActive,
