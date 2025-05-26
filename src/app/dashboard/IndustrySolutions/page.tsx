@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useGenericList } from "@/src/hooks/useGenericList"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
@@ -30,6 +30,7 @@ const INDUSTRY_CONFIG = {
   listTitle: "Industry List",
   editPath: "IndustrySolutions/addIndustry"
 }
+
 // Column definitions
 const INDUSTRY_COLUMNS = [
   {
@@ -76,10 +77,6 @@ export default function IndustryPage() {
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
   const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
-  
-  // Refs to track previous values for debugging
-  const prevHasMainSubSection = useRef(hasMainSubSection);
-  const isFirstRender = useRef(true);
 
   // Check if main subsection exists
   const { useGetMainByWebSiteId, useGetBySectionId } = useSubSections()
@@ -99,7 +96,7 @@ export default function IndustryPage() {
   // Use the generic list hook for Industry management
   const {
     section: industrySection,
-    items: navItems,
+    items: industryItems,
     isLoadingItems: isLoadingIndustryItems,
     isCreateDialogOpen,
     isDeleteDialogOpen,
@@ -120,27 +117,8 @@ export default function IndustryPage() {
     editPath: INDUSTRY_CONFIG.editPath
   })
 
-  // Debug changes in hasMainSubSection
-  useEffect(() => {
-    if (!isFirstRender.current && prevHasMainSubSection.current !== hasMainSubSection) {
-      console.log(`hasMainSubSection changed from ${prevHasMainSubSection.current} to ${hasMainSubSection}`);
-    }
-    
-    prevHasMainSubSection.current = hasMainSubSection;
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-    }
-  }, [hasMainSubSection]);
-
   // Determine if main subsection exists when data loads & set section data if needed
-  useEffect(() => {
-    console.log("Checking for main subsection...");
-    console.log("Subsection data state:", { 
-      mainSubSectionData, 
-      sectionSubsections,
-      isLoadingCompleteSubsections,
-      isLoadingSectionSubsections
-    });
+  useEffect(() => {    
     
     // First check if we are still loading
     if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
@@ -153,9 +131,9 @@ export default function IndustryPage() {
     let foundMainSubSection = false;
     let mainSubSection = null;
     
-    // Get expected name from configuration
-    const expectedName = industrySectionConfig.subSectionName;
-    console.log("Expected subsection name:", expectedName);
+    // Get expected name from configuration - FIXED: Use .name instead of .subSectionName
+    const expectedSlug = industrySectionConfig.name;
+    console.log("Expected subsection name:", expectedSlug);
     
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
@@ -164,19 +142,19 @@ export default function IndustryPage() {
       if (Array.isArray(sectionData)) {
         // Find the main subsection in the array with correct name
         mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedName
+          sub.isMain === true && sub.name === expectedSlug
         );
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-        foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedName;
+        foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedSlug;
         mainSubSection = foundMainSubSection ? sectionData : null;
       }
       
       console.log("Section subsections check:", { 
         foundMainSubSection, 
         mainSubSection,
-        matchesName: mainSubSection ? mainSubSection.name === expectedName : false
+        matchesSlug: mainSubSection ? mainSubSection.name === expectedSlug : false
       });
     }
     
@@ -187,19 +165,19 @@ export default function IndustryPage() {
       if (Array.isArray(websiteData)) {
         // Find the main subsection in the array with correct name
         mainSubSection = websiteData.find(sub => 
-          sub.isMain === true && sub.name === expectedName
+          sub.isMain === true && sub.name === expectedSlug
         );
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-        foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedName;
+        foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedSlug;
         mainSubSection = foundMainSubSection ? websiteData : null;
       }
       
       console.log("Website subsections check:", { 
         foundMainSubSection, 
         mainSubSection,
-        matchesName: mainSubSection ? mainSubSection.name === expectedName : false
+        matchesSlug: mainSubSection ? mainSubSection.name === expectedSlug : false
       });
     }
     
@@ -207,7 +185,7 @@ export default function IndustryPage() {
       foundMainSubSection, 
       mainSubSection,
       name: mainSubSection?.name,
-      expectedName
+      expectedSlug
     });
     
     // Update state based on what we found
@@ -245,18 +223,18 @@ export default function IndustryPage() {
   const handleMainSubSectionCreated = (subsection: any) => {
     console.log("Main subsection created:", subsection);
     
-    // Check if subsection has the correct name
-    const expectedName = industrySectionConfig.subSectionName;
-    const hasCorrectName = subsection.name === expectedName;
+    // Check if subsection has the correct name - FIXED: Use .name instead of .subSectionName
+    const expectedSlug = industrySectionConfig.name;
+    const hasCorrectSlug = subsection.name === expectedSlug;
     
     // Set that we have a main subsection now (only if it also has the correct name)
-    setHasMainSubSection(subsection.isMain === true && hasCorrectName);
+    setHasMainSubSection(subsection.isMain === true && hasCorrectSlug);
     
     // Log the name check
     console.log("Main subsection name check:", {
-      actualName: subsection.name,
-      expectedName,
-      isCorrect: hasCorrectName
+      actualSlug: subsection.name,
+      expectedSlug,
+      isCorrect: hasCorrectSlug
     });
     
     // If we have section data from the subsection, update it
@@ -275,25 +253,12 @@ export default function IndustryPage() {
     }
   };
 
-  // IMPORTANT: Here's the crux of the button enabling/disabling logic
+  // Logic for disabling the add button
   const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
     (Boolean(sectionId) && !hasMainSubSection);
   
-  // Debug logging specifically for our button disabling conditions
-  useEffect(() => {
-    console.log("BUTTON DISABLED LOGIC:", {
-      defaultAddButtonDisabled,
-      isLoadingMainSubSection,
-      sectionId: sectionId || "none",
-      hasMainSubSection,
-      finalIsAddButtonDisabled: isAddButtonDisabled
-    });
-  }, [defaultAddButtonDisabled, isLoadingMainSubSection, sectionId, hasMainSubSection, isAddButtonDisabled]);
-  
-
-
   // Custom message for empty state 
   const emptyStateMessage = !industrySection && !sectionData 
     ? INDUSTRY_CONFIG.noSectionMessage 
@@ -302,10 +267,10 @@ export default function IndustryPage() {
       : INDUSTRY_CONFIG.emptyStateMessage;
 
   // Components
-  const IndustryItemsTable = (
+  const IndustryTable = (
     <GenericTable
       columns={INDUSTRY_COLUMNS}
-      data={navItems}
+      data={industryItems}
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
     />
@@ -328,7 +293,7 @@ export default function IndustryPage() {
       serviceName={itemToDelete?.name || ""}
       onConfirm={handleDelete}
       isDeleting={isDeleting}
-      title="Delete Section"
+      title="Delete Industry Item"
       confirmText="Confirm"
     />
   );
@@ -341,12 +306,12 @@ export default function IndustryPage() {
         sectionId={sectionId}
         sectionConfig={industrySectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={IndustryItemsTable}
+        tableComponent={IndustryTable}
         createDialogComponent={CreateDialog}
         deleteDialogComponent={DeleteDialog}
         onAddNew={handleAddNew}
         isLoading={isLoadingIndustryItems || isLoadingMainSubSection}
-        emptyCondition={navItems.length === 0}
+        emptyCondition={industryItems.length === 0}
         noSectionCondition={!industrySection && !sectionData}
         customEmptyMessage={emptyStateMessage}
       />

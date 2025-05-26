@@ -147,9 +147,11 @@ export function useUserSections() {
    * This uses the updated endpoint in SectionController that handles auto-relationship creation
    */
   const useCreateUserSection = () => {
+    
     return useMutation({
       mutationFn: async (sectionData: any) => {
         try {
+                console.log('useCreateUserSection called' , sectionData);
           const { data } = await apiClient.post(`${sectionsEndpoint}`, sectionData);
           return data;
         } catch (error: any) {

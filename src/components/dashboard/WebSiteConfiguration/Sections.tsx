@@ -57,6 +57,8 @@ import {
 } from "@/src/components/ui/dropdown-menu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/src/components/ui/tooltip"
+import { sub } from "date-fns"
+
 
 interface ManagementProps {
   hasWebsite: boolean
@@ -66,6 +68,7 @@ interface ManagementProps {
 const PREDEFINED_SECTIONS = [
   {
     name: "Header",
+    subName : "Header",
     description: "Main navigation and brand identity",
     image: "/sections/header.jpg",
     icon: <LayoutTemplate className="h-10 w-10" />,
@@ -73,6 +76,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "Hero",
+    subName: "Hero",
     description: "Eye-catching banner with key messaging",
     image: "/sections/hero.jpg",
     icon: <Zap className="h-10 w-10" />,
@@ -80,6 +84,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "Services",
+    subName: "Services",
     description: "Showcase your service offerings",
     image: "/sections/services.jpg",
     icon: <Settings className="h-10 w-10" />,
@@ -87,6 +92,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "News",
+    subName: "News",
     description: "Latest company updates and news",
     image: "/sections/news.jpg",
     icon: <MessageSquare className="h-10 w-10" />,
@@ -94,6 +100,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "Industry Solutions",
+    subName: "IndustrySolutions",
     description: "Industry-specific solutions your company offers",
     image: "/sections/solutions.jpg",
     icon: <Bookmark className="h-10 w-10" />,
@@ -101,6 +108,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "Choose Us",
+    subName: "ChooseUs",
     description: "Highlight your competitive advantages",
     image: "/sections/choose-us.jpg",
     icon: <Zap className="h-10 w-10" />,
@@ -108,6 +116,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "Projects",
+    subName: "Projects",
     description: "Showcase your portfolio work",
     image: "/sections/projects.jpg",
     icon: <LayoutGrid className="h-10 w-10" />,
@@ -115,6 +124,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "Our Process",
+    subName: "OurProcess",
     description: "Step-by-step explanation of your workflow",
     image: "/sections/process.jpg",
     icon: <RefreshCw className="h-10 w-10" />,
@@ -122,6 +132,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "Team",
+    subName: "Team",
     description: "Introduce your key team members",
     image: "/sections/team.jpg",
     icon: <Users className="h-10 w-10" />,
@@ -129,6 +140,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "Client Comments",
+    subName: "ClientComments",
     description: "Customer testimonials and reviews",
     image: "/sections/testimonials.jpg",
     icon: <MessageSquare className="h-10 w-10" />,
@@ -136,6 +148,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "Partners",
+    subName: "Partners",
     description: "Strategic partners and collaborators",
     image: "/sections/partners.jpg",
     icon: <Users className="h-10 w-10" />,
@@ -143,13 +156,15 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "FAQ",
+    subName: "FAQ",
     description: "Answer common customer questions",
-    image: "/sections/faq.jpg",
+    image: "/sections/faq.jpg", 
     icon: <MessageSquare className="h-10 w-10" />,
     category: "content",
   },
   {
     name: "Blog",
+    subName: "Blog",
     description: "Recent articles and thought leadership",
     image: "/sections/blog.jpg",
     icon: <MessageSquare className="h-10 w-10" />,
@@ -157,6 +172,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "Contact",
+    subName: "Contact",
     description: "Contact information and form",
     image: "/sections/contact.jpg",
     icon: <MessageSquare className="h-10 w-10" />,
@@ -164,6 +180,7 @@ const PREDEFINED_SECTIONS = [
   },
   {
     name: "Footer",
+    subName: "Footer",
     description: "Site links, social media, and legal info",
     image: "/sections/footer.jpg",
     icon: <LayoutTemplate className="h-10 w-10" />,
@@ -261,12 +278,15 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
     const newSectionData = {
       name: predefinedSection.name,
       description: predefinedSection.description,
+      subName: predefinedSection.subName,
       image: predefinedSection.image,
       order: orderedSections.length, // Add to end of current sections
       subSections: [],
       isActive: true, // Default to active
       WebSiteId: websiteId,
     }
+    
+    console.log(newSectionData)
 
     // Check if section with this name already exists
     if (orderedSections?.some((section: Section) => section.name === predefinedSection.name)) {
@@ -358,29 +378,6 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
     }
   }
 
-  // const handleToggleActive = (section: Section) => {
-  //   if (!section._id) return
-
-  //   toggleSectionActiveMutation.mutate(
-  //     { id: section._id, isActive: !section.isActive },
-  //     {
-  //       onSuccess: () => {
-  //         toast({
-  //           title: `Section ${section.isActive ? "hidden" : "activated"}`,
-  //           description: `${section.name} is now ${section.isActive ? "hidden" : "visible"} on your website.`,
-  //         })
-  //         showSuccessMessage()
-  //       },
-  //       onError: (error: any) => {
-  //         toast({
-  //           title: "Error updating section",
-  //           description: error.message || "An error occurred while updating the section.",
-  //           variant: "destructive",
-  //         })
-  //       },
-  //     },
-  //   )
-  // }
 
   const handleReorder = (reorderedSections: Section[]) => {
     // Only process if we're not still dragging
