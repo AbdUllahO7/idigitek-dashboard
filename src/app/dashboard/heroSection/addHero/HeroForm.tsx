@@ -78,7 +78,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
     );
 
     const { toast } = useToast();
-    const forceUpdate = useForceUpdate();
     const primaryLanguageRef = useRef<string | null>(null);
     const onDataChangeRef = useRef(onDataChange);
 

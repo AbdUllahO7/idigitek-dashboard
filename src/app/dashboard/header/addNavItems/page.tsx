@@ -143,7 +143,7 @@ export default function AddHeader() {
       )
     }
   ]
-   
+  
   // Define save handler for the header
   const handleSaveHeader = async (formData: FormData) => {
     // Extract header info from hero data for title/description

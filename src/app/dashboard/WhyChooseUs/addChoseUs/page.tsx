@@ -193,7 +193,7 @@ export default function AddIndustry() {
       subtitle={isCreateMode 
         ? "Create a new ChoseUs item with multilingual content" 
         : `Editing "${sectionItemData?.data?.name || 'ChoseUs item'}" content across multiple languages`}
-      backUrl={`/dashboard/IndustrySolutions?sectionId=${sectionId}`}
+      backUrl={`/dashboard/WhyChooseUs?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}
       sectionId={sectionId}

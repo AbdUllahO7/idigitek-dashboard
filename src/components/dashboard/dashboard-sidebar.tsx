@@ -84,7 +84,6 @@ const allNavItems: NavItem[] = [
     icon: Package,
     sectionId: "header",
   },
-
   {
     title: "News",
     href: "/dashboard/News",
@@ -98,10 +97,10 @@ const allNavItems: NavItem[] = [
     sectionId: "industrysolutions",
   },
   {
-    title: "Choose Us",
+    title: "f",
     href: "/dashboard/WhyChooseUs",
     icon: Briefcase,
-    sectionId: "choseus",
+    sectionId: "whychooseus",
   },
   {
     title: "Projects",

@@ -108,8 +108,8 @@ const PREDEFINED_SECTIONS = [
     category: "content",
   },
   {
-    name: "Choose Us",
-    subName: "ChooseUs",
+    name: "why Choose Us",
+    subName: "whyChooseUs",
     description: "Highlight your competitive advantages",
     image: "/sections/choose-us.jpg",
     icon: <Zap className="h-10 w-10" />,
