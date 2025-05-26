@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/src/lib/api-client';
 import { Section } from '@/src/api/types/hooks/section.types';
 import { useAuth } from '@/src/context/AuthContext'; // Import auth context to get current user
+import { toast } from '../use-toast';
 
 // Base section hook
 export function useSections() {
@@ -272,38 +273,73 @@ export function useSections() {
     });
   };
 
-  // Update order of multiple sections
-  const useUpdateOrder = () => {
-    return useMutation({
-      mutationFn: async (sections: { id: string; order: number; websiteId?: string }[]) => {
-        const { data } = await apiClient.put(`${endpoint}/order`, { sections });
-        
-        // Get any websiteIds from the sections for cache invalidation
-        const websiteIds = [...new Set(
-          sections
-            .filter(s => s.websiteId)
-            .map(s => s.websiteId!)
-        )];
-        
-        return { data, websiteIds };
-      },
-      onSuccess: ({ websiteIds }) => {
-        // Invalidate all section queries to ensure order changes are reflected
-        queryClient.invalidateQueries({ queryKey: sectionsKey });
-        queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
-        
-        // Also invalidate website-specific queries
-        websiteIds.forEach(websiteId => {
-          queryClient.invalidateQueries({ 
-            queryKey: websiteSectionsKey(websiteId) 
-          });
-          queryClient.invalidateQueries({ 
-            queryKey: websiteSectionsCompleteKey(websiteId) 
-          });
-        });
-      },
-    });
-  };
+    // const useUpdateOrder = () => {
+    // const queryClient = useQueryClient();
+    // const { user } = useAuth();
+
+    // const getUserPrefix = () => {
+    //   const userId = user?.id || 'anonymous';
+    //   return userId ? `user-${userId}` : 'anonymous';
+    // };
+
+    // const sectionsKey = ['sections', getUserPrefix()];
+    // const sectionKey = (id: string) => [...sectionsKey, id];
+    // const websiteSectionsKey = (websiteId: string) => [...sectionsKey, 'website', websiteId];
+    // const websiteSectionsCompleteKey = (websiteId: string) => [...websiteSectionsKey(websiteId), 'complete'];
+
+    // return useMutation({
+    //   mutationFn: async (sections: { id: string; order: number; websiteId: string }[]) => {
+    //     try {
+    //       const response = await apiClient.patch(`/sections/order`, sections);
+    //       // Ensure response.data is an array
+    //       if (!Array.isArray(response.data)) {
+    //         throw new Error('Expected an array of sections in the response');
+    //       }
+    //       return response.data; // Return the array of updated sections
+    //     } catch (error: any) {
+    //       console.error('Error updating section orders:', error);
+    //       if (error.message?.includes('Max retries reached')) {
+    //         throw new Error('Unable to update section order due to high system load. Please try again later.');
+    //       }
+    //       if (error.message?.includes('Order value')) {
+    //         throw new Error(error.message);
+    //       }
+    //       if (error.message?.includes('Section not found')) {
+    //         throw new Error('One or more sections not found or do not belong to the specified website');
+    //       }
+    //       throw new Error('Failed to update section orders');
+    //     }
+    //   },
+    //   onSuccess: (data: Section[]) => {
+    //     // Ensure data is an array before iterating
+    //     if (Array.isArray(data)) {
+    //       data.forEach((section: Section) => {
+    //         if (section._id) {
+    //           queryClient.setQueryData(sectionKey(section._id), section);
+    //         }
+    //       });
+    //       // Invalidate queries
+    //       queryClient.invalidateQueries({ queryKey: sectionsKey });
+    //       queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+    //       const websiteIds = [...new Set(data.map((section: Section) => section.WebSiteId.toString()))];
+    //       websiteIds.forEach((websiteId) => {
+    //         queryClient.invalidateQueries({ queryKey: websiteSectionsKey(websiteId) });
+    //         queryClient.invalidateQueries({ queryKey: websiteSectionsCompleteKey(websiteId) });
+    //       });
+    //     } else {
+    //       console.error('onSuccess: Expected data to be an array, received:', data);
+    //     }
+    //   },
+    //   onError: (error: any) => {
+    //     console.error('Mutation error:', error);
+    //     toast({
+    //       title: 'Error updating order',
+    //       description: error.message || 'An error occurred while updating section order.',
+    //       variant: 'destructive',
+    //     });
+    //   },
+    // });
+    // };
 
   // Add a manual function to clear all section-related cache for a user
   const clearUserSectionsCache = () => {
@@ -323,7 +359,7 @@ export function useSections() {
     useUpdate,
     useToggleActive,
     useDelete,
-    useUpdateOrder,
+    // useUpdateOrder,
     clearUserSectionsCache  // New helper to explicitly clear cache between users
   };
 }

@@ -58,6 +58,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/src/components/ui/tooltip"
 import { sub } from "date-fns"
+import useUpdateOrder from "@/src/hooks/webConfiguration/useUpdateOrder"
 
 
 interface ManagementProps {
@@ -206,9 +207,10 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
     useCreate: useCreateSection,
     useDelete: useDeleteSection,
     useToggleActive: useToggleSectionActive,
-    useUpdateOrder: useUpdateSectionOrder,
   } = useSections()
+  
 
+ 
   // Get user-section hooks
   const { useActivateSection, useCreateUserSection } = useUserSections()
 
@@ -224,12 +226,12 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
     error: sectionsError,
     refetch: refetchSections,
     isError,
-  } = useGetByWebsiteId(websiteId, false, hasWebsite)
+  } = useGetByWebsiteId(websiteId, true, hasWebsite)
 
   const createSectionMutation = useCreateSection()
   const deleteSectionMutation = useDeleteSection()
   const toggleSectionActiveMutation = useToggleSectionActive()
-  const updateSectionOrderMutation = useUpdateSectionOrder()
+  const updateSectionOrderMutation = useUpdateOrder()
   const [itemToDelete, setItemToDelete] = useState<DeleteItemData | null>(null)
   const { toast } = useToast()
   const [showSavedSuccess, setShowSavedSuccess] = useState(false)
@@ -240,13 +242,19 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
   const [isDragging, setIsDragging] = useState(false)
 
   useEffect(() => {
-    if (createSectionMutation.isSuccess || deleteSectionMutation.isSuccess || toggleSectionActiveMutation.isSuccess) {
+    if (
+      createSectionMutation.isSuccess || 
+      deleteSectionMutation.isSuccess || 
+      toggleSectionActiveMutation.isSuccess ||
+      updateSectionOrderMutation.isSuccess
+    ) {
       refetchSections()
     }
   }, [
     createSectionMutation.isSuccess,
     deleteSectionMutation.isSuccess,
     toggleSectionActiveMutation.isSuccess,
+    updateSectionOrderMutation.isSuccess,
     refetchSections,
   ])
 
@@ -378,51 +386,100 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
     }
   }
 
+  // Handle toggle active status
+  const handleToggleActive = (section: Section) => {
+    if (!section._id) {
+      toast({
+        title: "Error",
+        description: "Section ID is missing.",
+        variant: "destructive",
+      })
+      return
+    }
 
+    const newActiveStatus = !section.isActive
+
+    toggleSectionActiveMutation.mutate(
+      { id: section._id, isActive: newActiveStatus },
+      {
+        onSuccess: () => {
+          toast({
+            title: `Section ${newActiveStatus ? 'activated' : 'deactivated'}`,
+            description: `${section.name} is now ${newActiveStatus ? 'visible' : 'hidden'} on your website.`,
+          })
+          showSuccessMessage()
+
+          // Optimistically update the local state
+          setOrderedSections(prevSections => 
+            prevSections.map(s => 
+              s._id === section._id 
+                ? { ...s, isActive: newActiveStatus }
+                : s
+            )
+          )
+        },
+        onError: (error: any) => {
+          toast({
+            title: "Error updating section",
+            description: error.message || "An error occurred while updating the section status.",
+            variant: "destructive",
+          })
+        },
+      }
+    )
+  }
+
+  // Handle reordering sections
+  // Handle reordering sections
   const handleReorder = (reorderedSections: Section[]) => {
-    // Only process if we're not still dragging
-    if (isDragging) return
+    // Update local state with the new order
+    setOrderedSections(reorderedSections);
 
-    // Update the local state with reordered sections
-    setOrderedSections(reorderedSections)
-
-    // Update the order property for each section
-    const updatedSections = reorderedSections.map((section, index) => ({
-      ...section,
-      order: index,
-    }))
-
-    // Prepare data for the API call, filtering out sections without _id
-    const orderData = updatedSections
-      .filter((section): section is Section & { _id: string; order: number } => section._id !== undefined && typeof section.order === 'number')
-      .map((section) => ({
+    // Prepare data for the API call
+    const orderData = reorderedSections
+      .filter((section): section is Section & { _id: string; order: number } => 
+        section._id !== undefined && typeof section.order === 'number' && Boolean(section.WebSiteId)
+      )
+      .map((section, index) => ({
         id: section._id,
-        order: section.order,
-        websiteId: section.WebSiteId, // Include website ID for cache invalidation
-      }))
+        order: index, // Use the index from the reordered array
+        websiteId: section.WebSiteId.toString(),
+      }));
 
-    // Save the new order to the backend
+    // Validate that we have sections to update
+    if (orderData.length === 0) {
+      toast({
+        title: "Error",
+        description: "No valid sections to reorder.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Perform the backend update
     updateSectionOrderMutation.mutate(orderData, {
       onSuccess: () => {
         toast({
           title: "Order updated",
           description: "Section order has been updated successfully.",
-        })
-        showSuccessMessage()
+        });
+        showSuccessMessage();
+        // Refetch sections to ensure consistency with backend
+        refetchSections();
       },
       onError: (error: any) => {
         toast({
           title: "Error updating order",
           description: error.message || "An error occurred while updating section order.",
           variant: "destructive",
-        })
+        });
         // Revert to original order on error
         if (websiteSections?.data) {
-          setOrderedSections([...websiteSections.data].sort((a, b) => a.order - b.order))
+          setOrderedSections([...websiteSections.data].sort((a, b) => a.order - b.order));
         }
       },
-    })
-  }
+    });
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -580,92 +637,97 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                       </div>
                     )}
                     
-                    <Reorder.Group 
-                      axis="y" 
-                      values={orderedSections} 
-                      onReorder={(items) => setOrderedSections(items)}
-                      className="space-y-3"
-                    >
-                      {filteredCurrentSections.map((section: Section) => (
-                        <Reorder.Item
-                          key={section._id || `section-${section.name}`}
-                          value={section}
-                          className="cursor-move"
-                          onDragStart={() => setIsDragging(true)}
-                          onDragEnd={() => {
-                            setIsDragging(false);
-                            handleReorder(orderedSections);
-                          }}
-                        >
-                          <Card className="border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300 overflow-hidden bg-white dark:bg-slate-900">
-                            <div className="p-4 flex items-center gap-4">
-                              <div className="text-muted-foreground border border-dashed border-slate-200 dark:border-slate-700 p-1.5 rounded-md cursor-grab">
-                                <GripVertical className="h-5 w-5" />
-                              </div>
-
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                  <h3 className="font-semibold text-base">{section.name}</h3>
-                                  <Badge
-                                    
-                                    className={section.isActive ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800" : ""}
-                                  >
-                                    {section.isActive ? "Active" : "Hidden"}
-                                  </Badge>
-                                </div>
-                                {section.description && (
-                                  <p className="text-sm text-muted-foreground mt-1">{section.description}</p>
-                                )}
-                              </div>
-
-                              <div className="flex items-center gap-2">
-                                {/* <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={(e) => {
-                                          e.stopPropagation() // Prevent reordering
-                                          handleToggleActive(section)
-                                        }}
-                                        className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
-                                      >
-                                        {section.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>{section.isActive ? "Hide section" : "Show section"}</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider> */}
-
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={(e) => {
-                                          e.stopPropagation() // Prevent reordering
-                                          handleOpenDelete(section)
-                                        }}
-                                        className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
-                                      >
-                                        <Trash className="h-4 w-4" />
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>Delete section</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              </div>
+                <Reorder.Group 
+                    axis="y" 
+                    values={orderedSections} 
+                    onReorder={handleReorder} // Directly call handleReorder
+                    className="space-y-3"
+                  >
+                    {filteredCurrentSections.map((section: Section) => (
+                      <Reorder.Item
+                        key={section._id || `section-${section.name}`}
+                        value={section}
+                        className="cursor-move"
+                      >
+                        <Card className="border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300 overflow-hidden bg-white dark:bg-slate-900">
+                          <div className="p-4 flex items-center gap-4">
+                            <div className="text-muted-foreground border border-dashed border-slate-200 dark:border-slate-700 p-1.5 rounded-md cursor-grab">
+                              <GripVertical className="h-5 w-5" />
                             </div>
-                          </Card>
-                        </Reorder.Item>
-                      ))}
-                    </Reorder.Group>
+
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-semibold text-base">{section.name}</h3>
+                                <Badge
+                                  variant={section.isActive ? "default" : "secondary"}
+                                  className={section.isActive ? 
+                                    "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800" : 
+                                    "bg-gray-100 text-gray-600 dark:bg-gray-800/50 dark:text-gray-400"
+                                  }
+                                >
+                                  {section.isActive ? "Active" : "Hidden"}
+                                </Badge>
+                              </div>
+                              {section.description && (
+                                <p className="text-sm text-muted-foreground mt-1">{section.description}</p>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleToggleActive(section);
+                                      }}
+                                      disabled={toggleSectionActiveMutation.isPending}
+                                      className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
+                                    >
+                                      {toggleSectionActiveMutation.isPending && toggleSectionActiveMutation.variables?.id === section._id ? (
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                      ) : section.isActive ? (
+                                        <Eye className="h-4 w-4" />
+                                      ) : (
+                                        <EyeOff className="h-4 w-4" />
+                                      )}
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>{section.isActive ? "Hide section" : "Show section"}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleOpenDelete(section);
+                                      }}
+                                      className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+                                    >
+                                      <Trash className="h-4 w-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Delete section</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </div>
+                          </div>
+                        </Card>
+                      </Reorder.Item>
+                    ))}
+                </Reorder.Group>
                   </div>
                 ) : searchQuery ? (
                   <div className="text-center py-12 text-muted-foreground">
@@ -781,7 +843,11 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                             }
                             className="w-full transition-all duration-300 flex items-center justify-center gap-2 group-hover:bg-primary"
                           >
-                            <PlusCircle className="h-4 w-4" />
+                            {(createSectionMutation.isPending || (createUserSectionMutation && createUserSectionMutation.isPending)) ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <PlusCircle className="h-4 w-4" />
+                            )}
                             Add to Website
                           </Button>
                         </CardFooter>
