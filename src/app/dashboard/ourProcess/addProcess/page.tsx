@@ -194,7 +194,7 @@ export default function AddProcess() {
       subtitle={isCreateMode 
         ? "Create a new service with multilingual content" 
         : `Editing "${sectionItemData?.data?.name || 'Process'}" content across multiple languages`}
-      backUrl={`/dashboard/Process?sectionId=${sectionId}`}
+      backUrl={`/dashboard/ourProcess?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}
       sectionId={sectionId}
