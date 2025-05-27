@@ -18,7 +18,6 @@ export const processSectionConfig = {
         { id: "sectionBadge", label: "Section Badge", type: "text", required: true },
         { id: "sectionTitle", label: "Section Title", type: "text", required: true },
         { id: "sectionDescription", label: "Section Description", type: "textarea", required: false },
-        { id: "serviceDetails", label: "process Details", type: "badge", required: true },
     ] as FieldConfig[],
 
   // Define element mapping
@@ -26,6 +25,5 @@ export const processSectionConfig = {
         "sectionBadge": "Badge",
         "sectionTitle": "Title", 
         "sectionDescription": "Description",
-        "serviceDetails": "ServiceDetails"
     }
 };
