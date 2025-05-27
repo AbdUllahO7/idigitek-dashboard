@@ -83,7 +83,7 @@ const schemaDefinitions = {
       title: z.string().min(1, { message: "Title is required" }),
       description: z.string().min(1, { message: "Description is required" }),
       category: z.string().min(1, { message: "Category is required" }),
-      date: z.date().optional(),
+      date: z.any().optional(),
       backLinkText: z.string().min(1, { message: "Button text is required" }),
       
       // Optional fields
