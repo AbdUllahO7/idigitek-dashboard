@@ -4,12 +4,11 @@ import React, { ReactNode } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card"
 import { Button } from "@/src/components/ui/button"
 import { Skeleton } from "@/src/components/ui/skeleton"
-import { Check, AlertCircle, Loader2, Globe, Info, Edit, Save, AlertTriangle, Car, MonitorSmartphone, CreditCard, Settings, Clock, MessageSquare, Headphones, LineChart } from 'lucide-react'
+import {  Loader2,  Save, AlertTriangle} from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert"
 import { Tabs,  TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { motion } from "framer-motion"
 // Import the Plus icon that was missing
-import { Plus } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { ActionButtonProps, CancelButtonProps, ErrorCardProps, InfoAlertProps, LanguageSelectorProps, LanguageTabsProps, LoadingDialogProps, MainFormCardProps, SuccessCardProps, WarningAlertProps, WarningCardProps } from "../api/types/utils/MainSectionComponents.types"
 
@@ -354,7 +353,61 @@ export const LoadingDialog = ({ isOpen, title, description } : LoadingDialogProp
 
 // Icon mapping component to render the actual icons
 
-export const IconComponent = ({ iconName } : {iconName : IconNames}) => {
+import {
+  Car,
+  MonitorSmartphone,
+  Settings,
+  CreditCard,
+  Clock,
+  MessageSquare,
+  LineChart,
+  Headphones,
+  User,
+  Calendar,
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Lock,
+  Unlock,
+  Star,
+  Heart,
+  ThumbsUp,
+  ThumbsDown,
+  Eye,
+  EyeOff,
+  Search,
+  Filter,
+  Edit,
+  Trash,
+  Plus,
+  Minus,
+  Check,
+  X,
+  Download,
+  Upload,
+  Share,
+  Link,
+  Copy,
+  Bookmark,
+  Tag,
+  Folder,
+  File,
+  Image,
+  Video,
+  Music,
+  Play,
+  Pause,
+  Volume,
+  VolumeX,
+  Sun,
+  Moon,
+  Bell,
+  AlertCircle,
+  Info,
+} from "lucide-react";
+
+export const IconComponent = ({ iconName }: { iconName: IconNames }) => {
   const icons = {
     Car: <Car className="h-4 w-4" />,
     MonitorSmartphone: <MonitorSmartphone className="h-4 w-4" />,
@@ -363,11 +416,104 @@ export const IconComponent = ({ iconName } : {iconName : IconNames}) => {
     Clock: <Clock className="h-4 w-4" />,
     MessageSquare: <MessageSquare className="h-4 w-4" />,
     LineChart: <LineChart className="h-4 w-4" />,
-    Headphones: <Headphones className="h-4 w-4" />
+    Headphones: <Headphones className="h-4 w-4" />,
+    User: <User className="h-4 w-4" />,
+    Calendar: <Calendar className="h-4 w-4" />,
+    Mail: <Mail className="h-4 w-4" />,
+    Phone: <Phone className="h-4 w-4" />,
+    MapPin: <MapPin className="h-4 w-4" />,
+    Globe: <Globe className="h-4 w-4" />,
+    Lock: <Lock className="h-4 w-4" />,
+    Unlock: <Unlock className="h-4 w-4" />,
+    Star: <Star className="h-4 w-4" />,
+    Heart: <Heart className="h-4 w-4" />,
+    ThumbsUp: <ThumbsUp className="h-4 w-4" />,
+    ThumbsDown: <ThumbsDown className="h-4 w-4" />,
+    Eye: <Eye className="h-4 w-4" />,
+    EyeOff: <EyeOff className="h-4 w-4" />,
+    Search: <Search className="h-4 w-4" />,
+    Filter: <Filter className="h-4 w-4" />,
+    Edit: <Edit className="h-4 w-4" />,
+    Trash: <Trash className="h-4 w-4" />,
+    Plus: <Plus className="h-4 w-4" />,
+    Minus: <Minus className="h-4 w-4" />,
+    Check: <Check className="h-4 w-4" />,
+    X: <X className="h-4 w-4" />,
+    Download: <Download className="h-4 w-4" />,
+    Upload: <Upload className="h-4 w-4" />,
+    Share: <Share className="h-4 w-4" />,
+    Link: <Link className="h-4 w-4" />,
+    Copy: <Copy className="h-4 w-4" />,
+    Bookmark: <Bookmark className="h-4 w-4" />,
+    Tag: <Tag className="h-4 w-4" />,
+    Folder: <Folder className="h-4 w-4" />,
+    File: <File className="h-4 w-4" />,
+    Image: <Image className="h-4 w-4" />,
+    Video: <Video className="h-4 w-4" />,
+    Music: <Music className="h-4 w-4" />,
+    Play: <Play className="h-4 w-4" />,
+    Pause: <Pause className="h-4 w-4" />,
+    Volume: <Volume className="h-4 w-4" />,
+    VolumeX: <VolumeX className="h-4 w-4" />,
+    Sun: <Sun className="h-4 w-4" />,
+    Moon: <Moon className="h-4 w-4" />,
+    Bell: <Bell className="h-4 w-4" />,
+    AlertCircle: <AlertCircle className="h-4 w-4" />,
+    Info: <Info className="h-4 w-4" />,
   };
 
   return icons[iconName] || <Car className="h-4 w-4" />;
 };
 
-
-export type IconNames = 'Car' | 'MonitorSmartphone' | 'Settings' | 'CreditCard' | 'Clock' | 'MessageSquare' | 'LineChart' | 'Headphones';
+export type IconNames =
+  | 'Car'
+  | 'MonitorSmartphone'
+  | 'Settings'
+  | 'CreditCard'
+  | 'Clock'
+  | 'MessageSquare'
+  | 'LineChart'
+  | 'Headphones'
+  | 'User'
+  | 'Calendar'
+  | 'Mail'
+  | 'Phone'
+  | 'MapPin'
+  | 'Globe'
+  | 'Lock'
+  | 'Unlock'
+  | 'Star'
+  | 'Heart'
+  | 'ThumbsUp'
+  | 'ThumbsDown'
+  | 'Eye'
+  | 'EyeOff'
+  | 'Search'
+  | 'Filter'
+  | 'Edit'
+  | 'Trash'
+  | 'Plus'
+  | 'Minus'
+  | 'Check'
+  | 'X'
+  | 'Download'
+  | 'Upload'
+  | 'Share'
+  | 'Link'
+  | 'Copy'
+  | 'Bookmark'
+  | 'Tag'
+  | 'Folder'
+  | 'File'
+  | 'Image'
+  | 'Video'
+  | 'Music'
+  | 'Play'
+  | 'Pause'
+  | 'Volume'
+  | 'VolumeX'
+  | 'Sun'
+  | 'Moon'
+  | 'Bell'
+  | 'AlertCircle'
+  | 'Info';
