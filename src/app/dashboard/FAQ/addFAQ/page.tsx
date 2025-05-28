@@ -11,7 +11,6 @@ import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useSearchParams } from "next/navigation"
 import FaqForm from "./FAQs/faq-form"
-import QuestionsForm from "./HaveQuestion/QuestionsForm"
 
 
 // Form sections to collect data from
@@ -145,20 +144,7 @@ export default function AddHeader() {
         />
       )
     },
-    {
-      id: "haveQuestions",
-      label: "Have Questions Items",
-      icon: <Layout className="h-4 w-4" />,
-      component: (
-        <QuestionsForm
-          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
-          activeLanguages={activeLanguages}
-          slug={getSlug('haveQuestions')}
-          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('haveQuestions')}
-        />
-      )
-    }
+   
   ]
   // Define save handler for the header
   const handleSaveHeader = async (formData: FormData) => {
