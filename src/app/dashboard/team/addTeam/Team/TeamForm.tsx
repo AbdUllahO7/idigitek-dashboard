@@ -20,7 +20,9 @@ import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content
 import { teamFormProps } from "@/src/api/types/sections/team/teamSection.type";
 import { processAndLoadData } from "../../../services/addService/Utils/load-form-data";
 import { TeamLanguageCard } from "./TeamLanguageCard";
-
+import { useImageUploader } from "../../../services/addService/Utils/Image-uploader";
+import apiClient from "@/src/lib/api-client";
+import { BackgroundImageSection } from "../../../services/addService/Components/Hero/SimpleImageUploader";
 
 const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
   const { 
@@ -48,7 +50,7 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
     isLoadingData: !slug,
     dataLoaded: !slug,
     hasUnsavedChanges: false,
-    existingSubSectionId: null as string | null ,
+    existingSubSectionId: null as string | null,
     contentElements: [] as ContentElement[],
     isSaving: false
   });
@@ -70,7 +72,7 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
 
   // Hooks
   const { toast } = useToast();
-  const dataTeamed = useRef(false);
+  const dataProcessed = useRef(false);
   const onDataChangeRef = useRef(onDataChange);
   const defaultLangCode = activeLanguages[0]?.languageID || 'en';
   
@@ -89,7 +91,27 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
   const createContentElement = useCreateContentElement();
   const bulkUpsertTranslations = useBulkUpsertTranslations();
 
-
+  // Image upload hook
+  const { 
+    imageFile, 
+    imagePreview, 
+    handleImageUpload, 
+    handleImageRemove 
+  } = useImageUploader({
+    form,
+    fieldPath: 'backgroundImage',
+    initialImageUrl: initialData?.image || form.getValues().backgroundImage,
+    onUpload: () => updateState({
+      hasUnsavedChanges: true,
+    }),
+    onRemove: () => updateState({
+      hasUnsavedChanges: true,
+    }),
+    validate: (file: { type: string; }) => {
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
+      return validTypes.includes(file.type) || 'Only JPEG, PNG, GIF, or SVG files are allowed';
+    }
+  });
 
   // Data fetching from API
   const { 
@@ -103,16 +125,15 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
     onDataChangeRef.current = onDataChange;
   }, [onDataChange]);
 
-  // Team initial data from parent
-  const teamInitialData = useCallback(() => {
+  // Process initial data from parent
+  const processInitialData = useCallback(() => {
     if (initialData && !dataLoaded) {
-      
       if (initialData.description) {
         form.setValue(`${defaultLangCode}.description`, initialData.description);
       }
-      
-     
-      
+      if (initialData.image) {
+        form.setValue('backgroundImage', initialData.image);
+      }
       updateState({ 
         dataLoaded: true, 
         hasUnsavedChanges: false 
@@ -120,27 +141,27 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
     }
   }, [initialData, dataLoaded, defaultLangCode, form]);
 
-  // Team hero data from API
-  const processProcessData = useCallback((subsectionData: SubSection | null) => {
-      processAndLoadData(
+  // Process team data from API
+  const processTeamData = useCallback((subsectionData: SubSection | null) => {
+    processAndLoadData(
       subsectionData,
       form,
       languageIds,
       activeLanguages,
       {
         groupElements: (elements) => ({
-          'team': elements.filter(el => el.type === 'text' || (el.name === 'Background Image' && el.type === 'image'))
+          'team': elements.filter(el => el.type === 'text' || (el.name === 'Logo' && el.type === 'image'))
         }),
         processElementGroup: (groupId, elements, langId, getTranslationContent) => {
           const elementKeyMap: Record<string, keyof typeof result> = {
             'Title': 'title',
-            'Job' :'job',
+            'Job': 'job',
             'Description': 'description',
           };
           
           const result = {
             title: '',
-            job:'',
+            job: '',
             description: '',
           };
           
@@ -168,30 +189,39 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
       }
     );
 
-  
+    // Handle background image
+    const bgImageElement = subsectionData?.elements?.find(
+      (el) => el.name === 'Logo' && el.type === 'image'
+    ) || subsectionData?.contentElements?.find(
+      (el) => el.name === 'Logo' && el.type === 'image'
+    );
+    
+    if (bgImageElement?.imageUrl) {
+      form.setValue('backgroundImage', bgImageElement.imageUrl);
+    }
   }, [form, languageIds, activeLanguages]);
 
-  // Team initial data effect
+  // Process initial data effect
   useEffect(() => {
     if (!dataLoaded && initialData) {
-      teamInitialData();
+      processInitialData();
     }
-  }, [initialData, dataLoaded, teamInitialData]);
+  }, [initialData, dataLoaded, processInitialData]);
 
-  // Team API data effect
+  // Process API data effect
   useEffect(() => {
-    if (!slug || isLoadingSubsection || dataTeamed.current) return;
+    if (!slug || isLoadingSubsection || dataProcessed.current) return;
     
     if (completeSubsectionData?.data) {
       updateState({ isLoadingData: true });
-      processProcessData(completeSubsectionData.data);
+      processTeamData(completeSubsectionData.data);
       updateState({ 
         dataLoaded: true,
         isLoadingData: false
       });
-      dataTeamed.current = true;
+      dataProcessed.current = true;
     }
-  }, [completeSubsectionData, isLoadingSubsection, slug, processProcessData]);
+  }, [completeSubsectionData, isLoadingSubsection, slug, processTeamData]);
 
   // Form watch effect for unsaved changes
   useEffect(() => {
@@ -208,8 +238,45 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
   }, [form, isLoadingData, dataLoaded, updateState]);
 
   // Image upload handler
+  const uploadImage = useCallback(async (elementId: any, file: string | Blob) => {
+    if (!file) return null;
+    
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      
+      const uploadResult = await apiClient.post(
+        `/content-elements/${elementId}/image`, 
+        formData, 
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      
+      const imageUrl = uploadResult.data?.imageUrl || 
+                      uploadResult.data?.url || 
+                      uploadResult.data?.data?.imageUrl;
+      
+      if (imageUrl) {
+        form.setValue("backgroundImage", imageUrl, { shouldDirty: false });
+        toast({
+          title: "Image Uploaded",
+          description: "Background image has been successfully uploaded."
+        });
+        return imageUrl;
+      } 
+      
+      throw new Error("No image URL returned from server. Response: " + JSON.stringify(uploadResult.data));
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      toast({
+        title: "Image Upload Failed",
+        description: error instanceof Error ? error.message : "Failed to upload image",
+        variant: "destructive"
+      });
+      throw error;
+    }
+  }, [form, toast]);
 
-  // Save handler with optimized team
+  // Save handler with optimized process
   const handleSave = useCallback(async () => {
     // Validate form
     const isValid = await form.trigger();
@@ -236,15 +303,15 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
         
         const subsectionData = {
           name: "Team Section",
-          slug: slug || `hero-section-${Date.now()}`,
+          slug: slug || `team-section-${Date.now()}`,
           description: "",
           isActive: true,
           isMain: false,
           order: 0,
-          defaultContent : '',
+          defaultContent: '',
           sectionItem: ParentSectionId,
           languages: languageIds,
-          WebSiteId : websiteId
+          WebSiteId: websiteId
         };
         
         const newSubSection = await createSubSection.mutateAsync(subsectionData);
@@ -275,13 +342,20 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
 
       // Step 3: Handle existing content or create new content
       if (contentElements.length > 0) {
+        // Handle existing content elements
+        if (imageFile) {
+          const imageElement = contentElements.find((e) => e.type === "image");
+          if (imageElement) {
+            await uploadImage(imageElement._id, imageFile);
+          }
+        }
 
         // Update translations for text elements
         const textElements = contentElements.filter((e) => e.type === "text");
-        const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] | { content: any; language: string; contentElement: string; isActive: boolean; }[] = [];
-        const elementNameToKeyMap: Record<string, 'title' | 'description' | 'job' > = {
+        const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] = [];
+        const elementNameToKeyMap: Record<string, 'title' | 'description' | 'job'> = {
           'Title': 'title',
-          "Job" : 'job',
+          'Job': 'job',
           'Description': 'description',
         };
 
@@ -310,6 +384,7 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
       } else {
         // Create new content elements
         const elementTypes = [
+          { type: "image", key: "backgroundImage", name: "Logo" },
           { type: "text", key: "title", name: "Title" },
           { type: "text", key: "job", name: "Job" },
           { type: "text", key: "description", name: "Description" },
@@ -318,7 +393,9 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
         const createdElements = [];
         for (const [index, el] of elementTypes.entries()) {
           let defaultContent = "";
-          if (el.type === "text" && typeof allFormValues[defaultLangCode] === "object") {
+          if (el.type === "image") {
+            defaultContent = "image-placeholder";
+          } else if (el.type === "text" && typeof allFormValues[defaultLangCode] === "object") {
             const langValues = allFormValues[defaultLangCode];
             defaultContent = langValues && typeof langValues === "object" && el.key in langValues
               ? langValues[el.key]
@@ -340,9 +417,15 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
 
         updateState({ contentElements: createdElements.map((e) => ({ ...e, translations: [] })) });
 
+        // Handle image upload for new elements
+        const bgImageElement = createdElements.find((e) => e.key === "backgroundImage");
+        if (bgImageElement && imageFile) {
+          await uploadImage(bgImageElement._id, imageFile);
+        }
+
         // Create translations for new elements
         const textElements = createdElements.filter((e) => e.key !== "backgroundImage");
-        const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] | { content: any; language: string; contentElement: any; isActive: boolean; }[] = [];
+        const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] = [];
         
         Object.entries(allFormValues).forEach(([langCode, langValues]) => {
           if (langCode === "backgroundImage") return;
@@ -380,7 +463,7 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
         const result = await refetch();
         if (result.data?.data) {
           updateState({ dataLoaded: false });
-          await processProcessData(result.data.data);
+          await processTeamData(result.data.data);
         }
       } else {
         // For new subsections, manually update form
@@ -404,7 +487,7 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
     } catch (error) {
       console.error("Operation failed:", error);
       toast({
-        title: existingSubSectionId ? "Error updating hero section" : "Error creating hero section",
+        title: existingSubSectionId ? "Error updating team section" : "Error creating team section",
         variant: "destructive",
         description: error instanceof Error ? error.message : "Unknown error occurred"
       });
@@ -415,6 +498,7 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
   }, [
     existingSubSectionId, 
     form, 
+    imageFile, 
     ParentSectionId, 
     slug, 
     toast, 
@@ -424,10 +508,11 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
     createSubSection, 
     defaultLangCode, 
     languageIds, 
-    processProcessData, 
+    processTeamData, 
     refetch, 
     updateState, 
     updateSubSection, 
+    uploadImage, 
     activeLanguages
   ]);
 
@@ -440,9 +525,11 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
     contentElements,
     componentName: 'Team',
     extraMethods: {
+      getImageFile: () => imageFile,
       saveData: handleSave
     },
     extraData: {
+      imageFile,
       existingSubSectionId
     }
   });
@@ -454,7 +541,7 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-muted-foreground">Loading hero section data...</p>
+        <p className="ml-2 text-muted-foreground">Loading team section data...</p>
       </div>
     );
   }
@@ -468,6 +555,19 @@ const TeamForm = forwardRef<any, teamFormProps>((props, ref) => {
       />
       
       <Form {...form}>
+        {/* Logo Section */}
+        <BackgroundImageSection 
+          imagePreview={imagePreview || undefined} 
+          imageValue={form.getValues().backgroundImage}
+          onUpload={(event: React.ChangeEvent<HTMLInputElement>) => {
+            if (event.target.files && event.target.files.length > 0) {
+              handleImageUpload({ target: { files: Array.from(event.target.files) } });
+            }
+          }}
+          onRemove={handleImageRemove}
+          imageType="logo"
+        />
+        
         {/* Language Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {languageIds.map((langId) => {

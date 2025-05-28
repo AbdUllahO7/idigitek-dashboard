@@ -153,7 +153,7 @@ export default function AddProject() {
         />
       )
     },
-     {
+    {
       id: "images",
       label: "Images",
       icon: <Sparkles className="h-4 w-4" />,

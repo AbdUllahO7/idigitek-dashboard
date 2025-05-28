@@ -168,6 +168,7 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
             'Category' : 'category',
             'Date' : 'date',
             'Back Link Text': 'backLinkText',
+            'Gallery Text' : "galleryText"
           };
           
           const result = {
@@ -176,6 +177,7 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
             backLinkText: '',
             category : '',
             date : '',
+            galleryText :'',
           };
           
           elements.filter(el => el.type === 'text').forEach(element => {
@@ -191,6 +193,7 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
           title: '',
           description: '',
           backLinkText: '',
+          galleryText:'',
           category : '',
           date : '',
         })
@@ -368,12 +371,13 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
         // Update translations for text elements
         const textElements = contentElements.filter((e) => e.type === "text");
         const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] | { content: any; language: string; contentElement: string; isActive: boolean; }[] = [];
-        const elementNameToKeyMap: Record<string, 'title' | 'description' | 'backLinkText' | 'category' | 'date'> = {
+        const elementNameToKeyMap: Record<string, 'title' | 'description' | 'backLinkText' | 'category' | 'date' | 'galleryText'> = {
           'Title': 'title',
           'Description': 'description',
           'Back Link Text': 'backLinkText',
           'Category' : 'category',
           'Date' : 'date',
+          'GalleryText' : 'galleryText'
         };
 
         Object.entries(allFormValues).forEach(([langCode, values]) => {
@@ -407,6 +411,7 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
           { type: "text", key: "category", name: "Category" },
           { type: "text", key: "date", name: "Date" },
           { type: "text", key: "backLinkText", name: "Back Link Text" },
+          { type: "text", key: "galleryText", name: "Gallery Text" },
           { type: "text", key: "client", name: "Client" },
           { type: "text", key: "industry", name: "Industry" },
           { type: "text", key: "year", name: "Year" },

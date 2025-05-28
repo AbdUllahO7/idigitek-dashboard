@@ -76,6 +76,19 @@ export const LanguageCard = memo(({ langCode, form, isFirstLanguage = false }: L
             </FormItem>
           )}
         />
+      <FormField
+            control={form.control}
+            name={`${langCode}.galleryText`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Gallery Text</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="Enter Gallery Text" className="min-h-[100px]" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
         {/* Date Field with DatePicker - Only shown for first language */}
         {isFirstLanguage && (

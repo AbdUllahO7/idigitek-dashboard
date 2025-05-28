@@ -57,6 +57,13 @@ const defaultValueDefinitions = {
         requestButton: "",
         image :""
     }],
+        teamSection: () => [{
+        title: "",
+        description: "",
+        exploreButton: "",
+        requestButton: "",
+        image :""
+    }],
       footerSection: () => [
         {
           description: "",
@@ -212,6 +219,12 @@ export const createBlogDefaultValues = (languageIds: string[], activeLanguages: 
 export const createHeroSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.heroSection);
 };
+
+export const createTeamSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.teamSection);
+};
+
+
 export const createFooterSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.footerSection);
 };
