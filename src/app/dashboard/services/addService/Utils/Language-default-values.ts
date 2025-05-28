@@ -49,6 +49,7 @@ const defaultValueDefinitions = {
       title: "",
       description: "",
     }],
+    
       heroSection: () => [{
         title: "",
         description: "",
@@ -78,7 +79,11 @@ const defaultValueDefinitions = {
       question: "",
       answer: "",
     }],
-    
+      clientComments: () => [{
+      icon: "Car",
+      title: "",
+      description: "",
+    }],
     feature: () => [{
       id: "feature-1",
       title: "",
@@ -174,6 +179,10 @@ export const createHaveFaqQuestionsDefaultValues = (languageIds: string[], activ
 };
 export const createChooseUsDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.benefit);
+};
+
+export const createClientCommentsDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.clientComments);
 };
 
 export  const createFaqDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {

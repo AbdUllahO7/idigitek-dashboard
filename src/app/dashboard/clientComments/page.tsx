@@ -5,13 +5,13 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useGenericList } from "@/src/hooks/useGenericList"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
-import { CountBadgeCell, GenericTable, StatusCell, TruncatedCell } from "@/src/components/dashboard/MainSections/GenericTable"
-import { GenericListPage } from "@/src/components/dashboard/MainSections/GenericListPage"
-import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
-import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { clientCommentsSectionConfig } from "./clientCommentsSectionConfig"
+import { CountBadgeCell, GenericTable, StatusCell, TruncatedCell } from "@/src/components/dashboard/MainSections/GenericTable"
+import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
+import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
+import { GenericListPage } from "@/src/components/dashboard/MainSections/GenericListPage"
 
 // Configuration for the Client Comments page
 const ClientComments_CONFIG = {
@@ -31,7 +31,7 @@ const ClientComments_CONFIG = {
   editPath: "clientComments/addClientComments"
 }
 // Column definitions
-const ChoseUs_COLUMNS = [
+const ClientComments_COLUMNS = [
   {
     header: "Name",
     accessor: "name",
@@ -69,7 +69,7 @@ const ChoseUs_COLUMNS = [
   }
 ]
 
-export default function ChoseUsPage() {
+export default function ClientComments() {
   const searchParams = useSearchParams()
   const sectionId = searchParams.get("sectionId")
   const { websiteId } = useWebsiteContext();
@@ -103,7 +103,7 @@ export default function ChoseUsPage() {
   const {
     section: industrySection,
     items: navItems,
-    isLoadingItems: isLoadingChoseUs,
+    isLoadingItems: isLoadingClientComments,
     isCreateDialogOpen,
     isDeleteDialogOpen,
     itemToDelete,
@@ -240,7 +240,8 @@ export default function ChoseUsPage() {
   const isAddButtonDisabled = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
-    (Boolean(sectionId) && !hasMainSubSection);
+    (Boolean(sectionId) && !hasMainSubSection) ||
+    (navItems.length > 0); // Added to disable button if there's at least one Client Comments item
 
   const emptyStateMessage = !industrySection && !sectionData 
     ? ClientComments_CONFIG.noSectionMessage 
@@ -249,9 +250,9 @@ export default function ChoseUsPage() {
       : ClientComments_CONFIG.emptyStateMessage;
 
   // Memoize component references to prevent recreation on each render
-  const ChoseUsItemsTable = (
+  const ClientCommentsItemsTable = (
     <GenericTable
-      columns={ChoseUs_COLUMNS}
+      columns={ClientComments_COLUMNS}
       data={navItems}
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
@@ -288,11 +289,11 @@ export default function ChoseUsPage() {
         sectionId={sectionId}
         sectionConfig={clientCommentsSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={ChoseUsItemsTable}
+        tableComponent={ClientCommentsItemsTable}
         createDialogComponent={CreateDialog}
         deleteDialogComponent={DeleteDialog}
         onAddNew={handleAddNew}
-        isLoading={isLoadingChoseUs || isLoadingMainSubSection}
+        isLoading={isLoadingClientComments || isLoadingMainSubSection}
         emptyCondition={navItems.length === 0}
         noSectionCondition={!industrySection && !sectionData}
         customEmptyMessage={emptyStateMessage}

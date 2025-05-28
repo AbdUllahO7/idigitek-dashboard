@@ -77,8 +77,20 @@ const schemaDefinitions = {
         description: z.string().min(1, { message: "Description is required" }),
         
       })
+      
     ).min(1, { message: "At least one benefit is required" }),
     
+      clientComments: (z: any) => z.array(
+      z.object({
+        icon: z.string().min(1, { message: "Icon is required" }),
+        title: z.string().min(1, { message: "Title is required" }),
+        description: z.string().min(1, { message: "Description is required" }),
+        
+      })
+      
+    ).min(1, { message: "At least one benefit is required" }),
+    
+
     projectBasicInfo: (z: any) => z.object({
       title: z.string().min(1, { message: "Title is required" }),
       description: z.string().min(1, { message: "Description is required" }),
@@ -296,9 +308,13 @@ export const createHaveFaqQuestionsSchema = (languageIds: string[], activeLangua
 };
 
 
-
 export const createChooseUsSchema = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.chooseUs);
+};
+
+
+export const createClientCommentsUsSchema = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.clientComments);
 };
   
 export const createFaqSchema = (languageIds: string[], activeLanguages: Language[]) => {
