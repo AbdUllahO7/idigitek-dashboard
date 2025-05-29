@@ -24,7 +24,6 @@ import { BlogsFormProps } from "@/src/api/types/sections/blog/blogSection.types"
 import { createBlogSchema } from "../../../services/addService/Utils/language-specific-schemas";
 import { BlogLanguageCard } from "./BlogLanguageCard";
 
-
 const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
   const { 
     languageIds, 
@@ -37,32 +36,29 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
   } = props;
 
   const { websiteId } = useWebsiteContext();
-  console.log("blog form subSectionId" , subSectionId)
   // Setup form with schema validation
   const formSchema = createBlogSchema(languageIds, activeLanguages);
   const defaultValues = createBlogDefaultValues(languageIds, activeLanguages);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues,
-    mode: "onChange" // Enable validation on change for better UX
+    mode: "onChange"
   });
 
   // State management
   const [state, setState] = useState({
-    isLoadingData: !subSectionId,
+    isLoadingData: !!subSectionId,
     dataLoaded: !subSectionId,
     hasUnsavedChanges: false,
-    existingSubSectionId: null as string | null ,
+    existingSubSectionId: null as string | null,
     contentElements: [] as ContentElement[],
     isSaving: false
   });
 
-  // Use object state update for better performance and readability
-  const updateState = useCallback((newState: { isLoadingData?: boolean; dataLoaded?: boolean; hasUnsavedChanges?: boolean; existingSubSectionId?: string | null; contentElements?: any[]; isSaving?: boolean; }) => {
+  const updateState = useCallback((newState: Partial<typeof state>) => {
     setState(prev => ({ ...prev, ...newState }));
   }, []);
 
-  // Extract state variables for readability
   const { 
     isLoadingData, 
     dataLoaded, 
@@ -97,21 +93,15 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
   const { 
     imageFile, 
     imagePreview, 
-    handleImageUpload : handleOriginalImageUpload, 
+    handleImageUpload: handleOriginalImageUpload, 
     handleImageRemove 
   } = useImageUploader({
     form,
     fieldPath: 'backgroundImage',
     initialImageUrl: initialData?.image || form.getValues().backgroundImage,
-    onUpload: () => updateState({
-      hasUnsavedChanges: true,
-
-    }),
-    onRemove: () => updateState({
-      hasUnsavedChanges: true,
-
-    }),
-    validate: (file: { type: string; }) => {
+    onUpload: () => updateState({ hasUnsavedChanges: true }),
+    onRemove: () => updateState({ hasUnsavedChanges: true }),
+    validate: (file: { type: string }) => {
       const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
       return validTypes.includes(file.type) || 'Only JPEG, PNG, GIF, or SVG files are allowed';
     }
@@ -124,9 +114,6 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
     refetch 
   } = useGetBySectionItemId(subSectionId || '');
 
-
-  console.log("completeSubsectionData", completeSubsectionData)
-
   // Update reference when onDataChange changes
   useEffect(() => {
     onDataChangeRef.current = onDataChange;
@@ -135,18 +122,15 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
   // Process initial data from parent
   const processInitialData = useCallback(() => {
     if (initialData && !dataLoaded) {
-      
       if (initialData.description) {
         form.setValue(`${defaultLangCode}.description`, initialData.description);
       }
-            
       if (initialData.content) {
         form.setValue(`${defaultLangCode}.content`, initialData.content);
       }
       if (initialData.image) {
         form.setValue('backgroundImage', initialData.image);
       }
-      
       updateState({ 
         dataLoaded: true, 
         hasUnsavedChanges: false 
@@ -169,18 +153,18 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
           const elementKeyMap: Record<string, keyof typeof result> = {
             'Title': 'title',
             'Description': 'description',
-            'News Content' : 'newsContent',
-            'Category' : 'category',
-            'Date' : 'date',
+            'Content': 'content',
+            'Category': 'category',
+            'Date': 'date',
             'Back Link Text': 'backLinkText',
           };
           
           const result = {
             title: '',
             description: '',
-            newsContent: '',
-            category : '',
-            date : '',
+            content: '',
+            category: '',
+            date: '',
             backLinkText: '',
           };
           
@@ -196,9 +180,9 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
         getDefaultValue: () => ({
           title: '',
           description: '',
-          newsContent :'',
-          category : '',
-          date : '',
+          content: '',
+          category: '',
+          date: '',
           backLinkText: '',
         })
       },
@@ -243,7 +227,7 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
       });
       dataProcessed.current = true;
     }
-  }, [completeSubsectionData[0], isLoadingSubsection, subSectionId, processBlogData]);
+  }, [completeSubsectionData, isLoadingSubsection, subSectionId, processBlogData]);
 
   // Form watch effect for unsaved changes
   useEffect(() => {
@@ -257,7 +241,7 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
     });
     
     return () => subscription.unsubscribe();
-  }, [form, isLoadingData, dataLoaded, updateState]);
+  }, [form, isLoadingData, dataLoaded]);
 
   // Image upload handler
   const uploadImage = useCallback(async (elementId: any, file: string | Blob) => {
@@ -298,8 +282,10 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
     }
   }, [form, toast]);
 
-  // Save handler with optimized process
+  // Save handler
   const handleSave = useCallback(async () => {
+    const allFormValues = form.getValues();
+
     // Validate form
     const isValid = await form.trigger();
     if (!isValid) {
@@ -314,8 +300,6 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
     updateState({ isSaving: true });
     
     try {
-      const allFormValues = form.getValues();
-
       // Step 1: Create or update subsection
       let sectionId = existingSubSectionId;
       if (!sectionId) {
@@ -330,10 +314,10 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
           isActive: true,
           isMain: false,
           order: 0,
-          defaultContent : '',
+          defaultContent: '',
           sectionItem: ParentSectionId,
           languages: languageIds,
-          WebSiteId : websiteId
+          WebSiteId: websiteId
         };
         
         const newSubSection = await createSubSection.mutateAsync(subsectionData);
@@ -374,14 +358,14 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
 
         // Update translations for text elements
         const textElements = contentElements.filter((e) => e.type === "text");
-        const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] | { content: any; language: string; contentElement: string; isActive: boolean; }[] = [];
-        const elementNameToKeyMap: Record<string, 'title' | 'description' | 'backLinkText' | 'category' | 'date' | 'newsContent'> = {
+        const translations: (Omit<ContentTranslation, "_id"> & { id?: string })[] = [];
+        const elementNameToKeyMap: Record<string, 'title' | 'description' | 'backLinkText' | 'category' | 'date' | 'content'> = {
           'Title': 'title',
           'Description': 'description',
-          'News Content' : 'newsContent',
+          'Content': 'content',
           'Back Link Text': 'backLinkText',
-          'Category' : 'category',
-          'Date' : 'date',
+          'Category': 'category',
+          'Date': 'date',
         };
 
         Object.entries(allFormValues).forEach(([langCode, values]) => {
@@ -393,12 +377,15 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
           textElements.forEach((element) => {
             const key = elementNameToKeyMap[element.name];
             if (key && values && typeof values === "object" && key in values) {
-              translations.push({
-                content: values[key],
-                language: langId,
-                contentElement: element._id,
-                isActive: true
-              });
+              const content = values[key];
+              if (content || langCode === defaultLangCode) {
+                translations.push({
+                  content: content || "",
+                  language: langId,
+                  contentElement: element._id,
+                  isActive: true
+                });
+              }
             }
           });
         });
@@ -412,7 +399,7 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
           { type: "image", key: "backgroundImage", name: "Background Image" },
           { type: "text", key: "title", name: "Title" },
           { type: "text", key: "description", name: "Description" },
-          { type: "text", key: "newsContent", name: "News Content" },
+          { type: "text", key: "content", name: "Content" },
           { type: "text", key: "category", name: "Category" },
           { type: "text", key: "date", name: "Date" },
           { type: "text", key: "backLinkText", name: "Back Link Text" },
@@ -453,29 +440,58 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
 
         // Create translations for new elements
         const textElements = createdElements.filter((e) => e.key !== "backgroundImage");
-        const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] | { content: any; language: string; contentElement: any; isActive: boolean; }[] = [];
-        
+        const translations: (Omit<ContentTranslation, "_id"> & { id?: string })[] = [];
+
         Object.entries(allFormValues).forEach(([langCode, langValues]) => {
           if (langCode === "backgroundImage") return;
           
           const langId = langCodeToIdMap[langCode];
-          if (!langId) return;
+          if (!langId) {
+            console.warn(`No language ID found for langCode: ${langCode}`);
+            return;
+          }
+          
+          const isPrimaryLanguage = langCode === defaultLangCode;
           
           for (const element of textElements) {
             if (langValues && typeof langValues === "object" && element.key in langValues) {
-              translations.push({
-                content: langValues[element.key],
-                language: langId,
-                contentElement: element._id,
-                isActive: true
-              });
+              const content = langValues[element.key];
+              if (content || isPrimaryLanguage) {
+                if (isPrimaryLanguage && !content) {
+                  console.error(`Required field ${element.key} is empty for primary language ${langCode}`);
+                  throw new Error(`Required field ${element.key} is empty for primary language ${langCode}`);
+                }
+                translations.push({
+                  content: content || "",
+                  language: langId,
+                  contentElement: element._id,
+                  isActive: true
+                });
+              }
             }
           }
         });
 
         if (translations.length > 0) {
+          console.log("Translations to be sent:", translations);
           await bulkUpsertTranslations.mutateAsync(translations);
+        } else {
+          console.warn("No valid translations to save");
         }
+      }
+
+      // Step 4: Fetch and process the updated subsection data
+      const { data: fetchedData } = await refetch();
+      if (fetchedData?.data[0]) {
+        updateState({ dataLoaded: false });
+        await processBlogData(fetchedData.data[0]);
+        updateState({ dataLoaded: true });
+      } else {
+        // Fallback: Reset form with submitted values
+        form.reset({
+          ...allFormValues,
+          backgroundImage: form.getValues("backgroundImage")
+        }, { keepDirty: false });
       }
 
       // Show success message
@@ -485,31 +501,6 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
       });
 
       updateState({ hasUnsavedChanges: false });
-
-      // Update form state with saved data
-      if (subSectionId) {
-        const result = await refetch();
-        if (result.data?.data) {
-          updateState({ dataLoaded: false });
-          await processBlogData(result.data.data);
-        }
-      } else {
-        // For new subsections, manually update form
-        const updatedData = {
-          ...allFormValues,
-          backgroundImage: form.getValues("backgroundImage")
-        };
-        
-        Object.entries(updatedData).forEach(([key, value]) => {
-          if (key !== "backgroundImage") {
-            Object.entries(value).forEach(([field, content]) => {
-              form.setValue(`${key}.${field}`, content, { shouldDirty: false });
-            });
-          }
-        });
-        
-        form.setValue("backgroundImage", updatedData.backgroundImage, { shouldDirty: false });
-      }
 
       return true;
     } catch (error) {
@@ -541,7 +532,9 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
     updateState, 
     updateSubSection, 
     uploadImage, 
-    activeLanguages
+    activeLanguages,
+    websiteId,
+    slug
   ]);
 
   // Create form ref for parent component
@@ -564,15 +557,7 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
 
   const languageCodes = createLanguageCodeMap(activeLanguages);
 
-  // Loading state
-  if (subSectionId && (isLoadingData || isLoadingSubsection) && !dataLoaded) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-muted-foreground">Loading blog section data...</p>
-      </div>
-    );
-  }
+
 
   return (
     <div className="space-y-6">
@@ -583,41 +568,38 @@ const BlogForm = forwardRef<any, BlogsFormProps>((props, ref) => {
       />
       
       <Form {...form}>
-        {/* Background Image Section */}
         <BackgroundImageSection 
           imagePreview={imagePreview || undefined} 
           imageValue={form.getValues().backgroundImage}
           onUpload={(event: React.ChangeEvent<HTMLInputElement>) => {
-              if (event.target.files && event.target.files.length > 0) {
-                handleOriginalImageUpload({ target: { files: Array.from(event.target.files) } });
+            if (event.target.files && event.target.files.length > 0) {
+              handleOriginalImageUpload({ target: { files: Array.from(event.target.files) } });
             }
-            }}
+          }}
           onRemove={handleImageRemove}
           imageType="logo"
         />
         
-        {/* Language Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {languageIds.map((langId, index) => {
-          const langCode = languageCodes[langId] || langId;
-          return (
-            <BlogLanguageCard 
-              key={langId}
-              langCode={langCode}
-              form={form}
-              isFirstLanguage={index === 0} // Only pass true for the first language
-            />
-          );
-        })}
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {languageIds.map((langId, index) => {
+            const langCode = languageCodes[langId] || langId;
+            return (
+              <BlogLanguageCard 
+                key={langId}
+                langCode={langCode}
+                form={form}
+                isFirstLanguage={index === 0}
+              />
+            );
+          })}
+        </div>
       </Form>
       
-      {/* Save Button */}
       <div className="flex justify-end mt-6">
         <Button 
           type="button" 
           onClick={handleSave} 
-          disabled={isLoadingData || isSaving}
+          disabled={isSaving}
           className="flex items-center"
         >
           {isSaving ? (

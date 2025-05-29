@@ -2,25 +2,27 @@ import { Language } from "@/src/api/types/hooks/language.types";
 import { z } from "zod";
 
 const createLanguageSchema = <T>(
-    languageIds: string[], 
-    activeLanguages: Language[], 
-    schemaDefinitionFn: (z: any) => T
-  ) => {
-    const schemaShape: Record<string, any> = {};
-    
-    // Create language mapping (same in all functions)
-    const languageCodeMap = activeLanguages.reduce<Record<string, string>>((acc, lang) => {
-      acc[lang._id] = lang.languageID;
-      return acc;
-    }, {});
-    
-    // Apply the schema definition to each language
-    languageIds.forEach((langId) => {
-      const langCode = languageCodeMap[langId] || langId;
-      schemaShape[langCode] = schemaDefinitionFn(z);
-    });
-    
-    return z.object(schemaShape);
+  languageIds: string[],
+  activeLanguages: Language[],
+  schemaDefinitionFn: (z: any, isRequired?: boolean) => T
+) => {
+  const schemaShape: Record<string, any> = {};
+  const firstLangCode = activeLanguages[0]?.languageID || "en";
+
+  // Create language mapping
+  const languageCodeMap = activeLanguages.reduce<Record<string, string>>((acc, lang) => {
+    acc[lang._id] = lang.languageID;
+    return acc;
+  }, {});
+
+  // Apply the schema definition to each language
+  languageIds.forEach((langId) => {
+    const langCode = languageCodeMap[langId] || langId;
+    // Apply required schema for the first language, optional for others
+    schemaShape[langCode] = schemaDefinitionFn(z, langCode === firstLangCode);
+  });
+
+  return z.object(schemaShape);
 };
   
 const schemaDefinitions = {
@@ -181,7 +183,7 @@ const schemaDefinitions = {
             })
     ).min(1, { message: "At least one hero is required" }),
       specialLink: (z: any) =>
-           z.array(
+          z.array(
                   z.object({
                     id: z.string().optional(),
                     image: z.string().min(1, "Social link image is required"),
@@ -200,15 +202,32 @@ const schemaDefinitions = {
       Logo: z.string().min(1, { message: "Logo is required" }),
     }),
 
-    blog: (z: any) => z.object({
-      title: z.string().min(1, { message: "Title is required" }),
-      description: z.string().min(1, { message: "Description is required" }),
-      newsContent: z.string().min(1, { message: "Content is required" }),
-      category : z.string().min(1, { message: "category is required" }),
-      date: z.date().optional(),
-      backLinkText: z.string().min(1, { message: "Back link text is required" }),
+   blog: (z: any, isRequired: boolean = true) =>
+    z.object({
+      title: isRequired
+        ? z.string().min(1, { message: "Title is required" })
+        : z.string().optional(),
+      description: isRequired
+        ? z.string().min(1, { message: "Description is required" })
+        : z.string().optional(),
+      content: isRequired
+        ? z.string().min(1, { message: "content is required" })
+        : z.string().optional(),
+      category: isRequired
+        ? z.string().min(1, { message: "Category is required" })
+        : z.string().optional(),
+      date: z
+        .string()
+        .refine(
+          (value: string | number | Date) => value === "" || !isNaN(new Date(value).getTime()),
+          { message: "Invalid date format" }
+        )
+        .optional(),
+      backLinkText: isRequired
+        ? z.string().min(1, { message: "Back link text is required" })
+        : z.string().optional(),
     }),
-};
+  };
 
 export const createHeroSchema = (languageIds: string[], activeLanguages: Language[]) => {
     const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.hero);
@@ -329,13 +348,11 @@ export const createImageGallerySchema = (languageIds: string[], activeLanguages:
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.galleryImage);
 };
 
-export const createBlogSchema = (languageIds: string[], activeLanguages: Language[]) => {
-    const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.blog);
-    return z.object({
-      ...schema.shape,
-      backgroundImage: z.string().optional(),
-    });
-};
+export const createBlogSchema = (languageIds: string[], activeLanguages: Language[]) =>
+  z.object({
+    ...createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.blog).shape,
+    backgroundImage: z.string().optional(),
+  });
 
 export const createHeroSectionSchema = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.heroSection);

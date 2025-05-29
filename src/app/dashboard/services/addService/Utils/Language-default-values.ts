@@ -31,12 +31,12 @@ const defaultValueDefinitions = {
       backLinkText: "",
     }),
     blog: () => ({
-      title: "",
-      description: "",
-      content : "",
-      category : "",
-      date : "",
-      backLinkText: "",
+    title: "",
+    description: "",
+    content: "",
+    category: "",
+    date: "", // Empty string for all languages
+    backLinkText: "",
     }),
     processStep: () => [{
       icon: "Clock",

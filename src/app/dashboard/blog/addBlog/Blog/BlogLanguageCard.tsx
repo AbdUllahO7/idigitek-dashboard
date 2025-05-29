@@ -1,25 +1,27 @@
-"use client"
+"use client";
 
-import { memo } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/src/components/ui/form"
-import { Input } from "@/src/components/ui/input"
-import { Textarea } from "@/src/components/ui/textarea"
-import type { UseFormReturn } from "react-hook-form"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover"
-import { Button } from "@/src/components/ui/button"
-import { Calendar } from "@/src/components/ui/calendar"
-import { cn } from "@/src/lib/utils"
+import { memo } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/src/components/ui/form";
+import { Input } from "@/src/components/ui/input";
+import { Textarea } from "@/src/components/ui/textarea";
+import { useFormContext, type UseFormReturn } from "react-hook-form";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover";
+import { Button } from "@/src/components/ui/button";
+import { Calendar } from "@/src/components/ui/calendar";
+import { cn } from "@/src/lib/utils";
 
 interface BlogLanguageCardProps {
-  langCode: string
-  form: UseFormReturn<any>
-  isFirstLanguage?: boolean
+  langCode: string;
+  form: UseFormReturn<any>;
+  isFirstLanguage?: boolean;
 }
 
 export const BlogLanguageCard = memo(({ langCode, form, isFirstLanguage = false }: BlogLanguageCardProps) => {
+  const { formState: { errors } } = useFormContext();
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -27,7 +29,7 @@ export const BlogLanguageCard = memo(({ langCode, form, isFirstLanguage = false 
           <span className="uppercase font-bold text-sm bg-primary text-primary-foreground rounded-md px-2 py-1 mr-2">
             {langCode}
           </span>
-          blog Section
+          Blog Section
         </CardTitle>
         <CardDescription>Manage blog content for {langCode.toUpperCase()}</CardDescription>
       </CardHeader>
@@ -38,7 +40,7 @@ export const BlogLanguageCard = memo(({ langCode, form, isFirstLanguage = false 
           name={`${langCode}.title`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Title {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
               <FormControl>
                 <Input placeholder="Enter title" {...field} />
               </FormControl>
@@ -53,7 +55,7 @@ export const BlogLanguageCard = memo(({ langCode, form, isFirstLanguage = false 
           name={`${langCode}.description`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Description {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
               <FormControl>
                 <Textarea placeholder="Enter description" className="min-h-[100px]" {...field} />
               </FormControl>
@@ -65,12 +67,12 @@ export const BlogLanguageCard = memo(({ langCode, form, isFirstLanguage = false 
         {/* Content Field */}
         <FormField
           control={form.control}
-          name={`${langCode}.newsContent`}
+          name={`${langCode}.content`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>News Content</FormLabel>
+              <FormLabel>content {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
               <FormControl>
-                <Textarea placeholder="Enter News Content" className="min-h-[100px]" {...field} />
+                <Textarea placeholder="Enter content" className="min-h-[100px]" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -83,7 +85,7 @@ export const BlogLanguageCard = memo(({ langCode, form, isFirstLanguage = false 
           name={`${langCode}.category`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>Category {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
               <FormControl>
                 <Textarea placeholder="Enter category" className="min-h-[100px]" {...field} />
               </FormControl>
@@ -99,7 +101,7 @@ export const BlogLanguageCard = memo(({ langCode, form, isFirstLanguage = false 
             name={`${langCode}.date`}
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Date</FormLabel>
+                <FormLabel>Date {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -123,7 +125,7 @@ export const BlogLanguageCard = memo(({ langCode, form, isFirstLanguage = false 
                     <Calendar
                       mode="single"
                       selected={field.value ? new Date(field.value) : undefined}
-                      onSelect={field.onChange}
+                      onSelect={(date) => field.onChange(date ? date.toISOString() : "")}
                       initialFocus
                     />
                   </PopoverContent>
@@ -134,12 +136,13 @@ export const BlogLanguageCard = memo(({ langCode, form, isFirstLanguage = false 
           />
         )}
 
+        {/* Back Link Text Field */}
         <FormField
           control={form.control}
           name={`${langCode}.backLinkText`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Button Text</FormLabel>
+              <FormLabel>Button Text {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
               <FormControl>
                 <Input placeholder="Get Started" {...field} />
               </FormControl>
@@ -149,7 +152,7 @@ export const BlogLanguageCard = memo(({ langCode, form, isFirstLanguage = false 
         />
       </CardContent>
     </Card>
-  )
-})
+  );
+});
 
-BlogLanguageCard.displayName = "BlogLanguageCard"
+BlogLanguageCard.displayName = "BlogLanguageCard";
