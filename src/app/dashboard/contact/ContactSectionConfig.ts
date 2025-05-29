@@ -18,7 +18,6 @@ export const contactSectionConfig = {
         { id: "sectionBadge", label: "Section Badge", type: "text", required: true },
         { id: "sectionTitle", label: "Section Title", type: "text", required: true },
         { id: "sectionDescription", label: "Section Description", type: "textarea", required: false },
-        { id: "serviceDetails", label: "contact Details", type: "badge", required: true },
     ] as FieldConfig[],
 
   // Define element mapping
@@ -26,6 +25,5 @@ export const contactSectionConfig = {
         "sectionBadge": "Badge",
         "sectionTitle": "Title", 
         "sectionDescription": "Description",
-        "serviceDetails": "ServiceDetails"
     }
 };

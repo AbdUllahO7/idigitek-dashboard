@@ -153,7 +153,7 @@ export const createProjectDefaultValues = (languageIds: string[], activeLanguage
 
   return defaultValues;
 };
-export const createContactInformationDefaultValues = (languageIds: string[], activeLanguages: any[]) => {
+export const createContactSendMessageDefaultValues = (languageIds: string[], activeLanguages: any[]) => {
   const defaultValues: Record<string, any> = {};
 
   languageIds.forEach((langId) => {
@@ -231,6 +231,30 @@ export const createFooterSectionDefaultValues = (languageIds: string[], activeLa
 
 export const createFooterSpecialLinkSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.specialLink);
+};
+
+
+const contactInformationDefaultDefinition = () => ({
+  title: "",
+  description: "",
+  location: "",
+  phoneText: "",
+  phoneTextValue: "",
+  email: "",
+  emailValue: "",
+  office: "",
+  officeValue: "",
+});
+
+export const createContactInformationDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
+
+  const languageValues = languageIds.reduce<Record<string, any>>((acc, langId) => {
+    const langCode = activeLanguages.find((lang) => lang._id === langId)?.languageID || langId;
+    acc[langCode] = contactInformationDefaultDefinition();
+    return acc;
+  }, {});
+
+  return {  ...languageValues };
 };
 
 // ex : 

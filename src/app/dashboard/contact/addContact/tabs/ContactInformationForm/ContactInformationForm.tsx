@@ -18,8 +18,8 @@ import { createContactInformationDefaultValues, createLanguageCodeMap } from "@/
 import { processAndLoadData } from "@/src/app/dashboard/services/addService/Utils/load-form-data";
 import { createFormRef } from "@/src/app/dashboard/services/addService/Utils/Expose-form-data";
 import { ContactFormProps } from "@/src/api/types/sections/contact/contactSection.type";
-import { createContactInformationInfoSchema } from "@/src/app/dashboard/services/addService/Utils/language-specific-schemas";
 import { ContactInformationFormLanguageCard } from "./ContactInformationFormLanguageCard";
+import { createContactInformationInfoSchema } from "@/src/app/dashboard/services/addService/Utils/language-specific-schemas";
 
 
 const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) => {
@@ -227,6 +227,9 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
   // Save handler with optimized process
   const handleSave = useCallback(async () => {
     const isValid = await form.trigger();
+    console.log("Form Errors:", form.formState.errors); // Add this to debug validation errors
+          const allFormValues = form.getValues();
+        console.log(allFormValues)
     if (!isValid) {
       toast({
         title: "Validation Error",

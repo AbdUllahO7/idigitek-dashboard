@@ -107,18 +107,28 @@ const schemaDefinitions = {
       technologies: z.string().optional(),
     }),
     ContactInformationInfo: (z: any) => z.object({
-        title: z.string().min(1, { message: "Title is required" }),
-    fullname: z.string().min(1, { message: "Full name text is required" }),
-    fullnamePlaceHolder: z.string().optional(),
-    email: z.string().min(1, { message: "Email text is required" }),
-    emailPlaceHolder: z.string().optional(),
-    message: z.string().min(1, { message: "Message text is required" }),
-    messagePlaceHolder: z.string().optional(),
-    subjects: z
-      .array(z.string().min(1, { message: "Subject cannot be empty" }))
-      .min(1, { message: "At least one subject is required" }),
-    buttonText: z.string().min(1, { message: "Button text is required" }),
-
+            title: z.string().min(1, { message: "Title is required" }),
+            description: z.string().min(1, { message: "Description text is required" }),
+            location: z.string().min(1, { message: "Location is required" }), // Add location
+            phoneText: z.string().optional(), // Make optional since collapsible
+            phoneTextValue: z.string().optional(), // Make optional since collapsible
+            email: z.string().optional(), // Make optional since collapsible
+            emailValue: z.string().optional(), // Make optional since collapsible
+            office: z.string().optional(), // Make optional since collapsible
+            officeValue: z.string().optional(), // Make optional since collapsible
+          }),
+    ContactInSendMessage: (z: any) => z.object({
+          title: z.string().min(1, { message: "Title is required" }),
+          fullname: z.string().min(1, { message: "Full name text is required" }),
+          fullnamePlaceHolder: z.string().optional(),
+          email: z.string().min(1, { message: "Email text is required" }),
+          emailPlaceHolder: z.string().optional(),
+          message: z.string().min(1, { message: "Message text is required" }),
+          messagePlaceHolder: z.string().optional(),
+          subjects: z
+            .array(z.string().min(1, { message: "Subject cannot be empty" }))
+            .min(1, { message: "At least one subject is required" }),
+          buttonText: z.string().min(1, { message: "Button text is required" }),
     }),
     projectMoreInfo: (z: any) => z.object({
       client: z.string().min(1, { message: "client is required" }),
@@ -260,10 +270,14 @@ export const createProjectBasicInfoSchema = (languageIds: string[], activeLangua
 };
 
 export const createContactInformationInfoSchema = (languageIds: string[], activeLanguages: Language[]) => {
-    const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.ContactInformationInfo);
+    return   createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.ContactInformationInfo);
+     
+};
+
+export const createContactSendMessageSchema = (languageIds: string[], activeLanguages: Language[]) => {
+    const schema = createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.ContactInSendMessage);
     return z.object({
       ...schema.shape,
-      backgroundImage: z.string().optional(),
     });
 };
 

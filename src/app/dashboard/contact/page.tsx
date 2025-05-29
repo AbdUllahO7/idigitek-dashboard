@@ -255,17 +255,19 @@ export default function ContactPage() {
   };
 
   // Logic for disabling the add button
-  const isAddButtonDisabled: boolean = 
-    Boolean(defaultAddButtonDisabled) || 
-    isLoadingMainSubSection ||
-    (Boolean(sectionId) && !hasMainSubSection);
-  
-  // Custom message for empty state 
-  const emptyStateMessage = !contactSection && !sectionData 
-    ? PROJECTS_CONFIG.noSectionMessage 
-    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
-      ? PROJECTS_CONFIG.mainSectionRequiredMessage
-      : PROJECTS_CONFIG.emptyStateMessage;
+// Logic for disabling the add button
+const isAddButtonDisabled: boolean = 
+  Boolean(defaultAddButtonDisabled) || 
+  isLoadingMainSubSection ||
+  (Boolean(sectionId) && !hasMainSubSection) ||
+  contactItems.length > 0; // Disable if there is at least one contact item
+
+// Custom message for empty state 
+const emptyStateMessage = !contactSection && !sectionData 
+  ? PROJECTS_CONFIG.noSectionMessage 
+  : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
+    ? PROJECTS_CONFIG.mainSectionRequiredMessage
+    : PROJECTS_CONFIG.emptyStateMessage;
 
 
   // Components

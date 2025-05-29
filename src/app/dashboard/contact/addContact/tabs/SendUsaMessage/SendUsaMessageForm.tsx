@@ -14,11 +14,11 @@ import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/conten
 import { SubSection } from "@/src/api/types/hooks/section.types";
 import { useWebsiteContext } from "@/src/providers/WebsiteContext";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
-import { createContactInformationDefaultValues, createLanguageCodeMap } from "@/src/app/dashboard/services/addService/Utils/Language-default-values";
+import {  createContactSendMessageDefaultValues, createLanguageCodeMap } from "@/src/app/dashboard/services/addService/Utils/Language-default-values";
 import { processAndLoadData } from "@/src/app/dashboard/services/addService/Utils/load-form-data";
 import { createFormRef } from "@/src/app/dashboard/services/addService/Utils/Expose-form-data";
 import { ContactFormProps } from "@/src/api/types/sections/contact/contactSection.type";
-import { createContactInformationInfoSchema } from "@/src/app/dashboard/services/addService/Utils/language-specific-schemas";
+import {  createContactSendMessageSchema } from "@/src/app/dashboard/services/addService/Utils/language-specific-schemas";
 import { SendUsaMessageFormLanguageCard } from "./SendUsaMessageFormLanguageCard";
 
 const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
@@ -34,8 +34,8 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
   const { websiteId } = useWebsiteContext();
 
   // Setup form with schema validation
-  const formSchema = createContactInformationInfoSchema(languageIds, activeLanguages);
-  const defaultValues = createContactInformationDefaultValues(languageIds, activeLanguages);
+  const formSchema = createContactSendMessageSchema(languageIds, activeLanguages);
+  const defaultValues = createContactSendMessageDefaultValues(languageIds, activeLanguages);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues,
