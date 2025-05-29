@@ -68,7 +68,7 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name={`${langCode}.location`}
             render={({ field }) => (
@@ -80,7 +80,7 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         </div>
 
         <Separator />
