@@ -70,6 +70,7 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
     const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
     const [stepToDelete, setStepToDelete] = useState<StepToDelete | null>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
+    const [isUrlSyncing, setIsUrlSyncing] = useState<boolean>(false); // Add this to prevent infinite loops
 
     const updateState = useCallback(
       (newState: Partial<FooteresFormState>) => {
@@ -103,8 +104,7 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
       refetch,
     } = useGetCompleteBySlug(slug || "", Boolean(slug));
 
-const { heroImages, socialLinkImages, handleHeroImageRemove, updateHeroImageIndices, HeroImageUploader, SocialLinkImageUploader } = useHeroImages(form);
-
+    const { heroImages, socialLinkImages, handleHeroImageRemove, updateHeroImageIndices, HeroImageUploader, SocialLinkImageUploader } = useHeroImages(form);
 
     useEffect(() => {
       onDataChangeRef.current = onDataChange;
@@ -115,6 +115,38 @@ const { heroImages, socialLinkImages, handleHeroImageRemove, updateHeroImageIndi
         primaryLanguageRef.current = languageIds[0];
       }
     }, [languageIds]);
+
+    // Add function to sync social link URLs across all languages
+    const syncSocialLinkUrls = useCallback((changedPath: string, newValue: string) => {
+      if (isUrlSyncing) return; // Prevent infinite loops
+      
+      // Check if the changed field is a social link URL
+      const urlMatch = changedPath.match(/^([^.]+)\.(\d+)\.socialLinks\.(\d+)\.url$/);
+      if (!urlMatch) return;
+
+      const [, changedLangCode, footerIndex, socialLinkIndex] = urlMatch;
+      
+      setIsUrlSyncing(true);
+      
+      // Get all form values
+      const allValues = form.getValues();
+      
+      // Update the same social link URL in all other languages
+      Object.keys(allValues).forEach((langCode) => {
+        if (langCode !== changedLangCode && allValues[langCode] && allValues[langCode][parseInt(footerIndex)]) {
+          const currentFooter = allValues[langCode][parseInt(footerIndex)];
+          if (currentFooter.socialLinks && currentFooter.socialLinks[parseInt(socialLinkIndex)]) {
+            form.setValue(
+              `${langCode}.${footerIndex}.socialLinks.${socialLinkIndex}.url`,
+              newValue,
+              { shouldDirty: true, shouldValidate: true }
+            );
+          }
+        }
+      });
+      
+      setIsUrlSyncing(false);
+    }, [form, isUrlSyncing]);
 
     const validateFormFooterCounts = useCallback(() => {
       const values = form.getValues();
@@ -233,88 +265,131 @@ const { heroImages, socialLinkImages, handleHeroImageRemove, updateHeroImageIndi
       updateState,
     ]);
 
-    const processFooteresData = useCallback(
-      (subsectionData: SubSection) => {
-        updateState({ isLoadingData: true });
-        try {
-          processAndLoadData(
-            subsectionData,
-            form,
-            languageIds,
-            activeLanguages,
+   const processFooteresData = useCallback(
+  (subsectionData: SubSection) => {
+    updateState({ isLoadingData: true });
+    try {
+      const footerGroups = processAndLoadData(
+        subsectionData,
+        form,
+        languageIds,
+        activeLanguages,
+        {
+          groupElements: (elements) => {
+            const footerGroups: { [key: number]: ContentElement[] } = {};
+            elements.forEach((element: any) => {
+              const footerMatch = element.name.match(/Footer (\d+)/i);
+              if (footerMatch) {
+                const footerNumber = parseInt(footerMatch[1], 10);
+                if (!footerGroups[footerNumber]) {
+                  footerGroups[footerNumber] = [];
+                }
+                footerGroups[footerNumber].push(element);
+              }
+            });
+            return footerGroups;
+          },
+          processElementGroup: (
+            footerNumber,
+            elements,
+            langId,
+            getTranslationContent
+          ) => {
+            const descriptionElement = elements.find((el) => el.name.includes("Description"));
+            const socialLinkElements = elements.filter((el) => el.name.match(/Footer \d+ - SocialLink \d+/i));
+            const socialLinks = socialLinkElements.reduce((acc, el) => {
+              const match = el.name.match(/Footer \d+ - SocialLink (\d+)/i);
+              if (match) {
+                const socialLinkIndex = parseInt(match[1], 10) - 1;
+                const isImage = el.type === "image";
+                const isUrl = el.name.includes("Url");
+                if (!acc[socialLinkIndex]) acc[socialLinkIndex] = { image: "", url: "" };
+                if (isImage) acc[socialLinkIndex].image = el.imageUrl || "";
+                if (isUrl) acc[socialLinkIndex].url = getTranslationContent(el, "");
+              }
+              return acc;
+            }, [] as { image: string; url: string }[]);
+            return {
+              id: `footer-${footerNumber}`,
+              description: getTranslationContent(descriptionElement, ""),
+              socialLinks,
+            };
+          },
+          getDefaultValue: () => [
             {
-              groupElements: (elements) => {
-                const footerGroups: { [key: number]: ContentElement[] } = {};
-                elements.forEach((element: any) => {
-                  const footerMatch = element.name.match(/Footer (\d+)/i);
-                  if (footerMatch) {
-                    const footerNumber = parseInt(footerMatch[1], 10);
-                    if (!footerGroups[footerNumber]) {
-                      footerGroups[footerNumber] = [];
-                    }
-                    footerGroups[footerNumber].push(element);
+              id: "footer-1",
+              description: "",
+              socialLinks: [],
+            },
+          ],
+        },
+        {
+          setExistingSubSectionId: (id) => updateState({ existingSubSectionId: id }),
+          setContentElements: (elements) => updateState({ contentElements: elements }),
+          setDataLoaded: (loaded) => updateState({ dataLoaded: loaded }),
+          setHasUnsavedChanges: (hasChanges) => updateState({ hasUnsavedChanges: hasChanges }),
+          setIsLoadingData: (loading) => updateState({ isLoadingData: loading }),
+          validateCounts: validateFormFooterCounts,
+        }
+      );
+
+      // Normalize footer counts across languages and sync social link URLs
+      const allFormValues = form.getValues();
+      const firstLangKey = Object.keys(allFormValues)[0];
+      const maxFooterCount = allFormValues[firstLangKey]?.length || 1;
+
+      Object.keys(allFormValues).forEach((langCode) => {
+        const currentFooters = allFormValues[langCode] || [];
+        if (currentFooters.length < maxFooterCount) {
+          const additionalFooters = Array(maxFooterCount - currentFooters.length).fill({
+            id: `footer-${Date.now()}`,
+            description: "",
+            socialLinks: [],
+          });
+          form.setValue(langCode, [...currentFooters, ...additionalFooters], {
+            shouldDirty: false,
+            shouldValidate: false,
+          });
+        }
+      });
+
+      // Sync social link URLs from the first language to all other languages
+      if (firstLangKey && allFormValues[firstLangKey]) {
+        const primaryLanguageData = allFormValues[firstLangKey];
+        Object.keys(allFormValues).forEach((langCode) => {
+          if (langCode !== firstLangKey && allFormValues[langCode]) {
+            primaryLanguageData.forEach((footer, footerIndex) => {
+              if (footer.socialLinks && allFormValues[langCode][footerIndex]) {
+                footer.socialLinks.forEach((socialLink, socialLinkIndex) => {
+                  if (allFormValues[langCode][footerIndex].socialLinks[socialLinkIndex]) {
+                    // Sync URL from primary language
+                    form.setValue(
+                      `${langCode}.${footerIndex}.socialLinks.${socialLinkIndex}.url`,
+                      socialLink.url,
+                      { shouldDirty: false, shouldValidate: false }
+                    );
                   }
                 });
-                return footerGroups;
-              },
-              processElementGroup: (
-                footerNumber,
-                elements,
-                langId,
-                getTranslationContent
-              ) => {
-                const descriptionElement = elements.find((el) => el.name.includes("Description"));
+              }
+            });
+          }
+        });
+      }
 
-                const socialLinkElements = elements.filter((el) => el.name.match(/Footer \d+ - SocialLink \d+/i));
-                const socialLinks = socialLinkElements.reduce((acc, el) => {
-                  const match = el.name.match(/Footer \d+ - SocialLink (\d+)/i);
-                  if (match) {
-                    const socialLinkIndex = parseInt(match[1], 10) - 1;
-                    const isImage = el.type === "image";
-                    const isUrl = el.name.includes("Url");
-                    if (!acc[socialLinkIndex]) acc[socialLinkIndex] = { image: "", url: "" };
-                    if (isImage) acc[socialLinkIndex].image = el.imageUrl || "";
-                    if (isUrl) acc[socialLinkIndex].url = getTranslationContent(el, "");
-                  }
-                  return acc;
-                }, [] as { image: string; url: string }[]);
-
-                return {
-                  id: `footer-${footerNumber}`,
-                  description: getTranslationContent(descriptionElement, ""),
-                  socialLinks,
-                };
-              },
-              getDefaultValue: () => [
-                {
-                  id: "footer-1",
-                  description: "",
-                  socialLinks: [],
-                },
-              ],
-            },
-            {
-              setExistingSubSectionId: (id) => updateState({ existingSubSectionId: id }),
-              setContentElements: (elements) => updateState({ contentElements: elements }),
-              setDataLoaded: (loaded) => updateState({ dataLoaded: loaded }),
-              setHasUnsavedChanges: (hasChanges) => updateState({ hasUnsavedChanges: hasChanges }),
-              setIsLoadingData: (loading) => updateState({ isLoadingData: loading }),
-              validateCounts: validateFormFooterCounts,
-            }
-          );
-        } catch (error) {
-          console.error("Error processing footer data:", error);
-          toast({
-            title: "Error loading data",
-            description: "Failed to load footer data. Please try again.",
-            variant: "destructive",
-          });
-        } finally {
-          updateState({ isLoadingData: false });
-        }
-      },
-      [form, languageIds, activeLanguages, updateState, validateFormFooterCounts, toast]
-    );
+      validateFormFooterCounts();
+    } catch (error) {
+      console.error("Error processing footer data:", error);
+      toast({
+        title: "Error loading data",
+        description: "Failed to load footer data. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      updateState({ isLoadingData: false });
+    }
+  },
+  [form, languageIds, activeLanguages, updateState, validateFormFooterCounts, toast]
+  );
 
     useEffect(() => {
       if (!slug || state.dataLoaded || isLoadingSubsection || !completeSubsectionData?.data) {
@@ -323,19 +398,26 @@ const { heroImages, socialLinkImages, handleHeroImageRemove, updateHeroImageIndi
       processFooteresData(completeSubsectionData.data);
     }, [completeSubsectionData, isLoadingSubsection, state.dataLoaded, slug, processFooteresData]);
 
+    // Modified useEffect to include URL synchronization
     useEffect(() => {
       if (state.isLoadingData || !state.dataLoaded) return;
 
-      const subscription = form.watch((value) => {
+      const subscription = form.watch((value, { name }) => {
         updateState({ hasUnsavedChanges: true });
         validateFormFooterCounts();
+        
+        // Sync social link URLs if a URL field was changed
+        if (name && typeof value === 'string') {
+          syncSocialLinkUrls(name, value);
+        }
+        
         if (onDataChangeRef.current) {
           onDataChangeRef.current(value as FormData);
         }
       });
 
       return () => subscription.unsubscribe();
-    }, [form, state.isLoadingData, state.dataLoaded, validateFormFooterCounts, updateState]);
+    }, [form, state.isLoadingData, state.dataLoaded, validateFormFooterCounts, updateState, syncSocialLinkUrls]);
 
     const addFooter = useCallback(
       (langCode: string) => {
@@ -381,7 +463,9 @@ const { heroImages, socialLinkImages, handleHeroImageRemove, updateHeroImageIndi
     const handleSave = useCallback(async () => {
       const isValid = await form.trigger();
       const hasEqualFooterCounts = validateFormFooterCounts();
-
+      const allFormValues = form.getValues();
+      console.log(allFormValues)
+      
       if (!hasEqualFooterCounts) {
         updateState({ isValidationDialogOpen: true });
         toast({
