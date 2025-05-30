@@ -7,12 +7,12 @@ import { FieldConfig } from "@/src/api/types/hooks/MultilingualSection.types";
 
 // Define service section configuration
 export const footerSectionConfig = {
-    name: "Hero Section Basic",
-    slug: "Hero-main",
-    subSectionName: "Hero Section Basic",
-    description: "Hero section for managing service information",
+    name: "Footer Section Basic",
+    slug: "Footer-main",
+    subSectionName: "Footer Section Basic",
+    description: "Footer section for managing service information",
     isMain: true,
-    type: 'Hero',
+    type: 'Footer',
     // Define fields with proper typing
     fields: [
         { id: "sectionTitle", label: "Section Title", type: "text", required: true },

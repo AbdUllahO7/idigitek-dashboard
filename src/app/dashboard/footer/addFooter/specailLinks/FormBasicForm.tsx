@@ -375,7 +375,6 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
                       socialLink.url,
                       { shouldDirty: false, shouldValidate: false }
                     );
-                   
                   }
                 });
               }
@@ -582,7 +581,7 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
         for (let i = 0; i < footerCount; i++) {
           const footerIndex = i + 1;
           const elementNames = {
-            title: `Footer ${footerIndex} - Title`, // Changed from Description to Title
+            title: `Special Footer ${footerIndex} - Title`, // Changed from Description to Title
           };
 
           const elements: Record<string, ContentElement | null> = {
@@ -618,9 +617,9 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
           for (let j = 0; j < socialLinks.length; j++) {
             const socialLinkIndex = j + 1;
             const socialLinkNames = {
-              url: `Footer ${footerIndex} - SocialLink ${socialLinkIndex} - Url`,
-              image: `Footer ${footerIndex} - SocialLink ${socialLinkIndex} - Image`,
-              linkName: `Footer ${footerIndex} - SocialLink ${socialLinkIndex} - LinkName`, // Added linkName
+              url: `Special Footer ${footerIndex} - SocialLink ${socialLinkIndex} - Url`,
+              image: `Special Footer ${footerIndex} - SocialLink ${socialLinkIndex} - Image`,
+              linkName: `Special Footer ${footerIndex} - SocialLink ${socialLinkIndex} - LinkName`, // Added linkName
             };
 
             socialLinkElements[j] = {
