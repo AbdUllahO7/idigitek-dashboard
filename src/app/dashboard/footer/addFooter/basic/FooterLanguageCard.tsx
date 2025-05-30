@@ -46,22 +46,14 @@ export const FooterLanguageCard = memo(({
             langCode={langCode}
             index={index}
             form={form}
+            isFirstLanguage={isFirstLanguage} // Pass isFirstLanguage to FooterCard
             onDelete={(langCodeParam, index) => onDeleteStep(langCodeParam, index)}
             FooterImageUploader={FooterImageUploader}
             SocialLinkImageUploader={SocialLinkImageUploader}
           />
         ))}
 
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => addFooter(langCode)}
-          className="mt-2"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Add Footer
-        </Button>
+       
       </CardContent>
     </Card>
   );
