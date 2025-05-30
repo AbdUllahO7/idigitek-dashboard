@@ -11,7 +11,7 @@ import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
 
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import FormBasicForm from "./basic/FormBasicForm"
-import SpecialFormBasicForm from "./specailLinks/SpecialFormBasicForm"
+import SpecialFormBasicForm from "./specailLinks/FormBasicForm"
 
 // Form sections to collect data from
 const FORM_SECTIONS = ["footer"]

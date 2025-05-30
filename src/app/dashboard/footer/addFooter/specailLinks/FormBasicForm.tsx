@@ -24,20 +24,24 @@ import { useWebsiteContext } from "@/src/providers/WebsiteContext";
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
 import apiClient from "@/src/lib/api-client";
-import { createFooterSpecialLinkSectionSchema  } from "../../../services/addService/Utils/language-specific-schemas";
+import { createFooterSectionSchema, createFooterSpecialLinkSectionSchema } from "../../../services/addService/Utils/language-specific-schemas";
+import { createFooterSectionDefaultValues, createFooterSpecialLinkSectionDefaultValues, createLanguageCodeMap } from "../../../services/addService/Utils/Language-default-values";
 import { createFormRef, getSubSectionCountsByLanguage, useForceUpdate, validateSubSectionCounts } from "../../../services/addService/Utils/Expose-form-data";
 import { processAndLoadData } from "../../../services/addService/Utils/load-form-data";
+import { FooterLanguageCard } from "./FooterLanguageCard";
 import { FooteresFormState, FooterFormProps } from "@/src/api/types/sections/footer/footerSection.type";
 import { StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
 import { useHeroImages } from "../utils/FooterImageUploader";
-import { SpecialFooterLanguageCard } from "./SpecialFooterLanguageCard";
-import { createFooterSpecialLinkSectionDefaultValues, createLanguageCodeMap } from "../../../services/addService/Utils/Language-default-values";
 
+// Updated interface to reflect new field structure
 interface FormData {
   [key: string]: Array<{
-    specialLinks: Array<{
+    title: string; // Changed from description to title
+    socialLinks: Array<{
+      id: any;
       image: string;
       url: string;
+      linkName: string; // Added linkName field
     }>;
     id?: string;
   }>;
@@ -69,6 +73,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
     const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
     const [stepToDelete, setStepToDelete] = useState<StepToDelete | null>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
+    const [isUrlSyncing, setIsUrlSyncing] = useState<boolean>(false);
 
     const updateState = useCallback(
       (newState: Partial<FooteresFormState>) => {
@@ -78,6 +83,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
     );
 
     const { toast } = useToast();
+    const forceUpdate = useForceUpdate();
     const primaryLanguageRef = useRef<string | null>(null);
     const onDataChangeRef = useRef(onDataChange);
 
@@ -112,6 +118,38 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
         primaryLanguageRef.current = languageIds[0];
       }
     }, [languageIds]);
+
+    // Updated function to sync both URLs and link names across all languages
+      const syncSocialLinkData = useCallback((changedPath: string, newValue: string) => {
+          if (isUrlSyncing) return;
+          
+          // Only sync URLs, not linkNames
+          const urlMatch = changedPath.match(/^([^.]+)\.(\d+)\.socialLinks\.(\d+)\.url$/);
+          if (!urlMatch) return; // Don't sync linkName changes
+
+          const [, changedLangCode, footerIndex, socialLinkIndex] = urlMatch;
+          
+          setIsUrlSyncing(true);
+          
+          const allValues = form.getValues();
+          
+          // Update the URL in all other languages (but keep their own linkNames)
+          Object.keys(allValues).forEach((langCode) => {
+              if (langCode !== changedLangCode && allValues[langCode] && allValues[langCode][parseInt(footerIndex)]) {
+                  const currentFooter = allValues[langCode][parseInt(footerIndex)];
+                  if (currentFooter.socialLinks && currentFooter.socialLinks[parseInt(socialLinkIndex)]) {
+                      form.setValue(
+                          `${langCode}.${footerIndex}.socialLinks.${socialLinkIndex}.url`,
+                          newValue,
+                          { shouldDirty: true, shouldValidate: true }
+                      );
+                      // Note: We're NOT syncing linkName anymore
+                  }
+              }
+          });
+          
+          setIsUrlSyncing(false);
+      }, [form, isUrlSyncing]);
 
     const validateFormFooterCounts = useCallback(() => {
       const values = form.getValues();
@@ -176,7 +214,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
                 const oldNumber = Number.parseInt(match[1]);
                 const newNumber = oldNumber - 1;
                 const newName = element.name.replace(`Footer ${oldNumber}`, `Footer ${newNumber}`);
-                const newOrder = element.order - (2 + (currentSteps[index].specialLinks?.length || 0) * 2);
+                const newOrder = element.order - (5 + (currentSteps[index].socialLinks?.length || 0) * 3); // Updated to account for linkName field
                 await updateContentElement.mutateAsync({
                   id: element._id,
                   data: { name: newName, order: newOrder },
@@ -230,84 +268,136 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
       updateState,
     ]);
 
-    const processFooteresData = useCallback(
-      (subsectionData: SubSection) => {
-        updateState({ isLoadingData: true });
-        try {
-          processAndLoadData(
-            subsectionData,
-            form,
-            languageIds,
-            activeLanguages,
+   const processFooteresData = useCallback(
+  (subsectionData: SubSection) => {
+    updateState({ isLoadingData: true });
+    try {
+      const footerGroups = processAndLoadData(
+        subsectionData,
+        form,
+        languageIds,
+        activeLanguages,
+        {
+          groupElements: (elements) => {
+            const footerGroups: { [key: number]: ContentElement[] } = {};
+            elements.forEach((element: any) => {
+              const footerMatch = element.name.match(/Footer (\d+)/i);
+              if (footerMatch) {
+                const footerNumber = parseInt(footerMatch[1], 10);
+                if (!footerGroups[footerNumber]) {
+                  footerGroups[footerNumber] = [];
+                }
+                footerGroups[footerNumber].push(element);
+              }
+            });
+            return footerGroups;
+          },
+          processElementGroup: (
+          footerNumber,
+          elements,
+          langId,
+          getTranslationContent
+          ) => {
+            // Updated to look for Title instead of Description
+              const titleElement = elements.find((el) => el.name.includes("Title"));
+              const socialLinkElements = elements.filter((el) => el.name.match(/Footer \d+ - SocialLink \d+/i));
+         const socialLinks = socialLinkElements.reduce((acc, el) => {
+        const match = el.name.match(/Footer \d+ - SocialLink (\d+)/i);
+        if (match) {
+            const socialLinkIndex = parseInt(match[1], 10) - 1;
+            const isImage = el.type === "image";
+            const isUrl = el.name.includes("Url");
+            const isLinkName = el.name.includes("LinkName");
+            if (!acc[socialLinkIndex]) acc[socialLinkIndex] = { image: "", url: "", linkName: "" };
+            if (isImage) acc[socialLinkIndex].image = el.imageUrl || "";
+            if (isUrl) acc[socialLinkIndex].url = getTranslationContent(el, "");
+            if (isLinkName) acc[socialLinkIndex].linkName = getTranslationContent(el, ""); // This will be different per language
+        }
+        return acc;
+    }, [] as { image: string; url: string; linkName: string }[]);
+    return {
+        id: `footer-${footerNumber}`,
+        title: getTranslationContent(titleElement, ""),
+        socialLinks,
+    };
+          },
+          getDefaultValue: () => [
             {
-              groupElements: (elements) => {
-                const footerGroups: { [key: number]: ContentElement[] } = {};
-                elements.forEach((element: any) => {
-                  const footerMatch = element.name.match(/Footer (\d+)/i);
-                  if (footerMatch) {
-                    const footerNumber = parseInt(footerMatch[1], 10);
-                    if (!footerGroups[footerNumber]) {
-                      footerGroups[footerNumber] = [];
-                    }
-                    footerGroups[footerNumber].push(element);
+              id: "footer-1",
+              title: "", // Changed from description to title
+              socialLinks: [],
+            },
+          ],
+        },
+        {
+          setExistingSubSectionId: (id) => updateState({ existingSubSectionId: id }),
+          setContentElements: (elements) => updateState({ contentElements: elements }),
+          setDataLoaded: (loaded) => updateState({ dataLoaded: loaded }),
+          setHasUnsavedChanges: (hasChanges) => updateState({ hasUnsavedChanges: hasChanges }),
+          setIsLoadingData: (loading) => updateState({ isLoadingData: loading }),
+          validateCounts: validateFormFooterCounts,
+        }
+      );
+
+      // Normalize footer counts across languages and sync social link data
+      const allFormValues = form.getValues();
+      const firstLangKey = Object.keys(allFormValues)[0];
+      const maxFooterCount = allFormValues[firstLangKey]?.length || 1;
+
+      Object.keys(allFormValues).forEach((langCode) => {
+        const currentFooters = allFormValues[langCode] || [];
+        if (currentFooters.length < maxFooterCount) {
+          const additionalFooters = Array(maxFooterCount - currentFooters.length).fill({
+            id: `footer-${Date.now()}`,
+            title: "", // Changed from description to title
+            socialLinks: [],
+          });
+          form.setValue(langCode, [...currentFooters, ...additionalFooters], {
+            shouldDirty: false,
+            shouldValidate: false,
+          });
+        }
+      });
+
+      // Sync social link data from the first language to all other languages
+      if (firstLangKey && allFormValues[firstLangKey]) {
+        const primaryLanguageData = allFormValues[firstLangKey];
+        Object.keys(allFormValues).forEach((langCode) => {
+          if (langCode !== firstLangKey && allFormValues[langCode]) {
+            primaryLanguageData.forEach((footer, footerIndex) => {
+              if (footer.socialLinks && allFormValues[langCode][footerIndex]) {
+                footer.socialLinks.forEach((socialLink, socialLinkIndex) => {
+                  if (allFormValues[langCode][footerIndex].socialLinks[socialLinkIndex]) {
+                    // Sync both URL and linkName from primary language
+                    
+                    form.setValue(
+                      `${langCode}.${footerIndex}.socialLinks.${socialLinkIndex}.url`,
+                      socialLink.url,
+                      { shouldDirty: false, shouldValidate: false }
+                    );
+                   
                   }
                 });
-                return footerGroups;
-              },
-              processElementGroup: (
-                footerNumber,
-                elements,
-                langId,
-                getTranslationContent
-              ) => {
-                const specialLinkElements = elements.filter((el) => el.name.match(/Footer \d+ - SpecialLink \d+/i));
-                const specialLinks = specialLinkElements.reduce((acc, el) => {
-                  const match = el.name.match(/Footer \d+ - SpecialLink (\d+)/i);
-                  if (match) {
-                    const specialLinkIndex = parseInt(match[1], 10) - 1;
-                    const isImage = el.type === "image";
-                    const isUrl = el.name.includes("Url");
-                    if (!acc[specialLinkIndex]) acc[specialLinkIndex] = { image: "", url: "" };
-                    if (isImage) acc[specialLinkIndex].image = el.imageUrl || "";
-                    if (isUrl) acc[specialLinkIndex].url = getTranslationContent(el, "");
-                  }
-                  return acc;
-                }, [] as { image: string; url: string }[]);
+              }
+            });
+          }
+        });
+      }
 
-                return {
-                  id: `footer-${footerNumber}`,
-                  specialLinks,
-                };
-              },
-              getDefaultValue: () => [
-                {
-                  id: "footer-1",
-                  specialLinks: [],
-                },
-              ],
-            },
-            {
-              setExistingSubSectionId: (id) => updateState({ existingSubSectionId: id }),
-              setContentElements: (elements) => updateState({ contentElements: elements }),
-              setDataLoaded: (loaded) => updateState({ dataLoaded: loaded }),
-              setHasUnsavedChanges: (hasChanges) => updateState({ hasUnsavedChanges: hasChanges }),
-              setIsLoadingData: (loading) => updateState({ isLoadingData: loading }),
-              validateCounts: validateFormFooterCounts,
-            }
-          );
-        } catch (error) {
-          console.error("Error processing footer data:", error);
-          toast({
-            title: "Error loading data",
-            description: "Failed to load footer data. Please try again.",
-            variant: "destructive",
-          });
-        } finally {
-          updateState({ isLoadingData: false });
-        }
-      },
-      [form, languageIds, activeLanguages, updateState, validateFormFooterCounts, toast]
-    );
+      validateFormFooterCounts();
+    } catch (error) {
+      console.error("Error processing footer data:", error);
+      toast({
+        title: "Error loading data",
+        description: "Failed to load footer data. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      updateState({ isLoadingData: false });
+    }
+  },
+  [form, languageIds, activeLanguages, updateState, validateFormFooterCounts, toast]
+  );
 
     useEffect(() => {
       if (!slug || state.dataLoaded || isLoadingSubsection || !completeSubsectionData?.data) {
@@ -316,26 +406,34 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
       processFooteresData(completeSubsectionData.data);
     }, [completeSubsectionData, isLoadingSubsection, state.dataLoaded, slug, processFooteresData]);
 
+    // Modified useEffect to include social link data synchronization
     useEffect(() => {
       if (state.isLoadingData || !state.dataLoaded) return;
 
-      const subscription = form.watch((value) => {
+      const subscription = form.watch((value, { name }) => {
         updateState({ hasUnsavedChanges: true });
         validateFormFooterCounts();
+        
+        // Sync social link data if a URL or linkName field was changed
+        if (name && typeof value === 'string') {
+          syncSocialLinkData(name, value);
+        }
+        
         if (onDataChangeRef.current) {
           onDataChangeRef.current(value as FormData);
         }
       });
 
       return () => subscription.unsubscribe();
-    }, [form, state.isLoadingData, state.dataLoaded, validateFormFooterCounts, updateState]);
+    }, [form, state.isLoadingData, state.dataLoaded, validateFormFooterCounts, updateState, syncSocialLinkData]);
 
     const addFooter = useCallback(
       (langCode: string) => {
         const newFooterId = `footer-${Date.now()}`;
         const newFooter = {
           id: newFooterId,
-          specialLinks: [],
+          title: "", // Changed from description to title
+          socialLinks: [],
         };
 
         Object.keys(form.getValues()).forEach((lang) => {
@@ -370,10 +468,56 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
       setDeleteDialogOpen(true);
     }, [form, toast]);
 
+const syncSocialLinksBeforeValidation = useCallback(() => {
+    const allValues = form.getValues();
+    const firstLangKey = Object.keys(allValues)[0];
+    const firstLangData = allValues[firstLangKey];
+    
+    if (!firstLangData) return;
+
+    // Sync social links structure and URLs (but NOT linkNames) from first language to all other languages
+    Object.keys(allValues).forEach((langCode) => {
+        if (langCode !== firstLangKey && allValues[langCode]) {
+            firstLangData.forEach((footer: any, footerIndex: number) => {
+                if (footer.socialLinks && allValues[langCode][footerIndex]) {
+                    const targetLength = footer.socialLinks.length;
+                    const currentSocialLinks = allValues[langCode][footerIndex].socialLinks || [];
+                    
+                    // Create new social links array with the same length as first language
+                    const newSocialLinks = [];
+                    for (let i = 0; i < targetLength; i++) {
+                        const sourceLink = footer.socialLinks[i];
+                        const existingLink = currentSocialLinks[i];
+                        
+                        newSocialLinks.push({
+                            id: existingLink?.id || sourceLink?.id,
+                            image: existingLink?.image || sourceLink?.image || "",
+                            url: sourceLink?.url || "", // Sync URL from first language
+                            linkName: existingLink?.linkName || "", // Keep existing linkName for translation
+                        });
+                    }
+                    
+                    form.setValue(`${langCode}.${footerIndex}.socialLinks`, newSocialLinks, {
+                        shouldDirty: false,
+                        shouldValidate: false,
+                    });
+                }
+            });
+        }
+    });
+}, [form]);
+
+
     const handleSave = useCallback(async () => {
+          syncSocialLinksBeforeValidation();
+
+              await new Promise(resolve => setTimeout(resolve, 100));
+
       const isValid = await form.trigger();
       const hasEqualFooterCounts = validateFormFooterCounts();
-
+      const allFormValues = form.getValues();
+      console.log(allFormValues)
+      
       if (!hasEqualFooterCounts) {
         updateState({ isValidationDialogOpen: true });
         toast({
@@ -438,15 +582,15 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
         for (let i = 0; i < footerCount; i++) {
           const footerIndex = i + 1;
           const elementNames = {
-            image: `Footer ${footerIndex} - Image`,
+            title: `Footer ${footerIndex} - Title`, // Changed from Description to Title
           };
 
           const elements: Record<string, ContentElement | null> = {
-            image: state.contentElements.find((el) => el.name === elementNames.image && el.type === "image") ?? null,
+            title: state.contentElements.find((el) => el.name === elementNames.title) ?? null, // Changed from description to title
           };
 
           const elementTypes = [
-            { type: "image", key: "image", name: elementNames.image },
+            { type: "text", key: "title", name: elementNames.title }, // Changed from description to title
           ];
 
           for (const { type, key, name } of elementTypes) {
@@ -469,50 +613,73 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
             }
           }
 
-          const specialLinks = allFormValues[firstLangKey][i]?.specialLinks || [];
-          const specialLinkElements: Record<string, ContentElement | null>[] = [];
-          for (let j = 0; j < specialLinks.length; j++) {
-            const specialLinkIndex = j + 1;
-            const specialLinkNames = {
-              url: `Footer ${footerIndex} - SpecialLink ${specialLinkIndex} - Url`,
-              image: `Footer ${footerIndex} - SpecialLink ${specialLinkIndex} - Image`,
+          const socialLinks = allFormValues[firstLangKey][i]?.socialLinks || [];
+          const socialLinkElements: Record<string, ContentElement | null>[] = [];
+          for (let j = 0; j < socialLinks.length; j++) {
+            const socialLinkIndex = j + 1;
+            const socialLinkNames = {
+              url: `Footer ${footerIndex} - SocialLink ${socialLinkIndex} - Url`,
+              image: `Footer ${footerIndex} - SocialLink ${socialLinkIndex} - Image`,
+              linkName: `Footer ${footerIndex} - SocialLink ${socialLinkIndex} - LinkName`, // Added linkName
             };
 
-            specialLinkElements[j] = {
-              url: state.contentElements.find((el) => el.name === specialLinkNames.url) ?? null,
-              image: state.contentElements.find((el) => el.name === specialLinkNames.image && el.type === "image") ?? null,
+            socialLinkElements[j] = {
+              url: state.contentElements.find((el) => el.name === socialLinkNames.url) ?? null,
+              image: state.contentElements.find((el) => el.name === socialLinkNames.image && el.type === "image") ?? null,
+              linkName: state.contentElements.find((el) => el.name === socialLinkNames.linkName) ?? null, // Added linkName
             };
 
-            if (!specialLinkElements[j].url) {
+            // Create URL element if it doesn't exist
+            if (!socialLinkElements[j].url) {
               const newElement = await createContentElement.mutateAsync({
-                name: specialLinkNames.url,
+                name: socialLinkNames.url,
                 type: "text",
                 parent: sectionId,
                 isActive: true,
-                order: i * 5 + elementTypes.length + j * 2,
+                order: i * 5 + elementTypes.length + j * 3, // Updated to account for 3 fields per social link
                 defaultContent: "",
               });
-              specialLinkElements[j].url = newElement.data;
+              socialLinkElements[j].url = newElement.data;
               updateState({
                 contentElements: [...state.contentElements, newElement.data],
               });
             }
-            if (!specialLinkElements[j].image) {
+
+            // Create Image element if it doesn't exist
+            if (!socialLinkElements[j].image) {
               const newElement = await createContentElement.mutateAsync({
-                name: specialLinkNames.image,
+                name: socialLinkNames.image,
                 type: "image",
                 parent: sectionId,
                 isActive: true,
-                order: i * 5 + elementTypes.length + j * 2 + 1,
+                order: i * 5 + elementTypes.length + j * 3 + 1, // Updated order
                 defaultContent: "image-placeholder",
               });
-              specialLinkElements[j].image = newElement.data;
+              socialLinkElements[j].image = newElement.data;
               updateState({
                 contentElements: [...state.contentElements, newElement.data],
               });
             }
-            processedElementIds.add(specialLinkElements[j].url!._id);
-            processedElementIds.add(specialLinkElements[j].image!._id);
+
+            // Create LinkName element if it doesn't exist
+            if (!socialLinkElements[j].linkName) {
+              const newElement = await createContentElement.mutateAsync({
+                name: socialLinkNames.linkName,
+                type: "text",
+                parent: sectionId,
+                isActive: true,
+                order: i * 5 + elementTypes.length + j * 3 + 2, // Added linkName order
+                defaultContent: "",
+              });
+              socialLinkElements[j].linkName = newElement.data;
+              updateState({
+                contentElements: [...state.contentElements, newElement.data],
+              });
+            }
+
+            processedElementIds.add(socialLinkElements[j].url!._id);
+            processedElementIds.add(socialLinkElements[j].image!._id);
+            processedElementIds.add(socialLinkElements[j].linkName!._id); // Added linkName to processed elements
           }
 
           Object.entries(allFormValues).forEach(([langCode, footeres]) => {
@@ -522,13 +689,36 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
 
             const footer = footeres[i];
       
-            footer.specialLinks?.forEach((specialLink: any, j: number) => {
-              if (specialLinkElements[j].url) {
+            // Changed from description to title
+            if (elements.title) {
+              translations.push({
+                _id: "",
+                content: footer.title || "",
+                language: langId,
+                contentElement: elements.title._id,
+                isActive: true,
+              });
+            }
+
+            footer.socialLinks?.forEach((socialLink: any, j: number) => {
+              // Add URL translation
+              if (socialLinkElements[j].url) {
                 translations.push({
                   _id: "",
-                  content: specialLink.url || "",
+                  content: socialLink.url || "",
                   language: langId,
-                  contentElement: specialLinkElements[j].url!._id,
+                  contentElement: socialLinkElements[j].url!._id,
+                  isActive: true,
+                });
+              }
+
+              // Add LinkName translation
+              if (socialLinkElements[j].linkName) {
+                translations.push({
+                  _id: "",
+                  content: socialLink.linkName || "",
+                  language: langId,
+                  contentElement: socialLinkElements[j].linkName!._id,
                   isActive: true,
                 });
               }
@@ -542,23 +732,22 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
             const uploadResult = await apiClient.post(`/content-elements/${elements.image._id}/image`, formData, {
               headers: { "Content-Type": "multipart/form-data" },
             });
-          
           }
 
-          specialLinks.forEach((specialLink: any, j: number) => {
-            const specialLinkImage = socialLinkImages[i]?.[j];
-            if (specialLinkImage && specialLinkElements[j].image) {
+          socialLinks.forEach((socialLink: any, j: number) => {
+            const socialLinkImage = socialLinkImages[i]?.[j];
+            if (socialLinkImage && socialLinkElements[j].image) {
               const formData = new FormData();
-              formData.append("image", specialLinkImage);
+              formData.append("image", socialLinkImage);
               apiClient
-                .post(`/content-elements/${specialLinkElements[j].image!._id}/image`, formData, {
+                .post(`/content-elements/${socialLinkElements[j].image!._id}/image`, formData, {
                   headers: { "Content-Type": "multipart/form-data" },
                 })
                 .then((uploadResult) => {
                   if (uploadResult.data?.imageUrl) {
                     Object.entries(allFormValues).forEach(([langCode]) => {
                       if (allFormValues[langCode] && allFormValues[langCode][i]) {
-                        form.setValue(`${langCode}.${i}.specialLinks.${j}.image`, uploadResult.data.imageUrl, {
+                        form.setValue(`${langCode}.${i}.socialLinks.${j}.image`, uploadResult.data.imageUrl, {
                           shouldDirty: true,
                         });
                       }
@@ -566,10 +755,10 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
                   }
                 })
                 .catch((uploadError) => {
-                  console.error(`Image upload failed for Special Link ${j + 1} of Footer ${footerIndex}`, uploadError);
+                  console.error(`Image upload failed for Social Link ${j + 1} of Footer ${footerIndex}`, uploadError);
                   toast({
                     title: "Image Upload Error",
-                    description: `Failed to upload image for Special Link ${j + 1} of Footer ${footerIndex}.`,
+                    description: `Failed to upload image for Social Link ${j + 1} of Footer ${footerIndex}.`,
                     variant: "destructive",
                   });
                 });
@@ -658,7 +847,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
       componentName: "Footeres",
       extraMethods: {
         getFooterImages: () => heroImages,
-        getSpecialLinkImages: () => socialLinkImages,
+        getSocialLinkImages: () => socialLinkImages,
       },
     });
 
@@ -697,7 +886,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
               const isFirstLanguage = langIndex === 0;
 
               return (
-                <SpecialFooterLanguageCard
+                <FooterLanguageCard
                   key={langId}
                   langCode={langCode}
                   isFirstLanguage={isFirstLanguage}
@@ -706,7 +895,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
                   removeFooter={confirmDeleteStep}
                   onDeleteStep={confirmDeleteStep}
                   FooterImageUploader={HeroImageUploader}
-                  SpecialLinkImageUploader={SocialLinkImageUploader}
+                  SocialLinkImageUploader={SocialLinkImageUploader}
                 />
               );
             })}
@@ -761,4 +950,4 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
 );
 
 SpecialFormBasicForm.displayName = "SpecialFormBasicForm";
-export default SpecialFormBasicForm;
+export default SpecialFormBasicForm; 

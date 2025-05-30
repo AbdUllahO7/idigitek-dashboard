@@ -4,7 +4,7 @@ import { memo } from "react";
 import { Plus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
-import { SpecialFooterCard } from "./SpecialFooterCard";
+import { FooterCard } from "./FooterCard";
 
 interface LanguageCardProps {
   langCode: string;
@@ -14,16 +14,17 @@ interface LanguageCardProps {
   removeFooter: (langCode: string, index: number) => void;
   onDeleteStep: (langCode: string, index: number) => void;
   FooterImageUploader: React.ComponentType<any>;
-  SpecialLinkImageUploader?: React.ComponentType<any>;
+  SocialLinkImageUploader?: React.ComponentType<any>;
 }
 
-export const SpecialFooterLanguageCard = memo(({
+export const FooterLanguageCard = memo(({
   langCode,
+  isFirstLanguage,
   form,
   addFooter,
   onDeleteStep,
   FooterImageUploader,
-  SpecialLinkImageUploader,
+  SocialLinkImageUploader,
 }: LanguageCardProps) => {
   const footer = form.watch(langCode) || [];
 
@@ -40,30 +41,26 @@ export const SpecialFooterLanguageCard = memo(({
       </CardHeader>
       <CardContent className="space-y-4">
         {footer.map((_: any, index: number) => (
-          <SpecialFooterCard
+          <FooterCard
             key={`${langCode}-footer-${index}`}
             langCode={langCode}
             index={index}
             form={form}
+            isFirstLanguage={isFirstLanguage}
             onDelete={(langCodeParam, index) => onDeleteStep(langCodeParam, index)}
             FooterImageUploader={FooterImageUploader}
-            SpecialLinkImageUploader={SpecialLinkImageUploader}
+            SocialLinkImageUploader={SocialLinkImageUploader}
           />
         ))}
-
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => addFooter(langCode)}
-          className="mt-2"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Add Footer
-        </Button>
+        {isFirstLanguage && (
+          <Button type="button" variant="outline" onClick={() => addFooter(langCode)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Footer
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
 });
 
-SpecialFooterLanguageCard.displayName = "SpecialFooterLanguageCard";
+FooterLanguageCard.displayName = "FooterLanguageCard";

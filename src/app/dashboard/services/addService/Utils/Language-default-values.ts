@@ -8,20 +8,20 @@ export const createLanguageCodeMap = (activeLanguages: Language[]): Record<strin
 };
 
 const forEachLanguage = <T>(
-    languageIds: string[],
-    activeLanguages: Language[],
-    callback: (langCode: string) => T
-  ): Record<string, T> => {
-    const result: Record<string, T> = {};
-    const languageCodeMap = createLanguageCodeMap(activeLanguages);
-    
-    languageIds.forEach((langId) => {
-      const langCode = languageCodeMap[langId] || langId;
-      result[langCode] = callback(langCode);
-    });
-    
-    return result;
-    
+  languageIds: string[],
+  activeLanguages: Language[],
+  callback: (langCode: string, isPrimary: boolean) => T
+): Record<string, T> => {
+  const result: Record<string, T> = {};
+  const languageCodeMap = createLanguageCodeMap(activeLanguages);
+  const primaryLangId = languageIds[0] || "en";
+
+  languageIds.forEach((langId) => {
+    const langCode = languageCodeMap[langId] || langId;
+    result[langCode] = callback(langCode, langId === primaryLangId);
+  });
+
+  return result;
 };
 // Simplified default values creation functions
 const defaultValueDefinitions = {
@@ -70,12 +70,13 @@ const defaultValueDefinitions = {
           socialLinks: [],
         },
       ],
-     specialLink: () => [
-        {
-        image: "",
-        url: "",
-        },
-      ],
+      specialLink: (isPrimary: boolean, primaryValues?: any) => [
+         {
+        id: "footer-1",
+        title: "", // Changed from description to title
+        socialLinks: [],
+          },
+        ],
     faqHaveQuestions: () => [{
       icon: "Car",
       title: "",
@@ -109,20 +110,27 @@ const defaultValueDefinitions = {
 };
 
 const createLanguageDefaultValues = <T>(
-    languageIds: string[],
-    activeLanguages: Language[],
-    defaultValueFn: () => T,
-    extraFields: Record<string, any> = {}
-  ) => {
-    const defaultValues: Record<string, any> = { ...extraFields };
-    
-    const languageValues = forEachLanguage(
-      languageIds,
-      activeLanguages,
-      () => defaultValueFn()
-    );
-    
-    return { ...defaultValues, ...languageValues };
+  languageIds: string[],
+  activeLanguages: Language[],
+  defaultValueFn: (isPrimary: boolean, primaryValues?: any) => T,
+  extraFields: Record<string, any> = {}
+) => {
+  const defaultValues: Record<string, any> = { ...extraFields };
+  let primaryValues: any;
+
+  const languageValues = forEachLanguage(
+    languageIds,
+    activeLanguages,
+    (langCode, isPrimary) => {
+      const values = defaultValueFn(isPrimary, primaryValues);
+      if (isPrimary) {
+        primaryValues = values;
+      }
+      return values;
+    }
+  );
+
+  return { ...defaultValues, ...languageValues };
 };
 
 export const createHeroDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
@@ -230,7 +238,7 @@ export const createFooterSectionDefaultValues = (languageIds: string[], activeLa
 };
 
 export const createFooterSpecialLinkSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
-    return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.specialLink);
+  return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.specialLink);
 };
 
 

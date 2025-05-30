@@ -193,16 +193,23 @@ const schemaDefinitions = {
             })
     ).min(1, { message: "At least one hero is required" }),
       specialLink: (z: any) =>
-          z.array(
-                  z.object({
-                    id: z.string().optional(),
-                    image: z.string().min(1, "Social link image is required"),
-                    url: z.string().url("Invalid URL").min(1, "Social link URL is required"),
-                  })
-                )
-                .optional()
-                .default([]),
-  
+           z.array(
+            z.object({
+                id: z.string().optional(),
+                title: z.string().min(1, "Title is required"), // Changed from description to title
+                socialLinks: z
+                    .array(
+                        z.object({
+                            id: z.string().optional(),
+                            image: z.string().optional(), // Made optional since images might not be uploaded initially
+                            url: z.string().url("Invalid URL").min(1, "Social link URL is required"),
+                            linkName: z.string().min(1, "Link name is required"), // Added linkName field
+                        })
+                    )
+                    .optional()
+                    .default([]),
+            })
+        ).min(1, { message: "At least one footer is required" }),
     ChooseUs: (z: any) => z.object({
       title: z.string().min(1, { message: "Title is required" }),
       description: z.string().min(1, { message: "Description is required" }),
@@ -375,7 +382,58 @@ export const createFooterSectionSchema = (languageIds: string[], activeLanguages
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.footerSection);
 };
 export const createFooterSpecialLinkSectionSchema = (languageIds: string[], activeLanguages: Language[]) => {
-    return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.specialLink);
+    const schemaShape: Record<string, any> = {};
+    const languageCodeMap = activeLanguages.reduce<Record<string, string>>((acc, lang) => {
+        acc[lang._id] = lang.languageID;
+        return acc;
+    }, {});
+
+    languageIds.forEach((langId, index) => {
+        const langCode = languageCodeMap[langId] || langId;
+        const isFirstLanguage = index === 0;
+        
+        if (isFirstLanguage) {
+            // First language has strict validation
+            schemaShape[langCode] = z.array(
+                z.object({
+                    id: z.string().optional(),
+                    title: z.string().min(1, "Title is required"),
+                    socialLinks: z
+                        .array(
+                            z.object({
+                                id: z.string().optional(),
+                                image: z.string().optional(),
+                                url: z.string().min(1, "Social link URL is required"),
+                                linkName: z.string().min(1, "Link name is required"),
+                            })
+                        )
+                        .optional()
+                        .default([]),
+                })
+            ).min(1, { message: "At least one footer is required" });
+        } else {
+            // Other languages are more flexible - allow empty social links during sync
+            schemaShape[langCode] = z.array(
+                z.object({
+                    id: z.string().optional(),
+                    title: z.string().min(1, "Title is required"),
+                    socialLinks: z
+                        .array(
+                            z.object({
+                                id: z.string().optional(),
+                                image: z.string().optional(),
+                                url: z.string().optional().default(""), // Allow empty during sync
+                                linkName: z.string().optional().default(""), // Allow empty during sync
+                            })
+                        )
+                        .optional()
+                        .default([]),
+                })
+            ).min(1, { message: "At least one footer is required" });
+        }
+    });
+
+    return z.object(schemaShape);
 };
 
 // Usage remains the same
