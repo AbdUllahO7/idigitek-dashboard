@@ -145,13 +145,18 @@ const schemaDefinitions = {
       year: z.string().min(1, { message: "Year is required" }),
       technologies: z.string().min(1, { message: "Technologies  is required" }),
     }),
-    faq: (z: any) => z.array(
-      z.object({
-        question: z.string().min(1, { message: "Question is required" }),
-        answer: z.string().min(1, { message: "Answer is required" }),
-      })
-    ).min(1, { message: "At least one FAQ is required" }),
-    
+   faq: (z: any) =>
+    z.object({
+      sectionTitle: z.string().min(1, { message: "Section Title is required" }),
+      faqs: z
+        .array(
+          z.object({
+            question: z.string().min(1, { message: "Question is required" }),
+            answer: z.string().min(1, { message: "Answer is required" }),
+          })
+        )
+        .min(1, { message: "At least one FAQ is required" }),
+    }),
     feature: (z: any) => z.array(
       z.object({
         id: z.string().min(1, { message: "ID is required" }),
