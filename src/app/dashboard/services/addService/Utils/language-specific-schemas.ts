@@ -112,7 +112,6 @@ const schemaDefinitions = {
     ContactInformationInfo: (z: any) => z.object({
             title: z.string().min(1, { message: "Title is required" }),
             description: z.string().min(1, { message: "Description text is required" }),
-            location: z.string().min(1, { message: "Location is required" }), // Add location
             phoneText: z.string().optional(), // Make optional since collapsible
             phoneTextValue: z.string().optional(), // Make optional since collapsible
             email: z.string().optional(), // Make optional since collapsible

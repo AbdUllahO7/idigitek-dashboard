@@ -254,7 +254,6 @@ export const createFooterSpecialLinkSectionDefaultValues = (languageIds: string[
 const contactInformationDefaultDefinition = () => ({
   title: "",
   description: "",
-  location: "",
   phoneText: "",
   phoneTextValue: "",
   email: "",

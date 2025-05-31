@@ -6,6 +6,7 @@ import {
   LayoutGrid, 
   AlertTriangle,
   Loader2,
+  Palette
 } from "lucide-react"
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/src/components/ui/card"
@@ -14,6 +15,7 @@ import { useWebSite } from "@/src/hooks/webConfiguration/use-WebSite"
 import WebsiteList from "@/src/components/dashboard/WebSiteConfiguration/WebSite"
 import { LanguageManagement } from "@/src/components/dashboard/WebSiteConfiguration/Languages"
 import { SectionManagement } from "@/src/components/dashboard/WebSiteConfiguration/Sections"
+import { ThemeManagement } from "@/src/components/dashboard/WebSiteConfiguration/ThemeManagement"
 
 // Main Component
 export default function AdminManagementPage() {
@@ -68,7 +70,7 @@ export default function AdminManagementPage() {
         <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-purple-500/10 to-transparent dark:from-purple-900/20" />
       </div>
 
-      <div className="max-w-5xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex flex-col items-center space-y-4">
           <motion.h1 
             initial={{ y: -20, opacity: 0 }}
@@ -84,10 +86,12 @@ export default function AdminManagementPage() {
             transition={{ delay: 0.2 }}
             className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl text-center"
           >
-            Add, edit, or remove languages and sections for your website configuration
+            Customize your website with languages, sections, and beautiful themes
           </motion.p>
         </div>
+        
         <WebsiteList />
+        
         <Tabs 
           defaultValue="languages" 
           value={activeTab} 
@@ -100,7 +104,7 @@ export default function AdminManagementPage() {
             transition={{ delay: 0.4 }}
             className="flex justify-center mb-6"
           >
-            <TabsList className="grid grid-cols-2 w-full max-w-md">
+            <TabsList className="grid grid-cols-3 w-full max-w-lg">
               <TabsTrigger value="languages" className="flex items-center gap-2">
                 <Globe className="h-4 w-4" />
                 Languages
@@ -109,18 +113,25 @@ export default function AdminManagementPage() {
                 <LayoutGrid className="h-4 w-4" />
                 Sections
               </TabsTrigger>
+              <TabsTrigger value="themes" className="flex items-center gap-2">
+                <Palette className="h-4 w-4" />
+                Themes
+              </TabsTrigger>
             </TabsList>
           </motion.div>
 
           <TabsContent value="languages">
             <LanguageManagement hasWebsite={hasWebsite} />
           </TabsContent>
+          
           <TabsContent value="sections">
             <SectionManagement hasWebsite={hasWebsite} />
           </TabsContent>
+          
+          <TabsContent value="themes">
+            <ThemeManagement hasWebsite={hasWebsite} websites={websites} />
+          </TabsContent>
         </Tabs>
-
-
 
         <motion.div 
           variants={fadeIn}
@@ -128,7 +139,7 @@ export default function AdminManagementPage() {
           animate="visible"
           className="text-center text-sm text-slate-500 dark:text-slate-400 mt-8"
         >
-          <p>Manage the languages and sections available for website configuration.</p>
+          <p>Manage the languages, sections, and visual themes for your website.</p>
           <p className="mt-1">These settings will be used across your website building process.</p>
         </motion.div>
       </div>
