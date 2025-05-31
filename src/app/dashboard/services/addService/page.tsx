@@ -14,6 +14,7 @@ import ProcessStepsForm from "./Components/ProcessStepsForm/process-steps-form"
 import FaqForm from "./Components/FaqForm/faq-form"
 import FeaturesForm from "./Components/FeaturesForm/features-form"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
+import OverviewForm from "./Components/OverView/OverviewForm"
 
 // Form sections to collect data from
 const FORM_SECTIONS = ["hero", "benefits", "features", "processSteps", "faq"]
@@ -159,6 +160,20 @@ export default function AddService() {
           slug={getSlug('benefits')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('benefits')}
+        />
+      )
+    },
+        {
+      id: "overView",
+      label: "OverView",
+      icon: <Sparkles className="h-4 w-4" />,
+      component: (
+        <OverviewForm
+          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
+          activeLanguages={activeLanguages}
+          slug={getSlug('overView')}
+          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
+          initialData={findSubsection('overView')}
         />
       )
     },

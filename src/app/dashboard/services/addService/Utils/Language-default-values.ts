@@ -30,6 +30,9 @@ const defaultValueDefinitions = {
       description: "",
       backLinkText: "",
     }),
+      overView: () => ({
+      description: "",
+    }),
     blog: () => ({
     title: "",
     description: "",
@@ -83,10 +86,10 @@ const defaultValueDefinitions = {
       description: "",
       buttonText : "",
     }],
-    faq: () => [{
-      question: "",
-      answer: "",
-    }],
+   faq: () => ({
+    sectionTitle: "",
+    faqs: [{ question: "", answer: "" }],
+  }),
       clientComments: () => [{
       icon: "Car",
       title: "",
@@ -141,7 +144,13 @@ export const createHeroDefaultValues = (languageIds: string[], activeLanguages: 
       { backgroundImage: "" }
     );
 };
-
+export const createOverDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
+    return createLanguageDefaultValues(
+      languageIds,
+      activeLanguages,
+      defaultValueDefinitions.hero,
+    );
+};
 
 export const createProjectDefaultValues = (languageIds: string[], activeLanguages: any[]) => {
   const defaultValues: Record<string, any> = {};
