@@ -37,7 +37,11 @@ interface FormData {
     title: string;
     description: string;
     requestButton: string;
+    requestButtonType: string,
+    requestButtonUrl: string,
     exploreButton: string;
+    exploreButtonType: string,
+    exploreButtonUrl: string,
     image: string;
     id?: string;
   }>;
@@ -107,11 +111,65 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       onDataChangeRef.current = onDataChange;
     }, [onDataChange]);
 
+    // Fix: Set primary language code instead of ID
     useEffect(() => {
       if (languageIds.length > 0) {
-        primaryLanguageRef.current = languageIds[0];
+        const primaryLangCode = activeLanguages.find(lang => lang._id === languageIds[0])?.languageID || languageIds[0];
+        primaryLanguageRef.current = primaryLangCode;
       }
-    }, [languageIds]);
+    }, [languageIds, activeLanguages]);
+
+    // Track if we're currently syncing to prevent infinite loops
+    const isSyncing = useRef(false);
+
+    // URL Field Syncing Effect - sync from primary language to others
+    useEffect(() => {
+      if (!primaryLanguageRef.current) return;
+      
+      const subscription = form.watch((value, { name }) => {
+        // Prevent infinite loops
+        if (isSyncing.current) return;
+        
+        // Only sync URL-related fields from primary language to other languages
+        if (name && name.startsWith(primaryLanguageRef.current)) {
+          const isUrlField = name.includes('exploreButtonType') || 
+                            name.includes('exploreButtonUrl') || 
+                            name.includes('requestButtonType') || 
+                            name.includes('requestButtonUrl');
+          
+          if (isUrlField) {
+            // Extract the field name and index
+            const matches = name.match(new RegExp(`${primaryLanguageRef.current}\\.(\\d+)\\.(.*)`));
+            if (matches) {
+              const [, index, fieldName] = matches;
+              const newValue = value[primaryLanguageRef.current]?.[parseInt(index)]?.[fieldName];
+              
+              // Set syncing flag to prevent recursive calls
+              isSyncing.current = true;
+              
+              // Update all other languages with the same URL setting
+              try {
+                Object.keys(form.getValues()).forEach((langCode) => {
+                  if (langCode !== primaryLanguageRef.current) {
+                    form.setValue(`${langCode}.${index}.${fieldName}`, newValue, {
+                      shouldDirty: false,
+                      shouldValidate: false, // Prevent validation during sync
+                    });
+                  }
+                });
+              } finally {
+                // Reset syncing flag after a brief delay
+                setTimeout(() => {
+                  isSyncing.current = false;
+                }, 10);
+              }
+            }
+          }
+        }
+      });
+
+      return () => subscription.unsubscribe();
+    }, [form]);
 
     const validateFormHeroCounts = useCallback(() => {
       const values = form.getValues();
@@ -176,7 +234,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
                 const oldNumber = Number.parseInt(match[1]);
                 const newNumber = oldNumber - 1;
                 const newName = element.name.replace(`Hero ${oldNumber}`, `Hero ${newNumber}`);
-                const newOrder = element.order - 5; // Adjusted for five fields (including image)
+                const newOrder = element.order - 9; // Updated for 9 fields (including URL fields)
 
                 await updateContentElement.mutateAsync({
                   id: element._id,
@@ -263,16 +321,36 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
               ) => {
                 const titleElement = elements.find((el) => el.name.includes("Title"));
                 const descriptionElement = elements.find((el) => el.name.includes("Description"));
-                const exploreButtonElement = elements.find((el) => el.name.includes("ExploreButton"));
-                const requestButtonElement = elements.find((el) => el.name.includes("RequestButton"));
+                const exploreButtonElement = elements.find((el) => el.name.includes("ExploreButton") && !el.name.includes("Type") && !el.name.includes("Url"));
+                const exploreButtonTypeElement = elements.find((el) => el.name.includes("ExploreButtonType"));
+                const exploreButtonUrlElement = elements.find((el) => el.name.includes("ExploreButtonUrl"));
+                const requestButtonElement = elements.find((el) => el.name.includes("RequestButton") && !el.name.includes("Type") && !el.name.includes("Url"));
+                const requestButtonTypeElement = elements.find((el) => el.name.includes("RequestButtonType"));
+                const requestButtonUrlElement = elements.find((el) => el.name.includes("RequestButtonUrl"));
                 const imageElement = elements.find((el) => el.name.includes("Image") && el.type === "image");
+
+                // For URL fields, use primary language values for all languages
+                const primaryLangId = activeLanguages[0]?._id;
+                const useTranslationContent = (element: ContentElement | undefined, fallback: string, forceUsePrimaryLang = false) => {
+                  if (!element) return fallback;
+                  if (forceUsePrimaryLang && langId !== primaryLangId) {
+                    // Find translation for primary language
+                    const primaryTranslation = element.translations?.find((t: any) => t.language._id === primaryLangId);
+                    return primaryTranslation?.content || fallback;
+                  }
+                  return getTranslationContent(element, fallback);
+                };
 
                 return {
                   id: `hero-${heroNumber}`,
-                  title: getTranslationContent(titleElement, ""),
-                  description: getTranslationContent(descriptionElement, ""),
-                  exploreButton: getTranslationContent(exploreButtonElement, ""),
-                  requestButton: getTranslationContent(requestButtonElement, ""),
+                  title: useTranslationContent(titleElement, ""),
+                  description: useTranslationContent(descriptionElement, ""),
+                  exploreButton: useTranslationContent(exploreButtonElement, ""),
+                  exploreButtonType: useTranslationContent(exploreButtonTypeElement, "default", true), // Use primary language
+                  exploreButtonUrl: useTranslationContent(exploreButtonUrlElement, "", true), // Use primary language
+                  requestButton: useTranslationContent(requestButtonElement, ""),
+                  requestButtonType: useTranslationContent(requestButtonTypeElement, "default", true), // Use primary language
+                  requestButtonUrl: useTranslationContent(requestButtonUrlElement, "", true), // Use primary language
                   image: imageElement?.imageUrl || "",
                 };
               },
@@ -282,7 +360,11 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
                   title: "",
                   description: "",
                   exploreButton: "",
+                  exploreButtonType: "default",
+                  exploreButtonUrl: "",
                   requestButton: "",
+                  requestButtonType: "default",
+                  requestButtonUrl: "",
                   image: "",
                 },
               ],
@@ -319,12 +401,17 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       processHeroesData(completeSubsectionData.data);
     }, [completeSubsectionData, isLoadingSubsection, state.dataLoaded, slug, processHeroesData]);
 
+    // Combined form watch effect - handles all form changes
     useEffect(() => {
       if (state.isLoadingData || !state.dataLoaded) return;
 
       const subscription = form.watch((value) => {
+        // Skip if we're currently syncing URL fields
+        if (isSyncing.current) return;
+        
         updateState({ hasUnsavedChanges: true });
         validateFormHeroCounts();
+        
         if (onDataChangeRef.current) {
           onDataChangeRef.current(value as FormData);
         }
@@ -341,12 +428,30 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
           title: "",
           description: "",
           exploreButton: "",
+          exploreButtonType: "default",
+          exploreButtonUrl: "",
           requestButton: "",
+          requestButtonType: "default",
+          requestButtonUrl: "",
           image: "",
         };
 
         Object.keys(form.getValues()).forEach((lang) => {
           const currentHeroes = form.getValues()[lang] || [];
+          
+          // For non-primary languages, sync URL settings from primary language if adding to existing index
+          if (lang !== primaryLanguageRef.current && currentHeroes.length > 0) {
+            const primaryHeroes = form.getValues()[primaryLanguageRef.current] || [];
+            const heroIndex = currentHeroes.length; // This will be the index of the new hero
+            
+            if (primaryHeroes[heroIndex]) {
+              newHero.exploreButtonType = primaryHeroes[heroIndex].exploreButtonType || "default";
+              newHero.exploreButtonUrl = primaryHeroes[heroIndex].exploreButtonUrl || "";
+              newHero.requestButtonType = primaryHeroes[heroIndex].requestButtonType || "default";
+              newHero.requestButtonUrl = primaryHeroes[heroIndex].requestButtonUrl || "";
+            }
+          }
+          
           form.setValue(lang, [...currentHeroes, newHero], {
             shouldDirty: true,
             shouldValidate: true,
@@ -360,7 +465,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
           description: "A new hero has been added. Please fill in the details and save your changes.",
         });
       },
-      [form, validateFormHeroCounts, updateState, toast]
+      [form, validateFormHeroCounts, updateState, toast, primaryLanguageRef]
     );
 
     const confirmDeleteStep = useCallback((langCode: string, index: number) => {
@@ -449,7 +554,11 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             title: `Hero ${heroIndex} - Title`,
             description: `Hero ${heroIndex} - Description`,
             exploreButton: `Hero ${heroIndex} - ExploreButton`,
+            exploreButtonType: `Hero ${heroIndex} - ExploreButtonType`,
+            exploreButtonUrl: `Hero ${heroIndex} - ExploreButtonUrl`,
             requestButton: `Hero ${heroIndex} - RequestButton`,
+            requestButtonType: `Hero ${heroIndex} - RequestButtonType`,
+            requestButtonUrl: `Hero ${heroIndex} - RequestButtonUrl`,
             image: `Hero ${heroIndex} - Image`,
           };
 
@@ -457,7 +566,11 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             title: state.contentElements.find((el) => el.name === elementNames.title) ?? null,
             description: state.contentElements.find((el) => el.name === elementNames.description) ?? null,
             exploreButton: state.contentElements.find((el) => el.name === elementNames.exploreButton) ?? null,
+            exploreButtonType: state.contentElements.find((el) => el.name === elementNames.exploreButtonType) ?? null,
+            exploreButtonUrl: state.contentElements.find((el) => el.name === elementNames.exploreButtonUrl) ?? null,
             requestButton: state.contentElements.find((el) => el.name === elementNames.requestButton) ?? null,
+            requestButtonType: state.contentElements.find((el) => el.name === elementNames.requestButtonType) ?? null,
+            requestButtonUrl: state.contentElements.find((el) => el.name === elementNames.requestButtonUrl) ?? null,
             image: state.contentElements.find((el) => el.name === elementNames.image && el.type === "image") ?? null,
           };
 
@@ -465,7 +578,11 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             { type: "text", key: "title", name: elementNames.title },
             { type: "text", key: "description", name: elementNames.description },
             { type: "text", key: "exploreButton", name: elementNames.exploreButton },
+            { type: "text", key: "exploreButtonType", name: elementNames.exploreButtonType },
+            { type: "text", key: "exploreButtonUrl", name: elementNames.exploreButtonUrl },
             { type: "text", key: "requestButton", name: elementNames.requestButton },
+            { type: "text", key: "requestButtonType", name: elementNames.requestButtonType },
+            { type: "text", key: "requestButtonUrl", name: elementNames.requestButtonUrl },
             { type: "image", key: "image", name: elementNames.image },
           ];
 
@@ -476,7 +593,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
                 type,
                 parent: sectionId,
                 isActive: true,
-                order: i * 5 + elementTypes.findIndex((t) => t.key === key),
+                order: i * 9 + elementTypes.findIndex((t) => t.key === key), // Updated for 9 fields
                 defaultContent: type === "image" ? "image-placeholder" : "",
               });
               elements[key] = newElement.data;
@@ -495,6 +612,8 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             if (!langId) return;
 
             const hero = heroes[i];
+            
+            // Standard text fields for all languages
             if (elements.title) {
               translations.push({
                 _id: "",
@@ -530,6 +649,50 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
                 contentElement: elements.requestButton._id,
                 isActive: true,
               });
+            }
+
+            // URL fields - only save from primary language to avoid duplicates
+            const primaryLangCode = activeLanguages[0]?.languageID;
+            if (langCode === primaryLangCode) {
+              if (elements.exploreButtonType) {
+                translations.push({
+                  _id: "",
+                  content: hero.exploreButtonType || "default",
+                  language: langId,
+                  contentElement: elements.exploreButtonType._id,
+                  isActive: true,
+                });
+              }
+              
+              if (elements.exploreButtonUrl) {
+                translations.push({
+                  _id: "",
+                  content: hero.exploreButtonUrl || "",
+                  language: langId,
+                  contentElement: elements.exploreButtonUrl._id,
+                  isActive: true,
+                });
+              }
+              
+              if (elements.requestButtonType) {
+                translations.push({
+                  _id: "",
+                  content: hero.requestButtonType || "default",
+                  language: langId,
+                  contentElement: elements.requestButtonType._id,
+                  isActive: true,
+                });
+              }
+              
+              if (elements.requestButtonUrl) {
+                translations.push({
+                  _id: "",
+                  content: hero.requestButtonUrl || "",
+                  language: langId,
+                  contentElement: elements.requestButtonUrl._id,
+                  isActive: true,
+                });
+              }
             }
           });
 
@@ -657,15 +820,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
     });
 
     const languageCodes = createLanguageCodeMap(activeLanguages);
-
-    useEffect(() => {
-      const subscription = form.watch(() => {
-        if (state.dataLoaded && !state.isLoadingData) {
-          validateFormHeroCounts();
-        }
-      });
-      return () => subscription.unsubscribe();
-    }, [state.dataLoaded, state.isLoadingData, form, validateFormHeroCounts]);
 
     if (slug && ( isLoadingSubsection) && !state.dataLoaded) {
       return (

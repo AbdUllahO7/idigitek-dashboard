@@ -8,7 +8,8 @@ import { Button } from "@/src/components/ui/button";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
 import { useToast } from "@/src/hooks/use-toast";
-import { Loader2, Save } from "lucide-react";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Loader2, Save, Trash2 } from "lucide-react";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
 import { SubSection } from "@/src/api/types/hooks/section.types";
@@ -20,6 +21,11 @@ import { createFormRef } from "@/src/app/dashboard/services/addService/Utils/Exp
 import { ContactFormProps } from "@/src/api/types/sections/contact/contactSection.type";
 import {  createContactSendMessageSchema } from "@/src/app/dashboard/services/addService/Utils/language-specific-schemas";
 import { SendUsaMessageFormLanguageCard } from "./SendUsaMessageFormLanguageCard";
+import apiClient from '@/src/lib/api-client';
+import { useSubsectionDeleteManager } from "@/src/hooks/DeleteSubSections/useSubsectionDeleteManager";
+import { DeleteConfirmationDialog } from "@/src/components/DeleteConfirmationDialog";
+
+
 
 const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
   const {
@@ -50,13 +56,15 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
     existingSubSectionId: null as string | null,
     contentElements: [] as ContentElement[],
     isSaving: false,
+    showDeleteConfirm: false,
+    isRefreshingAfterDelete: false,
   });
 
   const updateState = useCallback((newState: Partial<typeof state>) => {
     setState((prev) => ({ ...prev, ...newState }));
   }, []);
 
-  const { isLoadingData, dataLoaded, hasUnsavedChanges, existingSubSectionId, contentElements, isSaving } = state;
+  const { isLoadingData, dataLoaded, hasUnsavedChanges, existingSubSectionId, contentElements, isSaving, showDeleteConfirm, isRefreshingAfterDelete } = state;
 
   // Hooks
   const { toast } = useToast();
@@ -77,6 +85,53 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
   const updateSubSection = useUpdateSubSection();
   const createContentElement = useCreateContentElement();
   const bulkUpsertTranslations = useBulkUpsertTranslations();
+
+  // Custom delete mutation with backend cascade delete
+  const queryClient = useQueryClient();
+  const deleteSubSection = useMutation({
+    mutationFn: async (id: string) => {
+      // Use backend cascade delete - much simpler and more reliable
+      const { data } = await apiClient.delete(`/subsections/${id}`, {
+        params: { 
+          hardDelete: true,
+          cascadeDelete: true  // Let backend handle cascade deletion
+        }
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      // Invalidate all related queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['subsections'] });
+      queryClient.invalidateQueries({ queryKey: ['content-elements'] });
+      queryClient.invalidateQueries({ queryKey: ['content-translations'] });
+      
+      // If we have a slug, also invalidate the specific slug query
+      if (slug) {
+        queryClient.invalidateQueries({ queryKey: ['subsections', 'slug', slug] });
+      }
+      
+      // Invalidate website-specific queries if we have websiteId
+      if (websiteId) {
+        queryClient.invalidateQueries({ queryKey: ['subsections', 'website', websiteId] });
+      }
+      
+      // Show success message with details
+      toast({
+        title: "Contact form deleted successfully!",
+        description: data.deletedElements 
+          ? `Deleted subsection and ${data.deletedElements} content elements.`
+          : "The contact form has been removed.",
+      });
+    },
+    onError: (error) => {
+      console.error("Delete mutation failed:", error);
+      toast({
+        title: "Failed to delete contact form",
+        variant: "destructive",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+      });
+    },
+  });
 
   // Data fetching from API
   const {
@@ -126,6 +181,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
               EmailPlaceHolder: "emailPlaceHolder",
               Message: "message",
               MessagePlaceHolder: "messagePlaceHolder",
+              SubjectTitle : "subjectTitle",
               Subjects: "subjects",
               ButtonText: "buttonText",
             };
@@ -136,6 +192,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
               fullnamePlaceHolder: "",
               email: "",
               emailPlaceHolder: "",
+              subjectTitle : "",
               message: "",
               messagePlaceHolder: "",
               subjects: [] as string[],
@@ -167,6 +224,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
             fullnamePlaceHolder: "",
             email: "",
             emailPlaceHolder: "",
+            subjectTitle : "",
             message: "",
             messagePlaceHolder: "",
             subjects: [],
@@ -223,6 +281,63 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
 
     return () => subscription.unsubscribe();
   }, [form, isLoadingData, dataLoaded, updateState]);
+
+  // Delete handler
+ const deleteManager = useSubsectionDeleteManager({
+    subsectionId: existingSubSectionId,
+    websiteId,
+    slug,
+    sectionName: "contact form",
+    contentElements,
+    customWarnings: [
+      "All form submissions will be lost",
+      "Email notification settings will be removed"
+    ],
+    shouldRefetch: !!slug,
+    refetchFn: refetch,
+    resetForm: () => {
+      form.reset(defaultValues);
+    },
+    resetState: () => {
+      updateState({
+        existingSubSectionId: null,
+        contentElements: [],
+        hasUnsavedChanges: false,
+        dataLoaded: !slug,
+      });
+      dataProcessed.current = false;
+    },
+    onDataChange,
+    onDeleteSuccess: async () => {
+      // Custom success handling after deletion
+      updateState({ isRefreshingAfterDelete: true });
+      
+      if (slug) {
+        try {
+          const result = await refetch();
+          if (result.data?.data) {
+            updateState({ isLoadingData: true });
+            await processContactData(result.data.data);
+            updateState({ isLoadingData: false });
+            dataProcessed.current = true;
+          } else {
+            updateState({ 
+              dataLoaded: true,
+              isLoadingData: false 
+            });
+          }
+        } catch (refetchError) {
+          console.log("Refetch after deletion resulted in expected error (subsection deleted)");
+          updateState({ 
+            dataLoaded: true,
+            isLoadingData: false 
+          });
+        }
+      }
+      
+      updateState({ isRefreshingAfterDelete: false });
+    },
+  });
 
   // Save handler with optimized process
   const handleSave = useCallback(async () => {
@@ -294,6 +409,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
           FullnamePlaceHolder: "fullnamePlaceHolder",
           Email: "email",
           EmailPlaceHolder: "emailPlaceHolder",
+          SubjectTitle: "subjectTitle",
           Message: "message",
           MessagePlaceHolder: "messagePlaceHolder",
           Subjects: "subjects",
@@ -342,6 +458,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
           { type: "text", key: "fullnamePlaceHolder", name: "FullnamePlaceHolder" },
           { type: "text", key: "email", name: "Email" },
           { type: "text", key: "emailPlaceHolder", name: "EmailPlaceHolder" },
+          { type: "text", key: "subjectTitle", name: "SubjectTitle" },
           { type: "text", key: "message", name: "Message" },
           { type: "text", key: "messagePlaceHolder", name: "MessagePlaceHolder" },
           { type: "text", key: "subjects", name: "Subjects" },
@@ -471,6 +588,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
     componentName: "ContactForm",
     extraMethods: {
       saveData: handleSave,
+      deleteData: deleteManager.handleDelete,
     },
     extraData: {
       existingSubSectionId,
@@ -497,6 +615,25 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
         description="Please wait while we save your changes..."
       />
 
+      <LoadingDialog
+        isOpen={deleteSubSection.isPending}
+        title="Deleting Contact Form"
+        description="Please wait while we delete the contact form..."
+      />
+
+      <LoadingDialog
+        isOpen={isRefreshingAfterDelete}
+        title="Refreshing Data"
+        description="Updating the interface after deletion..."
+      />
+
+      {/* Delete Confirmation Dialog */}
+        <DeleteConfirmationDialog
+        {...deleteManager.confirmationDialogProps}
+        title="Delete Contact Form"
+        description="Are you sure you want to delete this contact form? This action cannot be undone."
+      />
+
       <Form {...form}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {languageIds.map((langId, index) => {
@@ -513,25 +650,42 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
         </div>
       </Form>
 
-      <div className="flex justify-end mt-6">
-        <Button
-          type="button"
-          onClick={handleSave}
-          disabled={isLoadingData || isSaving}
-          className="flex items-center"
-        >
-          {isSaving ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <Save className="mr-2 h-4 w-4" />
-              {existingSubSectionId ? "Update Contact Form" : "Save Contact Form"}
-            </>
-          )}
-        </Button>
+      <div className="flex justify-between mt-6">
+        {/* Delete Button - Only show if there's an existing subsection */}
+        {existingSubSectionId && (
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={deleteManager.openDeleteDialog}
+            disabled={isLoadingData || isSaving || deleteManager.isDeleting || isRefreshingAfterDelete}
+            className="flex items-center"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete Contact Form
+          </Button>
+        )}
+
+        {/* Save Button */}
+        <div className={existingSubSectionId ? "" : "ml-auto"}>
+          <Button
+            type="button"
+            onClick={handleSave}
+            disabled={isLoadingData || isSaving || deleteSubSection.isPending || isRefreshingAfterDelete}
+            className="flex items-center"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                {existingSubSectionId ? "Update Contact Form" : "Save Contact Form"}
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,4 @@
 "use client";
-
 import { memo } from "react";
 import { Plus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
@@ -25,7 +24,7 @@ export const LanguageCard = memo(({
   HeroImageUploader,
 }: LanguageCardProps) => {
   const hero = form.watch(langCode) || [];
-
+  
   return (
     <Card className="w-full">
       <CardHeader>
@@ -34,8 +33,16 @@ export const LanguageCard = memo(({
             {langCode}
           </span>
           Hero Section
+          {isFirstLanguage && (
+            <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+              Primary
+            </span>
+          )}
         </CardTitle>
-        <CardDescription>Manage hero content for {langCode.toUpperCase()}</CardDescription>
+        <CardDescription>
+          Manage hero content for {langCode.toUpperCase()}
+          {isFirstLanguage && " (URL settings configured here apply to all languages)"}
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {hero.map((_: any, index: number) => (
@@ -45,10 +52,10 @@ export const LanguageCard = memo(({
             index={index}
             form={form}
             onDelete={(langCodeParam, index) => onDeleteStep(langCodeParam, index)}
+            isFirstLanguage={isFirstLanguage}
             HeroImageUploader={HeroImageUploader}
           />
         ))}
-
         <Button
           type="button"
           variant="outline"

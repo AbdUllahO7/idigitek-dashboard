@@ -1,4 +1,4 @@
-"use title";
+"use client";
 
 import { forwardRef, useEffect, useState, useRef, useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,7 @@ import { Button } from "@/src/components/ui/button";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
 import { useToast } from "@/src/hooks/use-toast";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, Save, Trash2 } from "lucide-react";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
 import { SubSection } from "@/src/api/types/hooks/section.types";
@@ -20,7 +20,8 @@ import { createFormRef } from "@/src/app/dashboard/services/addService/Utils/Exp
 import { ContactFormProps } from "@/src/api/types/sections/contact/contactSection.type";
 import { ContactInformationFormLanguageCard } from "./ContactInformationFormLanguageCard";
 import { createContactInformationInfoSchema } from "@/src/app/dashboard/services/addService/Utils/language-specific-schemas";
-
+import { DeleteConfirmationDialog } from "@/src/components/DeleteConfirmationDialog";
+import { useSubsectionDeleteManager } from "@/src/hooks/DeleteSubSections/useSubsectionDeleteManager";
 
 const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) => {
   const { 
@@ -40,21 +41,22 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues,
-    mode: "onChange" // Enable validation on change for better UX
+    mode: "onChange" 
   });
 
   // State management
   const [state, setState] = useState({
-    isLoadingData: !slug,
+    isLoadingData: !!slug, // Fixed: should be true if slug exists initially
     dataLoaded: !slug,
     hasUnsavedChanges: false,
-    existingSubSectionId: null as string | null ,
+    existingSubSectionId: null as string | null,
     contentElements: [] as ContentElement[],
-    isSaving: false
+    isSaving: false,
+    isRefreshingAfterDelete: false,
   });
 
   // Use object state update for better performance and readability
-  const updateState = useCallback((newState: { isLoadingData?: boolean; dataLoaded?: boolean; hasUnsavedChanges?: boolean; existingSubSectionId?: string | null; contentElements?: any[]; isSaving?: boolean; }) => {
+  const updateState = useCallback((newState: Partial<typeof state>) => {
     setState(prev => ({ ...prev, ...newState }));
   }, []);
 
@@ -65,7 +67,8 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
     hasUnsavedChanges, 
     existingSubSectionId, 
     contentElements, 
-    isSaving 
+    isSaving,
+    isRefreshingAfterDelete
   } = state;
 
   // Hooks
@@ -96,7 +99,134 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
     refetch 
   } = useGetCompleteBySlug(slug || '', Boolean(slug));
 
-  console.log("completeSubsectionData", completeSubsectionData)
+  console.log("completeSubsectionData", completeSubsectionData);
+
+  // Process contact data from API
+  const processContactData = useCallback((subsectionData: SubSection | null) => {
+    processAndLoadData(
+      subsectionData,
+      form,
+      languageIds,
+      activeLanguages,
+      {
+        groupElements: (elements) => ({
+          'contact': elements.filter(el => el.type === 'text' || (el.name === 'Background Image' && el.type === 'image'))
+        }),
+        processElementGroup: (groupId, elements, langId, getTranslationContent) => {
+          const elementKeyMap: Record<string, keyof typeof result> = {
+            Title: "title",
+            Description: "description",
+            Location: "location", 
+            PhoneText: "phoneText",
+            PhoneTextValue: "phoneTextValue",
+            Email: "email",
+            EmailValue: "emailValue",
+            Office: "office",
+            OfficeValue: "officeValue",
+          };
+
+          const result = {
+            title: "",
+            description: "",
+            location: "",
+            phoneText: "",
+            phoneTextValue: "",
+            email: "",
+            emailValue: "",
+            office: "",
+            officeValue: "",
+          };
+
+          elements
+            .filter((el) => el.type === "text")
+            .forEach((element) => {
+              const key = elementKeyMap[element.name];
+              if (key) {
+                result[key] = getTranslationContent(element, "") || "";
+              }
+            });
+
+          return result;
+        },
+        getDefaultValue: () => ({
+          title: '',
+          description: '', 
+          location: '',
+          phoneText: '',
+          phoneTextValue: '', 
+          email: '',
+          emailValue: '', 
+          office: '',
+          officeValue: '', 
+        })
+      },
+      {
+        setExistingSubSectionId: (id) => updateState({ existingSubSectionId: id }),
+        setContentElements: (elements) => updateState({ contentElements: elements }),
+        setDataLoaded: (loaded) => updateState({ dataLoaded: loaded }),
+        setHasUnsavedChanges: (hasChanges) => updateState({ hasUnsavedChanges: hasChanges }),
+        setIsLoadingData: (loading) => updateState({ isLoadingData: loading })
+      }
+    );
+  }, [form, languageIds, activeLanguages, updateState]);
+
+  // Delete functionality using the delete manager
+  const deleteManager = useSubsectionDeleteManager({
+    subsectionId: existingSubSectionId,
+    websiteId,
+    slug,
+    sectionName: "contact information section",
+    contentElements,
+    customWarnings: [
+      "All contact information will be lost",
+      "Phone and email details will be removed",
+      "Office location data will be deleted"
+    ],
+    shouldRefetch: !!slug,
+    refetchFn: refetch,
+    resetForm: () => {
+      form.reset(defaultValues);
+    },
+    resetState: () => {
+      updateState({
+        existingSubSectionId: null,
+        contentElements: [],
+        hasUnsavedChanges: false,
+        dataLoaded: !slug,
+      });
+      dataProcessed.current = false;
+    },
+    onDataChange,
+    onDeleteSuccess: async () => {
+      // Custom success handling after deletion
+      updateState({ isRefreshingAfterDelete: true });
+      
+      if (slug) {
+        try {
+          const result = await refetch();
+          if (result.data?.data) {
+            updateState({ isLoadingData: true });
+            await processContactData(result.data.data);
+            updateState({ isLoadingData: false });
+            dataProcessed.current = true;
+          } else {
+            updateState({ 
+              dataLoaded: true,
+              isLoadingData: false 
+            });
+          }
+        } catch (refetchError) {
+          console.log("Refetch after deletion resulted in expected error (subsection deleted)");
+          updateState({ 
+            dataLoaded: true,
+            isLoadingData: false 
+          });
+        }
+      }
+      
+      updateState({ isRefreshingAfterDelete: false });
+    },
+  });
 
   // Update reference when onDataChange changes
   useEffect(() => {
@@ -106,87 +236,16 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
   // Process initial data from parent
   const processInitialData = useCallback(() => {
     if (initialData && !dataLoaded) {
-      
       if (initialData.description) {
         form.setValue(`${defaultLangCode}.description`, initialData.description);
       }
-      
-
       
       updateState({ 
         dataLoaded: true, 
         hasUnsavedChanges: false 
       });
     }
-  }, [initialData, dataLoaded, defaultLangCode, form]);
-
-  // Process contact data from API
-  const processContactData = useCallback((subsectionData: SubSection | null) => {
-  processAndLoadData(
-    subsectionData,
-    form,
-    languageIds,
-    activeLanguages,
-    {
-      groupElements: (elements) => ({
-        'contact': elements.filter(el => el.type === 'text' || (el.name === 'Background Image' && el.type === 'image'))
-      }),
-      processElementGroup: (groupId, elements, langId, getTranslationContent) => {
-      const elementKeyMap: Record<string, keyof typeof result> = {
-          Title: "title",
-          Description: "description",
-          Location: "location", 
-          PhoneText: "phoneText",
-          PhoneTextValue: "phoneTextValue",
-          Email: "email",
-          EmailValue: "emailValue",
-          Office: "office",
-          OfficeValue: "officeValue",
-        };
-
-      const result = {
-        title: "",
-        description: "",
-        location: "", // New field
-        phoneText: "",
-        phoneTextValue: "",
-        email: "",
-        emailValue: "",
-        office: "",
-        officeValue: "",
-      };
-
-        elements
-          .filter((el) => el.type === "text")
-          .forEach((element) => {
-            const key = elementKeyMap[element.name];
-            if (key) {
-              result[key] = getTranslationContent(element, "") || ""; // Fallback to empty string
-            }
-          });
-
-        return result;
-      },
-      getDefaultValue: () => ({
-        title: '',
-        description: '', 
-        phoneText: '',
-        phoneTextValue: '', 
-        email: '',
-        emailValue: '', 
-        office: '',
-        officeValue: '', 
-      })
-    },
-    {
-      setExistingSubSectionId: (id) => updateState({ existingSubSectionId: id }),
-      setContentElements: (elements) => updateState({ contentElements: elements }),
-      setDataLoaded: (loaded) => updateState({ dataLoaded: loaded }),
-      setHasUnsavedChanges: (hasChanges) => updateState({ hasUnsavedChanges: hasChanges }),
-      setIsLoadingData: (loading) => updateState({ isLoadingData: loading })
-    }
-  );
-}, [form, languageIds, activeLanguages]);
+  }, [initialData, dataLoaded, defaultLangCode, form, updateState]);
 
   // Process initial data effect
   useEffect(() => {
@@ -208,7 +267,7 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
       });
       dataProcessed.current = true;
     }
-  }, [completeSubsectionData, isLoadingSubsection, slug, processContactData]);
+  }, [completeSubsectionData, isLoadingSubsection, slug, processContactData, updateState]);
 
   // Form watch effect for unsaved changes
   useEffect(() => {
@@ -227,9 +286,10 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
   // Save handler with optimized process
   const handleSave = useCallback(async () => {
     const isValid = await form.trigger();
-    console.log("Form Errors:", form.formState.errors); // Add this to debug validation errors
-          const allFormValues = form.getValues();
-        console.log(allFormValues)
+    console.log("Form Errors:", form.formState.errors);
+    const allFormValues = form.getValues();
+    console.log("Form Values:", allFormValues);
+
     if (!isValid) {
       toast({
         title: "Validation Error",
@@ -242,8 +302,6 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
     updateState({ isSaving: true });
 
     try {
-      const allFormValues = form.getValues();
-
       let sectionId = existingSubSectionId;
       if (!sectionId) {
         if (!ParentSectionId) {
@@ -251,8 +309,8 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
         }
 
         const subsectionData = {
-          name: "Contact Section",
-          slug: slug || `contact-section-${Date.now()}`,
+          name: "Contact Information Section",
+          slug: slug || `contact-information-section-${Date.now()}`,
           description: "",
           isActive: true,
           isMain: false,
@@ -292,14 +350,15 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
         const textElements = contentElements.filter((e) => e.type === "text");
         const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] = [];
         const elementNameToKeyMap: Record<string, keyof typeof allFormValues[string]> = {
-            'Title': 'title',
-            'Description': 'description', 
-            'PhoneText': 'phoneText',
-            'PhoneTextValue': 'phoneTextValue',
-            'Email': 'email',
-            'EmailValue': 'emailValue', 
-            'Office': 'office',
-            'OfficeValue': 'officeValue', 
+          'Title': 'title',
+          'Description': 'description', 
+          'Location': 'location',
+          'PhoneText': 'phoneText',
+          'PhoneTextValue': 'phoneTextValue',
+          'Email': 'email',
+          'EmailValue': 'emailValue', 
+          'Office': 'office',
+          'OfficeValue': 'officeValue', 
         };
 
         Object.entries(allFormValues).forEach(([langCode, values]) => {
@@ -385,7 +444,7 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
       }
 
       toast({
-        title: existingSubSectionId ? "Contact section updated successfully!" : "Contact section created successfully!",
+        title: existingSubSectionId ? "Contact information updated successfully!" : "Contact information created successfully!",
         description: "All content has been saved."
       });
 
@@ -403,7 +462,7 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
     } catch (error) {
       console.error("Operation failed:", error);
       toast({
-        title: existingSubSectionId ? "Error updating contact section" : "Error creating contact section",
+        title: existingSubSectionId ? "Error updating contact information" : "Error creating contact information",
         variant: "destructive",
         description: error instanceof Error ? error.message : "Unknown error occurred"
       });
@@ -427,7 +486,8 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
     refetch,
     updateState,
     updateSubSection,
-    activeLanguages
+    activeLanguages,
+    websiteId
   ]);
 
   // Create form ref for parent component
@@ -437,9 +497,10 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
     setHasUnsavedChanges: (value) => updateState({ hasUnsavedChanges: value }),
     existingSubSectionId,
     contentElements,
-    componentName: 'Contact',
+    componentName: 'ContactInformation',
     extraMethods: {
-      saveData: handleSave
+      saveData: handleSave,
+      deleteData: deleteManager.handleDelete,
     },
     extraData: {
       existingSubSectionId
@@ -453,57 +514,93 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-muted-foreground">Loading contact section data...</p>
+        <p className="ml-2 text-muted-foreground">Loading contact information data...</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
+      {/* Loading Dialogs */}
       <LoadingDialog 
         isOpen={isSaving} 
-        title={existingSubSectionId ? "Updating Contact Section" : "Creating Contact Section"}
+        title={existingSubSectionId ? "Updating Contact Information" : "Creating Contact Information"}
         description="Please wait while we save your changes..."
       />
       
+      <LoadingDialog
+        isOpen={deleteManager.isDeleting}
+        title="Deleting Contact Information"
+        description="Please wait while we delete the contact information..."
+      />
+
+      <LoadingDialog
+        isOpen={isRefreshingAfterDelete}
+        title="Refreshing Data"
+        description="Updating the interface after deletion..."
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        {...deleteManager.confirmationDialogProps}
+        title="Delete Contact Information"
+        description="Are you sure you want to delete this contact information section? This action cannot be undone."
+      />
+
       <Form {...form}>
-        
         {/* Language Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {languageIds.map((langId, index) => {
-          const langCode = languageCodes[langId] || langId;
-          return (
-            <ContactInformationFormLanguageCard 
-              key={langId}
-              langCode={langCode}
-              form={form}
-              isFirstLanguage={index === 0} // Only pass true for the first language
-            />
-          );
-        })}
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {languageIds.map((langId, index) => {
+            const langCode = languageCodes[langId] || langId;
+            return (
+              <ContactInformationFormLanguageCard 
+                key={langId}
+                langCode={langCode}
+                form={form}
+                isFirstLanguage={index === 0}
+              />
+            );
+          })}
+        </div>
       </Form>
-      
-      {/* Save Button */}
-      <div className="flex justify-end mt-6">
-        <Button 
-          type="button" 
-          onClick={handleSave} 
-          disabled={isLoadingData || isSaving}
-          className="flex items-center"
-        >
-          {isSaving ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <Save className="mr-2 h-4 w-4" />
-              {existingSubSectionId ? "Update Contact Content" : "Save Contact Content"}
-            </>
-          )}
-        </Button>
+
+      {/* Action Buttons */}
+      <div className="flex justify-between items-center mt-6">
+        {/* Delete Button - Only show if there's an existing subsection */}
+        {existingSubSectionId && (
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={deleteManager.openDeleteDialog}
+            disabled={isLoadingData || isSaving || deleteManager.isDeleting || isRefreshingAfterDelete}
+            className="flex items-center"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete Contact Information
+          </Button>
+        )}
+
+        {/* Save Button */}
+        <div className={existingSubSectionId ? "" : "ml-auto"}>
+          <Button 
+            type="button" 
+            onClick={handleSave} 
+            disabled={isLoadingData || isSaving || deleteManager.isDeleting || isRefreshingAfterDelete}
+            className="flex items-center"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                {existingSubSectionId ? "Update Contact Information" : "Save Contact Information"}
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

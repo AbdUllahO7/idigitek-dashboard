@@ -6,7 +6,6 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/src/
 import { Input } from "@/src/components/ui/input";
 import { Textarea } from "@/src/components/ui/textarea";
 import type { UseFormReturn } from "react-hook-form";
-import { Separator } from "@/src/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible";
 import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
@@ -20,7 +19,7 @@ interface SendUsaMessageFormLanguageCardProps {
 
 export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLanguage = false }: SendUsaMessageFormLanguageCardProps) => {
   const [openSections, setOpenSections] = useState({
-    formFields: true,
+    formFields: false,
     phone: false,
     email: false,
   });
@@ -141,6 +140,19 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
                   <FormLabel>Message Placeholder</FormLabel>
                   <FormControl>
                     <Textarea placeholder="Enter message placeholder" className="min-h-[100px]" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+                <FormField
+              control={form.control}
+              name={`${langCode}.subjectTitle`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Subject Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter Subject Title"  {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

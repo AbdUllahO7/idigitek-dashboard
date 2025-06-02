@@ -68,19 +68,7 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
               </FormItem>
             )}
           />
-          {/* <FormField
-            control={form.control}
-            name={`${langCode}.location`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Location (Map URL)</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter map URL (e.g., Google Maps embed URL)" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
+         
         </div>
 
         <Separator />

@@ -127,6 +127,7 @@ const schemaDefinitions = {
           emailPlaceHolder: z.string().optional(),
           message: z.string().min(1, { message: "Message text is required" }),
           messagePlaceHolder: z.string().optional(),
+          subjectTitle: z.string().optional(),
           subjects: z
             .array(z.string().min(1, { message: "Subject cannot be empty" }))
             .min(1, { message: "At least one subject is required" }),
@@ -177,7 +178,11 @@ const schemaDefinitions = {
         title: z.string().min(1, "Title is required"),
         description: z.string().min(1, "Description is required"),
         exploreButton: z.string().min(1, "Explore Button text is required"),
+        exploreButtonType: z.enum(["default", "special"]).default("default"),
+        exploreButtonUrl: z.string().url().optional().or(z.literal("")), 
         requestButton: z.string().min(1, "Request Button text is required"),
+        requestButtonType: z.enum(["default", "special"]).default("default"),
+        requestButtonUrl: z.string().url().optional().or(z.literal("")), 
         image : z.string().min(1, "Request Button text is required"),
       })
     ).min(1, { message: "At least one feature is required" }),
