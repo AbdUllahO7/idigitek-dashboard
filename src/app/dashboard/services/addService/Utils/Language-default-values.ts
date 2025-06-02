@@ -90,11 +90,10 @@ const defaultValueDefinitions = {
       description: "",
       buttonText : "",
     }],
-    faq: () => [{
-      
-      question: "",
-      answer: "",
-    }],
+   faq: () => ({
+    sectionTitle: "",
+    faqs: [{ question: "", answer: "" }],
+  }),
       clientComments: () => [{
       icon: "Car",
       title: "",
