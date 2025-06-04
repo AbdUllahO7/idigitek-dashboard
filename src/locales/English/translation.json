@@ -989,7 +989,299 @@
       }
     }
   },
-  
+  "header": {
+    "management": {
+      "title": "Header Management",
+      "description": "Manage your Header inventory and multilingual content",
+      "addButtonLabel": "Add New Nav Item",
+      "listTitle": "Header List",
+      "editPath": "header/addNavItems"
+    },
+    "messages": {
+      "emptyStateMessage": "No Header found. Create your first Header by clicking the \"Add New Header\" button.",
+      "noSectionMessage": "Please create a Header section first before adding Header.",
+      "mainSectionRequiredMessage": "Please enter your main section data before adding Header.",
+      "emptyFieldsMessage": "Please complete all required fields in the main section before adding Header."
+    },
+    "section": {
+      "title": "Header Section Content",
+      "description": "Manage your Header section content in multiple languages.",
+      "addButtonLabel": "Add Header Section",
+      "editButtonLabel": "Edit Header Section",
+      "saveButtonLabel": "Save Header Section"
+    },
+    "columns": {
+      "name": "Name",
+      "description": "Description",
+      "status": "Status",
+      "order": "Order",
+      "subsections": "Subsections"
+    },
+    "badges": {
+      "main": "Main"
+    },
+    "dialogs": {
+      "create": {
+        "title": "Header"
+      },
+      "delete": {
+        "title": "Delete Section",
+        "confirmText": "Confirm"
+      }
+    }
+  },
+  "table": {
+    "actions": "Actions",
+    "emptyMessage": "No data available",
+    "tryChangingCriteria": "Try changing your search or filter criteria",
+    "filter": "Filter",
+    "search": "Search...",
+    "showing": "Showing",
+    "results": "results",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "actionTitles": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "mainSectionComponents": {
+    "errorCard": {
+      "title": "Error",
+      "tryAgain": "Try Again",
+      "defaultMessage": "Could not check if main subsection exists."
+    },
+    "successCard": {
+      "editContent": "Edit Content"
+    },
+    "languageSelector": {
+      "activeLanguages": "Active Languages",
+      "default": "Default"
+    },
+    "actionButton": {
+      "creatingSubsection": "Creating Subsection...",
+      "creatingElements": "Creating Content Elements...",
+      "updatingContent": "Updating Content...",
+      "saveChanges": "Save Changes",
+      "createMainSubsection": "Create Main Subsection"
+    },
+    "cancelButton": {
+      "cancel": "Cancel"
+    },
+    "loadingStates": {
+      "loading": "Loading...",
+      "processing": "Processing...",
+      "pleaseWait": "Please wait..."
+    }
+  },
+  "createMainSubSection": {
+    "titles": {
+      "createSubsection": "Create Main Subsection",
+      "editSubsection": "Edit Main Subsection",
+      "subsectionAvailable": "Main Subsection Available",
+      "noLanguages": "No Active Languages Available"
+    },
+    "descriptions": {
+      "createSubsection": "Complete the required fields to create the main subsection for this section.",
+      "editSubsection": "Update the content for this main subsection across all languages.",
+      "subsectionAvailable": "The main subsection is already set up for this section.",
+      "noLanguages": "You need to have at least one active language before creating a subsection."
+    },
+    "buttons": {
+      "showForm": "Show Content Form",
+      "create": "Create Subsection",
+      "update": "Update Subsection",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "retry": "Retry"
+    },
+    "messages": {
+      "validationError": "Validation Error",
+      "checkFormErrors": "Please check the form for errors in",
+      "success": "Success",
+      "subsectionCreated": "Main subsection created with content in",
+      "subsectionUpdated": "Subsection updated with content in",
+      "languages": "language(s)",
+      "errorCreating": "Error creating subsection",
+      "errorUpdating": "Error updating subsection",
+      "unexpectedError": "An unexpected error occurred",
+      "couldNotCheck": "Could not check if main subsection exists.",
+      "enterMainSectionData": "Please enter your main section data!",
+      "required": "is required"
+    },
+    "placeholders": {
+      "enterFieldFor": "Enter {{field}} for {{language}}"
+    },
+    "metaFields": {
+      "name": "Name",
+      "description": "Description",
+      "slug": "Slug",
+      "languages": "Languages",
+      "contentElements": "Content Elements"
+    },
+    "form": {
+      "requiredIndicator": "*",
+      "loading": "Loading form data...",
+      "creating": "Creating...",
+      "updating": "Updating...",
+      "creatingElements": "Creating content elements..."
+    }
+  },
+  "navItemsForm": {
+      "titles": {
+        "navItemCountMismatch": "Navigation Item Count Mismatch",
+        "deleteNavItem": "Delete Navigation Item",
+        "updatingNavSection": "Updating Navigation Section",
+        "creatingNavSection": "Creating Navigation Section"
+      },
+      "descriptions": {
+        "navItemCountMismatch": "Each language must have the same number of navigation items before saving. Please add or remove items to ensure all languages have the same count:",
+        "deleteNavItem": "Are you sure you want to delete Navigation Item {number}?",
+        "loadingNavData": "Loading navigation section data...",
+        "savingChanges": "Please wait while we save your changes..."
+      },
+      "buttons": {
+        "addNavItem": "Add Nav Item",
+        "addNavItemToAllLanguages": "Add Nav Item to All Languages",
+        "saveNavContent": "Save Navigation Content",
+        "updateNavContent": "Update Navigation Content",
+        "deleteItem": "Delete Item",
+        "close": "Close"
+      },
+      "messages": {
+        "navItemAdded": "Navigation item added",
+        "navItemAddedDescription": "A new navigation item has been added.",
+        "cannotRemove": "Cannot remove",
+        "cannotRemoveDescription": "You need at least one navigation item",
+        "navItemDeleted": "Navigation item deleted",
+        "navItemDeletedDescription": "Item {number} has been deleted from the database",
+        "errorRemovingItem": "Error removing item",
+        "errorRemovingItemDescription": "There was an error removing the navigation item from the database",
+        "imageUploaded": "Image Uploaded",
+        "imageUploadedDescription": "Logo image has been successfully uploaded.",
+        "imageUploadFailed": "Image Upload Failed",
+        "imageUploadFailedDescription": "Failed to upload image",
+        "validationError": "Validation Error",
+        "validationErrorDescription": "Please fill all required fields correctly",
+        "creatingNavSection": "Creating new navigation section...",
+        "creatingNavSectionDescription": "Setting up your new navigation content.",
+        "navSectionCreated": "Navigation section created successfully!",
+        "navSectionUpdated": "Navigation section updated successfully!",
+        "navSectionSuccessDescription": "All changes have been saved.",
+        "errorCreatingNavSection": "Error creating navigation section",
+        "errorUpdatingNavSection": "Error updating navigation section",
+        "errorOperationFailedDescription": "Unknown error occurred",
+        "refreshingContent": "Refreshing content",
+        "refreshingContentDescription": "Loading the updated content...",
+        "navItemCountMismatchWarning": "Each language must have the same number of navigation items"
+      },
+      "placeholders": {
+        "navItem": "Nav Item {number}"
+      },
+      "form": {
+        "loading": "Loading navigation section data...",
+        "saving": "Saving..."
+      }
+  },
+  "addHeader": {
+      "titles": {
+        "createHeader": "Create New Nav Item",
+        "editHeader": "Edit Nav Item"
+      },
+      "descriptions": {
+        "createHeader": "Create a new nav item with multilingual content",
+        "editHeader": "Editing content across multiple languages"
+      },
+      "tabs": {
+        "navItems": "Nav Items"
+      }
+  },
+  "formShell": {
+      "titles": {
+        "unsavedChanges": "Unsaved Changes",
+        "languages": "Languages"
+      },
+      "descriptions": {
+        "unsavedChanges": "You have unsaved changes. Are you sure you want to leave this page? All unsaved changes will be lost.",
+        "noActiveLanguages": "No active languages found. Please activate at least one language in settings."
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "leavePage": "Leave Page",
+        "create": "Create",
+        "update": "Update",
+        "saving": "Saving..."
+      },
+      "labels": {
+        "completion": "Completion:",
+        "language": "{language}"
+      },
+      "form": {
+        "loading": "Loading form data..."
+      }
+  },
+  "simpleImageUploader": {
+      "labels": {
+        "dragAndDrop": "Drag and drop or click to upload"
+      },
+      "buttons": {
+        "uploadImage": "Upload Image",
+        "replaceImage": "Replace Image",
+        "remove": "Remove"
+      }
+  },
+  "backgroundImageSection": {
+      "titles": {
+        "logoImage": "Logo Image Uploading",
+        "sectionImage": "Section Image"
+      },
+      "descriptions": {
+        "logoImage": "Logo Image Uploading for header",
+        "sectionImage": "Upload an image for the section (applies to all languages)"
+      },
+      "labels": {
+        "logo": "Logo",
+        "backgroundImage": "Background Image",
+        "appliesToAllLanguages": "(applies to all languages)"
+      }
+  },
+  "navLanguageCard": {
+      "titles": {
+        "navigationSection": "Navigation Section"
+      },
+      "descriptions": {
+        "manageNavigation": "Manage navigation items for"
+      },
+      "labels": {
+        "languageCode": "{langCode}",
+        "navItem": "Nav Item"
+      }
+  },
+    "deleteSectionDialog": {
+      "titles": {
+        "deleteSection": "Delete Section"
+      },
+      "descriptions": {
+        "confirmDelete": "Are you sure you want to delete <span class=\"font-semibold\"></span>? This action cannot be undone."
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "deleting": "Deleting..."
+      }
+    },
   "common": {
     "welcome": "Welcome",
     "logout": "Log out",

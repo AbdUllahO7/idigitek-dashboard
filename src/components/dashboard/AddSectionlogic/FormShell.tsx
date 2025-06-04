@@ -1,4 +1,3 @@
-// FormShell.tsx
 "use client"
 
 import { JSX, ReactNode } from "react"
@@ -9,6 +8,7 @@ import { Button } from "@/src/components/ui/button"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Globe, Layout, Sparkles, ListChecks, ArrowRight, HelpCircle, Save, Loader2 } from "lucide-react"
 import { Language } from "@/src/api/types/hooks/language.types"
+import { useTranslation } from "react-i18next"
 
 // Define the tab configuration
 interface TabConfig {
@@ -44,6 +44,7 @@ const defaultTabIcons: Record<string, JSX.Element> = {
 
 // Inner component that uses the form context
 function FormShellInner({ tabs, title, subtitle, isLoading = false }: Pick<FormShellProps, "tabs" | "title" | "subtitle" | "backUrl" | "isLoading">) {
+  const { t } = useTranslation()
   const {
     saveAllData,
     showLeaveConfirmation,
@@ -58,6 +59,7 @@ function FormShellInner({ tabs, title, subtitle, isLoading = false }: Pick<FormS
     return (
       <div className="flex items-center justify-center p-10">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-500"></div>
+        <span className="ml-2 text-slate-500 dark:text-slate-400">{t("formShell.form.loading")}</span>
       </div>
     )
   }
@@ -69,7 +71,7 @@ function FormShellInner({ tabs, title, subtitle, isLoading = false }: Pick<FormS
         <Card className="shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden">
           <CardContent className="p-6">
             <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-              No active languages found. Please activate at least one language in settings.
+              {t("formShell.descriptions.noActiveLanguages")}
             </div>
           </CardContent>
         </Card>
@@ -95,10 +97,10 @@ function FormShellInner({ tabs, title, subtitle, isLoading = false }: Pick<FormS
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Globe className="h-5 w-5 text-teal-600 dark:text-teal-400" />
-                  <h2 className="text-lg font-medium">Languages</h2>
+                  <h2 className="text-lg font-medium">{t("formShell.titles.languages")}</h2>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-500">Completion:</span>
+                  <span className="text-sm text-slate-500">{t("formShell.labels.completion")}</span>
                   <div className="w-32 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full transition-all duration-500 ease-out"
@@ -115,7 +117,7 @@ function FormShellInner({ tabs, title, subtitle, isLoading = false }: Pick<FormS
                     className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm flex items-center gap-2"
                   >
                     <Globe className="h-4 w-4" />
-                    {lang.language}
+                    { lang.language }
                   </div>
                 ))}
               </div>
@@ -133,30 +135,28 @@ function FormShellInner({ tabs, title, subtitle, isLoading = false }: Pick<FormS
         saveButtonLabel={isSubmitting ? (
           <>
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Saving...
+            {t("formShell.buttons.saving")}
           </>
         ) : (
           <>
             <Save className="mr-2 h-5 w-5" />
-            {title.toLowerCase().includes("create") ? "Create" : "Update"}
+            {title.toLowerCase().includes("create") ? t("formShell.buttons.create") : t("formShell.buttons.update")}
           </>
         )}
       />
-
-    
 
       {/* Leave confirmation dialog */}
       <Dialog open={showLeaveConfirmation} onOpenChange={setShowLeaveConfirmation}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Unsaved Changes</DialogTitle>
+            <DialogTitle>{t("formShell.titles.unsavedChanges")}</DialogTitle>
             <DialogDescription>
-              You have unsaved changes. Are you sure you want to leave this page? All unsaved changes will be lost.
+              {t("formShell.descriptions.unsavedChanges")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex justify-end gap-2 sm:justify-end">
             <Button variant="outline" onClick={() => setShowLeaveConfirmation(false)}>
-              Cancel
+              {t("formShell.buttons.cancel")}
             </Button>
             <Button 
               variant="destructive" 
@@ -165,7 +165,7 @@ function FormShellInner({ tabs, title, subtitle, isLoading = false }: Pick<FormS
                 navigateBack()
               }}
             >
-              Leave Page
+              {t("formShell.buttons.leavePage")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -176,7 +176,7 @@ function FormShellInner({ tabs, title, subtitle, isLoading = false }: Pick<FormS
 
 // Main FormShell component with context provider
 export function FormShell(props: FormShellProps) {
-  const {  formSections, activeLanguages, serviceData, sectionId, sectionItemId, mode, onSave, backUrl } = props
+  const { formSections, activeLanguages, serviceData, sectionId, sectionItemId, mode, onSave, backUrl } = props
   return (
     <FormContextProvider
       initialFormSections={formSections}

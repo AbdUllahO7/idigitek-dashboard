@@ -12,47 +12,7 @@ import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { headerSectionConfig } from "./HeaderSectionConfig"
-
-
-
-// Column definitions
-const HEADER_COLUMNS = [
-  {
-    header: "Name",
-    accessor: "name",
-    className: "font-medium"
-  },
-  {
-    header: "Description",
-    accessor: "description",
-    cell: TruncatedCell
-  },
-  {
-    header: "Status",
-    accessor: "isActive",
-    cell: (item: any, value: boolean) => (
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center">
-          {StatusCell(item, value)}
-          {item.isMain && (
-            <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-              Main
-            </span>
-          )}
-        </div>
-      </div>
-    )
-  },
-  {
-    header: "Order",
-    accessor: "order"
-  },
-  {
-    header: "Subsections",
-    accessor: "subsections.length",
-    cell: CountBadgeCell
-  }
-]
+import { useTranslation } from "react-i18next"
 
 export default function HeaderPage() {
   const searchParams = useSearchParams()
@@ -61,23 +21,64 @@ export default function HeaderPage() {
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
   const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
+  const { t } = useTranslation()
+
+  // Column definitions with translations
+  const HEADER_COLUMNS = [
+    {
+      header: t('header.columns.name'),
+      accessor: "name",
+      className: "font-medium"
+    },
+    {
+      header: t('header.columns.description'),
+      accessor: "description",
+      cell: TruncatedCell
+    },
+    {
+      header: t('header.columns.status'),
+      accessor: "isActive",
+      cell: (item: any, value: boolean) => (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center">
+            {StatusCell(item, value)}
+            {item.isMain && (
+              <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                {t('header.badges.main')}
+              </span>
+            )}
+          </div>
+        </div>
+      )
+    },
+    {
+      header: t('header.columns.order'),
+      accessor: "order"
+    },
+    {
+      header: t('header.columns.subsections'),
+      accessor: "subsections.length",
+      cell: CountBadgeCell
+    }
+  ]
 
   const HEADER_CONFIG = useMemo (() => ({
-    title: "Header Management",
-    description: "Manage your Header inventory and multilingual content",
-      addButtonLabel: "Add New Nav Item",
-    emptyStateMessage: "No Header found. Create your first Header by clicking the \"Add New Header\" button.",
-    noSectionMessage: "Please create a Header section first before adding Header.",
-    mainSectionRequiredMessage: "Please enter your main section data before adding Header.",
-    emptyFieldsMessage: "Please complete all required fields in the main section before adding Header.",
-    sectionIntegrationTitle: "Header Section Content",
-    sectionIntegrationDescription: "Manage your Header section content in multiple languages.",
-    addSectionButtonLabel: "Add Header Section",
-    editSectionButtonLabel: "Edit Header Section",
-    saveSectionButtonLabel: "Save Header Section",
-    listTitle: "Header List",
+    title: t('header.management.title'),
+    description: t('header.management.description'),
+    addButtonLabel: t('header.management.addButtonLabel'),
+    emptyStateMessage: t('header.messages.emptyStateMessage'),
+    noSectionMessage: t('header.messages.noSectionMessage'),
+    mainSectionRequiredMessage: t('header.messages.mainSectionRequiredMessage'),
+    emptyFieldsMessage: t('header.messages.emptyFieldsMessage'),
+    sectionIntegrationTitle: t('header.section.title'),
+    sectionIntegrationDescription: t('header.section.description'),
+    addSectionButtonLabel: t('header.section.addButtonLabel'),
+    editSectionButtonLabel: t('header.section.editButtonLabel'),
+    saveSectionButtonLabel: t('header.section.saveButtonLabel'),
+    listTitle: t('header.management.listTitle'),
     editPath: "header/addNavItems"
-  }), [] );
+  }), [t]);
+
   // Refs to track previous values for debugging
   const prevHasMainSubSection = useRef(hasMainSubSection);
   const isFirstRender = useRef(true);
@@ -120,7 +121,6 @@ export default function HeaderPage() {
     apiHooks: useSectionItems(),
     editPath: HEADER_CONFIG.editPath
   })
-
 
   // Debug changes in hasMainSubSection
   useEffect(() => {
@@ -191,8 +191,6 @@ export default function HeaderPage() {
       });
     }
     
-  
-    
     // Update state based on what we found
     setHasMainSubSection(foundMainSubSection);
     setIsLoadingMainSubSection(false);
@@ -202,7 +200,6 @@ export default function HeaderPage() {
       const sectionInfo = typeof mainSubSection.section === 'string' 
         ? { _id: mainSubSection.section } 
         : mainSubSection.section;
-      
       
       // Set local section data
       setSectionData(sectionInfo);
@@ -257,16 +254,11 @@ export default function HeaderPage() {
     }
   };
 
-  // IMPORTANT: Here's the crux of the button enabling/disabling logic
-  // Added check for navItems.length > 0 to disable when there's already a navItem
   const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
     (Boolean(sectionId) && !hasMainSubSection) ||
     (navItems.length > 0); // This disables the button if there's already at least one NavItem
-
-
-
 
   // Custom message for empty state 
   const emptyStateMessage = !headerSection && !sectionData 
@@ -291,7 +283,7 @@ export default function HeaderPage() {
       onOpenChange={setIsCreateDialogOpen}
       sectionId={sectionId || ""}
       onServiceCreated={handleItemCreated}
-      title="Header"
+      title={t('header.dialogs.create.title')}
     />
   );
 
@@ -302,8 +294,8 @@ export default function HeaderPage() {
       serviceName={itemToDelete?.name || ""}
       onConfirm={handleDelete}
       isDeleting={isDeleting}
-      title="Delete Section"
-      confirmText="Confirm"
+      title={t('header.dialogs.delete.title')}
+      confirmText={t('header.dialogs.delete.confirmText')}
     />
   );
 

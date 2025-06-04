@@ -11,6 +11,7 @@ import { FormData } from "@/src/api/types/sections/service/serviceSections.types
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
 import NavItemsForm from "./NavItemsForm"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
+import { useTranslation } from "react-i18next"
 
 
 // Form sections to collect data from
@@ -29,8 +30,8 @@ export default function AddHeader() {
   const { useGetByWebsite: useGetAllLanguages } = useLanguages()
   const { useGetById: useGetSectionItemById } = useSectionItems()
   const { useGetBySectionItemId: useGetSubSectionsBySectionItemId } = useSubSections()
-    const { websiteId } = useWebsiteContext();
-  
+  const { websiteId } = useWebsiteContext();
+  const {t} = useTranslation()
   // Get languages
   const { 
     data: languagesData, 
@@ -130,7 +131,7 @@ export default function AddHeader() {
   const tabs = [
     {
       id: "navItems",
-      label: "Nav Items",
+      label: t("addHeader.tabs.navItems"),
       icon: <Layout className="h-4 w-4" />,
       component: (
         <NavItemsForm
@@ -188,10 +189,10 @@ export default function AddHeader() {
   
   return (
     <FormShell
-      title={isCreateMode ? "Create New nav item " : "Edit nav item "}
+      title={isCreateMode ? t("addHeader.titles.createHeader") : t("addHeader.titles.editHeader")}
       subtitle={isCreateMode 
-        ? "Create a new nav item with multilingual content" 
-        : `Editing "${sectionItemData?.data?.name || 'nav item'}" content across multiple languages`}
+        ? t("addHeader.descriptions.createHeader") 
+        : t("addHeader.descriptions.editHeader", { name: sectionItemData?.data?.name || 'nav item' })}
       backUrl={`/dashboard/header?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}

@@ -11,6 +11,7 @@ import {
 } from "@/src/components/ui/dialog"
 import { Button } from "@/src/components/ui/button"
 import { Loader2 } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 interface DeleteSectionDialogProps {
   open: boolean;
@@ -18,8 +19,8 @@ interface DeleteSectionDialogProps {
   serviceName: string;
   onConfirm: () => Promise<void>;
   isDeleting: boolean;
-  title?: string,
-  confirmText?:string
+  title?: string;
+  confirmText?: string;
 }
 
 export default function DeleteSectionDialog({
@@ -29,9 +30,10 @@ export default function DeleteSectionDialog({
   onConfirm,
   isDeleting,
   title,
-  confirmText
+  confirmText,
 }: DeleteSectionDialogProps) {
-  
+  const { t } = useTranslation()
+
   const handleConfirm = async () => {
     await onConfirm();
     onOpenChange(false);
@@ -41,9 +43,13 @@ export default function DeleteSectionDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>{title || t("deleteSectionDialog.titles.deleteSection")}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete <span className="font-semibold">{serviceName}</span>? This action cannot be undone.
+            <span
+              dangerouslySetInnerHTML={{
+                __html: t("deleteSectionDialog.descriptions.confirmDelete"),
+              }}
+            />
           </DialogDescription>
         </DialogHeader>
 
@@ -53,7 +59,7 @@ export default function DeleteSectionDialog({
             onClick={() => onOpenChange(false)}
             disabled={isDeleting}
           >
-            Cancel
+            {t("deleteSectionDialog.buttons.cancel")}
           </Button>
           <Button 
             variant="destructive" 
@@ -63,10 +69,10 @@ export default function DeleteSectionDialog({
             {isDeleting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Deleting...
+                {t("deleteSectionDialog.buttons.deleting")}
               </>
             ) : (
-              `${confirmText}`
+              confirmText || t("deleteSectionDialog.buttons.delete")
             )}
           </Button>
         </DialogFooter>
