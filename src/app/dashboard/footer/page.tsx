@@ -11,24 +11,24 @@ import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
-import { footerSectionConfig } from "./FooterSectionConfig"
+import { getFooterSectionConfig } from "./FooterSectionConfig"
+import { useTranslation } from "react-i18next"
+import { useLanguage } from "@/src/context/LanguageContext"
 
-
-
-// Column definitions
-const Footer_COLUMNS = [
+// Column definitions with translation support
+const getFooterColumns = (t: any) => [
   {
-    header: "Name",
+    header: t('footerPage.table.columns.name', 'Name'),
     accessor: "name",
     className: "font-medium"
   },
   {
-    header: "Description",
+    header: t('footerPage.table.columns.description', 'Description'),
     accessor: "description",
     cell: TruncatedCell
   },
   {
-    header: "Status",
+    header: t('footerPage.table.columns.status', 'Status'),
     accessor: "isActive",
     cell: (item: any, value: boolean) => (
       <div className="flex flex-col gap-2">
@@ -36,7 +36,7 @@ const Footer_COLUMNS = [
           {StatusCell(item, value)}
           {item.isMain && (
             <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-              Main
+              {t('footerPage.table.status.main', 'Main')}
             </span>
           )}
         </div>
@@ -44,11 +44,11 @@ const Footer_COLUMNS = [
     )
   },
   {
-    header: "Order",
+    header: t('footerPage.table.columns.order', 'Order'),
     accessor: "order"
   },
   {
-    header: "Subsections",
+    header: t('footerPage.table.columns.subsections', 'Subsections'),
     accessor: "subsections.length",
     cell: CountBadgeCell
   }
@@ -61,23 +61,35 @@ export default function FooterPage() {
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
   const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
+  const { language } = useLanguage()
+  const { t } = useTranslation()
 
-  const Footer_CONFIG = useMemo (() => ({
-    title: "Footer Management",
-    description: "Manage your Footer inventory and multilingual content",
-      addButtonLabel: "Add New footer",
-    emptyStateMessage: "No Footer found. Create your first Footer by clicking the \"Add New Footer\" button.",
-    noSectionMessage: "Please create a Footer section first before adding Footer.",
-    mainSectionRequiredMessage: "Please enter your main section data before adding Footer.",
-    emptyFieldsMessage: "Please complete all required fields in the main section before adding Footer.",
-    sectionIntegrationTitle: "Footer Section Content",
-    sectionIntegrationDescription: "Manage your Footer section content in multiple languages.",
-    addSectionButtonLabel: "Add Footer Section",
-    editSectionButtonLabel: "Edit Footer Section",
-    saveSectionButtonLabel: "Save Footer Section",
-    listTitle: "Footer List",
+  // Get translated footer section config based on current language (MEMOIZED like HeaderPage)
+  const footerSectionConfig = useMemo(() => {
+    return getFooterSectionConfig(language)
+  }, [language])
+
+  // Memoized configuration for the Footer page with translations
+  const Footer_CONFIG = useMemo(() => ({
+    title: t('footerPage.config.title', 'Footer Management'),
+    description: t('footerPage.config.description', 'Manage your footer inventory and multilingual footer content'),
+    addButtonLabel: t('footerPage.config.addButtonLabel', 'Add New Footer'),
+    emptyStateMessage: t('footerPage.config.emptyStateMessage', 'No footer found. Create your first footer by clicking the "Add New Footer" button.'),
+    noSectionMessage: t('footerPage.config.noSectionMessage', 'Please create a footer section first before adding footer.'),
+    mainSectionRequiredMessage: t('footerPage.config.mainSectionRequiredMessage', 'Please enter your main section data before adding footer.'),
+    emptyFieldsMessage: t('footerPage.config.emptyFieldsMessage', 'Please complete all required fields in the main section before adding footer.'),
+    sectionIntegrationTitle: t('footerPage.config.sectionIntegrationTitle', 'Footer Section Management'),
+    sectionIntegrationDescription: t('footerPage.config.sectionIntegrationDescription', 'Manage your footer section content in multiple languages.'),
+    addSectionButtonLabel: t('footerPage.config.addSectionButtonLabel', 'Add Footer Section'),
+    editSectionButtonLabel: t('footerPage.config.editSectionButtonLabel', 'Edit Footer Section'),
+    saveSectionButtonLabel: t('footerPage.config.saveSectionButtonLabel', 'Save Footer Section'),
+    listTitle: t('footerPage.config.listTitle', 'Footer List'),
     editPath: "footer/addFooter"
-  }), [] );
+  }), [t]);
+
+  // Get translated column definitions (MEMOIZED like HeaderPage)
+  const Footer_COLUMNS = useMemo(() => getFooterColumns(t), [t])
+
   // Refs to track previous values for debugging
   const prevHasMainSubSection = useRef(hasMainSubSection);
   const isFirstRender = useRef(true);
@@ -121,13 +133,10 @@ export default function FooterPage() {
     editPath: Footer_CONFIG.editPath
   })
 
+  console.log("footerSection", footerSection)
 
   // Debug changes in hasMainSubSection
   useEffect(() => {
-    if (!isFirstRender.current && prevHasMainSubSection.current !== hasMainSubSection) {
-      console.log(`hasMainSubSection changed from ${prevHasMainSubSection.current} to ${hasMainSubSection}`);
-    }
-    
     prevHasMainSubSection.current = hasMainSubSection;
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -136,7 +145,14 @@ export default function FooterPage() {
 
   // Determine if main subsection exists when data loads & set section data if needed
   useEffect(() => {
-
+    console.log("🔄 Footer useEffect running:", {
+      isLoadingCompleteSubsections,
+      isLoadingSectionSubsections,
+      sectionId,
+      hasMainSubSection,
+      footerSection
+    });
+    
     // First check if we are still loading
     if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
       setIsLoadingMainSubSection(true);
@@ -147,51 +163,105 @@ export default function FooterPage() {
     let foundMainSubSection = false;
     let mainSubSection = null;
     
-    // Get expected name from configuration
+    // Get expected name from configuration (now translated)
     const expectedName = footerSectionConfig.subSectionName;
+    
+    console.log("🔍 Footer Debug - Expected name:", expectedName);
+    console.log("🔍 Footer Debug - sectionSubsections?.data:", sectionSubsections?.data);
+    console.log("🔍 Footer Debug - mainSubSectionData?.data:", mainSubSectionData?.data);
     
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
       const sectionData = sectionSubsections.data;
+      console.log("🔍 Checking section-specific subsections:", sectionData);
       
       if (Array.isArray(sectionData)) {
         // Find the main subsection in the array with correct name
-        mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedName
-        );
+        console.log("🔍 Array of subsections, looking for main with name:", expectedName);
+        sectionData.forEach((sub, index) => {
+          console.log(`🔍 Subsection ${index}:`, {
+            name: sub.name,
+            isMain: sub.isMain,
+            matches: sub.isMain === true && sub.name === expectedName
+          });
+        });
+        
+        mainSubSection = sectionData.find(sub => {
+          // Try exact match first
+          if (sub.isMain === true && sub.name === expectedName) {
+            return true;
+          }
+          // Also try matching if it contains "Footer" and "Basic" for backward compatibility
+          if (sub.isMain === true && sub.name && 
+              (sub.name.toLowerCase().includes('footer') && sub.name.toLowerCase().includes('basic'))) {
+            console.log("🔍 Found footer subsection with flexible matching:", sub.name);
+            return true;
+          }
+          return false;
+        });
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
+        console.log("🔍 Single subsection object:", {
+          name: sectionData.name,
+          isMain: sectionData.isMain,
+          matches: sectionData.isMain === true && sectionData.name === expectedName
+        });
         foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedName;
         mainSubSection = foundMainSubSection ? sectionData : null;
       }
-
     }
+    
+    console.log("🔍 After section-specific check:", { foundMainSubSection, mainSubSection });
     
     // If we didn't find anything in the section-specific data, check the website-wide data
     if (!foundMainSubSection && mainSubSectionData?.data) {
       const websiteData = mainSubSectionData.data;
+      console.log("🔍 Checking website-wide subsections:", websiteData);
       
       if (Array.isArray(websiteData)) {
         // Find the main subsection in the array with correct name
-        mainSubSection = websiteData.find(sub => 
-          sub.isMain === true && sub.name === expectedName
-        );
+        console.log("🔍 Website data - Array of subsections, looking for main with name:", expectedName);
+        websiteData.forEach((sub, index) => {
+          console.log(`🔍 Website Subsection ${index}:`, {
+            name: sub.name,
+            isMain: sub.isMain,
+            matches: sub.isMain === true && sub.name === expectedName
+          });
+        });
+        
+        mainSubSection = websiteData.find(sub => {
+          // Try exact match first
+          if (sub.isMain === true && sub.name === expectedName) {
+            return true;
+          }
+          // Also try matching if it contains "Footer" and "Basic" for backward compatibility
+          if (sub.isMain === true && sub.name && 
+              (sub.name.toLowerCase().includes('footer') && sub.name.toLowerCase().includes('basic'))) {
+            console.log("🔍 Found footer subsection with flexible matching:", sub.name);
+            return true;
+          }
+          return false;
+        });
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
+        console.log("🔍 Website data - Single subsection object:", {
+          name: websiteData.name,
+          isMain: websiteData.isMain,
+          matches: websiteData.isMain === true && websiteData.name === expectedName
+        });
         foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedName;
         mainSubSection = foundMainSubSection ? websiteData : null;
       }
-      
-      console.log("Website subsections check:", { 
-        foundMainSubSection, 
-        mainSubSection,
-        matchesName: mainSubSection ? mainSubSection.name === expectedName : false
-      });
     }
     
-  
+    console.log("🔍 Final result:", { 
+      foundMainSubSection, 
+      mainSubSection,
+      expectedName,
+      willSetHasMainSubSection: foundMainSubSection 
+    });
     
     // Update state based on what we found
     setHasMainSubSection(foundMainSubSection);
@@ -202,7 +272,6 @@ export default function FooterPage() {
       const sectionInfo = typeof mainSubSection.section === 'string' 
         ? { _id: mainSubSection.section } 
         : mainSubSection.section;
-      
       
       // Set local section data
       setSectionData(sectionInfo);
@@ -220,14 +289,15 @@ export default function FooterPage() {
     isLoadingSectionSubsections, 
     sectionId, 
     footerSection, 
-    setSection
+    setSection,
+    footerSectionConfig.subSectionName // Add this dependency to re-run when language changes
   ]);
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
     console.log("Main subsection created:", subsection);
     
-    // Check if subsection has the correct name
+    // Check if subsection has the correct name (now using properly memoized translated name)
     const expectedName = footerSectionConfig.subSectionName;
     const hasCorrectName = subsection.name === expectedName;
     
@@ -258,24 +328,21 @@ export default function FooterPage() {
   };
 
   // IMPORTANT: Here's the crux of the button enabling/disabling logic
-  // Added check for navItems.length > 0 to disable when there's already a navItem
+  // Added check for navItems.length > 0 to disable when there's already a footer item
   const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
     (Boolean(sectionId) && !hasMainSubSection) ||
-    (navItems.length > 0); // This disables the button if there's already at least one NavItem
+    (navItems.length > 0); // This disables the button if there's already at least one Footer Item
 
-
-
-
-  // Custom message for empty state 
+  // Custom message for empty state with translations
   const emptyStateMessage = !footerSection && !sectionData 
     ? Footer_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
       ? Footer_CONFIG.mainSectionRequiredMessage
       : Footer_CONFIG.emptyStateMessage;
 
-  // Components
+  // Components with translations
   const NavItemsTable = (
     <GenericTable
       columns={Footer_COLUMNS}
@@ -291,7 +358,7 @@ export default function FooterPage() {
       onOpenChange={setIsCreateDialogOpen}
       sectionId={sectionId || ""}
       onServiceCreated={handleItemCreated}
-      title="Footer"
+      title={t('footerPage.dialogs.create.title', 'Footer')}
     />
   );
 
@@ -302,8 +369,6 @@ export default function FooterPage() {
       serviceName={itemToDelete?.name || ""}
       onConfirm={handleDelete}
       isDeleting={isDeleting}
-      title="Delete Section"
-      confirmText="Confirm"
     />
   );
 

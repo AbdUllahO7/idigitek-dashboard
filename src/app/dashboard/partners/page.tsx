@@ -304,8 +304,6 @@ export default function PartnersPage() {
       serviceName={itemToDelete?.name || ""}
       onConfirm={handleDelete}
       isDeleting={isDeleting}
-      title="Delete Section"
-      confirmText="Confirm"
     />
   );
 

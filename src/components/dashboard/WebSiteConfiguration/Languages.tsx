@@ -444,7 +444,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="new-language-id" className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <Label htmlFor="new-language-id" className={`flex items-center justify-between ${isRTL ? '' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
                 <span>{t('languageManagement.form.labels.languageId')}</span>
                 <TooltipProvider>
                   <Tooltip>
@@ -517,14 +517,15 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
                 />
               </div>
               <div className="mt-4">
-                <div className={`flex items-center space-x-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <div className={`flex items-center space-x-2 ${isRTL ? '' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
                   <Checkbox
                     id="new-language-active"
                     checked={newLanguage.isActive || false}
                     onCheckedChange={(checked) => setNewLanguage({ ...newLanguage, isActive: checked === true })}
                     disabled={!hasWebsite || noWebsiteSelected}
+                    className="ml-2 mr-2"
                   />
-                  <Label htmlFor="new-language-active">{t('languageManagement.form.labels.activeLanguage')}</Label>
+                  <Label  htmlFor="new-language-active">{t('languageManagement.form.labels.activeLanguage')}</Label>
                 </div>
                 <p className={`text-xs text-slate-500 mt-1 ${isRTL ? 'mr-6' : 'ml-6'}`}>
                   {t('languageManagement.form.helpText.activeLanguage')}
@@ -571,11 +572,11 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
         </CardFooter>
       </Card>
 
-      <Card className="overflow-hidden border-slate-200/70 shadow-xl dark:border-slate-800/70 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm">
-        <CardHeader className="pb-3 border-b border-slate-200 dark:border-slate-800">
-          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+      <Card className="overflow-hidden border-slate-200/70 shadow-xl dark:border-slate-800/70 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm" dir={isRTL ? 'rtl' : 'ltr'}>
+        <CardHeader className={`pb-3 border-b border-slate-200 dark:border-slate-800 `} >
+          <div className={`flex items-center justify-between `} dir={isRTL ? 'rtl' : 'ltr'}>
             <div>
-              <CardTitle className={`flex items-center gap-2 text-slate-800 dark:text-slate-200 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <CardTitle className={`flex items-center gap-2 text-slate-800 dark:text-slate-200`}>
                 <div className="p-1.5 rounded-md bg-indigo-100 dark:bg-indigo-900/30">
                   <Globe className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
@@ -624,7 +625,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
           </AnimatePresence>
         </CardHeader>
 
-        <CardContent className="pt-6">
+        <CardContent className="pt-6" dir={isRTL ? 'rtl' : 'ltr'}>
           {noWebsiteSelected ? (
             <div className="text-center py-8 text-slate-500">
               <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-full inline-flex mb-4">
@@ -678,20 +679,20 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
                   animate="visible"
                 >
                   {filteredLanguages.map((language: Language) => (
-                    <motion.div key={language._id || `lang-${language.languageID}`} variants={itemVariants}>
+                    <motion.div key={language._id || `lang-${language.languageID}`} variants={itemVariants} >
                       <Card className="border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-shadow overflow-hidden">
                         <CardContent className="p-0">
                           <div
-                            className={`h-1.5 w-full ${
+                            className={`h-1.5 w-full  ${
                               language.isActive
                                 ? "bg-gradient-to-r from-green-400 to-emerald-500"
                                 : "bg-gradient-to-r from-slate-300 to-slate-400 dark:from-slate-700 dark:to-slate-600"
                             }`}
                           ></div>
                           <div className="p-4">
-                            <div className={`flex justify-between items-start ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <div className={`flex justify-between items-start ${isRTL ? '' : ''}`}>
                               <div>
-                                <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                                <div className={`flex items-center gap-2 ${isRTL ? '' : ''}`}>
                                   <p className="font-medium text-slate-800 dark:text-slate-200">{language.language}</p>
                                   <Badge
                                     variant="outline"
@@ -706,7 +707,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
                                       language.isActive
                                         ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/40"
                                         : "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-                                    } border-0`}
+                                    } border-0 `}
                                   >
                                     {language.isActive 
                                       ? t('languageManagement.languageCard.status.active')
@@ -852,7 +853,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
                                   </DialogContent>
                                 </Dialog>
 
-                                <AlertDialog>
+                                <AlertDialog >
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
@@ -868,22 +869,22 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
                                           </Button>
                                         </AlertDialogTrigger>
                                       </TooltipTrigger>
-                                      <TooltipContent>
+                                      <TooltipContent >
                                         <p>{t('languageManagement.languageCard.tooltips.delete')}</p>
                                       </TooltipContent>
                                     </Tooltip>
                                   </TooltipProvider>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>
+                                  <AlertDialogContent >
+                                    <AlertDialogHeader >
+                                      <AlertDialogTitle className={`${isRTL ? 'text-start' : 'text-end'} `}>
                                         {t('languageManagement.deleteDialog.title')}
                                       </AlertDialogTitle>
-                                      <AlertDialogDescription>
+                                      <AlertDialogDescription className={`${isRTL ? 'text-start' : 'text-end'} `} >
                                         <p className="mb-2">
                                           {t('languageManagement.deleteDialog.description', { name: language.language })}
                                         </p>
                                         <div className="p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/30 rounded-md text-amber-800 dark:text-amber-200 text-sm mt-2">
-                                          <p className={`font-medium flex items-center gap-1.5 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                                          <p className={`font-medium flex items-center gap-1.5 ${isRTL ? '' : ''}`}>
                                             <AlertTriangle className="h-4 w-4" />
                                             {t('languageManagement.deleteDialog.warning.title')}
                                           </p>
@@ -893,7 +894,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
                                         </div>
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
-                                    <AlertDialogFooter className={`${isRTL ? 'flex-row-reverse' : ''}`}>
+                                    <AlertDialogFooter className={`${isRTL ? '' : ''}`} dir={isRTL ? 'ltr' :'rtl'}>
                                       <AlertDialogCancel>
                                         {t('languageManagement.deleteDialog.buttons.cancel')}
                                       </AlertDialogCancel>

@@ -80,7 +80,7 @@ export function EditUserDialog({
   toggleShowConfirmPassword
 }: EditUserDialogProps) {
   const { t, ready } = useTranslation();
-  const { isLoaded } = useLanguage();
+  const { isLoaded  , language} = useLanguage();
 
   // Show loading state if translations aren't ready
   if (!ready || !isLoaded) {
@@ -109,10 +109,10 @@ export function EditUserDialog({
       <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-2">
           <DialogTitle className="text-xl flex items-center">
-            <Edit className="h-5 w-5 mr-2 text-blue-500" />
+            <Edit className="h-5 w-5 mr-2 ml-2 text-blue-500" />
             {t('EditUserDialog.title', 'Edit User')}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-start" dir={language === 'ar' ? 'rtl' : 'ltr'}>
             {t('EditUserDialog.description', "Make changes to the user's information below.")}
           </DialogDescription>
         </DialogHeader>
@@ -328,17 +328,18 @@ export function EditUserDialog({
             </div>
           </div>
         </div>
-        <DialogFooter className="p-6 bg-slate-50 dark:bg-slate-900 border-t">
+        <DialogFooter className="p-6  bg-slate-50 dark:bg-slate-900 border-t">
           <Button 
             variant="outline" 
             onClick={onClose}
+            className="mr-2 ml-2"
           >
             {t('EditUserDialog.buttons.cancel', 'Cancel')}
           </Button>
           <Button 
             onClick={onSubmit}
             disabled={isUpdating || !!formError}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-blue-500 dark:to-purple-500"
+            className="bg-gradient-to-r  from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-blue-500 dark:to-purple-500"
           >
             {isUpdating ? (
               <>

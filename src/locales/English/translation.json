@@ -3416,7 +3416,554 @@
         "backToPartners": "Back to Partners",
         "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
       }
-    },
+  },
+  "contactPage": {
+      "config": {
+        "title": "Contact Management",
+        "description": "Manage your contact inventory and multilingual contact content",
+        "addButtonLabel": "Add New Contact Item",
+        "emptyStateMessage": "No contacts found. Create your first contact by clicking the \"Add New Contact\" button.",
+        "noSectionMessage": "Please create a contact section first before adding contacts.",
+        "mainSectionRequiredMessage": "Please enter your main section data before adding contacts.",
+        "emptyFieldsMessage": "Please complete all required fields in the main section before adding contacts.",
+        "sectionIntegrationTitle": "Contact Section Management",
+        "sectionIntegrationDescription": "Manage your contact section content in multiple languages.",
+        "addSectionButtonLabel": "Add Contact Section",
+        "editSectionButtonLabel": "Edit Contact Section", 
+        "saveSectionButtonLabel": "Save Contact Section",
+        "listTitle": "Contact List",
+        "editPath": "contact/addContact"
+      },
+      "table": {
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "status": "Status",
+          "order": "Order",
+          "subsections": "Subsections"
+        },
+        "status": {
+          "main": "Main",
+          "active": "Active",
+          "inactive": "Inactive"
+        }
+      },
+      "dialogs": {
+        "create": {
+          "title": "Contact",
+          "subtitle": "Create a new contact item"
+        },
+        "delete": {
+          "title": "Delete Contact Item",
+          "confirmText": "Confirm",
+          "cancelText": "Cancel",
+          "message": "Are you sure you want to delete this contact item?"
+        }
+      },
+      "messages": {
+        "loading": "Loading contacts...",
+        "noData": "No contact data available",
+        "createSuccess": "Contact item created successfully",
+        "createError": "Failed to create contact item",
+        "deleteSuccess": "Contact item deleted successfully",
+        "deleteError": "Failed to delete contact item",
+        "updateSuccess": "Contact item updated successfully",
+        "updateError": "Failed to update contact item"
+      },
+      "actions": {
+        "add": "Add",
+        "edit": "Edit", 
+        "delete": "Delete",
+        "save": "Save",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "back": "Back"
+      }
+  },
+  "addContact": {
+      "page": {
+        "createTitle": "Create New Contact",
+        "editTitle": "Edit Contact",
+        "createSubtitle": "Create a new contact with multilingual content",
+        "editSubtitle": "Editing \"{{name}}\" content across multiple languages",
+        "defaultContactName": "New Contact"
+      },
+      "tabs": {
+        "contact": "Contact Information",
+        "contactSendMessage": "Send Message",
+        "basicInfo": "Basic Information",
+        "settings": "Settings",
+        "socialMedia": "Social Media",
+        "location": "Location & Address"
+      },
+      "form": {
+        "loading": "Loading contact data...",
+        "saving": "Saving contact...",
+        "saveSuccess": "Contact saved successfully",
+        "saveError": "Failed to save contact",
+        "contactInfoDescription": "Enter contact information in multiple languages.",
+        "sendMessageDescription": "Configure contact form and messaging settings.",
+        "validation": {
+          "nameRequired": "Contact name is required",
+          "descriptionRequired": "Contact description is required",
+          "emailRequired": "Email address is required",
+          "phoneRequired": "Phone number is required",
+          "addressRequired": "Address is required"
+        }
+      },
+      "navigation": {
+        "backToContact": "Back to Contact",
+        "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
+      },
+      "fields": {
+        "contactTitle": "Contact Title",
+        "contactDescription": "Contact Description",
+        "emailAddress": "Email Address",
+        "phoneNumber": "Phone Number",
+        "address": "Address",
+        "city": "City",
+        "state": "State",
+        "zipCode": "ZIP Code",
+        "country": "Country",
+        "website": "Website",
+        "socialMedia": "Social Media Links",
+        "workingHours": "Working Hours",
+        "contactForm": "Contact Form Settings"
+      }
+  },
+  "contactInformationForm": {
+      "deleteManager": {
+        "sectionName": "contact information section",
+        "warning1": "All contact information will be lost",
+        "warning2": "Phone and email details will be removed",
+        "warning3": "Office location data will be deleted"
+      },
+      "validation": {
+        "error": "Validation Error",
+        "fillRequired": "Please fill all required fields correctly"
+      },
+      "subsection": {
+        "name": "Contact Information Section"
+      },
+      "success": {
+        "updated": "Contact information updated successfully!",
+        "created": "Contact information created successfully!",
+        "saved": "All content has been saved."
+      },
+      "error": {
+        "updating": "Error updating contact information",
+        "creating": "Error creating contact information",
+        "unknown": "Unknown error occurred"
+      },
+      "loading": {
+        "updating": "Updating Contact Information",
+        "creating": "Creating Contact Information",
+        "saveDescription": "Please wait while we save your changes...",
+        "deleting": "Deleting Contact Information",
+        "deleteDescription": "Please wait while we delete the contact information...",
+        "refreshing": "Refreshing Data",
+        "refreshDescription": "Updating the interface after deletion..."
+      },
+      "delete": {
+        "title": "Delete Contact Information",
+        "description": "Are you sure you want to delete this contact information section? This action cannot be undone."
+      },
+      "button": {
+        "delete": "Delete Contact Information",
+        "saving": "Saving...",
+        "update": "Update Contact Information",
+        "save": "Save Contact Information"
+      }
+  },
+  "contactInformationFormCard": {
+      "title": "Contact Section",
+      "description": "Manage contact content for {{langCode}}",
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "phoneText": "Phone Text",
+        "phoneValue": "Phone Value",
+        "emailText": "Email Text",
+        "emailValue": "Email Value",
+        "officeText": "Office Text",
+        "officeAddress": "Office Address"
+      },
+      "placeholders": {
+        "title": "Enter title",
+        "description": "Enter description",
+        "phoneText": "Enter phone text",
+        "phoneValue": "Enter phone number",
+        "emailText": "Enter email text",
+        "emailValue": "Enter email address",
+        "officeText": "Enter office text",
+        "officeAddress": "Enter office address"
+      },
+      "sections": {
+        "phone": "Phone",
+        "email": "Email",
+        "office": "Office"
+      }
+  },
+  "sendUsaMessageForm": {
+      "deleteManager": {
+        "sectionName": "contact form",
+        "warning1": "All form submissions will be lost",
+        "warning2": "Email notification settings will be removed"
+      },
+      "validation": {
+        "error": "Validation Error",
+        "fillRequired": "Please fill all required fields correctly"
+      },
+      "subsection": {
+        "name": "Contact Form"
+      },
+      "success": {
+        "updated": "Contact form updated successfully!",
+        "created": "Contact form created successfully!",
+        "saved": "All content has been saved."
+      },
+      "error": {
+        "updating": "Error updating contact form",
+        "creating": "Error creating contact form",
+        "unknown": "Unknown error occurred"
+      },
+      "loading": {
+        "data": "Loading contact form data...",
+        "updating": "Updating Contact Form",
+        "creating": "Creating Contact Form",
+        "saveDescription": "Please wait while we save your changes...",
+        "deleting": "Deleting Contact Form",
+        "deleteDescription": "Please wait while we delete the contact form...",
+        "refreshing": "Refreshing Data",
+        "refreshDescription": "Updating the interface after deletion..."
+      },
+      "delete": {
+        "success": {
+          "title": "Contact form deleted successfully!",
+          "withElements": "Deleted subsection and {{count}} content elements.",
+          "simple": "The contact form has been removed."
+        },
+        "error": {
+          "title": "Failed to delete contact form",
+          "unknown": "Unknown error occurred"
+        },
+        "dialog": {
+          "title": "Delete Contact Form",
+          "description": "Are you sure you want to delete this contact form? This action cannot be undone."
+        }
+      },
+      "button": {
+        "delete": "Delete Contact Form",
+        "saving": "Saving...",
+        "update": "Update Contact Form",
+        "save": "Save Contact Form"
+      }
+  },
+  "sendUsaMessageFormCard": {
+      "title": "Contact Form",
+      "description": "Manage contact form content for {{langCode}}",
+      "sections": {
+        "formFields": "Form Fields"
+      },
+      "fields": {
+        "title": "Title",
+        "fullname": "Full Name Text",
+        "fullnamePlaceholder": "Full Name Placeholder",
+        "email": "Email Text",
+        "emailPlaceholder": "Email Placeholder",
+        "message": "Message Text",
+        "messagePlaceholder": "Message Placeholder",
+        "subjectTitle": "Subject Title",
+        "subjects": "Subjects",
+        "buttonText": "Button Text"
+      },
+      "placeholders": {
+        "title": "Enter form title",
+        "fullname": "Enter full name label",
+        "fullnamePlaceholder": "Enter full name placeholder",
+        "email": "Enter email label",
+        "emailPlaceholder": "Enter email placeholder",
+        "message": "Enter message label",
+        "messagePlaceholder": "Enter message placeholder",
+        "subjectTitle": "Enter Subject Title",
+        "subject": "Enter subject {{index}}",
+        "buttonText": "Enter button text"
+      },
+      "buttons": {
+        "addSubject": "Add Subject"
+      }
+  },
+  "footerPage": {
+      "config": {
+        "title": "Footer Management",
+        "description": "Manage your footer inventory and multilingual footer content",
+        "addButtonLabel": "Add New Footer",
+        "emptyStateMessage": "No footer found. Create your first footer by clicking the \"Add New Footer\" button.",
+        "noSectionMessage": "Please create a footer section first before adding footer.",
+        "mainSectionRequiredMessage": "Please enter your main section data before adding footer.",
+        "emptyFieldsMessage": "Please complete all required fields in the main section before adding footer.",
+        "sectionIntegrationTitle": "Footer Section Management",
+        "sectionIntegrationDescription": "Manage your footer section content in multiple languages.",
+        "addSectionButtonLabel": "Add Footer Section",
+        "editSectionButtonLabel": "Edit Footer Section",
+        "saveSectionButtonLabel": "Save Footer Section",
+        "listTitle": "Footer List"
+      },
+      "table": {
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "status": "Status",
+          "order": "Order",
+          "subsections": "Subsections"
+        },
+        "status": {
+          "main": "Main",
+          "active": "Active",
+          "inactive": "Inactive"
+        }
+      },
+      "dialogs": {
+        "create": {
+          "title": "Footer",
+          "subtitle": "Create a new footer item"
+        },
+        "delete": {
+          "title": "Delete Footer Item",
+          "confirmText": "Confirm",
+          "cancelText": "Cancel",
+          "message": "Are you sure you want to delete this footer item?"
+        }
+      },
+      "messages": {
+        "loading": "Loading footer...",
+        "noData": "No footer data available",
+        "createSuccess": "Footer item created successfully",
+        "createError": "Failed to create footer item",
+        "deleteSuccess": "Footer item deleted successfully",
+        "deleteError": "Failed to delete footer item",
+        "updateSuccess": "Footer item updated successfully",
+        "updateError": "Failed to update footer item"
+      },
+      "actions": {
+        "add": "Add",
+        "edit": "Edit",
+        "delete": "Delete",
+        "save": "Save",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "back": "Back"
+      }
+  },
+  "addFooter": {
+      "title": {
+        "create": "Create New Footer",
+        "edit": "Edit Footer"
+      },
+      "subtitle": {
+        "create": "Create a new footer with multilingual content",
+        "edit": "Editing \"{{name}}\" content across multiple languages"
+      },
+      "tabs": {
+        "footer": "Footer",
+        "specialLinks": "Special Links"
+      },
+      "form": {
+        "defaultName": "New Footer",
+        "saveButton": "Save Footer",
+        "cancelButton": "Cancel",
+        "loading": "Loading...",
+        "saving": "Saving..."
+      },
+      "navigation": {
+        "backToList": "Back to Footer List"
+      },
+      "messages": {
+        "saveSuccess": "Footer saved successfully",
+        "saveError": "Failed to save footer",
+        "loadError": "Failed to load footer data"
+      }
+  },
+  "footerForm": {
+      "card": {
+        "title": "Footer Section {{index}}",
+        "description": "Footer Description",
+        "socialLinks": {
+          "title": "Social Links",
+          "appliesToAll": "Applies to all languages",
+          "collapse": "Collapse",
+          "expand": "Expand",
+          "linkTitle": "Social Link {{index}}",
+          "urlLabel": "Social Link URL",
+          "urlPlaceholder": "https://example.com",
+          "imageLabel": "Social Link Image",
+          "imageHelper": "This image will be used across all languages",
+          "emptyState": {
+            "title": "No social links added yet",
+            "description": "Click \"Add Social Link\" to get started"
+          },
+          "addButton": "Add Social Link"
+        },
+        "descriptionPlaceholder": "Enter footer description"
+      },
+      "languageCard": {
+        "title": "Footer Section",
+        "description": "Manage footer content for {{language}}"
+      },
+      "form": {
+        "loading": "Loading footer section data...",
+        "saving": {
+          "updating": "Updating Footer",
+          "creating": "Creating Footer",
+          "description": "Please wait while we save your changes..."
+        },
+        "validation": {
+          "countMismatch": "Each language must have the same number of footers"
+        },
+        "buttons": {
+          "saving": "Saving...",
+          "update": "Update Footer",
+          "save": "Save Footer"
+        }
+      },
+      "delete": {
+        "title": "Delete Footer",
+        "confirmText": "Delete Footer",
+        "cannotRemove": "Cannot remove",
+        "needAtLeast": "You need at least one footer"
+      },
+      "toast": {
+        "footerAdded": "Footer added",
+        "footerAddedDesc": "A new footer has been added. Please fill in the details and save your changes.",
+        "footerRemoved": "Footer removed",
+        "footerRemovedDesc": "The footer has been removed successfully.",
+        "footerDeleted": "Footer deleted",
+        "footerDeletedDesc": "Footer {{index}} has been deleted from the database",
+        "saveSuccess": "Footer section saved successfully!",
+        "saveSuccessDesc": "All content has been saved.",
+        "updateSuccess": "Footer section updated successfully!",
+        "saveError": "Error saving footer section",
+        "updateError": "Error updating footer section",
+        "loadError": "Error loading data",
+        "loadErrorDesc": "Failed to load footer data. Please try again.",
+        "validationError": "Validation Error",
+        "validationErrorDesc": "Please fill all required fields correctly.",
+        "validationCountError": "All languages must have the same number of footers.",
+        "imageUploadError": "Image Upload Error",
+        "imageUploadErrorDesc": "Failed to upload image for Social Link {{linkIndex}} of Footer {{footerIndex}}.",
+        "removeError": "Error",
+        "removeErrorDesc": "There was an error removing the footer.",
+        "reloadWarning": "Warning",
+        "reloadWarningDesc": "Failed to reload data after save."
+      }
+  },
+  "specialLinks": {
+      "languageCard": {
+        "title": "قسم التذييل",
+        "description": "إدارة محتوى التذييل لـ {{langCode}}",
+        "buttons": {
+          "addFooter": "إضافة تذييل"
+        }
+      },
+      "card": {
+        "title": "قسم التذييل {{number}}",
+        "translationMode": "وضع الترجمة",
+        "socialLinksCount": "{{count}} رابط (روابط) اجتماعية",
+        "footerTitle": {
+          "label": "عنوان التذييل",
+          "translate": "(ترجم)",
+          "placeholder": "أدخل عنوان التذييل"
+        },
+        "socialLinks": {
+          "title": "الروابط الاجتماعية",
+          "translateNames": "ترجمة الأسماء",
+          "primaryControl": "التحكم الأساسي",
+          "titleWithNumber": "رابط اجتماعي {{number}}",
+          "buttons": {
+            "collapse": "طي",
+            "expand": "توسيع",
+            "add": "إضافة رابط اجتماعي"
+          },
+          "noLinks": "لم تُضف روابط اجتماعية بعد",
+          "linkName": {
+            "label": "اسم الرابط",
+            "translate": "(ترجم هذا)",
+            "placeholder": "أدخل اسم الرابط"
+          },
+          "url": {
+            "label": "رابط الرابط الاجتماعي",
+            "placeholder": "https://example.com"
+          }
+        },
+        "imageManagement": {
+          "title": "إدارة الصور",
+          "description": "يتم إدارة الصور من اللغة الأساسية وتُشارك عبر جميع اللغات"
+        }
+      },
+      "form": {
+        "loading": "جارٍ تحميل بيانات قسم التذييل...",
+        "saving": {
+          "updating": "تحديث التذييلات",
+          "creating": "إنشاء التذييلات",
+          "description": "يرجى الانتظار بينما نحفظ التغييرات..."
+        },
+        "validation": {
+          "countMismatch": "يجب أن تحتوي كل لغة على نفس عدد التذييلات",
+          "errorTitle": "خطأ في التحقق",
+          "errorDescription": "يجب أن تحتوي جميع اللغات على نفس عدد التذييلات.",
+          "fieldsError": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح."
+        },
+        "buttons": {
+          "saving": "جارٍ الحفظ...",
+          "update": "تحديث التذييلات",
+          "save": "حفظ التذييلات"
+        },
+        "toasts": {
+          "cannotRemove": {
+            "title": "لا يمكن الإزالة",
+            "description": "يجب أن يكون لديك تذييل واحد على الأقل"
+          },
+          "footerDeleted": {
+            "title": "تم حذف التذييل",
+            "description": "تم حذف التذييل {{number}} من قاعدة البيانات"
+          },
+          "footerRemoved": {
+            "title": "تم إزالة التذييل",
+            "description": "تم إزالة التذييل بنجاح."
+          },
+          "errorRemoving": {
+            "title": "خطأ",
+            "description": "حدث خطأ أثناء إزالة التذييل."
+          },
+          "footerAdded": {
+            "title": "تم إضافة تذييل",
+            "description": "تم إضافة تذييل جديد. يرجى ملء التفاصيل وحفظ التغييرات."
+          },
+          "errorLoading": {
+            "title": "خطأ في تحميل البيانات",
+            "description": "فشل تحميل بيانات التذييل. يرجى المحاولة مرة أخرى."
+          },
+          "success": {
+            "updated": "تم تحديث قسم التذييلات بنجاح!",
+            "created": "تم إنشاء قسم التذييلات بنجاح!",
+            "allContentSaved": "تم حفظ جميع المحتويات."
+          },
+          "errorSaving": {
+            "updated": "خطأ في تحديث قسم التذييلات",
+            "created": "خطأ في إنشاء قسم التذييلات",
+            "unknown": "حدث خطأ غير معروف"
+          },
+          "warningReload": {
+            "title": "تحذير",
+            "description": "فشل إعادة تحميل البيانات بعد الحفظ."
+          }
+        },
+        "deleteDialog": {
+          "title": "حذف التذييل",
+          "confirm": "حذف التذييل"
+        }
+      }
+  },
   "common": {
     "welcome": "Welcome",
     "logout": "Log out",

@@ -32,6 +32,7 @@ import { FooterLanguageCard } from "./FooterLanguageCard";
 import { FooteresFormState, FooterFormProps } from "@/src/api/types/sections/footer/footerSection.type";
 import { StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
 import { useHeroImages } from "../utils/FooterImageUploader";
+import { useTranslation } from "react-i18next";
 
 interface FormData {
   [key: string]: Array<{
@@ -46,6 +47,7 @@ interface FormData {
 
 const FormBasicForm = forwardRef<any, FooterFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId }, ref) => {
+    const { t } = useTranslation();
     const { websiteId } = useWebsiteContext();
     const formSchema = createFooterSectionSchema(languageIds, activeLanguages);
     const defaultValues = createFooterSectionDefaultValues(languageIds, activeLanguages);
@@ -164,8 +166,8 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
       const currentSteps = form.getValues()[langCode] || [];
       if (currentSteps.length <= 1) {
         toast({
-          title: "Cannot remove",
-          description: "You need at least one footer",
+          title: t('footerForm.delete.cannotRemove', 'Cannot remove'),
+          description: t('footerForm.delete.needAtLeast', 'You need at least one footer'),
           variant: "destructive",
         });
         setIsDeleting(false);
@@ -194,8 +196,10 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
             });
 
             toast({
-              title: "Footer deleted",
-              description: `Footer ${footerNumber} has been deleted from the database`,
+              title: t('footerForm.toast.footerDeleted', 'Footer deleted'),
+              description: t('footerForm.toast.footerDeletedDesc', 'Footer {{index}} has been deleted from the database', {
+                index: footerNumber
+              }),
             });
           }
 
@@ -233,8 +237,8 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
         });
 
         toast({
-          title: "Footer removed",
-          description: "The footer has been removed successfully.",
+          title: t('footerForm.toast.footerRemoved', 'Footer removed'),
+          description: t('footerForm.toast.footerRemovedDesc', 'The footer has been removed successfully.'),
         });
 
         validateFormFooterCounts();
@@ -242,8 +246,8 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
       } catch (error) {
         console.error("Error removing footer:", error);
         toast({
-          title: "Error",
-          description: "There was an error removing the footer.",
+          title: t('footerForm.toast.removeError', 'Error'),
+          description: t('footerForm.toast.removeErrorDesc', 'There was an error removing the footer.'),
           variant: "destructive",
         });
       } finally {
@@ -263,6 +267,7 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
       toast,
       validateFormFooterCounts,
       updateState,
+      t,
     ]);
 
    const processFooteresData = useCallback(
@@ -380,15 +385,15 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
     } catch (error) {
       console.error("Error processing footer data:", error);
       toast({
-        title: "Error loading data",
-        description: "Failed to load footer data. Please try again.",
+        title: t('footerForm.toast.loadError', 'Error loading data'),
+        description: t('footerForm.toast.loadErrorDesc', 'Failed to load footer data. Please try again.'),
         variant: "destructive",
       });
     } finally {
       updateState({ isLoadingData: false });
     }
   },
-  [form, languageIds, activeLanguages, updateState, validateFormFooterCounts, toast]
+  [form, languageIds, activeLanguages, updateState, validateFormFooterCounts, toast, t]
   );
 
     useEffect(() => {
@@ -439,26 +444,26 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
         validateFormFooterCounts();
         updateState({ hasUnsavedChanges: true });
         toast({
-          title: "Footer added",
-          description: "A new footer has been added. Please fill in the details and save your changes.",
+          title: t('footerForm.toast.footerAdded', 'Footer added'),
+          description: t('footerForm.toast.footerAddedDesc', 'A new footer has been added. Please fill in the details and save your changes.'),
         });
       },
-      [form, validateFormFooterCounts, updateState, toast]
+      [form, validateFormFooterCounts, updateState, toast, t]
     );
 
     const confirmDeleteStep = useCallback((langCode: string, index: number) => {
       const currentFooteres = form.getValues()[langCode] || [];
       if (currentFooteres.length <= 1) {
         toast({
-          title: "Cannot remove",
-          description: "You need at least one footer",
+          title: t('footerForm.delete.cannotRemove', 'Cannot remove'),
+          description: t('footerForm.delete.needAtLeast', 'You need at least one footer'),
           variant: "destructive",
         });
         return;
       }
       setStepToDelete({ langCode, index });
       setDeleteDialogOpen(true);
-    }, [form, toast]);
+    }, [form, toast, t]);
 
     const handleSave = useCallback(async () => {
       const isValid = await form.trigger();
@@ -469,8 +474,8 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
       if (!hasEqualFooterCounts) {
         updateState({ isValidationDialogOpen: true });
         toast({
-          title: "Validation Error",
-          description: "All languages must have the same number of footeres.",
+          title: t('footerForm.toast.validationError', 'Validation Error'),
+          description: t('footerForm.toast.validationCountError', 'All languages must have the same number of footers.'),
           variant: "destructive",
         });
         return;
@@ -478,8 +483,8 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
 
       if (!isValid) {
         toast({
-          title: "Validation Error",
-          description: "Please fill all required fields correctly.",
+          title: t('footerForm.toast.validationError', 'Validation Error'),
+          description: t('footerForm.toast.validationErrorDesc', 'Please fill all required fields correctly.'),
           variant: "destructive",
         });
         return;
@@ -670,8 +675,11 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
                 .catch((uploadError) => {
                   console.error(`Image upload failed for Social Link ${j + 1} of Footer ${footerIndex}`, uploadError);
                   toast({
-                    title: "Image Upload Error",
-                    description: `Failed to upload image for Social Link ${j + 1} of Footer ${footerIndex}.`,
+                    title: t('footerForm.toast.imageUploadError', 'Image Upload Error'),
+                    description: t('footerForm.toast.imageUploadErrorDesc', 'Failed to upload image for Social Link {{linkIndex}} of Footer {{footerIndex}}.', {
+                      linkIndex: j + 1,
+                      footerIndex: footerIndex
+                    }),
                     variant: "destructive",
                   });
                 });
@@ -698,8 +706,10 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
         }
 
         toast({
-          title: state.existingSubSectionId ? "Footeres section updated successfully!" : "Footeres section created successfully!",
-          description: "All content has been saved.",
+          title: state.existingSubSectionId 
+            ? t('footerForm.toast.updateSuccess', 'Footer section updated successfully!')
+            : t('footerForm.toast.saveSuccess', 'Footer section saved successfully!'),
+          description: t('footerForm.toast.saveSuccessDesc', 'All content has been saved.'),
           duration: 5000,
         });
 
@@ -711,8 +721,8 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
           } else {
             updateState({ isLoadingData: false });
             toast({
-              title: "Warning",
-              description: "Failed to reload data after save.",
+              title: t('footerForm.toast.reloadWarning', 'Warning'),
+              description: t('footerForm.toast.reloadWarningDesc', 'Failed to reload data after save.'),
               variant: "destructive",
             });
           }
@@ -722,7 +732,9 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
       } catch (error) {
         console.error("Save operation failed:", error);
         toast({
-          title: state.existingSubSectionId ? "Error updating footeres section" : "Error creating footeres section",
+          title: state.existingSubSectionId 
+            ? t('footerForm.toast.updateError', 'Error updating footer section')
+            : t('footerForm.toast.saveError', 'Error saving footer section'),
           description: error instanceof Error ? error.message : "An unknown error occurred",
           variant: "destructive",
           duration: 5000,
@@ -749,6 +761,7 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
       refetch,
       processFooteresData,
       updateState,
+      t,
     ]);
 
     createFormRef(ref, {
@@ -779,7 +792,9 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
       return (
         <div className="flex items-center justify-center p-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary mr-2" />
-          <p className="text-muted-foreground">Loading footeres section data...</p>
+          <p className="text-muted-foreground">
+            {t('footerForm.form.loading', 'Loading footer section data...')}
+          </p>
         </div>
       );
     }
@@ -788,8 +803,11 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
       <div className="space-y-6">
         <LoadingDialog
           isOpen={state.isSaving}
-          title={state.existingSubSectionId ? "Updating Footeres" : "Creating Footeres"}
-          description="Please wait while we save your changes..."
+          title={state.existingSubSectionId 
+            ? t('footerForm.form.saving.updating', 'Updating Footer')
+            : t('footerForm.form.saving.creating', 'Creating Footer')
+          }
+          description={t('footerForm.form.saving.description', 'Please wait while we save your changes...')}
         />
 
         <Form {...form}>
@@ -819,7 +837,9 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
           {state.footerCountMismatch && (
             <div className="flex items-center text-amber-500 mr-4">
               <AlertTriangle className="h-4 w-4 mr-2" />
-              <span className="text-sm">Each language must have the same number of footeres</span>
+              <span className="text-sm">
+                {t('footerForm.form.validation.countMismatch', 'Each language must have the same number of footers')}
+              </span>
             </div>
           )}
           <Button
@@ -831,12 +851,15 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
             {state.isSaving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
+                {t('footerForm.form.buttons.saving', 'Saving...')}
               </>
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                {state.existingSubSectionId ? "Update Footeres" : "Save Footeres"}
+                {state.existingSubSectionId 
+                  ? t('footerForm.form.buttons.update', 'Update Footer')
+                  : t('footerForm.form.buttons.save', 'Save Footer')
+                }
               </>
             )}
           </Button>
@@ -845,11 +868,11 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
         <DeleteSectionDialog
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
-          serviceName={stepToDelete ? `Footer ${stepToDelete.index + 1}` : ""}
+          serviceName={stepToDelete ? t('footerForm.card.title', 'Footer {{index}}', { index: stepToDelete.index + 1 }) : ""}
           onConfirm={removeProcessStep}
           isDeleting={isDeleting}
-          title="Delete Footer"
-          confirmText="Delete Footer"
+          title={t('footerForm.delete.title', 'Delete Footer')}
+          confirmText={t('footerForm.delete.confirmText', 'Delete Footer')}
         />
 
         <ValidationDialog

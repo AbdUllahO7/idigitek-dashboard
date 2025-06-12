@@ -10,6 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/compo
 import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { useFieldArray } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 interface SendUsaMessageFormLanguageCardProps {
   langCode: string;
@@ -18,6 +19,7 @@ interface SendUsaMessageFormLanguageCardProps {
 }
 
 export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLanguage = false }: SendUsaMessageFormLanguageCardProps) => {
+  const { t } = useTranslation();
   const [openSections, setOpenSections] = useState({
     formFields: false,
     phone: false,
@@ -37,19 +39,21 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
     <Card className="h-full">
       <CardHeader>
         <CardTitle className="flex items-center">
-          <span className="uppercase font-bold text-sm bg-primary text-primary-foreground rounded-md px-2 py-1 mr-2">
+          <span className="uppercase font-bold text-sm bg-primary text-primary-foreground rounded-md px-2 py-1 ml-2 mr-2">
             {langCode}
           </span>
-          Contact Form
+          {t('sendUsaMessageFormCard.title', 'Contact Form')}
         </CardTitle>
-        <CardDescription>Manage contact form content for {langCode.toUpperCase()}</CardDescription>
+        <CardDescription>
+          {t('sendUsaMessageFormCard.description', 'Manage contact form content for {{langCode}}', { langCode: langCode.toUpperCase() })}
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Form Fields Collapsible Section */}
         <Collapsible open={openSections.formFields} onOpenChange={() => toggleSection("formFields")}>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" className="flex w-full justify-between items-center">
-              <span className="text-lg font-semibold">Form Fields</span>
+              <span className="text-lg font-semibold">{t('sendUsaMessageFormCard.sections.formFields', 'Form Fields')}</span>
               {openSections.formFields ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
           </CollapsibleTrigger>
@@ -59,9 +63,11 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
               name={`${langCode}.title`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
+                  <FormLabel>
+                    {t('sendUsaMessageFormCard.fields.title', 'Title')} {isFirstLanguage && <span className="text-red-500">*</span>}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter form title" {...field} />
+                    <Input placeholder={t('sendUsaMessageFormCard.placeholders.title', 'Enter form title')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -72,9 +78,11 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
               name={`${langCode}.fullname`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name Text {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
+                  <FormLabel>
+                    {t('sendUsaMessageFormCard.fields.fullname', 'Full Name Text')} {isFirstLanguage && <span className="text-red-500">*</span>}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter full name label" {...field} />
+                    <Input placeholder={t('sendUsaMessageFormCard.placeholders.fullname', 'Enter full name label')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -85,9 +93,9 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
               name={`${langCode}.fullnamePlaceHolder`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name Placeholder</FormLabel>
+                  <FormLabel>{t('sendUsaMessageFormCard.fields.fullnamePlaceholder', 'Full Name Placeholder')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter full name placeholder" {...field} />
+                    <Input placeholder={t('sendUsaMessageFormCard.placeholders.fullnamePlaceholder', 'Enter full name placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -98,9 +106,11 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
               name={`${langCode}.email`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Text {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
+                  <FormLabel>
+                    {t('sendUsaMessageFormCard.fields.email', 'Email Text')} {isFirstLanguage && <span className="text-red-500">*</span>}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter email label" {...field} />
+                    <Input placeholder={t('sendUsaMessageFormCard.placeholders.email', 'Enter email label')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -111,9 +121,9 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
               name={`${langCode}.emailPlaceHolder`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Placeholder</FormLabel>
+                  <FormLabel>{t('sendUsaMessageFormCard.fields.emailPlaceholder', 'Email Placeholder')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter email placeholder" {...field} />
+                    <Input placeholder={t('sendUsaMessageFormCard.placeholders.emailPlaceholder', 'Enter email placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -124,9 +134,11 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
               name={`${langCode}.message`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Message Text {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
+                  <FormLabel>
+                    {t('sendUsaMessageFormCard.fields.message', 'Message Text')} {isFirstLanguage && <span className="text-red-500">*</span>}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter message label" {...field} />
+                    <Input placeholder={t('sendUsaMessageFormCard.placeholders.message', 'Enter message label')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,9 +149,9 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
               name={`${langCode}.messagePlaceHolder`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Message Placeholder</FormLabel>
+                  <FormLabel>{t('sendUsaMessageFormCard.fields.messagePlaceholder', 'Message Placeholder')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Enter message placeholder" className="min-h-[100px]" {...field} />
+                    <Textarea placeholder={t('sendUsaMessageFormCard.placeholders.messagePlaceholder', 'Enter message placeholder')} className="min-h-[100px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -150,21 +162,23 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
               name={`${langCode}.subjectTitle`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Subject Title</FormLabel>
+                  <FormLabel>{t('sendUsaMessageFormCard.fields.subjectTitle', 'Subject Title')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Subject Title"  {...field} />
+                    <Input placeholder={t('sendUsaMessageFormCard.placeholders.subjectTitle', 'Enter Subject Title')}  {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormItem>
-              <FormLabel>Subjects {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
+              <FormLabel>
+                {t('sendUsaMessageFormCard.fields.subjects', 'Subjects')} {isFirstLanguage && <span className="text-red-500">*</span>}
+              </FormLabel>
               {fields.map((field, index) => (
                 <div key={field.id} className="flex items-center space-x-2 mt-2">
                   <FormControl>
                     <Input
-                      placeholder={`Enter subject ${index + 1}`}
+                      placeholder={t('sendUsaMessageFormCard.placeholders.subject', 'Enter subject {{index}}', { index: index + 1 })}
                       {...form.register(`${langCode}.subjects.${index}`)}
                     />
                   </FormControl>
@@ -188,7 +202,7 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
                 onClick={() => append("")}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Subject
+                {t('sendUsaMessageFormCard.buttons.addSubject', 'Add Subject')}
               </Button>
               <FormMessage />
             </FormItem>
@@ -197,9 +211,11 @@ export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLan
               name={`${langCode}.buttonText`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Button Text {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
+                  <FormLabel>
+                    {t('sendUsaMessageFormCard.fields.buttonText', 'Button Text')} {isFirstLanguage && <span className="text-red-500">*</span>}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter button text" {...field} />
+                    <Input placeholder={t('sendUsaMessageFormCard.placeholders.buttonText', 'Enter button text')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

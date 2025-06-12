@@ -22,6 +22,7 @@ import { ContactInformationFormLanguageCard } from "./ContactInformationFormLang
 import { createContactInformationInfoSchema } from "@/src/app/dashboard/services/addService/Utils/language-specific-schemas";
 import { DeleteConfirmationDialog } from "@/src/components/DeleteConfirmationDialog";
 import { useSubsectionDeleteManager } from "@/src/hooks/DeleteSubSections/useSubsectionDeleteManager";
+import { useTranslation } from "react-i18next";
 
 const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) => {
   const { 
@@ -34,6 +35,7 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
   } = props;
     
   const { websiteId } = useWebsiteContext();
+  const { t } = useTranslation();
 
   // Setup form with schema validation
   const formSchema = createContactInformationInfoSchema(languageIds, activeLanguages);
@@ -175,12 +177,12 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
     subsectionId: existingSubSectionId,
     websiteId,
     slug,
-    sectionName: "contact information section",
+    sectionName: t('contactInformationForm.deleteManager.sectionName', 'contact information section'),
     contentElements,
     customWarnings: [
-      "All contact information will be lost",
-      "Phone and email details will be removed",
-      "Office location data will be deleted"
+      t('contactInformationForm.deleteManager.warning1', 'All contact information will be lost'),
+      t('contactInformationForm.deleteManager.warning2', 'Phone and email details will be removed'),
+      t('contactInformationForm.deleteManager.warning3', 'Office location data will be deleted')
     ],
     shouldRefetch: !!slug,
     refetchFn: refetch,
@@ -292,8 +294,8 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
 
     if (!isValid) {
       toast({
-        title: "Validation Error",
-        description: "Please fill all required fields correctly",
+        title: t('contactInformationForm.validation.error', 'Validation Error'),
+        description: t('contactInformationForm.validation.fillRequired', 'Please fill all required fields correctly'),
         variant: "destructive"
       });
       return false;
@@ -309,7 +311,7 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
         }
 
         const subsectionData = {
-          name: "Contact Information Section",
+          name: t('contactInformationForm.subsection.name', 'Contact Information Section'),
           slug: slug || `contact-information-section-${Date.now()}`,
           description: "",
           isActive: true,
@@ -444,8 +446,10 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
       }
 
       toast({
-        title: existingSubSectionId ? "Contact information updated successfully!" : "Contact information created successfully!",
-        description: "All content has been saved."
+        title: existingSubSectionId 
+          ? t('contactInformationForm.success.updated', 'Contact information updated successfully!')
+          : t('contactInformationForm.success.created', 'Contact information created successfully!'),
+        description: t('contactInformationForm.success.saved', 'All content has been saved.')
       });
 
       updateState({ hasUnsavedChanges: false });
@@ -462,9 +466,11 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
     } catch (error) {
       console.error("Operation failed:", error);
       toast({
-        title: existingSubSectionId ? "Error updating contact information" : "Error creating contact information",
+        title: existingSubSectionId 
+          ? t('contactInformationForm.error.updating', 'Error updating contact information')
+          : t('contactInformationForm.error.creating', 'Error creating contact information'),
         variant: "destructive",
-        description: error instanceof Error ? error.message : "Unknown error occurred"
+        description: error instanceof Error ? error.message : t('contactInformationForm.error.unknown', 'Unknown error occurred')
       });
       return false;
     } finally {
@@ -476,6 +482,7 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
     ParentSectionId,
     slug,
     toast,
+    t,
     bulkUpsertTranslations,
     contentElements,
     createContentElement,
@@ -509,42 +516,35 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
 
   const languageCodes = createLanguageCodeMap(activeLanguages);
 
-  // Loading state
-  if (slug && (isLoadingData || isLoadingSubsection) && !dataLoaded) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-muted-foreground">Loading contact information data...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       {/* Loading Dialogs */}
       <LoadingDialog 
         isOpen={isSaving} 
-        title={existingSubSectionId ? "Updating Contact Information" : "Creating Contact Information"}
-        description="Please wait while we save your changes..."
+        title={existingSubSectionId 
+          ? t('contactInformationForm.loading.updating', 'Updating Contact Information')
+          : t('contactInformationForm.loading.creating', 'Creating Contact Information')
+        }
+        description={t('contactInformationForm.loading.saveDescription', 'Please wait while we save your changes...')}
       />
       
       <LoadingDialog
         isOpen={deleteManager.isDeleting}
-        title="Deleting Contact Information"
-        description="Please wait while we delete the contact information..."
+        title={t('contactInformationForm.loading.deleting', 'Deleting Contact Information')}
+        description={t('contactInformationForm.loading.deleteDescription', 'Please wait while we delete the contact information...')}
       />
 
       <LoadingDialog
         isOpen={isRefreshingAfterDelete}
-        title="Refreshing Data"
-        description="Updating the interface after deletion..."
+        title={t('contactInformationForm.loading.refreshing', 'Refreshing Data')}
+        description={t('contactInformationForm.loading.refreshDescription', 'Updating the interface after deletion...')}
       />
 
       {/* Delete Confirmation Dialog */}
       {/* <DeleteConfirmationDialog
         {...deleteManager.confirmationDialogProps}
-        title="Delete Contact Information"
-        description="Are you sure you want to delete this contact information section? This action cannot be undone."
+        title={t('contactInformationForm.delete.title', 'Delete Contact Information')}
+        description={t('contactInformationForm.delete.description', 'Are you sure you want to delete this contact information section? This action cannot be undone.')}
       /> */}
 
       <Form {...form}>
@@ -576,7 +576,7 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
             className="flex items-center"
           >
             <Trash2 className="mr-2 h-4 w-4" />
-            Delete Contact Information
+            {t('contactInformationForm.button.delete', 'Delete Contact Information')}
           </Button>
         )} */}
 
@@ -585,18 +585,21 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
           <Button 
             type="button" 
             onClick={handleSave} 
-            disabled={isLoadingData || isSaving || deleteManager.isDeleting || isRefreshingAfterDelete}
+            disabled={isSaving || deleteManager.isDeleting || isRefreshingAfterDelete}
             className="flex items-center"
           >
             {isSaving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
+                {t('contactInformationForm.button.saving', 'Saving...')}
               </>
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                {existingSubSectionId ? "Update Contact Information" : "Save Contact Information"}
+                {existingSubSectionId 
+                  ? t('contactInformationForm.button.update', 'Update Contact Information')
+                  : t('contactInformationForm.button.save', 'Save Contact Information')
+                }
               </>
             )}
           </Button>

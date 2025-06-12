@@ -11,6 +11,7 @@ import { Textarea } from "@/src/components/ui/textarea"
 import { Button } from "@/src/components/ui/button"
 import { LabeledImageUploader, useImageUpload } from "../../../services/addService/Utils/Image-uploader"
 import { cn } from "@/src/lib/utils"
+import { useTranslation } from "react-i18next"
 
 interface FooterCardProps {
   langCode: string
@@ -42,6 +43,8 @@ export const FooterCard = memo(
         return true
       },
     })
+
+    const {t} = useTranslation()
 
     const [isCollapsed, setIsCollapsed] = useState(true)
     const [isSocialLinksExpanded, setIsSocialLinksExpanded] = useState(false)
@@ -130,7 +133,7 @@ export const FooterCard = memo(
               </div>
               <div className="flex flex-col">
                 <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  Footer Section {index + 1}
+                  {t("specialLinks.card.title", { number: index + 1 })}
                   {!isFirstLanguage && <Globe className="h-4 w-4 text-blue-500" />}
                 </CardTitle>
                 {currentTitle && (
@@ -143,12 +146,14 @@ export const FooterCard = memo(
                   {currentSocialLinks.length > 0 && (
                     <div className="flex items-center gap-1">
                       <ExternalLink className="h-3 w-3 text-blue-500" />
-                      <span className="text-blue-600">{currentSocialLinks.length} social link(s)</span>
+                      <span className="text-blue-600">
+                        {t("specialLinks.card.socialLinksCount", { count: currentSocialLinks.length })}
+                      </span>
                     </div>
                   )}
                   {!isFirstLanguage && (
                     <span className="text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full text-xs">
-                      Translation Mode
+                      {t("specialLinks.card.translationMode")}
                     </span>
                   )}
                 </div>
@@ -195,12 +200,16 @@ export const FooterCard = memo(
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium">
-                    Footer Title
-                    {!isFirstLanguage && <span className="text-amber-600 ml-1">(Translate)</span>}
+                    {t("specialLinks.card.footerTitle.label")}
+                    {!isFirstLanguage && (
+                      <span className="text-amber-600 ml-1">
+                        {t("specialLinks.card.footerTitle.translate")}
+                      </span>
+                    )}
                   </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Enter footer title"
+                      placeholder={t("specialLinks.card.footerTitle.placeholder")}
                       className="min-h-[100px] hover:border-primary transition-colors focus:ring-2 focus:ring-primary/20 resize-none"
                       {...field}
                     />
@@ -216,14 +225,14 @@ export const FooterCard = memo(
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ExternalLink className="h-4 w-4 text-primary" />
-                    <h4 className="text-sm font-medium">Social Links</h4>
+                    <h4 className="text-sm font-medium">{t("specialLinks.card.socialLinks.title")}</h4>
                     {!isFirstLanguage ? (
                       <span className="text-xs bg-amber-100 text-amber-700 rounded-full px-2 py-0.5">
-                        Translate Names
+                        {t("specialLinks.card.socialLinks.translateNames")}
                       </span>
                     ) : (
                       <span className="text-xs bg-blue-100 text-blue-700 rounded-full px-2 py-0.5">
-                        Primary Control
+                        {t("specialLinks.card.socialLinks.primaryControl")}
                       </span>
                     )}
                   </div>
@@ -234,7 +243,12 @@ export const FooterCard = memo(
                     onClick={() => setIsSocialLinksExpanded(!isSocialLinksExpanded)}
                     className="h-8 px-3 "
                   >
-                    <span className="text-xs mr-1">{isSocialLinksExpanded ? "Collapse" : "Expand"}</span>
+                    <span className="text-xs mr-1">
+                      {isSocialLinksExpanded 
+                        ? t("specialLinks.card.socialLinks.buttons.collapse") 
+                        : t("specialLinks.card.socialLinks.buttons.expand")
+                      }
+                    </span>
                     {isSocialLinksExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
                   </Button>
                 </div>
@@ -262,7 +276,9 @@ export const FooterCard = memo(
                               >
                                 {socialLinkIndex + 1}
                               </div>
-                              <h5 className="text-sm font-medium">Social Link {socialLinkIndex + 1}</h5>
+                              <h5 className="text-sm font-medium">
+                                {t("specialLinks.card.socialLinks.titleWithNumber", { number: socialLinkIndex + 1 })}
+                              </h5>
                               {!isFirstLanguage && <Lock className="h-3 w-3 text-amber-600" />}
                             </div>
                             {isFirstLanguage && (
@@ -286,12 +302,16 @@ export const FooterCard = memo(
                               render={({ field }) => (
                                 <FormItem>
                                   <FormLabel className="text-sm font-medium">
-                                    Link Name
-                                    {!isFirstLanguage && <span className="text-amber-600 ml-1">(Translate this)</span>}
+                                    {t("specialLinks.card.socialLinks.linkName.label")}
+                                    {!isFirstLanguage && (
+                                      <span className="text-amber-600 ml-1">
+                                        {t("specialLinks.card.socialLinks.linkName.translate")}
+                                      </span>
+                                    )}
                                   </FormLabel>
                                   <FormControl>
                                     <Input
-                                      placeholder="Enter link name"
+                                      placeholder={t("specialLinks.card.socialLinks.linkName.placeholder")}
                                       className="h-10 hover:border-primary transition-colors"
                                       {...field}
                                     />
@@ -308,16 +328,14 @@ export const FooterCard = memo(
                               render={({ field }) => (
                                 <FormItem>
                                   <FormLabel className="text-sm font-medium flex items-center gap-1">
-                                    Social Link URL
+                                    {t("specialLinks.card.socialLinks.url.label")}
                                     {!isFirstLanguage && (
-                                      <>
-                                        <Lock className="h-3 w-3 text-amber-600" />
-                                      </>
+                                      <Lock className="h-3 w-3 text-amber-600" />
                                     )}
                                   </FormLabel>
                                   <FormControl>
                                     <Input
-                                      placeholder="https://example.com"
+                                      placeholder={t("specialLinks.card.socialLinks.url.placeholder")}
                                       className={cn(
                                         "h-10 transition-colors",
                                         isFirstLanguage ? "hover:border-primary" : "bg-gray-100 cursor-not-allowed",
@@ -335,7 +353,9 @@ export const FooterCard = memo(
                           {/* Image upload - Only for first language */}
                           {isFirstLanguage ? (
                             <div className="space-y-2">
-                              <FormLabel className="text-sm font-medium">Social Link Image</FormLabel>
+                              <FormLabel className="text-sm font-medium">
+                                {t("specialLinks.card.socialLinks.title")}
+                              </FormLabel>
                               {SocialLinkImageUploader ? (
                                 <SocialLinkImageUploader
                                   heroIndex={index}
@@ -345,7 +365,7 @@ export const FooterCard = memo(
                               ) : (
                                 <LabeledImageUploader
                                   label=""
-                                  helperText="This image will be used across all languages"
+                                  helperText={t("specialLinks.card.imageManagement.description")}
                                   imageValue={
                                     form.watch(`${langCode}.${index}.socialLinks.${socialLinkIndex}.image`) || ""
                                   }
@@ -370,7 +390,7 @@ export const FooterCard = memo(
                                       shouldValidate: true,
                                     })
                                   }}
-                                  altText={`Social Link ${socialLinkIndex + 1} image`}
+                                  altText={t("specialLinks.card.socialLinks.titleWithNumber", { number: socialLinkIndex + 1 })}
                                 />
                               )}
                             </div>
@@ -378,10 +398,12 @@ export const FooterCard = memo(
                             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
                               <div className="flex items-center gap-2 text-amber-700">
                                 <Lock className="h-4 w-4" />
-                                <span className="text-sm font-medium">Image Management</span>
+                                <span className="text-sm font-medium">
+                                  {t("specialLinks.card.imageManagement.title")}
+                                </span>
                               </div>
                               <p className="text-xs text-amber-600 mt-1">
-                                Images are managed from the primary language and shared across all languages
+                                {t("specialLinks.card.imageManagement.description")}
                               </p>
                             </div>
                           )}
@@ -399,7 +421,7 @@ export const FooterCard = memo(
                         className="w-full hover:bg-primary hover:text-primary-foreground transition-colors"
                       >
                         <Plus className="mr-2 h-4 w-4" />
-                        Add Social Link
+                        {t("specialLinks.card.socialLinks.buttons.add")}                      
                       </Button>
                     )}
                   </div>
@@ -411,7 +433,9 @@ export const FooterCard = memo(
             {isFirstLanguage && currentSocialLinks.length === 0 && (
               <div className="text-center py-6">
                 <ExternalLink className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                <p className="text-sm font-medium text-gray-500 mb-3">No social links added yet</p>
+                <p className="text-sm font-medium text-gray-500 mb-3">
+                  {t("specialLinks.card.socialLinks.noLinks")}
+                </p>                
                 <Button
                   type="button"
                   variant="outline"
@@ -420,7 +444,7 @@ export const FooterCard = memo(
                   className="hover:bg-primary hover:text-primary-foreground transition-colors"
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  Add Social Link
+                  {t("specialLinks.card.socialLinks.buttons.add")}
                 </Button>
               </div>
             )}

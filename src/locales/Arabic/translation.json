@@ -140,6 +140,7 @@
       "showingAll":"عرض جميع المستخدمين",
       "user":"مستخدم",
       "users":"مستخدمون",
+      "actions" : "الإجراءات",
       "headers": {
         "name": "الاسم",
         "email": "البريد الإلكتروني",
@@ -3424,6 +3425,553 @@
         "backToPartners": "العودة إلى الشركاء",
         "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد من رغبتك في المغادرة؟"
       }
+  },
+  "contactPage": {
+      "config": {
+        "title": "إدارة جهات الاتصال",
+        "description": "إدارة مخزون جهات الاتصال والمحتوى متعدد اللغات",
+        "addButtonLabel": "إضافة عنصر اتصال جديد",
+        "emptyStateMessage": "لا توجد جهات اتصال. أنشئ أول جهة اتصال بالنقر على زر \"إضافة اتصال جديد\".",
+        "noSectionMessage": "يرجى إنشاء قسم اتصال أولاً قبل إضافة جهات الاتصال.",
+        "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة جهات الاتصال.",
+        "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة جهات الاتصال.",
+        "sectionIntegrationTitle": "إدارة قسم الاتصال",
+        "sectionIntegrationDescription": "إدارة محتوى قسم الاتصال بعدة لغات.",
+        "addSectionButtonLabel": "إضافة قسم اتصال",
+        "editSectionButtonLabel": "تحرير قسم الاتصال",
+        "saveSectionButtonLabel": "حفظ قسم الاتصال",
+        "listTitle": "قائمة جهات الاتصال",
+        "editPath": "contact/addContact"
+      },
+      "table": {
+        "columns": {
+          "name": "الاسم",
+          "description": "الوصف",
+          "status": "الحالة",
+          "order": "الترتيب",
+          "subsections": "الأقسام الفرعية"
+        },
+        "status": {
+          "main": "رئيسي",
+          "active": "نشط",
+          "inactive": "غير نشط"
+        }
+      },
+      "dialogs": {
+        "create": {
+          "title": "جهة اتصال",
+          "subtitle": "إنشاء عنصر اتصال جديد"
+        },
+        "delete": {
+          "title": "حذف عنصر الاتصال",
+          "confirmText": "تأكيد",
+          "cancelText": "إلغاء",
+          "message": "هل أنت متأكد من رغبتك في حذف عنصر الاتصال هذا؟"
+        }
+      },
+      "messages": {
+        "loading": "جاري تحميل جهات الاتصال...",
+        "noData": "لا توجد بيانات اتصال متاحة",
+        "createSuccess": "تم إنشاء عنصر الاتصال بنجاح",
+        "createError": "فشل في إنشاء عنصر الاتصال",
+        "deleteSuccess": "تم حذف عنصر الاتصال بنجاح",
+        "deleteError": "فشل في حذف عنصر الاتصال",
+        "updateSuccess": "تم تحديث عنصر الاتصال بنجاح",
+        "updateError": "فشل في تحديث عنصر الاتصال"
+      },
+      "actions": {
+        "add": "إضافة",
+        "edit": "تحرير",
+        "delete": "حذف",
+        "save": "حفظ",
+        "cancel": "إلغاء",
+        "confirm": "تأكيد",
+        "back": "رجوع"
+      }
+  },
+  "addContact": {
+      "page": {
+        "createTitle": "إنشاء جهة اتصال جديدة",
+        "editTitle": "تحرير جهة الاتصال",
+        "createSubtitle": "إنشاء جهة اتصال جديدة بمحتوى متعدد اللغات",
+        "editSubtitle": "تحرير محتوى \"{{name}}\" عبر لغات متعددة",
+        "defaultContactName": "جهة اتصال جديدة"
+      },
+      "tabs": {
+        "contact": "معلومات الاتصال",
+        "contactSendMessage": "إرسال رسالة",
+        "basicInfo": "المعلومات الأساسية",
+        "settings": "الإعدادات",
+        "socialMedia": "وسائل التواصل الاجتماعي",
+        "location": "الموقع والعنوان"
+      },
+      "form": {
+        "loading": "جاري تحميل بيانات الاتصال...",
+        "saving": "جاري حفظ بيانات الاتصال...",
+        "saveSuccess": "تم حفظ بيانات الاتصال بنجاح",
+        "saveError": "فشل في حفظ بيانات الاتصال",
+        "contactInfoDescription": "أدخل معلومات الاتصال بعدة لغات.",
+        "sendMessageDescription": "قم بتكوين نموذج الاتصال وإعدادات المراسلة.",
+        "validation": {
+          "nameRequired": "اسم جهة الاتصال مطلوب",
+          "descriptionRequired": "وصف جهة الاتصال مطلوب",
+          "emailRequired": "عنوان البريد الإلكتروني مطلوب",
+          "phoneRequired": "رقم الهاتف مطلوب",
+          "addressRequired": "العنوان مطلوب"
+        }
+      },
+      "navigation": {
+        "backToContact": "العودة إلى جهات الاتصال",
+        "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد من رغبتك في المغادرة؟"
+      },
+      "fields": {
+        "contactTitle": "عنوان الاتصال",
+        "contactDescription": "وصف الاتصال",
+        "emailAddress": "عنوان البريد الإلكتروني",
+        "phoneNumber": "رقم الهاتف",
+        "address": "العنوان",
+        "city": "المدينة",
+        "state": "الولاية",
+        "zipCode": "الرمز البريدي",
+        "country": "البلد",
+        "website": "الموقع الإلكتروني",
+        "socialMedia": "روابط وسائل التواصل الاجتماعي",
+        "workingHours": "ساعات العمل",
+        "contactForm": "إعدادات نموذج الاتصال"
+      }
+  },
+  "contactInformationForm": {
+      "deleteManager": {
+        "sectionName": "قسم معلومات الاتصال",
+        "warning1": "ستفقد جميع معلومات الاتصال",
+        "warning2": "ستتم إزالة تفاصيل الهاتف والبريد الإلكتروني",
+        "warning3": "ستحذف بيانات موقع المكتب"
+      },
+      "validation": {
+        "error": "خطأ في التحقق",
+        "fillRequired": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح"
+      },
+      "subsection": {
+        "name": "قسم معلومات الاتصال"
+      },
+      "success": {
+        "updated": "تم تحديث معلومات الاتصال بنجاح!",
+        "created": "تم إنشاء معلومات الاتصال بنجاح!",
+        "saved": "تم حفظ جميع المحتويات."
+      },
+      "error": {
+        "updating": "خطأ في تحديث معلومات الاتصال",
+        "creating": "خطأ في إنشاء معلومات الاتصال",
+        "unknown": "حدث خطأ غير معروف"
+      },
+      "loading": {
+        "updating": "تحديث معلومات الاتصال",
+        "creating": "إنشاء معلومات الاتصال",
+        "saveDescription": "يرجى الانتظار بينما نحفظ التغييرات...",
+        "deleting": "حذف معلومات الاتصال",
+        "deleteDescription": "يرجى الانتظار بينما نحذف معلومات الاتصال...",
+        "refreshing": "تحديث البيانات",
+        "refreshDescription": "تحديث الواجهة بعد الحذف..."
+      },
+      "delete": {
+        "title": "حذف معلومات الاتصال",
+        "description": "هل أنت متأكد من رغبتك في حذف قسم معلومات الاتصال هذا؟ لا يمكن التراجع عن هذا الإجراء."
+      },
+      "button": {
+        "delete": "حذف معلومات الاتصال",
+        "saving": "جاري الحفظ...",
+        "update": "تحديث معلومات الاتصال",
+        "save": "حفظ معلومات الاتصال"
+      }
+  },
+  "contactInformationFormCard": {
+      "title": "قسم الاتصال",
+      "description": "إدارة محتوى الاتصال لـ {{langCode}}",
+      "fields": {
+        "title": "العنوان",
+        "description": "الوصف",
+        "phoneText": "نص الهاتف",
+        "phoneValue": "رقم الهاتف",
+        "emailText": "نص البريد الإلكتروني",
+        "emailValue": "البريد الإلكتروني",
+        "officeText": "نص المكتب",
+        "officeAddress": "عنوان المكتب"
+      },
+      "placeholders": {
+        "title": "أدخل العنوان",
+        "description": "أدخل الوصف",
+        "phoneText": "أدخل نص الهاتف",
+        "phoneValue": "أدخل رقم الهاتف",
+        "emailText": "أدخل نص البريد الإلكتروني",
+        "emailValue": "أدخل عنوان البريد الإلكتروني",
+        "officeText": "أدخل نص المكتب",
+        "officeAddress": "أدخل عنوان المكتب"
+      },
+      "sections": {
+        "phone": "الهاتف",
+        "email": "البريد الإلكتروني",
+        "office": "المكتب"
+      }
+  },
+  "sendUsaMessageForm": {
+      "deleteManager": {
+        "sectionName": "نموذج الاتصال",
+        "warning1": "ستفقد جميع إرسالات النموذج",
+        "warning2": "ستتم إزالة إعدادات إشعارات البريد الإلكتروني"
+      },
+      "validation": {
+        "error": "خطأ في التحقق",
+        "fillRequired": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح"
+      },
+      "subsection": {
+        "name": "نموذج الاتصال"
+      },
+      "success": {
+        "updated": "تم تحديث نموذج الاتصال بنجاح!",
+        "created": "تم إنشاء نموذج الاتصال بنجاح!",
+        "saved": "تم حفظ جميع المحتويات."
+      },
+      "error": {
+        "updating": "خطأ في تحديث نموذج الاتصال",
+        "creating": "خطأ في إنشاء نموذج الاتصال",
+        "unknown": "حدث خطأ غير معروف"
+      },
+      "loading": {
+        "data": "جاري تحميل بيانات نموذج الاتصال...",
+        "updating": "تحديث نموذج الاتصال",
+        "creating": "إنشاء نموذج الاتصال",
+        "saveDescription": "يرجى الانتظار بينما نحفظ التغييرات...",
+        "deleting": "حذف نموذج الاتصال",
+        "deleteDescription": "يرجى الانتظار بينما نحذف نموذج الاتصال...",
+        "refreshing": "تحديث البيانات",
+        "refreshDescription": "تحديث الواجهة بعد الحذف..."
+      },
+      "delete": {
+        "success": {
+          "title": "تم حذف نموذج الاتصال بنجاح!",
+          "withElements": "تم حذف القسم الفرعي و {{count}} عناصر المحتوى.",
+          "simple": "تم إزالة نموذج الاتصال."
+        },
+        "error": {
+          "title": "فشل في حذف نموذج الاتصال",
+          "unknown": "حدث خطأ غير معروف"
+        },
+        "dialog": {
+          "title": "حذف نموذج الاتصال",
+          "description": "هل أنت متأكد من رغبتك في حذف نموذج الاتصال هذا؟ لا يمكن التراجع عن هذا الإجراء."
+        }
+      },
+      "button": {
+        "delete": "حذف نموذج الاتصال",
+        "saving": "جاري الحفظ...",
+        "update": "تحديث نموذج الاتصال",
+        "save": "حفظ نموذج الاتصال"
+      }
+  },
+  "sendUsaMessageFormCard": {
+      "title": "نموذج الاتصال",
+      "description": "إدارة محتوى نموذج الاتصال لـ {{langCode}}",
+      "sections": {
+        "formFields": "حقول النموذج"
+      },
+      "fields": {
+        "title": "العنوان",
+        "fullname": "نص الاسم الكامل",
+        "fullnamePlaceholder": "نائب الاسم الكامل",
+        "email": "نص البريد الإلكتروني",
+        "emailPlaceholder": "نائب البريد الإلكتروني",
+        "message": "نص الرسالة",
+        "messagePlaceholder": "نائب الرسالة",
+        "subjectTitle": "عنوان الموضوع",
+        "subjects": "المواضيع",
+        "buttonText": "نص الزر"
+      },
+      "placeholders": {
+        "title": "أدخل عنوان النموذج",
+        "fullname": "أدخل تسمية الاسم الكامل",
+        "fullnamePlaceholder": "أدخل نائب الاسم الكامل",
+        "email": "أدخل تسمية البريد الإلكتروني",
+        "emailPlaceholder": "أدخل نائب البريد الإلكتروني",
+        "message": "أدخل تسمية الرسالة",
+        "messagePlaceholder": "أدخل نائب الرسالة",
+        "subjectTitle": "أدخل عنوان الموضوع",
+        "subject": "أدخل الموضوع {{index}}",
+        "buttonText": "أدخل نص الزر"
+      },
+      "buttons": {
+        "addSubject": "إضافة موضوع"
+      }
+  },
+  "footerPage": {
+      "config": {
+        "title": "إدارة الشريط",
+        "description": "إدارة مخزون الشريط والمحتوى متعدد اللغات",
+        "addButtonLabel": "إضافة شريط جديد",
+        "emptyStateMessage": "لا يوجد تذييل. أنشئ أول شريطبالنقر على زر \"إضافة شريطجديد\".",
+        "noSectionMessage": "يرجى إنشاء قسم شريطأولاً قبل إضافة الشريط.",
+        "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة الشريط.",
+        "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة الشريط.",
+        "sectionIntegrationTitle": "إدارة قسم الشريط",
+        "sectionIntegrationDescription": "إدارة محتوى قسم الشريط بعدة لغات.",
+        "addSectionButtonLabel": "إضافة قسم تذييل",
+        "editSectionButtonLabel": "تحرير قسم الشريط",
+        "saveSectionButtonLabel": "حفظ قسم الشريط",
+        "listTitle": "قائمة الشريط"
+      },
+      "table": {
+        "columns": {
+          "name": "الاسم",
+          "description": "الوصف",
+          "status": "الحالة",
+          "order": "الترتيب",
+          "subsections": "الأقسام الفرعية"
+        },
+        "status": {
+          "main": "رئيسي",
+          "active": "نشط",
+          "inactive": "غير نشط"
+        }
+      },
+      "dialogs": {
+        "create": {
+          "title": "تذييل",
+          "subtitle": "إنشاء عنصر شريطجديد"
+        },
+        "delete": {
+          "title": "حذف عنصر الشريط",
+          "confirmText": "تأكيد",
+          "cancelText": "إلغاء",
+          "message": "هل أنت متأكد من رغبتك في حذف عنصر الشريط هذا؟"
+        }
+      },
+      "messages": {
+        "loading": "جاري تحميل الشريط...",
+        "noData": "لا توجد بيانات شريطمتاحة",
+        "createSuccess": "تم إنشاء عنصر الشريط بنجاح",
+        "createError": "فشل في إنشاء عنصر الشريط",
+        "deleteSuccess": "تم حذف عنصر الشريط بنجاح",
+        "deleteError": "فشل في حذف عنصر الشريط",
+        "updateSuccess": "تم تحديث عنصر الشريط بنجاح",
+        "updateError": "فشل في تحديث عنصر الشريط"
+      },
+      "actions": {
+        "add": "إضافة",
+        "edit": "تحرير",
+        "delete": "حذف",
+        "save": "حفظ",
+        "cancel": "إلغاء",
+        "confirm": "تأكيد",
+        "back": "رجوع"
+      }
+  },
+  "addFooter": {
+      "title": {
+        "create": "إنشاء تذييل جديد",
+        "edit": "تحرير التذييل"
+      },
+      "subtitle": {
+        "create": "إنشاء تذييل جديد بمحتوى متعدد اللغات",
+        "edit": "تحرير محتوى \"{{name}}\" عبر لغات متعددة"
+      },
+      "tabs": {
+        "footer": "التذييل",
+        "specialLinks": "الروابط الخاصة"
+      },
+      "form": {
+        "defaultName": "تذييل جديد",
+        "saveButton": "حفظ التذييل",
+        "cancelButton": "إلغاء",
+        "loading": "جاري التحميل...",
+        "saving": "جاري الحفظ..."
+      },
+      "navigation": {
+        "backToList": "العودة إلى قائمة التذييل"
+      },
+      "messages": {
+        "saveSuccess": "تم حفظ التذييل بنجاح",
+        "saveError": "فشل في حفظ التذييل",
+        "loadError": "فشل في تحميل بيانات التذييل"
+      }
+  },
+  "footerForm": {
+      "card": {
+        "title": "قسم التذييل {{index}}",
+        "description": "وصف التذييل",
+        "socialLinks": {
+          "title": "الروابط الاجتماعية",
+          "appliesToAll": "ينطبق على جميع اللغات",
+          "collapse": "طي",
+          "expand": "توسيع",
+          "linkTitle": "الرابط الاجتماعي {{index}}",
+          "urlLabel": "رابط URL الاجتماعي",
+          "urlPlaceholder": "https://example.com",
+          "imageLabel": "صورة الرابط الاجتماعي",
+          "imageHelper": "سيتم استخدام هذه الصورة عبر جميع اللغات",
+          "emptyState": {
+            "title": "لم يتم إضافة روابط اجتماعية بعد",
+            "description": "انقر على \"إضافة رابط اجتماعي\" للبدء"
+          },
+          "addButton": "إضافة رابط اجتماعي"
+        },
+        "descriptionPlaceholder": "أدخل وصف التذييل"
+      },
+      "languageCard": {
+        "title": "قسم التذييل",
+        "description": "إدارة محتوى التذييل للغة {{language}}"
+      },
+      "form": {
+        "loading": "جاري تحميل بيانات قسم التذييل...",
+        "saving": {
+          "updating": "تحديث التذييل",
+          "creating": "إنشاء التذييل",
+          "description": "يرجى الانتظار بينما نحفظ التغييرات..."
+        },
+        "validation": {
+          "countMismatch": "يجب أن يكون لكل لغة نفس عدد التذييلات"
+        },
+        "buttons": {
+          "saving": "جاري الحفظ...",
+          "update": "تحديث التذييل",
+          "save": "حفظ التذييل"
+        }
+      },
+      "delete": {
+        "title": "حذف التذييل",
+        "confirmText": "حذف التذييل",
+        "cannotRemove": "لا يمكن الإزالة",
+        "needAtLeast": "تحتاج إلى تذييل واحد على الأقل"
+      },
+      "toast": {
+        "footerAdded": "تم إضافة التذييل",
+        "footerAddedDesc": "تم إضافة تذييل جديد. يرجى ملء التفاصيل وحفظ التغييرات.",
+        "footerRemoved": "تم إزالة التذييل",
+        "footerRemovedDesc": "تم إزالة التذييل بنجاح.",
+        "footerDeleted": "تم حذف التذييل",
+        "footerDeletedDesc": "تم حذف التذييل {{index}} من قاعدة البيانات",
+        "saveSuccess": "تم حفظ قسم التذييل بنجاح!",
+        "saveSuccessDesc": "تم حفظ جميع المحتويات.",
+        "updateSuccess": "تم تحديث قسم التذييل بنجاح!",
+        "saveError": "خطأ في حفظ قسم التذييل",
+        "updateError": "خطأ في تحديث قسم التذييل",
+        "loadError": "خطأ في تحميل البيانات",
+        "loadErrorDesc": "فشل في تحميل بيانات التذييل. يرجى المحاولة مرة أخرى.",
+        "validationError": "خطأ في التحقق",
+        "validationErrorDesc": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح.",
+        "validationCountError": "يجب أن يكون لجميع اللغات نفس عدد التذييلات.",
+        "imageUploadError": "خطأ في رفع الصورة",
+        "imageUploadErrorDesc": "فشل في رفع الصورة للرابط الاجتماعي {{linkIndex}} في التذييل {{footerIndex}}.",
+        "removeError": "خطأ",
+        "removeErrorDesc": "حدث خطأ أثناء إزالة التذييل.",
+        "reloadWarning": "تحذير",
+        "reloadWarningDesc": "فشل في إعادة تحميل البيانات بعد الحفظ."
+      }
+  },
+ "specialLinks": {
+    "languageCard": {
+      "title": "قسم التذييل",
+      "description": "إدارة محتوى التذييل لـ {{langCode}}",
+      "buttons": {
+        "addFooter": "إضافة تذييل"
+      }
+    },
+    "card": {
+      "title": "قسم التذييل {{number}}",
+      "translationMode": "وضع الترجمة",
+      "socialLinksCount": "{{count}} رابط (روابط) اجتماعية",
+      "footerTitle": {
+        "label": "عنوان التذييل",
+        "translate": "(ترجم)",
+        "placeholder": "أدخل عنوان التذييل"
+      },
+      "socialLinks": {
+        "title": "الروابط الاجتماعية",
+        "translateNames": "ترجمة الأسماء",
+        "primaryControl": "التحكم الأساسي",
+        "titleWithNumber": "رابط اجتماعي {{number}}",
+        "buttons": {
+          "collapse": "طي",
+          "expand": "توسيع",
+          "add": "إضافة رابط اجتماعي"
+        },
+        "noLinks": "لم تُضف روابط اجتماعية بعد",
+        "linkName": {
+          "label": "اسم الرابط",
+          "translate": "(ترجم هذا)",
+          "placeholder": "أدخل اسم الرابط"
+        },
+        "url": {
+          "label": "رابط الرابط الاجتماعي",
+          "placeholder": "https://example.com"
+        }
+      },
+      "imageManagement": {
+        "title": "إدارة الصور",
+        "description": "يتم إدارة الصور من اللغة الأساسية وتُشارك عبر جميع اللغات"
+      }
+    },
+    "form": {
+      "loading": "جارٍ تحميل بيانات قسم التذييل...",
+      "saving": {
+        "updating": "تحديث التذييلات",
+        "creating": "إنشاء التذييلات",
+        "description": "يرجى الانتظار بينما نحفظ التغييرات..."
+      },
+      "validation": {
+        "countMismatch": "يجب أن تحتوي كل لغة على نفس عدد التذييلات",
+        "errorTitle": "خطأ في التحقق",
+        "errorDescription": "يجب أن تحتوي جميع اللغات على نفس عدد التذييلات.",
+        "fieldsError": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح."
+      },
+      "buttons": {
+        "saving": "جارٍ الحفظ...",
+        "update": "تحديث التذييلات",
+        "save": "حفظ التذييلات"
+      },
+      "toasts": {
+        "cannotRemove": {
+          "title": "لا يمكن الإزالة",
+          "description": "يجب أن يكون لديك تذييل واحد على الأقل"
+        },
+        "footerDeleted": {
+          "title": "تم حذف التذييل",
+          "description": "تم حذف التذييل {{number}} من قاعدة البيانات"
+        },
+        "footerRemoved": {
+          "title": "تم إزالة التذييل",
+          "description": "تم إزالة التذييل بنجاح."
+        },
+        "errorRemoving": {
+          "title": "خطأ",
+          "description": "حدث خطأ أثناء إزالة التذييل."
+        },
+        "footerAdded": {
+          "title": "تم إضافة تذييل",
+          "description": "تم إضافة تذييل جديد. يرجى ملء التفاصيل وحفظ التغييرات."
+        },
+        "errorLoading": {
+          "title": "خطأ في تحميل البيانات",
+          "description": "فشل تحميل بيانات التذييل. يرجى المحاولة مرة أخرى."
+        },
+        "success": {
+          "updated": "تم تحديث قسم التذييلات بنجاح!",
+          "created": "تم إنشاء قسم التذييلات بنجاح!",
+          "allContentSaved": "تم حفظ جميع المحتويات."
+        },
+        "errorSaving": {
+          "updated": "خطأ في تحديث قسم التذييلات",
+          "created": "خطأ في إنشاء قسم التذييلات",
+          "unknown": "حدث خطأ غير معروف"
+        },
+        "warningReload": {
+          "title": "تحذير",
+          "description": "فشل إعادة تحميل البيانات بعد الحفظ."
+        }
+      },
+      "deleteDialog": {
+        "title": "حذف التذييل",
+        "confirm": "حذف التذييل"
+      }
+    }
   },
   "common": {
     "welcome": "مرحبا",

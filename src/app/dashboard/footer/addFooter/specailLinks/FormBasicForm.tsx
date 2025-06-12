@@ -32,6 +32,7 @@ import { FooterLanguageCard } from "./FooterLanguageCard";
 import { FooteresFormState, FooterFormProps } from "@/src/api/types/sections/footer/footerSection.type";
 import { StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
 import { useHeroImages } from "../utils/FooterImageUploader";
+import { useTranslation } from "react-i18next";
 
 // Updated interface to reflect new field structure
 interface FormData {
@@ -50,6 +51,7 @@ interface FormData {
 const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId }, ref) => {
     const { websiteId } = useWebsiteContext();
+    const { t } = useTranslation();
     const formSchema = createFooterSpecialLinkSectionSchema(languageIds, activeLanguages);
     const defaultValues = createFooterSpecialLinkSectionDefaultValues(languageIds, activeLanguages);
 
@@ -120,36 +122,36 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
     }, [languageIds]);
 
     // Updated function to sync both URLs and link names across all languages
-      const syncSocialLinkData = useCallback((changedPath: string, newValue: string) => {
-          if (isUrlSyncing) return;
-          
-          // Only sync URLs, not linkNames
-          const urlMatch = changedPath.match(/^([^.]+)\.(\d+)\.socialLinks\.(\d+)\.url$/);
-          if (!urlMatch) return; // Don't sync linkName changes
+    const syncSocialLinkData = useCallback((changedPath: string, newValue: string) => {
+        if (isUrlSyncing) return;
+        
+        // Only sync URLs, not linkNames
+        const urlMatch = changedPath.match(/^([^.]+)\.(\d+)\.socialLinks\.(\d+)\.url$/);
+        if (!urlMatch) return; // Don't sync linkName changes
 
-          const [, changedLangCode, footerIndex, socialLinkIndex] = urlMatch;
-          
-          setIsUrlSyncing(true);
-          
-          const allValues = form.getValues();
-          
-          // Update the URL in all other languages (but keep their own linkNames)
-          Object.keys(allValues).forEach((langCode) => {
-              if (langCode !== changedLangCode && allValues[langCode] && allValues[langCode][parseInt(footerIndex)]) {
-                  const currentFooter = allValues[langCode][parseInt(footerIndex)];
-                  if (currentFooter.socialLinks && currentFooter.socialLinks[parseInt(socialLinkIndex)]) {
-                      form.setValue(
-                          `${langCode}.${footerIndex}.socialLinks.${socialLinkIndex}.url`,
-                          newValue,
-                          { shouldDirty: true, shouldValidate: true }
-                      );
-                      // Note: We're NOT syncing linkName anymore
-                  }
-              }
-          });
-          
-          setIsUrlSyncing(false);
-      }, [form, isUrlSyncing]);
+        const [, changedLangCode, footerIndex, socialLinkIndex] = urlMatch;
+        
+        setIsUrlSyncing(true);
+        
+        const allValues = form.getValues();
+        
+        // Update the URL in all other languages (but keep their own linkNames)
+        Object.keys(allValues).forEach((langCode) => {
+            if (langCode !== changedLangCode && allValues[langCode] && allValues[langCode][parseInt(footerIndex)]) {
+                const currentFooter = allValues[langCode][parseInt(footerIndex)];
+                if (currentFooter.socialLinks && currentFooter.socialLinks[parseInt(socialLinkIndex)]) {
+                    form.setValue(
+                        `${langCode}.${footerIndex}.socialLinks.${socialLinkIndex}.url`,
+                        newValue,
+                        { shouldDirty: true, shouldValidate: true }
+                    );
+                    // Note: We're NOT syncing linkName anymore
+                }
+            }
+        });
+        
+        setIsUrlSyncing(false);
+    }, [form, isUrlSyncing]);
 
     const validateFormFooterCounts = useCallback(() => {
       const values = form.getValues();
@@ -167,8 +169,8 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
       const currentSteps = form.getValues()[langCode] || [];
       if (currentSteps.length <= 1) {
         toast({
-          title: "Cannot remove",
-          description: "You need at least one footer",
+          title: t("specialLinks.form.toasts.cannotRemove.title"),
+          description: t("specialLinks.form.toasts.cannotRemove.description"),
           variant: "destructive",
         });
         setIsDeleting(false);
@@ -197,8 +199,8 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
             });
 
             toast({
-              title: "Footer deleted",
-              description: `Footer ${footerNumber} has been deleted from the database`,
+              title: t("specialLinks.form.toasts.footerDeleted.title"),
+              description: t("specialLinks.form.toasts.footerDeleted.description", { number: footerNumber }),
             });
           }
 
@@ -236,8 +238,8 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
         });
 
         toast({
-          title: "Footer removed",
-          description: "The footer has been removed successfully.",
+          title: t("specialLinks.form.toasts.footerRemoved.title"),
+          description: t("specialLinks.form.toasts.footerRemoved.description"),
         });
 
         validateFormFooterCounts();
@@ -245,8 +247,8 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
       } catch (error) {
         console.error("Error removing footer:", error);
         toast({
-          title: "Error",
-          description: "There was an error removing the footer.",
+          title: t("specialLinks.form.toasts.errorRemoving.title"),
+          description: t("specialLinks.form.toasts.errorRemoving.description"),
           variant: "destructive",
         });
       } finally {
@@ -266,6 +268,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
       toast,
       validateFormFooterCounts,
       updateState,
+      t,
     ]);
 
    const processFooteresData = useCallback(
@@ -387,15 +390,15 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
     } catch (error) {
       console.error("Error processing footer data:", error);
       toast({
-        title: "Error loading data",
-        description: "Failed to load footer data. Please try again.",
+        title: t("specialLinks.form.toasts.errorLoading.title"),
+        description: t("specialLinks.form.toasts.errorLoading.description"),
         variant: "destructive",
       });
     } finally {
       updateState({ isLoadingData: false });
     }
   },
-  [form, languageIds, activeLanguages, updateState, validateFormFooterCounts, toast]
+  [form, languageIds, activeLanguages, updateState, validateFormFooterCounts, toast, t]
   );
 
     useEffect(() => {
@@ -446,26 +449,26 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
         validateFormFooterCounts();
         updateState({ hasUnsavedChanges: true });
         toast({
-          title: "Footer added",
-          description: "A new footer has been added. Please fill in the details and save your changes.",
+          title: t("specialLinks.form.toasts.footerAdded.title"),
+          description: t("specialLinks.form.toasts.footerAdded.description"),
         });
       },
-      [form, validateFormFooterCounts, updateState, toast]
+      [form, validateFormFooterCounts, updateState, toast, t]
     );
 
     const confirmDeleteStep = useCallback((langCode: string, index: number) => {
       const currentFooteres = form.getValues()[langCode] || [];
       if (currentFooteres.length <= 1) {
         toast({
-          title: "Cannot remove",
-          description: "You need at least one footer",
+          title: t("specialLinks.form.toasts.cannotRemove.title"),
+          description: t("specialLinks.form.toasts.cannotRemove.description"),
           variant: "destructive",
         });
         return;
       }
       setStepToDelete({ langCode, index });
       setDeleteDialogOpen(true);
-    }, [form, toast]);
+    }, [form, toast, t]);
 
 const syncSocialLinksBeforeValidation = useCallback(() => {
     const allValues = form.getValues();
@@ -520,8 +523,8 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
       if (!hasEqualFooterCounts) {
         updateState({ isValidationDialogOpen: true });
         toast({
-          title: "Validation Error",
-          description: "All languages must have the same number of footeres.",
+          title: t("specialLinks.form.validation.errorTitle"),
+          description: t("specialLinks.form.validation.errorDescription"),
           variant: "destructive",
         });
         return;
@@ -529,8 +532,8 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
 
       if (!isValid) {
         toast({
-          title: "Validation Error",
-          description: "Please fill all required fields correctly.",
+          title: t("specialLinks.form.validation.errorTitle"),
+          description: t("specialLinks.form.validation.fieldsError"),
           variant: "destructive",
         });
         return;
@@ -784,8 +787,10 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
         }
 
         toast({
-          title: state.existingSubSectionId ? "Footeres section updated successfully!" : "Footeres section created successfully!",
-          description: "All content has been saved.",
+          title: state.existingSubSectionId 
+            ? t("specialLinks.form.toasts.success.updated") 
+            : t("specialLinks.form.toasts.success.created"),
+          description: t("specialLinks.form.toasts.success.allContentSaved"),
           duration: 5000,
         });
 
@@ -797,8 +802,8 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
           } else {
             updateState({ isLoadingData: false });
             toast({
-              title: "Warning",
-              description: "Failed to reload data after save.",
+              title: t("specialLinks.form.toasts.warningReload.title"),
+              description: t("specialLinks.form.toasts.warningReload.description"),
               variant: "destructive",
             });
           }
@@ -808,8 +813,10 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
       } catch (error) {
         console.error("Save operation failed:", error);
         toast({
-          title: state.existingSubSectionId ? "Error updating footeres section" : "Error creating footeres section",
-          description: error instanceof Error ? error.message : "An unknown error occurred",
+          title: state.existingSubSectionId 
+            ? t("specialLinks.form.toasts.errorSaving.updated") 
+            : t("specialLinks.form.toasts.errorSaving.created"),
+          description: error instanceof Error ? error.message : t("specialLinks.form.toasts.errorSaving.unknown"),
           variant: "destructive",
           duration: 5000,
         });
@@ -835,6 +842,7 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
       refetch,
       processFooteresData,
       updateState,
+      t,
     ]);
 
     createFormRef(ref, {
@@ -865,7 +873,7 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
       return (
         <div className="flex items-center justify-center p-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary mr-2" />
-          <p className="text-muted-foreground">Loading footeres section data...</p>
+          <p className="text-muted-foreground">{t("specialLinks.form.loading")}</p>
         </div>
       );
     }
@@ -874,8 +882,10 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
       <div className="space-y-6">
         <LoadingDialog
           isOpen={state.isSaving}
-          title={state.existingSubSectionId ? "Updating Footeres" : "Creating Footeres"}
-          description="Please wait while we save your changes..."
+          title={state.existingSubSectionId 
+            ? t("specialLinks.form.saving.updating") 
+            : t("specialLinks.form.saving.creating")}
+          description={t("specialLinks.form.saving.description")}
         />
 
         <Form {...form}>
@@ -905,7 +915,7 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
           {state.footerCountMismatch && (
             <div className="flex items-center text-amber-500 mr-4">
               <AlertTriangle className="h-4 w-4 mr-2" />
-              <span className="text-sm">Each language must have the same number of footeres</span>
+              <span className="text-sm">{t("specialLinks.form.validation.countMismatch")}</span>
             </div>
           )}
           <Button
@@ -917,12 +927,14 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
             {state.isSaving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
+                {t("specialLinks.form.buttons.saving")}
               </>
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                {state.existingSubSectionId ? "Update Footeres" : "Save Footeres"}
+                {state.existingSubSectionId 
+                  ? t("specialLinks.form.buttons.update") 
+                  : t("specialLinks.form.buttons.save")}
               </>
             )}
           </Button>
@@ -934,8 +946,8 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
           serviceName={stepToDelete ? `Footer ${stepToDelete.index + 1}` : ""}
           onConfirm={removeProcessStep}
           isDeleting={isDeleting}
-          title="Delete Footer"
-          confirmText="Delete Footer"
+          title={t("specialLinks.form.deleteDialog.title")}
+          confirmText={t("specialLinks.form.deleteDialog.confirm")}
         />
 
         <ValidationDialog
@@ -949,4 +961,4 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
 );
 
 SpecialFormBasicForm.displayName = "SpecialFormBasicForm";
-export default SpecialFormBasicForm; 
+export default SpecialFormBasicForm;

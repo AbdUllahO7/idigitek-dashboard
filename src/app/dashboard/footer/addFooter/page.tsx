@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useSearchParams } from "next/navigation"
@@ -8,8 +7,8 @@ import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { FormData } from "@/src/api/types/sections/service/serviceSections.types"
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
-
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
+import { useTranslation } from "react-i18next"
 import FormBasicForm from "./basic/FormBasicForm"
 import SpecialFormBasicForm from "./specailLinks/FormBasicForm"
 
@@ -18,6 +17,7 @@ const FORM_SECTIONS = ["footer"]
 
 export default function AddFooter() {
   const searchParams = useSearchParams()
+  const { t } = useTranslation()
   
   // Get URL parameters
   const sectionId = searchParams.get('sectionId')
@@ -109,8 +109,6 @@ export default function AddFooter() {
   const getSlug = (baseSlug: string) => {
     if (isCreateMode) return "";
     
-
-    
     // Find the subsection
     const subsection = findSubsection(baseSlug);
     
@@ -123,11 +121,11 @@ export default function AddFooter() {
     return `${baseSlug.toLowerCase()}-${sectionItemId}`;
   };
   
-  // Define tabs configuration
+  // Define tabs configuration with translations
   const tabs = [
     {
       id: "footer",
-      label: "Footer",
+      label: t('addFooter.tabs.footer', 'Footer'),
       icon: <Layout className="h-4 w-4" />,
       component: (
         <FormBasicForm
@@ -141,7 +139,7 @@ export default function AddFooter() {
     },
      {
       id: "specialLinks",
-      label: "Special Links",
+      label: t('addFooter.tabs.specialLinks', 'Special Links'),
       icon: <Layout className="h-4 w-4" />,
       component: (
         <SpecialFormBasicForm
@@ -154,13 +152,14 @@ export default function AddFooter() {
       )
     }
   ]
+  
   // Define save handler for the service
   const handleSaveFooter = async (formData: FormData) => {
     // Extract service info from footer data for title/description
     const footerData = formData.hero || {}
     
     // Get English title and description values or fallback to the first language
-    let serviceName = "New Footer"
+    let serviceName = t('addFooter.form.defaultName', 'New Footer')
     let serviceDescription = ""
     
     // Loop through languages to find title and description
@@ -193,15 +192,28 @@ export default function AddFooter() {
     return servicePayload
   }
   
+  // Get translated title and subtitle
+  const getTitle = () => {
+    return isCreateMode 
+      ? t('addFooter.title.create', 'Create New Footer')
+      : t('addFooter.title.edit', 'Edit Footer')
+  }
+  
+  const getSubtitle = () => {
+    return isCreateMode 
+      ? t('addFooter.subtitle.create', 'Create a new footer with multilingual content')
+      : t('addFooter.subtitle.edit', 'Editing "{name}" content across multiple languages', {
+          name: sectionItemData?.data?.name || 'Footer'
+        })
+  }
+  
   // Loading state
   const isLoading = isLoadingLanguages || (!isCreateMode && (isLoadingSectionItem || isLoadingSubsections))
   
   return (
     <FormShell
-      title={isCreateMode ? "Create New Footer" : "Edit Footer"}
-      subtitle={isCreateMode 
-        ? "Create a new service with multilingual content" 
-        : `Editing "${sectionItemData?.data?.name || 'Footer'}" content across multiple languages`}
+      title={getTitle()}
+      subtitle={getSubtitle()}
       backUrl={`/dashboard/footer?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}

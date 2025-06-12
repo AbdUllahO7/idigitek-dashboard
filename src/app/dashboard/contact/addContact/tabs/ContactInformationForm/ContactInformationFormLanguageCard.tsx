@@ -10,6 +10,7 @@ import { Separator } from "@/src/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface ContactInformationFormLanguageCardPops {
   langCode: string;
@@ -18,6 +19,7 @@ interface ContactInformationFormLanguageCardPops {
 }
 
 export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirstLanguage = false }: ContactInformationFormLanguageCardPops) => {
+  const { t } = useTranslation();
   const [openSections, setOpenSections] = React.useState({
     phone: false, 
     email: false, 
@@ -32,12 +34,14 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
     <Card className="h-full">
       <CardHeader>
         <CardTitle className="flex items-center">
-          <span className="uppercase font-bold text-sm bg-primary text-primary-foreground rounded-md px-2 py-1 mr-2">
+          <span className="uppercase font-bold text-sm bg-primary text-primary-foreground rounded-md px-2 py-1 ml-2 mr-2">
             {langCode}
           </span>
-          Contact Section
+          {t('contactInformationFormCard.title', 'Contact Section')}
         </CardTitle>
-        <CardDescription>Manage contact content for {langCode.toUpperCase()}</CardDescription>
+        <CardDescription>
+          {t('contactInformationFormCard.description', 'Manage contact content for {{langCode}}', { langCode: langCode.toUpperCase() })}
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Title and Description Fields (Always Visible) */}
@@ -47,9 +51,11 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
             name={`${langCode}.title`}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title {isFirstLanguage && <span className="text-red-500">*</span>}</FormLabel>
+                <FormLabel>
+                  {t('contactInformationFormCard.fields.title', 'Title')} {isFirstLanguage && <span className="text-red-500">*</span>}
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter title" {...field} />
+                  <Input placeholder={t('contactInformationFormCard.placeholders.title', 'Enter title')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -60,9 +66,9 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
             name={`${langCode}.description`}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>{t('contactInformationFormCard.fields.description', 'Description')}</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Enter description" className="min-h-[100px]" {...field} />
+                  <Textarea placeholder={t('contactInformationFormCard.placeholders.description', 'Enter description')} className="min-h-[100px]" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -77,7 +83,7 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
         <Collapsible open={openSections.phone} onOpenChange={() => toggleSection("phone")}>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" className="flex w-full justify-between items-center">
-              <span className="text-lg font-semibold">Phone</span>
+              <span className="text-lg font-semibold">{t('contactInformationFormCard.sections.phone', 'Phone')}</span>
               {openSections.phone ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
           </CollapsibleTrigger>
@@ -87,9 +93,9 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
               name={`${langCode}.phoneText`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Text</FormLabel>
+                  <FormLabel>{t('contactInformationFormCard.fields.phoneText', 'Phone Text')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter phone text" {...field} />
+                    <Input placeholder={t('contactInformationFormCard.placeholders.phoneText', 'Enter phone text')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,9 +106,9 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
               name={`${langCode}.phoneTextValue`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Value</FormLabel>
+                  <FormLabel>{t('contactInformationFormCard.fields.phoneValue', 'Phone Value')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter phone number" {...field} />
+                    <Input placeholder={t('contactInformationFormCard.placeholders.phoneValue', 'Enter phone number')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -117,7 +123,7 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
         <Collapsible open={openSections.email} onOpenChange={() => toggleSection("email")}>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" className="flex w-full justify-between items-center">
-              <span className="text-lg font-semibold">Email</span>
+              <span className="text-lg font-semibold">{t('contactInformationFormCard.sections.email', 'Email')}</span>
               {openSections.email ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
           </CollapsibleTrigger>
@@ -127,9 +133,9 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
               name={`${langCode}.email`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Text</FormLabel>
+                  <FormLabel>{t('contactInformationFormCard.fields.emailText', 'Email Text')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter email text" {...field} />
+                    <Input placeholder={t('contactInformationFormCard.placeholders.emailText', 'Enter email text')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -140,9 +146,9 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
               name={`${langCode}.emailValue`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Value</FormLabel>
+                  <FormLabel>{t('contactInformationFormCard.fields.emailValue', 'Email Value')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter email address" {...field} />
+                    <Input placeholder={t('contactInformationFormCard.placeholders.emailValue', 'Enter email address')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -157,7 +163,7 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
         <Collapsible open={openSections.office} onOpenChange={() => toggleSection("office")}>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" className="flex w-full justify-between items-center">
-              <span className="text-lg font-semibold">Office</span>
+              <span className="text-lg font-semibold">{t('contactInformationFormCard.sections.office', 'Office')}</span>
               {openSections.office ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
           </CollapsibleTrigger>
@@ -167,9 +173,9 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
               name={`${langCode}.office`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Office Text</FormLabel>
+                  <FormLabel>{t('contactInformationFormCard.fields.officeText', 'Office Text')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter office text" {...field} />
+                    <Input placeholder={t('contactInformationFormCard.placeholders.officeText', 'Enter office text')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -180,9 +186,9 @@ export const ContactInformationFormLanguageCard = memo(({ langCode, form, isFirs
               name={`${langCode}.officeValue`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Office Address</FormLabel>
+                  <FormLabel>{t('contactInformationFormCard.fields.officeAddress', 'Office Address')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Enter office address" className="min-h-[100px]" {...field} />
+                    <Textarea placeholder={t('contactInformationFormCard.placeholders.officeAddress', 'Enter office address')} className="min-h-[100px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

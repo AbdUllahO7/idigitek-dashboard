@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useGenericList } from "@/src/hooks/useGenericList"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
@@ -11,64 +11,8 @@ import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
-import { contactSectionConfig } from "./ContactSectionConfig"
-
-// Configuration for the Contact page
-const PROJECTS_CONFIG = {
-  title: "Contact Management",
-  description: "Manage your Contact inventory and multilingual contact",
-  addButtonLabel: "Add New Contact item",
-  emptyStateMessage: "No Contact found. Create your first Contact by clicking the \"Add New Contact\" button.",
-  noSectionMessage: "Please create a Contact section first before adding Contact.",
-  mainSectionRequiredMessage: "Please enter your main section data before adding Contact.",
-  emptyFieldsMessage: "Please complete all required fields in the main section before adding Contact.",
-  sectionIntegrationTitle: "Contact Section Contact",
-  sectionIntegrationDescription: "Manage your Contact section contact in multiple languages.",
-  addSectionButtonLabel: "Add Contact Section",
-  editSectionButtonLabel: "Edit Contact Section",
-  saveSectionButtonLabel: "Save Contact Section",
-  listTitle: "Contact List",
-  editPath: "contact/addContact"
-}
-
-// Contact table column definitions
-const PROJECTS_COLUMNS = [
-  {
-    header: "Name",
-    accessor: "name",
-    className: "font-medium"
-  },
-  {
-    header: "Description",
-    accessor: "description",
-    cell: TruncatedCell
-  },
-  {
-    header: "Status",
-    accessor: "isActive",
-    cell: (item: any, value: boolean) => (
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center">
-          {StatusCell(item, value)}
-          {item.isMain && (
-            <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-              Main
-            </span>
-          )}
-        </div>
-      </div>
-    )
-  },
-  {
-    header: "Order",
-    accessor: "order"
-  },
-  {
-    header: "Subsections",
-    accessor: "subsections.length",
-    cell: CountBadgeCell
-  }
-]
+import { getContactSectionConfig } from "./ContactSectionConfig"
+import { useTranslation } from "react-i18next"
 
 export default function ContactPage() {
   const searchParams = useSearchParams()
@@ -77,6 +21,69 @@ export default function ContactPage() {
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
   const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
+  const { t, i18n } = useTranslation()
+  const currentLanguage = i18n.language; // 'en', 'ar', 'tr'
+  const contactSectionConfig = getContactSectionConfig(currentLanguage);
+
+  // Memoized configuration for the Contact page with translations
+  const PROJECTS_CONFIG = useMemo(() => ({
+    title: t('contactPage.config.title'),
+    description: t('contactPage.config.description'),
+    addButtonLabel: t('contactPage.config.addButtonLabel'),
+    emptyStateMessage: t('contactPage.config.emptyStateMessage'),
+    noSectionMessage: t('contactPage.config.noSectionMessage'),
+    mainSectionRequiredMessage: t('contactPage.config.mainSectionRequiredMessage'),
+    emptyFieldsMessage: t('contactPage.config.emptyFieldsMessage'),
+    sectionIntegrationTitle: t('contactPage.config.sectionIntegrationTitle'),
+    sectionIntegrationDescription: t('contactPage.config.sectionIntegrationDescription'),
+    addSectionButtonLabel: t('contactPage.config.addSectionButtonLabel'),
+    editSectionButtonLabel: t('contactPage.config.editSectionButtonLabel'),
+    saveSectionButtonLabel: t('contactPage.config.saveSectionButtonLabel'),
+    listTitle: t('contactPage.config.listTitle'),
+    editPath: "contact/addContact"
+  }), [t]);
+
+  // Contact table column definitions with translations
+  const PROJECTS_COLUMNS = useMemo(() => [
+    {
+      header: t('contactPage.table.columns.name'),
+      accessor: "name",
+      className: "font-medium"
+    },
+    {
+      header: t('contactPage.table.columns.description'),
+      accessor: "description", 
+      cell: TruncatedCell
+    },
+    {
+      header: t('contactPage.table.columns.status'),
+      accessor: "isActive",
+      cell: (item: any, value: boolean) => (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center">
+            {StatusCell(item, value, { 
+              active: t('contactPage.table.status.active'), 
+              inactive: t('contactPage.table.status.inactive') 
+            })}
+            {item.isMain && (
+              <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                {t('contactPage.table.status.main')}
+              </span>
+            )}
+          </div>
+        </div>
+      )
+    },
+    {
+      header: t('contactPage.table.columns.order'),
+      accessor: "order"
+    },
+    {
+      header: t('contactPage.table.columns.subsections'),
+      accessor: "subsections.length",
+      cell: CountBadgeCell
+    }
+  ], [t]);
 
   // Check if main subsection exists
   const { useGetMainByWebSiteId, useGetBySectionId } = useSubSections()
@@ -119,8 +126,6 @@ export default function ContactPage() {
 
   // Determine if main subsection exists when data loads & set section data if needed
   useEffect(() => {    
-
-    
     // First check if we are still loading
     if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
       console.log("Still loading subsection data...");
@@ -217,7 +222,8 @@ export default function ContactPage() {
     isLoadingSectionSubsections, 
     sectionId, 
     contactSection, 
-    setSection
+    setSection,
+    contactSectionConfig.name
   ]);
 
   // Handle main subsection creation
@@ -255,28 +261,29 @@ export default function ContactPage() {
   };
 
   // Logic for disabling the add button
-// Logic for disabling the add button
-const isAddButtonDisabled: boolean = 
-  Boolean(defaultAddButtonDisabled) || 
-  isLoadingMainSubSection ||
-  (Boolean(sectionId) && !hasMainSubSection) ||
-  contactItems.length > 0; // Disable if there is at least one contact item
+  const isAddButtonDisabled: boolean = 
+    Boolean(defaultAddButtonDisabled) || 
+    isLoadingMainSubSection ||
+    (Boolean(sectionId) && !hasMainSubSection) ||
+    contactItems.length > 0; // Disable if there is at least one contact item
 
-// Custom message for empty state 
-const emptyStateMessage = !contactSection && !sectionData 
-  ? PROJECTS_CONFIG.noSectionMessage 
-  : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
-    ? PROJECTS_CONFIG.mainSectionRequiredMessage
-    : PROJECTS_CONFIG.emptyStateMessage;
+  // Custom message for empty state with translations
+  const emptyStateMessage = !contactSection && !sectionData 
+    ? PROJECTS_CONFIG.noSectionMessage 
+    : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
+      ? PROJECTS_CONFIG.mainSectionRequiredMessage
+      : PROJECTS_CONFIG.emptyStateMessage;
 
-
-  // Components
+  // Components with translations
   const ContactTable = (
     <GenericTable
       columns={PROJECTS_COLUMNS}
       data={contactItems}
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
+      actionColumnHeader={t('contactPage.actions.edit')}
+      emptyMessage={t('contactPage.messages.noData')}
+      loading={isLoadingContactItems}
     />
   );
 
@@ -286,7 +293,7 @@ const emptyStateMessage = !contactSection && !sectionData
       onOpenChange={setIsCreateDialogOpen}
       sectionId={sectionId || ""}
       onServiceCreated={handleItemCreated}
-      title="Contact"
+      title={t('contactPage.dialogs.create.title')}
     />
   );
 
@@ -297,8 +304,7 @@ const emptyStateMessage = !contactSection && !sectionData
       serviceName={itemToDelete?.name || ""}
       onConfirm={handleDelete}
       isDeleting={isDeleting}
-      title="Delete Contact Item"
-      confirmText="Confirm"
+
     />
   );
 

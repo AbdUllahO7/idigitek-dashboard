@@ -109,7 +109,6 @@ export default function HeaderPage() {
     data: sectionSubsections,
     isLoading: isLoadingSectionSubsections
   } = useGetBySectionId(sectionId || "")
-
   // Use the generic list hook for Header management
   const {
     section: headerSection,
@@ -133,11 +132,14 @@ export default function HeaderPage() {
     apiHooks: useSectionItems(),
     editPath: HEADER_CONFIG.editPath
   })
+  console.log("sectionId" , sectionId)
+  console.log("sectionSubsections", sectionSubsections)
+  console.log("headerSection", headerSection)
+  console.log("mainSubSectionData", mainSubSectionData)
+
 
   // Debug changes in hasMainSubSection
   useEffect(() => {
-
-    
     prevHasMainSubSection.current = hasMainSubSection;
     if (isFirstRender.current) {
       isFirstRender.current = false;

@@ -136,6 +136,7 @@
       "regularUsers": "Normal Kullanıcılar"
     },
     "table": {
+      "actions" : "Eylemler",
       "headers": {
         "name": "Ad",
         "email": "E-posta",
@@ -3362,6 +3363,553 @@
         "backToPartners": "Ortaklara Dön",
         "unsavedChanges": "Kaydedilmemiş değişiklikleriniz var. Ayrılmak istediğinizden emin misiniz?"
       }
+  },
+  "contactPage": {
+      "config": {
+        "title": "İletişim Yönetimi",
+        "description": "İletişim envanterinizi ve çok dilli iletişim içeriğinizi yönetin",
+        "addButtonLabel": "Yeni İletişim Öğesi Ekle",
+        "emptyStateMessage": "İletişim bulunamadı. \"Yeni İletişim Ekle\" düğmesine tıklayarak ilk iletişiminizi oluşturun.",
+        "noSectionMessage": "İletişimler eklemeden önce lütfen bir iletişim bölümü oluşturun.",
+        "mainSectionRequiredMessage": "İletişimler eklemeden önce lütfen ana bölüm verilerinizi girin.",
+        "emptyFieldsMessage": "İletişimler eklemeden önce lütfen ana bölümdeki tüm gerekli alanları doldurun.",
+        "sectionIntegrationTitle": "İletişim Bölümü Yönetimi",
+        "sectionIntegrationDescription": "İletişim bölümü içeriğinizi birden fazla dilde yönetin.",
+        "addSectionButtonLabel": "İletişim Bölümü Ekle",
+        "editSectionButtonLabel": "İletişim Bölümünü Düzenle",
+        "saveSectionButtonLabel": "İletişim Bölümünü Kaydet",
+        "listTitle": "İletişim Listesi",
+        "editPath": "contact/addContact"
+      },
+      "table": {
+        "columns": {
+          "name": "Ad",
+          "description": "Açıklama",
+          "status": "Durum",
+          "order": "Sıra",
+          "subsections": "Alt Bölümler"
+        },
+        "status": {
+          "main": "Ana",
+          "active": "Aktif",
+          "inactive": "Pasif"
+        }
+      },
+      "dialogs": {
+        "create": {
+          "title": "İletişim",
+          "subtitle": "Yeni bir iletişim öğesi oluştur"
+        },
+        "delete": {
+          "title": "İletişim Öğesini Sil",
+          "confirmText": "Onayla",
+          "cancelText": "İptal",
+          "message": "Bu iletişim öğesini silmek istediğinizden emin misiniz?"
+        }
+      },
+      "messages": {
+        "loading": "İletişimler yükleniyor...",
+        "noData": "Kullanılabilir iletişim verisi yok",
+        "createSuccess": "İletişim öğesi başarıyla oluşturuldu",
+        "createError": "İletişim öğesi oluşturulamadı",
+        "deleteSuccess": "İletişim öğesi başarıyla silindi",
+        "deleteError": "İletişim öğesi silinemedi",
+        "updateSuccess": "İletişim öğesi başarıyla güncellendi",
+        "updateError": "İletişim öğesi güncellenemedi"
+      },
+      "actions": {
+        "add": "Ekle",
+        "edit": "Düzenle",
+        "delete": "Sil",
+        "save": "Kaydet",
+        "cancel": "İptal",
+        "confirm": "Onayla",
+        "back": "Geri"
+      }
+  },
+  "addContact": {
+      "page": {
+        "createTitle": "Yeni İletişim Oluştur",
+        "editTitle": "İletişimi Düzenle",
+        "createSubtitle": "Çok dilli içerikle yeni bir iletişim oluşturun",
+        "editSubtitle": "\"{{name}}\" içeriğini birden fazla dilde düzenleme",
+        "defaultContactName": "Yeni İletişim"
+      },
+      "tabs": {
+        "contact": "İletişim Bilgileri",
+        "contactSendMessage": "Mesaj Gönder",
+        "basicInfo": "Temel Bilgiler",
+        "settings": "Ayarlar",
+        "socialMedia": "Sosyal Medya",
+        "location": "Konum ve Adres"
+      },
+      "form": {
+        "loading": "İletişim verileri yükleniyor...",
+        "saving": "İletişim kaydediliyor...",
+        "saveSuccess": "İletişim başarıyla kaydedildi",
+        "saveError": "İletişim kaydedilemedi",
+        "contactInfoDescription": "İletişim bilgilerini birden fazla dilde girin.",
+        "sendMessageDescription": "İletişim formu ve mesajlaşma ayarlarını yapılandırın.",
+        "validation": {
+          "nameRequired": "İletişim adı gereklidir",
+          "descriptionRequired": "İletişim açıklaması gereklidir",
+          "emailRequired": "E-posta adresi gereklidir",
+          "phoneRequired": "Telefon numarası gereklidir",
+          "addressRequired": "Adres gereklidir"
+        }
+      },
+      "navigation": {
+        "backToContact": "İletişime Dön",
+        "unsavedChanges": "Kaydedilmemiş değişiklikleriniz var. Ayrılmak istediğinizden emin misiniz?"
+      },
+      "fields": {
+        "contactTitle": "İletişim Başlığı",
+        "contactDescription": "İletişim Açıklaması",
+        "emailAddress": "E-posta Adresi",
+        "phoneNumber": "Telefon Numarası",
+        "address": "Adres",
+        "city": "Şehir",
+        "state": "Eyalet",
+        "zipCode": "Posta Kodu",
+        "country": "Ülke",
+        "website": "Web Sitesi",
+        "socialMedia": "Sosyal Medya Bağlantıları",
+        "workingHours": "Çalışma Saatleri",
+        "contactForm": "İletişim Formu Ayarları"
+      }
+  },
+  "contactInformationForm": {
+      "deleteManager": {
+        "sectionName": "iletişim bilgileri bölümü",
+        "warning1": "Tüm iletişim bilgileri kaybolacak",
+        "warning2": "Telefon ve e-posta detayları kaldırılacak",
+        "warning3": "Ofis konum verileri silinecek"
+      },
+      "validation": {
+        "error": "Doğrulama Hatası",
+        "fillRequired": "Lütfen tüm gerekli alanları doğru şekilde doldurun"
+      },
+      "subsection": {
+        "name": "İletişim Bilgileri Bölümü"
+      },
+      "success": {
+        "updated": "İletişim bilgileri başarıyla güncellendi!",
+        "created": "İletişim bilgileri başarıyla oluşturuldu!",
+        "saved": "Tüm içerik kaydedildi."
+      },
+      "error": {
+        "updating": "İletişim bilgileri güncellenirken hata",
+        "creating": "İletişim bilgileri oluşturulurken hata",
+        "unknown": "Bilinmeyen hata oluştu"
+      },
+      "loading": {
+        "updating": "İletişim Bilgileri Güncelleniyor",
+        "creating": "İletişim Bilgileri Oluşturuluyor",
+        "saveDescription": "Değişiklikleri kaydederken lütfen bekleyin...",
+        "deleting": "İletişim Bilgileri Siliniyor",
+        "deleteDescription": "İletişim bilgilerini silerken lütfen bekleyin...",
+        "refreshing": "Veriler Yenileniyor",
+        "refreshDescription": "Silme işleminden sonra arayüz güncelleniyor..."
+      },
+      "delete": {
+        "title": "İletişim Bilgilerini Sil",
+        "description": "Bu iletişim bilgileri bölümünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+      },
+      "button": {
+        "delete": "İletişim Bilgilerini Sil",
+        "saving": "Kaydediliyor...",
+        "update": "İletişim Bilgilerini Güncelle",
+        "save": "İletişim Bilgilerini Kaydet"
+      }
+  },
+  "contactInformationFormCard": {
+      "title": "İletişim Bölümü",
+      "description": "{{langCode}} için iletişim içeriğini yönet",
+      "fields": {
+        "title": "Başlık",
+        "description": "Açıklama",
+        "phoneText": "Telefon Metni",
+        "phoneValue": "Telefon Numarası",
+        "emailText": "E-posta Metni",
+        "emailValue": "E-posta Adresi",
+        "officeText": "Ofis Metni",
+        "officeAddress": "Ofis Adresi"
+      },
+      "placeholders": {
+        "title": "Başlık girin",
+        "description": "Açıklama girin",
+        "phoneText": "Telefon metni girin",
+        "phoneValue": "Telefon numarası girin",
+        "emailText": "E-posta metni girin",
+        "emailValue": "E-posta adresi girin",
+        "officeText": "Ofis metni girin",
+        "officeAddress": "Ofis adresi girin"
+      },
+      "sections": {
+        "phone": "Telefon",
+        "email": "E-posta",
+        "office": "Ofis"
+      }
+  },
+  "sendUsaMessageForm": {
+      "deleteManager": {
+        "sectionName": "iletişim formu",
+        "warning1": "Tüm form gönderileri kaybolacak",
+        "warning2": "E-posta bildirim ayarları kaldırılacak"
+      },
+      "validation": {
+        "error": "Doğrulama Hatası",
+        "fillRequired": "Lütfen tüm gerekli alanları doğru şekilde doldurun"
+      },
+      "subsection": {
+        "name": "İletişim Formu"
+      },
+      "success": {
+        "updated": "İletişim formu başarıyla güncellendi!",
+        "created": "İletişim formu başarıyla oluşturuldu!",
+        "saved": "Tüm içerik kaydedildi."
+      },
+      "error": {
+        "updating": "İletişim formu güncellenirken hata",
+        "creating": "İletişim formu oluşturulurken hata",
+        "unknown": "Bilinmeyen hata oluştu"
+      },
+      "loading": {
+        "data": "İletişim formu verileri yükleniyor...",
+        "updating": "İletişim Formu Güncelleniyor",
+        "creating": "İletişim Formu Oluşturuluyor",
+        "saveDescription": "Değişiklikleri kaydederken lütfen bekleyin...",
+        "deleting": "İletişim Formu Siliniyor",
+        "deleteDescription": "İletişim formunu silerken lütfen bekleyin...",
+        "refreshing": "Veriler Yenileniyor",
+        "refreshDescription": "Silme işleminden sonra arayüz güncelleniyor..."
+      },
+      "delete": {
+        "success": {
+          "title": "İletişim formu başarıyla silindi!",
+          "withElements": "Alt bölüm ve {{count}} içerik öğesi silindi.",
+          "simple": "İletişim formu kaldırıldı."
+        },
+        "error": {
+          "title": "İletişim formu silinemedi",
+          "unknown": "Bilinmeyen hata oluştu"
+        },
+        "dialog": {
+          "title": "İletişim Formunu Sil",
+          "description": "Bu iletişim formunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+        }
+      },
+      "button": {
+        "delete": "İletişim Formunu Sil",
+        "saving": "Kaydediliyor...",
+        "update": "İletişim Formunu Güncelle",
+        "save": "İletişim Formunu Kaydet"
+      }
+  },
+  "sendUsaMessageFormCard": {
+      "title": "İletişim Formu",
+      "description": "{{langCode}} için iletişim formu içeriğini yönet",
+      "sections": {
+        "formFields": "Form Alanları"
+      },
+      "fields": {
+        "title": "Başlık",
+        "fullname": "Ad Soyad Metni",
+        "fullnamePlaceholder": "Ad Soyad Yer Tutucusu",
+        "email": "E-posta Metni",
+        "emailPlaceholder": "E-posta Yer Tutucusu",
+        "message": "Mesaj Metni",
+        "messagePlaceholder": "Mesaj Yer Tutucusu",
+        "subjectTitle": "Konu Başlığı",
+        "subjects": "Konular",
+        "buttonText": "Buton Metni"
+      },
+      "placeholders": {
+        "title": "Form başlığını girin",
+        "fullname": "Ad soyad etiketini girin",
+        "fullnamePlaceholder": "Ad soyad yer tutucusunu girin",
+        "email": "E-posta etiketini girin",
+        "emailPlaceholder": "E-posta yer tutucusunu girin",
+        "message": "Mesaj etiketini girin",
+        "messagePlaceholder": "Mesaj yer tutucusunu girin",
+        "subjectTitle": "Konu Başlığını Girin",
+        "subject": "Konu {{index}} girin",
+        "buttonText": "Buton metnini girin"
+      },
+      "buttons": {
+        "addSubject": "Konu Ekle"
+      }
+  },
+  "footerPage": {
+      "config": {
+        "title": "Alt Bilgi Yönetimi",
+        "description": "Alt bilgi envanterinizi ve çok dilli alt bilgi içeriğinizi yönetin",
+        "addButtonLabel": "Yeni Alt Bilgi Ekle",
+        "emptyStateMessage": "Alt bilgi bulunamadı. \"Yeni Alt Bilgi Ekle\" düğmesine tıklayarak ilk alt bilginizi oluşturun.",
+        "noSectionMessage": "Alt bilgi eklemeden önce lütfen bir alt bilgi bölümü oluşturun.",
+        "mainSectionRequiredMessage": "Alt bilgi eklemeden önce lütfen ana bölüm verilerinizi girin.",
+        "emptyFieldsMessage": "Alt bilgi eklemeden önce lütfen ana bölümdeki tüm gerekli alanları doldurun.",
+        "sectionIntegrationTitle": "Alt Bilgi Bölümü Yönetimi",
+        "sectionIntegrationDescription": "Alt bilgi bölümü içeriğinizi birden fazla dilde yönetin.",
+        "addSectionButtonLabel": "Alt Bilgi Bölümü Ekle",
+        "editSectionButtonLabel": "Alt Bilgi Bölümünü Düzenle",
+        "saveSectionButtonLabel": "Alt Bilgi Bölümünü Kaydet",
+        "listTitle": "Alt Bilgi Listesi"
+      },
+      "table": {
+        "columns": {
+          "name": "Ad",
+          "description": "Açıklama",
+          "status": "Durum",
+          "order": "Sıra",
+          "subsections": "Alt Bölümler"
+        },
+        "status": {
+          "main": "Ana",
+          "active": "Aktif",
+          "inactive": "Pasif"
+        }
+      },
+      "dialogs": {
+        "create": {
+          "title": "Alt Bilgi",
+          "subtitle": "Yeni bir alt bilgi öğesi oluştur"
+        },
+        "delete": {
+          "title": "Alt Bilgi Öğesini Sil",
+          "confirmText": "Onayla",
+          "cancelText": "İptal",
+          "message": "Bu alt bilgi öğesini silmek istediğinizden emin misiniz?"
+        }
+      },
+      "messages": {
+        "loading": "Alt bilgi yükleniyor...",
+        "noData": "Kullanılabilir alt bilgi verisi yok",
+        "createSuccess": "Alt bilgi öğesi başarıyla oluşturuldu",
+        "createError": "Alt bilgi öğesi oluşturulamadı",
+        "deleteSuccess": "Alt bilgi öğesi başarıyla silindi",
+        "deleteError": "Alt bilgi öğesi silinemedi",
+        "updateSuccess": "Alt bilgi öğesi başarıyla güncellendi",
+        "updateError": "Alt bilgi öğesi güncellenemedi"
+      },
+      "actions": {
+        "add": "Ekle",
+        "edit": "Düzenle",
+        "delete": "Sil",
+        "save": "Kaydet",
+        "cancel": "İptal",
+        "confirm": "Onayla",
+        "back": "Geri"
+      }
+  },
+  "addFooter": {
+      "title": {
+        "create": "Yeni Alt Bilgi Oluştur",
+        "edit": "Alt Bilgiyi Düzenle"
+      },
+      "subtitle": {
+        "create": "Çok dilli içerikle yeni bir alt bilgi oluşturun",
+        "edit": "\"{{name}}\" içeriğini birden fazla dilde düzenleme"
+      },
+      "tabs": {
+        "footer": "Alt Bilgi",
+        "specialLinks": "Özel Bağlantılar"
+      },
+      "form": {
+        "defaultName": "Yeni Alt Bilgi",
+        "saveButton": "Alt Bilgiyi Kaydet",
+        "cancelButton": "İptal",
+        "loading": "Yükleniyor...",
+        "saving": "Kaydediliyor..."
+      },
+      "navigation": {
+        "backToList": "Alt Bilgi Listesine Dön"
+      },
+      "messages": {
+        "saveSuccess": "Alt bilgi başarıyla kaydedildi",
+        "saveError": "Alt bilgi kaydedilemedi",
+        "loadError": "Alt bilgi verileri yüklenemedi"
+      }
+  },
+  "footerForm": {
+      "card": {
+        "title": "Alt Bilgi Bölümü {{index}}",
+        "description": "Alt Bilgi Açıklaması",
+        "socialLinks": {
+          "title": "Sosyal Bağlantılar",
+          "appliesToAll": "Tüm dillere uygulanır",
+          "collapse": "Daralt",
+          "expand": "Genişlet",
+          "linkTitle": "Sosyal Bağlantı {{index}}",
+          "urlLabel": "Sosyal Bağlantı URL'si",
+          "urlPlaceholder": "https://example.com",
+          "imageLabel": "Sosyal Bağlantı Resmi",
+          "imageHelper": "Bu resim tüm dillerde kullanılacaktır",
+          "emptyState": {
+            "title": "Henüz sosyal bağlantı eklenmedi",
+            "description": "Başlamak için \"Sosyal Bağlantı Ekle\"ye tıklayın"
+          },
+          "addButton": "Sosyal Bağlantı Ekle"
+        },
+        "descriptionPlaceholder": "Alt bilgi açıklamasını girin"
+      },
+      "languageCard": {
+        "title": "Alt Bilgi Bölümü",
+        "description": "{{language}} için alt bilgi içeriğini yönet"
+      },
+      "form": {
+        "loading": "Alt bilgi bölümü verileri yükleniyor...",
+        "saving": {
+          "updating": "Alt Bilgi Güncelleniyor",
+          "creating": "Alt Bilgi Oluşturuluyor",
+          "description": "Değişikliklerinizi kaydederken lütfen bekleyin..."
+        },
+        "validation": {
+          "countMismatch": "Her dilin aynı sayıda alt bilgiye sahip olması gerekir"
+        },
+        "buttons": {
+          "saving": "Kaydediliyor...",
+          "update": "Alt Bilgiyi Güncelle",
+          "save": "Alt Bilgiyi Kaydet"
+        }
+      },
+      "delete": {
+        "title": "Alt Bilgiyi Sil",
+        "confirmText": "Alt Bilgiyi Sil",
+        "cannotRemove": "Kaldırılamıyor",
+        "needAtLeast": "En az bir alt bilgiye ihtiyacınız var"
+      },
+      "toast": {
+        "footerAdded": "Alt bilgi eklendi",
+        "footerAddedDesc": "Yeni bir alt bilgi eklendi. Lütfen detayları doldurun ve değişikliklerinizi kaydedin.",
+        "footerRemoved": "Alt bilgi kaldırıldı",
+        "footerRemovedDesc": "Alt bilgi başarıyla kaldırıldı.",
+        "footerDeleted": "Alt bilgi silindi",
+        "footerDeletedDesc": "Alt bilgi {{index}} veritabanından silindi",
+        "saveSuccess": "Alt bilgi bölümü başarıyla kaydedildi!",
+        "saveSuccessDesc": "Tüm içerik kaydedildi.",
+        "updateSuccess": "Alt bilgi bölümü başarıyla güncellendi!",
+        "saveError": "Alt bilgi bölümü kaydedilirken hata",
+        "updateError": "Alt bilgi bölümü güncellenirken hata",
+        "loadError": "Veri yükleme hatası",
+        "loadErrorDesc": "Alt bilgi verileri yüklenemedi. Lütfen tekrar deneyin.",
+        "validationError": "Doğrulama Hatası",
+        "validationErrorDesc": "Lütfen tüm gerekli alanları doğru şekilde doldurun.",
+        "validationCountError": "Tüm dillerin aynı sayıda alt bilgiye sahip olması gerekir.",
+        "imageUploadError": "Resim Yükleme Hatası",
+        "imageUploadErrorDesc": "Alt Bilgi {{footerIndex}}'nin {{linkIndex}} Sosyal Bağlantısı için resim yüklenemedi.",
+        "removeError": "Hata",
+        "removeErrorDesc": "Alt bilgi kaldırılırken bir hata oluştu.",
+        "reloadWarning": "Uyarı",
+        "reloadWarningDesc": "Kaydetme sonrası veri yeniden yüklenemedi."
+      }
+  },
+  "specialLinks": {
+    "languageCard": {
+      "title": "Alt Bilgi Bölümü",
+      "description": "{{langCode}} için alt bilgi içeriğini yönetin",
+      "buttons": {
+        "addFooter": "Alt Bilgi Ekle"
+      }
+    },
+    "card": {
+      "title": "Alt Bilgi Bölümü {{number}}",
+      "translationMode": "Çeviri Modu",
+      "socialLinksCount": "{{count}} sosyal bağlantı",
+      "footerTitle": {
+        "label": "Alt Bilgi Başlığı",
+        "translate": "(Çevir)",
+        "placeholder": "Alt bilgi başlığını girin"
+      },
+      "socialLinks": {
+        "title": "Sosyal Bağlantılar",
+        "translateNames": "Adları Çevir",
+        "primaryControl": "Birincil Kontrol",
+        "titleWithNumber": "Sosyal Bağlantı {{number}}",
+        "buttons": {
+          "collapse": "Daralt",
+          "expand": "Genişlet",
+          "add": "Sosyal Bağlantı Ekle"
+        },
+        "noLinks": "Henüz sosyal bağlantı eklenmedi",
+        "linkName": {
+          "label": "Bağlantı Adı",
+          "translate": "(Bunu çevir)",
+          "placeholder": "Bağlantı adını girin"
+        },
+        "url": {
+          "label": "Sosyal Bağlantı URL'si",
+          "placeholder": "https://example.com"
+        }
+      },
+      "imageManagement": {
+        "title": "Görsel Yönetimi",
+        "description": "Görseller birincil dilden yönetilir ve tüm diller arasında paylaşılır"
+      }
+    },
+    "form": {
+      "loading": "Alt bilgi bölümü verileri yükleniyor...",
+      "saving": {
+        "updating": "Alt Bilgiler Güncelleniyor",
+        "creating": "Alt Bilgiler Oluşturuluyor",
+        "description": "Değişikliklerinizi kaydederken lütfen bekleyin..."
+      },
+      "validation": {
+        "countMismatch": "Her dilin aynı sayıda alt bilgiye sahip olması gerekir",
+        "errorTitle": "Doğrulama Hatası",
+        "errorDescription": "Tüm dillerin aynı sayıda alt bilgiye sahip olması gerekir.",
+        "fieldsError": "Lütfen tüm gerekli alanları doğru şekilde doldurun."
+      },
+      "buttons": {
+        "saving": "Kaydediliyor...",
+        "update": "Alt Bilgileri Güncelle",
+        "save": "Alt Bilgileri Kaydet"
+      },
+      "toasts": {
+        "cannotRemove": {
+          "title": "Kaldırılamıyor",
+          "description": "En az bir alt bilginiz olması gerekir"
+        },
+        "footerDeleted": {
+          "title": "Alt bilgi silindi",
+          "description": "Alt bilgi {{number}} veritabanından silindi"
+        },
+        "footerRemoved": {
+          "title": "Alt bilgi kaldırıldı",
+          "description": "Alt bilgi başarıyla kaldırıldı."
+        },
+        "errorRemoving": {
+          "title": "Hata",
+          "description": "Alt bilgi kaldırılırken bir hata oluştu."
+        },
+        "footerAdded": {
+          "title": "Alt bilgi eklendi",
+          "description": "Yeni bir alt bilgi eklendi. Lütfen detayları doldurun ve değişikliklerinizi kaydedin."
+        },
+        "errorLoading": {
+          "title": "Veri yükleme hatası",
+          "description": "Alt bilgi verileri yüklenemedi. Lütfen tekrar deneyin."
+        },
+        "success": {
+          "updated": "Alt bilgi bölümü başarıyla güncellendi!",
+          "created": "Alt bilgi bölümü başarıyla oluşturuldu!",
+          "allContentSaved": "Tüm içerik kaydedildi."
+        },
+        "errorSaving": {
+          "updated": "Alt bilgi bölümü güncellenirken hata oluştu",
+          "created": "Alt bilgi bölümü oluşturulurken hata oluştu",
+          "unknown": "Bilinmeyen bir hata oluştu"
+        },
+        "warningReload": {
+          "title": "Uyarı",
+          "description": "Kaydetme sonrası veri yeniden yüklenemedi."
+        }
+      },
+      "deleteDialog": {
+        "title": "Alt Bilgiyi Sil",
+        "confirm": "Alt Bilgiyi Sil"
+      }
+    }
   },
   "common": {
     "welcome": "Hoş geldiniz",

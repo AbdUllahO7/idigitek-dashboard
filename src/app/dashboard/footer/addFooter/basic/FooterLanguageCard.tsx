@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { FooterCard } from "./FooterCard";
+import { useTranslation } from "react-i18next";
 
 interface LanguageCardProps {
   langCode: string;
@@ -26,18 +27,23 @@ export const FooterLanguageCard = memo(({
   FooterImageUploader,
   SocialLinkImageUploader,
 }: LanguageCardProps) => {
+  const { t } = useTranslation();
   const footer = form.watch(langCode) || [];
 
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center">
-          <span className="uppercase font-bold text-sm bg-primary text-primary-foreground rounded-md px-2 py-1 mr-2">
+          <span className="uppercase font-bold text-sm bg-primary text-primary-foreground rounded-md px-2 py-1  ml-2 mr-2">
             {langCode}
           </span>
-          Footer Section
+          {t('footerForm.languageCard.title', 'Footer Section')}
         </CardTitle>
-        <CardDescription>Manage footer content for {langCode.toUpperCase()}</CardDescription>
+        <CardDescription>
+          {t('footerForm.languageCard.description', 'Manage footer content for {{language}}', { 
+            language: langCode.toUpperCase() 
+          })}
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {footer.map((_: any, index: number) => (
@@ -52,8 +58,6 @@ export const FooterLanguageCard = memo(({
             SocialLinkImageUploader={SocialLinkImageUploader}
           />
         ))}
-
-       
       </CardContent>
     </Card>
   );

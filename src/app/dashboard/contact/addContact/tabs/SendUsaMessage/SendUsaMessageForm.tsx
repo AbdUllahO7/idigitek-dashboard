@@ -24,8 +24,7 @@ import { SendUsaMessageFormLanguageCard } from "./SendUsaMessageFormLanguageCard
 import apiClient from '@/src/lib/api-client';
 import { useSubsectionDeleteManager } from "@/src/hooks/DeleteSubSections/useSubsectionDeleteManager";
 import { DeleteConfirmationDialog } from "@/src/components/DeleteConfirmationDialog";
-
-
+import { useTranslation } from "react-i18next";
 
 const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
   const {
@@ -38,6 +37,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
   } = props;
 
   const { websiteId } = useWebsiteContext();
+  const { t } = useTranslation();
 
   // Setup form with schema validation
   const formSchema = createContactSendMessageSchema(languageIds, activeLanguages);
@@ -117,18 +117,18 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
       
       // Show success message with details
       toast({
-        title: "Contact form deleted successfully!",
+        title: t('sendUsaMessageForm.delete.success.title', 'Contact form deleted successfully!'),
         description: data.deletedElements 
-          ? `Deleted subsection and ${data.deletedElements} content elements.`
-          : "The contact form has been removed.",
+          ? t('sendUsaMessageForm.delete.success.withElements', 'Deleted subsection and {{count}} content elements.', { count: data.deletedElements })
+          : t('sendUsaMessageForm.delete.success.simple', 'The contact form has been removed.'),
       });
     },
     onError: (error) => {
       console.error("Delete mutation failed:", error);
       toast({
-        title: "Failed to delete contact form",
+        title: t('sendUsaMessageForm.delete.error.title', 'Failed to delete contact form'),
         variant: "destructive",
-        description: error instanceof Error ? error.message : "Unknown error occurred",
+        description: error instanceof Error ? error.message : t('sendUsaMessageForm.delete.error.unknown', 'Unknown error occurred'),
       });
     },
   });
@@ -287,11 +287,11 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
     subsectionId: existingSubSectionId,
     websiteId,
     slug,
-    sectionName: "contact form",
+    sectionName: t('sendUsaMessageForm.deleteManager.sectionName', 'contact form'),
     contentElements,
     customWarnings: [
-      "All form submissions will be lost",
-      "Email notification settings will be removed"
+      t('sendUsaMessageForm.deleteManager.warning1', 'All form submissions will be lost'),
+      t('sendUsaMessageForm.deleteManager.warning2', 'Email notification settings will be removed')
     ],
     shouldRefetch: !!slug,
     refetchFn: refetch,
@@ -344,8 +344,8 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
     const isValid = await form.trigger();
     if (!isValid) {
       toast({
-        title: "Validation Error",
-        description: "Please fill all required fields correctly",
+        title: t('sendUsaMessageForm.validation.error', 'Validation Error'),
+        description: t('sendUsaMessageForm.validation.fillRequired', 'Please fill all required fields correctly'),
         variant: "destructive",
       });
       return false;
@@ -363,7 +363,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
         }
 
         const subsectionData = {
-          name: "Contact Form",
+          name: t('sendUsaMessageForm.subsection.name', 'Contact Form'),
           slug: slug || `contact-form-${Date.now()}`,
           description: "",
           isActive: true,
@@ -533,8 +533,10 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
       }
 
       toast({
-        title: existingSubSectionId ? "Contact form updated successfully!" : "Contact form created successfully!",
-        description: "All content has been saved.",
+        title: existingSubSectionId 
+          ? t('sendUsaMessageForm.success.updated', 'Contact form updated successfully!')
+          : t('sendUsaMessageForm.success.created', 'Contact form created successfully!'),
+        description: t('sendUsaMessageForm.success.saved', 'All content has been saved.'),
       });
 
       updateState({ hasUnsavedChanges: false });
@@ -551,9 +553,11 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
     } catch (error) {
       console.error("Operation failed:", error);
       toast({
-        title: existingSubSectionId ? "Error updating contact form" : "Error creating contact form",
+        title: existingSubSectionId 
+          ? t('sendUsaMessageForm.error.updating', 'Error updating contact form')
+          : t('sendUsaMessageForm.error.creating', 'Error creating contact form'),
         variant: "destructive",
-        description: error instanceof Error ? error.message : "Unknown error occurred",
+        description: error instanceof Error ? error.message : t('sendUsaMessageForm.error.unknown', 'Unknown error occurred'),
       });
       return false;
     } finally {
@@ -565,6 +569,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
     ParentSectionId,
     slug,
     toast,
+    t,
     bulkUpsertTranslations,
     contentElements,
     createContentElement,
@@ -602,7 +607,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2 text-muted-foreground">Loading contact form data...</p>
+        <p className="ml-2 text-muted-foreground">{t('sendUsaMessageForm.loading.data', 'Loading contact form data...')}</p>
       </div>
     );
   }
@@ -611,27 +616,30 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
     <div className="space-y-6">
       <LoadingDialog
         isOpen={isSaving}
-        title={existingSubSectionId ? "Updating Contact Form" : "Creating Contact Form"}
-        description="Please wait while we save your changes..."
+        title={existingSubSectionId 
+          ? t('sendUsaMessageForm.loading.updating', 'Updating Contact Form')
+          : t('sendUsaMessageForm.loading.creating', 'Creating Contact Form')
+        }
+        description={t('sendUsaMessageForm.loading.saveDescription', 'Please wait while we save your changes...')}
       />
 
       <LoadingDialog
         isOpen={deleteSubSection.isPending}
-        title="Deleting Contact Form"
-        description="Please wait while we delete the contact form..."
+        title={t('sendUsaMessageForm.loading.deleting', 'Deleting Contact Form')}
+        description={t('sendUsaMessageForm.loading.deleteDescription', 'Please wait while we delete the contact form...')}
       />
 
       <LoadingDialog
         isOpen={isRefreshingAfterDelete}
-        title="Refreshing Data"
-        description="Updating the interface after deletion..."
+        title={t('sendUsaMessageForm.loading.refreshing', 'Refreshing Data')}
+        description={t('sendUsaMessageForm.loading.refreshDescription', 'Updating the interface after deletion...')}
       />
 
       {/* Delete Confirmation Dialog */}
         {/* <DeleteConfirmationDialog
         {...deleteManager.confirmationDialogProps}
-        title="Delete Contact Form"
-        description="Are you sure you want to delete this contact form? This action cannot be undone."
+        title={t('sendUsaMessageForm.delete.dialog.title', 'Delete Contact Form')}
+        description={t('sendUsaMessageForm.delete.dialog.description', 'Are you sure you want to delete this contact form? This action cannot be undone.')}
       /> */}
 
       <Form {...form}>
@@ -661,7 +669,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
             className="flex items-center"
           >
             <Trash2 className="mr-2 h-4 w-4" />
-            Delete Contact Form
+            {t('sendUsaMessageForm.button.delete', 'Delete Contact Form')}
           </Button>
         )} */}
 
@@ -676,12 +684,15 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
             {isSaving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
+                {t('sendUsaMessageForm.button.saving', 'Saving...')}
               </>
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                {existingSubSectionId ? "Update Contact Form" : "Save Contact Form"}
+                {existingSubSectionId 
+                  ? t('sendUsaMessageForm.button.update', 'Update Contact Form')
+                  : t('sendUsaMessageForm.button.save', 'Save Contact Form')
+                }
               </>
             )}
           </Button>
