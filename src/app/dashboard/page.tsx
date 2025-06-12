@@ -12,8 +12,6 @@ import {
   UserCircle,
   BarChart3,
   TrendingUp,
-  Sparkles,
-  Settings,
   Users,
   Zap,
   LayoutDashboard,
@@ -218,14 +216,29 @@ export default function DashboardPage() {
                 <div className="rounded-xl bg-yellow-100 dark:bg-yellow-900/50 p-3 text-yellow-600 dark:text-yellow-300 shadow-lg">
                   <AlertTriangle className="h-6 w-6" />
                 </div>
-                <div>
-                  <p className="font-semibold text-lg">
-                    {t('Dashboard.noWebsiteSelected.title', 'No Website Selected')}
-                  </p>
-                  <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-                    {t('Dashboard.noWebsiteSelected.description', 'Please select a website to view its dashboard data.')}
-                  </p>
+                <div className="flex justify-between items-center w-full">
+                    <div>
+                      <p className="font-semibold text-lg">
+                        {t('Dashboard.noWebsiteSelected.title', 'No Website Selected')}
+                      </p>
+                      <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
+                        {t('Dashboard.noWebsiteSelected.description', 'Please select a website to view its dashboard data.')}
+                      </p>
+                    </div>
+                    <div className="">
+                      <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-300"
+                      onClick={() => {
+                        router.push("dashboard/addWebSiteConfiguration")
+                      }}
+                    >
+                      {t('Dashboard.buttons.createWebsite', 'Create Website')} <ChevronRight className="ml-1 h-3 w-3" />
+                    </Button>
+                    </div>
                 </div>
+              
               </div>
             </CardContent>
           </Card>
@@ -250,7 +263,7 @@ export default function DashboardPage() {
           <>
             {/* Total Sections card */}
             <motion.div variants={itemVariants}>
-              <Card className="overflow-hidden bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 hover:translate-y-[-5px] group">
+              <Card className="overflow-hidden shadow-xl border-2 bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl  border-yellow dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 hover:translate-y-[-5px] group">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     {t('Dashboard.metrics.totalSections', 'Total Sections')}
@@ -294,7 +307,7 @@ export default function DashboardPage() {
 
             {/* Active Sections card */}
             <motion.div variants={itemVariants}>
-              <Card className="overflow-hidden bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 hover:translate-y-[-5px] group">
+              <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 hover:translate-y-[-5px] group">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     {t('Dashboard.metrics.activeSections', 'Active Sections')}
@@ -326,7 +339,7 @@ export default function DashboardPage() {
 
             {/* Total Languages card */}
             <motion.div variants={itemVariants}>
-              <Card className="overflow-hidden bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 hover:translate-y-[-5px] group">
+              <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 hover:translate-y-[-5px] group">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     {t('Dashboard.metrics.totalLanguages', 'Total Languages')}
@@ -357,7 +370,7 @@ export default function DashboardPage() {
 
             {/* Active Languages card */}
             <motion.div variants={itemVariants}>
-              <Card className="overflow-hidden bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 hover:translate-y-[-5px] group">
+              <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 hover:translate-y-[-5px] group">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     {t('Dashboard.metrics.activeLanguages', 'Active Languages')}
@@ -405,7 +418,7 @@ export default function DashboardPage() {
           transition={{ duration: 0.5, delay: 0.2, type: "spring", stiffness: 300, damping: 30 }}
           className="mb-8"
         >
-          <Card className="overflow-hidden bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 group">
+          <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 group">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 border-b border-slate-100 dark:border-slate-800">
               <div>
                 <CardTitle className="text-xl font-bold bg-gradient-to-r from-cyan-600 via-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center">
@@ -512,7 +525,7 @@ export default function DashboardPage() {
         >
           {/* Section Distribution Chart */}
           <motion.div variants={itemVariants}>
-            <Card className="overflow-hidden bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 h-full">
+            <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 h-full">
               <CardHeader className="bg-gradient-to-r from-cyan-50 to-purple-50 dark:from-cyan-950/20 dark:to-purple-950/20 border-b border-slate-100 dark:border-slate-800">
                 <CardTitle className="flex items-center text-lg">
                   <div className="bg-gradient-to-r from-cyan-500 to-purple-600 p-2 rounded-lg shadow-lg mr-3">
@@ -571,7 +584,7 @@ export default function DashboardPage() {
 
           {/* Language Distribution Chart */}
           <motion.div variants={itemVariants}>
-            <Card className="overflow-hidden bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 h-full">
+            <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 h-full">
               <CardHeader className="bg-gradient-to-r from-pink-50 to-orange-50 dark:from-pink-950/20 dark:to-orange-950/20 border-b border-slate-100 dark:border-slate-800">
                 <CardTitle className="flex items-center text-lg">
                   <div className="bg-gradient-to-r from-pink-500 to-orange-600 p-2 rounded-lg shadow-lg mr-3">
@@ -630,7 +643,7 @@ export default function DashboardPage() {
 
           {/* User Role Distribution Chart */}
           <motion.div variants={itemVariants}>
-            <Card className="overflow-hidden bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 h-full">
+            <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 h-full">
               <CardHeader className="bg-gradient-to-r from-purple-50 to-cyan-50 dark:from-purple-950/20 dark:to-cyan-950/20 border-b border-slate-100 dark:border-slate-800">
                 <CardTitle className="flex items-center text-lg">
                   <div className="bg-gradient-to-r from-purple-500 to-cyan-600 p-2 rounded-lg shadow-lg mr-3">
@@ -699,7 +712,7 @@ export default function DashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6, type: "spring", stiffness: 300, damping: 30 }}
         >
-          <Card className="overflow-hidden bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500">
+          <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500">
             <CardHeader className="bg-gradient-to-r from-cyan-50 via-purple-50 to-pink-50 dark:from-cyan-950/20 dark:via-purple-950/20 dark:to-pink-950/20 border-b border-slate-100 dark:border-slate-800">
               <CardTitle className="flex items-center text-lg">
                 <div className="bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 p-2 rounded-lg shadow-lg mr-3">

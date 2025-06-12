@@ -156,7 +156,7 @@ export default function ProfilePage() {
         </TabsList>
         
         {/* Account tab content */}
-        <TabsContent value="account" className="space-y-6">
+        <TabsContent value="account" className="space-y-6 ">
           {loading ? (
             <div className="flex justify-center p-12">
               <ContentLoader />
@@ -164,7 +164,7 @@ export default function ProfilePage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Profile summary sidebar */}
-              <Card className="md:col-span-1 h-fit bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 border-none shadow-md">
+              <Card className="md:col-span-1  h-fit bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 border-none shadow-xl">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center">
                     <div className="h-20 w-20 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-400 dark:to-purple-400 flex items-center justify-center text-white text-2xl font-bold mb-2 mx-auto">
@@ -209,7 +209,7 @@ export default function ProfilePage() {
               </Card>
 
               {/* Editable information */}
-              <Card className="md:col-span-2 shadow-md border-none dark:bg-slate-900" dir={isRTL ? 'rtl' : 'ltr'}>
+              <Card className="md:col-span-2 shadow-xl border-none dark:bg-slate-900" dir={isRTL ? 'rtl' : 'ltr'}>
                 <CardHeader>
                   <CardTitle>{t('ProfilePage.editProfile.title', 'Edit Profile')}</CardTitle>
                   <CardDescription>{t('ProfilePage.editProfile.description', 'Update your personal information')}</CardDescription>

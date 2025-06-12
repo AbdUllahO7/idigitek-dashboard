@@ -89,7 +89,8 @@
       "roles": "roles"
     },
     "buttons": {
-      "manageUsers": "Manage Users"
+      "manageUsers": "Manage Users",
+      "createWebsite" : "Create Website"
     },
     "userRoles": {
       "owner": "Owner",
@@ -987,6 +988,21 @@
         "description": "Colors for dark theme (nighttime/low-light appearance)",
         "icon": "🌙"
       }
+    },
+    "logoExtraction": {
+      "title": "Extract Colors from Logo",
+      "description": "Extract colors from your logo to create a brand-consistent theme",
+      "logoAlt": "Website Logo",
+      "extractButton": "Extract Colors from Logo",
+      "extracting": "Extracting Colors...",
+      "extractedPalette": "Extracted Color Palette",
+      "dominantColors": "Dominant Colors",
+      "applyColors": "Apply Colors",
+      "colorTooltip": "Color: {{color}}",
+      "errors": {
+        "noLogo": "No logo found for selected website",
+        "extractionFailed": "Failed to extract colors from logo. Please try again or check if the logo is accessible."
+    }
     }
   },
   "GenericTable": {
@@ -3311,7 +3327,7 @@
         "deleteErrorDescription": "There was an error removing the FAQ from the database",
         "errorDescription": "Unknown error occurred"
       }
-    },
+  },
   "faqItem": {
       "title": "FAQ {{number}}",
       "questionLabel": "Question",
@@ -3332,12 +3348,13 @@
         "noLinksDescription": "Click \"Add Social Link\" to get started",
         "linkCount": "{{count}} social link(s)"
       }
-    },
+  },
   "faqLanguageCard": {
       "title": "FAQ Section",
       "description": "Manage FAQ content for {{language}}",
       "addFaqButton": "Add FAQ"
-    },
+  },
+
   "common": {
     "welcome": "Welcome",
     "logout": "Log out",

@@ -524,7 +524,7 @@ const WebsiteImageExampleFixed: React.FC = () => {
 
     return (
       <>
-        <div className={`flex w-full justify-between items-center mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={`flex w-full justify-between items-center  mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
             {t('websiteList.title')}
           </h2>

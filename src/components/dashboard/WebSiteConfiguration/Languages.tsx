@@ -357,7 +357,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
 
   if (languagesError)
     return (
-      <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+      <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 p-6">
         <div className="mb-4 bg-red-50 dark:bg-red-900/20 p-3 rounded-full inline-flex">
           <X className="h-8 w-8 text-red-500 dark:text-red-400" />
         </div>
@@ -409,7 +409,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`fixed top-4 z-50 bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-700 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg shadow-md flex items-center gap-2 ${isRTL ? 'left-4 flex-row-reverse' : 'right-4'}`}
+            className={`fixed top-4 z-50 bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-700 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg shadow-xl flex items-center gap-2 ${isRTL ? 'left-4 flex-row-reverse' : 'right-4'}`}
           >
             <Check className="h-5 w-5" />
             <span>{t('languageManagement.changesSaved')}</span>
@@ -417,7 +417,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
         )}
       </AnimatePresence>
 
-      <Card className="overflow-hidden border-slate-200/70 dark:border-slate-800/70 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm">
+      <Card className="overflow-hidden border-slate-200/ shadow-xl dark:border-slate-800/70 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm">
         <CardHeader className="pb-3 border-b border-slate-200 dark:border-slate-800">
           <CardTitle className={`flex items-center gap-2 text-slate-800 dark:text-slate-200 ${isRTL ? 'text-left' : 'text-right'}`}>
             <div className="p-1.5 rounded-md bg-purple-100 dark:bg-purple-900/30">
@@ -571,7 +571,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
         </CardFooter>
       </Card>
 
-      <Card className="overflow-hidden border-slate-200/70 dark:border-slate-800/70 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm">
+      <Card className="overflow-hidden border-slate-200/70 shadow-xl dark:border-slate-800/70 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm">
         <CardHeader className="pb-3 border-b border-slate-200 dark:border-slate-800">
           <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
             <div>
@@ -679,7 +679,7 @@ export function LanguageManagement({ hasWebsite }: ManagementProps) {
                 >
                   {filteredLanguages.map((language: Language) => (
                     <motion.div key={language._id || `lang-${language.languageID}`} variants={itemVariants}>
-                      <Card className="border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow overflow-hidden">
+                      <Card className="border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-shadow overflow-hidden">
                         <CardContent className="p-0">
                           <div
                             className={`h-1.5 w-full ${

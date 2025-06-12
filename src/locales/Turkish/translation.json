@@ -89,7 +89,8 @@
       "roles": "roller"
     },
     "buttons": {
-      "manageUsers": "Kullanıcıları Yönet"
+      "manageUsers": "Kullanıcıları Yönet",
+      "createWebsite" : "Web Sitesi Oluştur"    
     },
     "userRoles": {
       "owner": "Sahip",
@@ -888,12 +889,6 @@
       "purpleCreative": "Mor Yaratıcı",
       "roseElegant": "Gül Zarif"
     },
-    "fontPresets": {
-      "modernSans": "Modern Sans",
-      "classicSerif": "Klasik Serif",
-      "techStack": "Teknoloji Yığını",
-      "editorial": "Editöryal"
-    },
     "colorLabels": {
       "primary": {
         "label": "Ana Marka Rengi",
@@ -978,6 +973,21 @@
         "label": "Karanlık Mod",
         "description": "Karanlık tema için renkler (gece/düşük ışık görünümü)",
         "icon": "🌙"
+      }
+    },
+    "logoExtraction": {
+      "title": "Logodan Renkleri Çıkar",
+      "description": "Marka tutarlı bir tema oluşturmak için logonuzdan renkleri çıkarın",
+      "logoAlt": "Web Sitesi Logosu",
+      "extractButton": "Logodan Renkleri Çıkar",
+      "extracting": "Renkler Çıkarılıyor...",
+      "extractedPalette": "Çıkarılan Renk Paleti",
+      "dominantColors": "Baskın Renkler",
+      "applyColors": "Renkleri Uygula",
+      "colorTooltip": "Renk: {{color}}",
+      "errors": {
+      "noLogo": "Seçili web sitesi için logo bulunamadı",
+      "extractionFailed": "Logodan renkler çıkarılamadı. Lütfen tekrar deneyin veya logonun erişilebilir olup olmadığını kontrol edin."
       }
     }
   },

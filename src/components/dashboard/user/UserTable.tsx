@@ -96,7 +96,7 @@ export function UserTable({
   }
 
   return (
-    <Card className="border-none shadow-lg">
+    <Card className="border-none shadow-xl">
       <CardHeader className="bg-slate-50 dark:bg-slate-900 rounded-t-lg border-b px-6">
         <div className="flex justify-between items-center">
           <div>

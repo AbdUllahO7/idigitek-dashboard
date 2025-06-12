@@ -26,7 +26,7 @@ export function UserStats({ stats, activeTab, setActiveTab }: UserStatsProps) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {Array.from({ length: 5 }).map((_, index) => (
-          <Card key={index} className="bg-white dark:bg-slate-950 shadow-sm">
+          <Card key={index} className="bg-white dark:bg-slate-950 shadow-xl">
             <CardContent className="p-4 flex justify-between items-center">
               <div>
                 <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-2" />
@@ -42,7 +42,7 @@ export function UserStats({ stats, activeTab, setActiveTab }: UserStatsProps) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-      <Card className="bg-white dark:bg-slate-950 shadow-sm hover:shadow-md transition-shadow">
+      <Card className="bg-white dark:bg-slate-950  hover:shadow-md  shadow-xl transition-shadow">
         <CardContent className="p-4 flex justify-between items-center">
           <div>
             <p className="text-sm font-medium text-muted-foreground mb-1">
@@ -58,7 +58,7 @@ export function UserStats({ stats, activeTab, setActiveTab }: UserStatsProps) {
       
       <Card 
         className={cn(
-          "shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+          " hover:shadow-md transition-shadow cursor-pointer  shadow-xl",
           activeTab === "active" ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800" : "bg-white dark:bg-slate-950"
         )} 
         onClick={() => setActiveTab(activeTab === "active" ? "all" : "active")}
@@ -78,7 +78,7 @@ export function UserStats({ stats, activeTab, setActiveTab }: UserStatsProps) {
       
       <Card 
         className={cn(
-          "shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+          "shadow-xl hover:shadow-md transition-shadow cursor-pointer",
           activeTab === "inactive" ? "bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800" : "bg-white dark:bg-slate-950"
         )} 
         onClick={() => setActiveTab(activeTab === "inactive" ? "all" : "inactive")}
@@ -98,7 +98,7 @@ export function UserStats({ stats, activeTab, setActiveTab }: UserStatsProps) {
       
       <Card 
         className={cn(
-          "shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+          "shadow-xl hover:shadow-md transition-shadow cursor-pointer",
           activeTab === "pending" ? "bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800" : "bg-white dark:bg-slate-950"
         )} 
         onClick={() => setActiveTab(activeTab === "pending" ? "all" : "pending")}
@@ -118,7 +118,7 @@ export function UserStats({ stats, activeTab, setActiveTab }: UserStatsProps) {
       
       <Card 
         className={cn(
-          "shadow-sm hover:shadow-md transition-shadow cursor-pointer",
+          "shadow-xl hover:shadow-md transition-shadow cursor-pointer",
           activeTab === "suspended" ? "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800" : "bg-white dark:bg-slate-950"
         )} 
         onClick={() => setActiveTab(activeTab === "suspended" ? "all" : "suspended")}

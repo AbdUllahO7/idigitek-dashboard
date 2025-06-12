@@ -621,18 +621,7 @@ export default function SignIn() {
                         disabled={isLoading || success}
                       >
                         <AnimatePresence mode="wait">
-                          {success ? (
-                            <motion.div
-                              key="success"
-                              initial={{ scale: 0.5, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 1.5, opacity: 0 }}
-                              className="flex items-center"
-                            >
-                              <CheckCircle2 className="mr-2 h-5 w-5" />
-                              {t("login.auth.states.success")}
-                            </motion.div>
-                          ) : isLoading ? (
+                          { isLoading ? (
                             <motion.div
                               key="loading"
                               initial={{ opacity: 0 }}
@@ -682,17 +671,7 @@ export default function SignIn() {
                   </form>
                 </CardContent>
 
-                {/* <CardFooter className="mt-6 flex justify-center p-0">
-                  <motion.div variants={itemVariants} className="text-sm text-slate-500 dark:text-slate-400">
-                    {t("login.auth.noAccount")}{" "}
-                    <Link
-                      href="/sign-up"
-                      className="font-medium text-purple-600 dark:text-purple-400 transition-colors hover:text-purple-500 dark:hover:text-purple-300"
-                    >
-                      {t("login.auth.signUp")}
-                    </Link>
-                  </motion.div>
-                </CardFooter> */}
+               
               </motion.div>
             </div>
           </Card>

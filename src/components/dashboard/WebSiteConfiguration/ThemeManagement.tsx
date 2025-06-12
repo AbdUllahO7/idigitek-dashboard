@@ -10,7 +10,6 @@ import {
   Copy,
   Trash2,
   Check,
-  Eye,
   Settings,
   Sparkles,
   ChevronDown,
@@ -21,6 +20,9 @@ import {
   X,
   Moon,
   Sun,
+  Wand2,
+  RefreshCw,
+  Image,
   AlertCircle,
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
@@ -66,12 +68,16 @@ export function ThemeManagement({ hasWebsite, websites }: ThemeManagementProps) 
   const [isCreatingTheme, setIsCreatingTheme] = useState(false);
   const [editingThemes, setEditingThemes] = useState<Record<string, WebSiteTheme>>({});
   const {t} = useTranslation()
+  const [extractingColors, setExtractingColors] = useState(false);
+  const [extractedPalette, setExtractedPalette] = useState<any>(null);
+  const [extractionError, setExtractionError] = useState("");
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    colors: true,
-    fonts: true,
-  });
-  const [colorMode, setColorMode] = useState<"light" | "dark">("light");
+  logoExtraction: true, 
+  colors: true,
+  fonts: true,
+});
 
+  const [colorMode, setColorMode] = useState<"light" | "dark">("light");
   const {
     useGetByWebsite,
     useGetActiveTheme,
@@ -286,7 +292,48 @@ export function ThemeManagement({ hasWebsite, websites }: ThemeManagementProps) 
       },
     }));
   };
+const handleExtractColorsFromLogo = async () => {
+  const selectedWebsite = websites.find(w => w._id === selectedWebsiteId);
+  
+  if (!selectedWebsite?.logo) {
+    setExtractionError(t('themeManagement.logoExtraction.errors.noLogo'));
+    return;
+  }
 
+  setExtractingColors(true);
+  setExtractionError("");
+
+  try {
+    const palette = await extractColorsFromImage(selectedWebsite.logo);
+    setExtractedPalette(palette);
+    
+    // Apply the extracted colors to the new theme
+    setNewTheme(prev => ({
+      ...prev,
+      colors: {
+        light: palette.light,
+        dark: palette.dark
+      }
+    }));
+  } catch (error) {
+    console.error("Color extraction failed:", error);
+    setExtractionError(t('themeManagement.logoExtraction.errors.extractionFailed'));
+  } finally {
+    setExtractingColors(false);
+  }
+};
+
+const handleApplyExtractedColors = () => {
+  if (extractedPalette) {
+    setNewTheme(prev => ({
+      ...prev,
+      colors: {
+        light: extractedPalette.light,
+        dark: extractedPalette.dark
+      }
+    }));
+  }
+};
   const saveEditingTheme = async (themeId: string) => {
     const editingTheme = editingThemes[themeId];
     if (!editingTheme) return;
@@ -305,6 +352,178 @@ export function ThemeManagement({ hasWebsite, websites }: ThemeManagementProps) 
       console.error("Failed to update theme:", error);
     }
   };
+  const generateColorPalette = (dominantColors: string[]) => {
+  if (!dominantColors.length) return null;
+  
+  const primary = dominantColors[0];
+  const secondary = dominantColors[1] || primary;
+  
+  const [primaryH, primaryS, primaryL] = hexToHsl(primary);
+  const [secondaryH, secondaryS, secondaryL] = hexToHsl(secondary);
+  
+  // Generate a complete color scheme
+  const lightColors = {
+    primary: primary,
+    secondary: secondary,
+    accent: dominantColors[2] || hslToHex(primaryH, primaryS, Math.min(primaryL + 20, 90)),
+    background: "#ffffff",
+    foreground: "#0f172a",
+    card: "#ffffff",
+    cardForeground: "#0f172a",
+    popover: "#ffffff",
+    popoverForeground: "#0f172a",
+    muted: "#f1f5f9",
+    mutedForeground: "#64748b",
+    border: "#e2e8f0",
+    input: "#e2e8f0",
+    ring: primary,
+  };
+  
+  const darkColors = {
+    primary: hslToHex(primaryH, primaryS, Math.max(primaryL - 10, 30)),
+    secondary: hslToHex(secondaryH, secondaryS, Math.max(secondaryL - 10, 30)),
+    accent: hslToHex(primaryH, primaryS, Math.max(primaryL - 5, 35)),
+    background: "#020817",
+    foreground: "#f8fafc",
+    card: "#020817",
+    cardForeground: "#f8fafc",
+    popover: "#020817",
+    popoverForeground: "#f8fafc",
+    muted: "#0f172a",
+    mutedForeground: "#64748b",
+    border: "#1e293b",
+    input: "#1e293b",
+    ring: hslToHex(primaryH, primaryS, Math.max(primaryL - 10, 30)),
+  };
+  
+  return {
+    light: lightColors,
+    dark: darkColors,
+    dominantColors: dominantColors.slice(0, 6)
+  };
+};
+  const analyzeImageColors = (imageData: ImageData) => {
+  const pixels = imageData.data;
+  const colorMap = new Map();
+  
+  // Sample every 4th pixel for performance
+  for (let i = 0; i < pixels.length; i += 16) {
+    const r = pixels[i];
+    const g = pixels[i + 1];
+    const b = pixels[i + 2];
+    const a = pixels[i + 3];
+    
+    // Skip transparent pixels
+    if (a < 128) continue;
+    
+    // Group similar colors (reduce precision)
+    const key = `${Math.floor(r / 8) * 8},${Math.floor(g / 8) * 8},${Math.floor(b / 8) * 8}`;
+    colorMap.set(key, (colorMap.get(key) || 0) + 1);
+  }
+  
+  // Sort by frequency and get dominant colors
+  const sortedColors = Array.from(colorMap.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([color]) => {
+      const [r, g, b] = color.split(',').map(Number);
+      return rgbToHex(r, g, b);
+    });
+  
+  return generateColorPalette(sortedColors);
+  };
+  const rgbToHex = (r: number, g: number, b: number): string => {
+  return "#" + [r, g, b].map(x => {
+    const hex = x.toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  }).join("");
+};
+  const hslToHex = (h: number, s: number, l: number): string => {
+    h /= 360;
+    s /= 100;
+    l /= 100;
+    
+    const hue2rgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+    
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    const r = hue2rgb(p, q, h + 1/3);
+    const g = hue2rgb(p, q, h);
+    const b = hue2rgb(p, q, h - 1/3);
+    
+    return rgbToHex(
+      Math.round(r * 255),
+      Math.round(g * 255),
+      Math.round(b * 255)
+    );
+  };
+  const hexToHsl = (hex: string): [number, number, number] => {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+    
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+    
+    if (max === min) {
+      h = s = 0;
+    } else {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h = h ?? 0; // Ensure 'h' is defined
+      h /= 6;
+    }
+    
+    return [h * 360, s * 100, l * 100];
+  };
+
+  const extractColorsFromImage = (imageUrl: string): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    const img = document.createElement("img");
+    img.crossOrigin = "anonymous";
+    
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      
+      if (!ctx) {
+        reject(new Error("Could not get canvas context"));
+        return;
+      }
+      
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      ctx.drawImage(img, 0, 0);
+      
+      try {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const colors = analyzeImageColors(imageData);
+        resolve(colors);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    
+    img.onerror = () => reject(new Error("Failed to load image"));
+    img.src = imageUrl;
+  });
+  };
+
+
 
   const commonFonts = [
     { name: t('themeManagement.fontFamilies.inter'), value: "Inter, sans-serif" },
@@ -430,7 +649,7 @@ export function ThemeManagement({ hasWebsite, websites }: ThemeManagementProps) 
                                       <div className="flex flex-col items-center cursor-help">
                                         <div
                                           className="w-12 h-12 rounded-lg border-2 border-white shadow-lg"
-                                          style={{ backgroundColor: color }}
+                                          style={{ backgroundColor: color as string }}
                                         />
                                         <span className="text-xs text-slate-600 dark:text-slate-400 mt-1 text-center">
                                           {colorInfo.icon} {colorInfo.label}
@@ -460,9 +679,9 @@ export function ThemeManagement({ hasWebsite, websites }: ThemeManagementProps) 
                         return (
                           <div key={fontType} className="flex items-center gap-3">
                             <span className="text-lg">{fontInfo.icon}</span>
-                            <div style={{ fontFamily: fontConfig.family }}>
+                            <div style={{ fontFamily: (fontConfig as { family: string }).family }}>
                               <span className="font-semibold">{fontInfo.label}:</span>
-                              <span className="ml-2">{fontConfig.family.split(",")[0]}</span>
+                              <span className="ml-2">{(fontConfig as { family: string }).family.split(",")[0]}</span>
                             </div>
                           </div>
                         );
@@ -514,7 +733,190 @@ export function ThemeManagement({ hasWebsite, websites }: ThemeManagementProps) 
                       placeholder={t('themeManagement.createTheme.namePlaceholder')}
                     />
                   </div>
+                  {/* Logo Color Extraction */}
+                    {(() => {
+                      const selectedWebsite = websites.find(w => w._id === selectedWebsiteId);
+                      return selectedWebsite?.logo ? (
+                        <Card className="border-2 border-dashed border-blue-200/50 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+                          <CardHeader>
+                            <div className="flex items-center justify-between">
+                              <button
+                                onClick={() => toggleSection("logoExtraction")}
+                                className="flex items-center gap-2 p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors flex-1"
+                              >
+                                <Wand2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                                <span className="font-medium text-blue-800 dark:text-blue-200">
+                                  {t('themeManagement.logoExtraction.title')}
+                                </span>
+                                {expandedSections.logoExtraction ? (
+                                  <ChevronUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                ) : (
+                                  <ChevronDown className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                                )}
+                              </button>
+                            </div>
+                          </CardHeader>
 
+                          <AnimatePresence>
+                            {expandedSections.logoExtraction && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                              >
+                                <CardContent>
+                                  <div className="space-y-4">
+                                    {/* Logo Preview */}
+                                    <div className="flex items-center gap-4">
+                                      <div className="w-20 h-20 border-2 border-blue-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                                        <img
+                                          src={selectedWebsite.logo}
+                                          alt={t('themeManagement.logoExtraction.logoAlt')}
+                                          className="w-full h-full object-contain"
+                                          onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            target.style.display = 'none';
+                                          }}
+                                        />
+                                      </div>
+                                      <div>
+                                        <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                                          {selectedWebsite.name}
+                                        </h4>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                          {t('themeManagement.logoExtraction.description')}
+                                        </p>
+                                      </div>
+                                    </div>
+
+                                    {/* Extract Button */}
+                                    <Button
+                                      onClick={handleExtractColorsFromLogo}
+                                      disabled={extractingColors}
+                                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                                    >
+                                      {extractingColors ? (
+                                        <>
+                                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                          {t('themeManagement.logoExtraction.extracting')}
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Palette className="h-4 w-4 mr-2" />
+                                          {t('themeManagement.logoExtraction.extractButton')}
+                                        </>
+                                      )}
+                                    </Button>
+
+                                    {/* Error Message */}
+                                    {extractionError && (
+                                      <motion.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg"
+                                      >
+                                        <AlertCircle className="h-4 w-4 text-red-500" />
+                                        <span className="text-sm text-red-700 dark:text-red-300">{extractionError}</span>
+                                      </motion.div>
+                                    )}
+
+                                    {/* Extracted Colors Preview */}
+                                    {extractedPalette && (
+                                      <motion.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        className="space-y-4 p-4 bg-white dark:bg-slate-800 rounded-lg border border-blue-200 dark:border-blue-700 shadow-sm"
+                                      >
+                                        <div className="flex items-center justify-between">
+                                          <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                                            {t('themeManagement.logoExtraction.extractedPalette')}
+                                          </h4>
+                                          <Button
+                                            size="sm"
+                                            onClick={handleApplyExtractedColors}
+                                            variant="outline"
+                                            className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-600 dark:text-blue-300 dark:hover:bg-blue-950/30"
+                                          >
+                                            <Check className="h-3 w-3 mr-1" />
+                                            {t('themeManagement.logoExtraction.applyColors')}
+                                          </Button>
+                                        </div>
+
+                                        {/* Dominant Colors */}
+                                        <div>
+                                          <Label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
+                                            {t('themeManagement.logoExtraction.dominantColors')}
+                                          </Label>
+                                          <div className="flex gap-2 flex-wrap">
+                                            {extractedPalette.dominantColors?.map((color: string, idx: number) => (
+                                              <Tooltip key={idx}>
+                                                <TooltipTrigger asChild>
+                                                  <div className="flex flex-col items-center cursor-help">
+                                                    <div
+                                                      className="w-10 h-10 rounded-lg border-2 border-white shadow-md hover:scale-110 transition-transform"
+                                                      style={{ backgroundColor: color }}
+                                                    />
+                                                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-mono">
+                                                      {color}
+                                                    </span>
+                                                  </div>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                  <p>{t('themeManagement.logoExtraction.colorTooltip', { color })}</p>
+                                                </TooltipContent>
+                                              </Tooltip>
+                                            ))}
+                                          </div>
+                                        </div>
+
+                                        {/* Theme Colors Preview */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                          {(["light", "dark"] as const).map((mode) => (
+                                            <div key={mode}>
+                                              <div className="flex items-center gap-2 mb-2">
+                                                {mode === "light" ? (
+                                                  <Sun className="h-4 w-4 text-yellow-500" />
+                                                ) : (
+                                                  <Moon className="h-4 w-4 text-blue-400" />
+                                                )}
+                                                <Label className="text-xs text-gray-600 dark:text-gray-400 capitalize">
+                                                  {t(`themeManagement.activeTheme.${mode}Mode`)}
+                                                </Label>
+                                              </div>
+                                              <div className="grid grid-cols-4 gap-1">
+                                                {Object.entries(extractedPalette[mode])
+                                                  .slice(0, 8)
+                                                  .map(([key, color]: [string, any]) => {
+                                                    const colorInfo = getColorLabel(key, t);
+                                                    return (
+                                                      <Tooltip key={key}>
+                                                        <TooltipTrigger asChild>
+                                                          <div
+                                                            className="w-8 h-8 rounded border-2 border-white shadow-sm cursor-help hover:scale-110 transition-transform"
+                                                            style={{ backgroundColor: color }}
+                                                            title={colorInfo.label}
+                                                          />
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                          <p>{colorInfo.label}: {color}</p>
+                                                        </TooltipContent>
+                                                      </Tooltip>
+                                                    );
+                                                  })}
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </motion.div>
+                                    )}
+                                  </div>
+                                </CardContent>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </Card>
+                      ) : null;
+                    })()}
                   {/* Preset Selection */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
