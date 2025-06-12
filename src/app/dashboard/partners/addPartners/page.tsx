@@ -1,7 +1,6 @@
-
 "use client"
 import { useSearchParams } from "next/navigation"
-import {  Sparkles } from "lucide-react"
+import { Sparkles } from "lucide-react"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
@@ -9,14 +8,14 @@ import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { FormDataPartners } from "@/src/api/types/sections/partners/partnersSection.type"
 import MultiImageForm from "../../projects/addProject/tabs/MultiImageForm"
-
-
+import { useTranslation } from "react-i18next"
 
 // Form sections to collect data from
-const FORM_SECTIONS = ["" ]
+const FORM_SECTIONS = [""]
 
 export default function AddPartners() {
   const searchParams = useSearchParams()
+  const { t } = useTranslation()
   
   // Get URL parameters
   const sectionId = searchParams.get('sectionId')
@@ -102,14 +101,13 @@ export default function AddPartners() {
       return partialMatch;
     }
     
-      return undefined;
+    return undefined;
   };
   
   // Generate proper slugs for subsections
   const getSlug = (baseSlug: string) => {
     if (isCreateMode) return "";
     
-
     // Find the subsection
     const subsection = findSubsection(baseSlug);
     
@@ -122,11 +120,11 @@ export default function AddPartners() {
     return `${baseSlug.toLowerCase()}-${sectionItemId}`;
   };
   
-  // Define tabs configuration
+  // Define tabs configuration with translations
   const tabs = [
     {
       id: "images",
-      label: "Images",
+      label: t('addPartners.tabs.images'),
       icon: <Sparkles className="h-4 w-4" />,
       component: (
         <MultiImageForm
@@ -146,7 +144,7 @@ export default function AddPartners() {
     const PartnersData = formData.partners || {}
     
     // Get English title and description values or fallback to the first language
-    let serviceName = "New Partners"
+    let serviceName = t('addPartners.page.defaultPartnerName')
     let serviceDescription = ""
     
     // Loop through languages to find title and description
@@ -179,15 +177,29 @@ export default function AddPartners() {
     return servicePayload
   }
   
+  // Generate page title and subtitle with translations
+  const getPageTitle = () => {
+    return isCreateMode 
+      ? t('addPartners.page.createTitle')
+      : t('addPartners.page.editTitle')
+  }
+  
+  const getPageSubtitle = () => {
+    if (isCreateMode) {
+      return t('addPartners.page.createSubtitle')
+    } else {
+      const partnerName = sectionItemData?.data?.name || t('addPartners.page.defaultPartnerName')
+      return t('addPartners.page.editSubtitle', { name: partnerName })
+    }
+  }
+  
   // Loading state
   const isLoading = isLoadingLanguages || (!isCreateMode && (isLoadingSectionItem || isLoadingSubsections))
   
   return (
     <FormShell
-      title={isCreateMode ? "Create New Partners" : "Edit Partners"}
-      subtitle={isCreateMode 
-        ? "Create a new service with multilingual content" 
-        : `Editing "${sectionItemData?.data?.name || 'Partners'}" content across multiple languages`}
+      title={getPageTitle()}
+      subtitle={getPageSubtitle()}
       backUrl={`/dashboard/partners?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}

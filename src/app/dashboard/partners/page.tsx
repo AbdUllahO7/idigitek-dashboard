@@ -11,48 +11,10 @@ import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
-import { partnersSectionConfig } from "./PartnersSectionConfig"
+import { useTranslation } from "react-i18next"
+import { getPartnersSectionConfig } from "./PartnersSectionConfig"
 
 
-
-// Column definitions
-const HEADER_COLUMNS = [
-  {
-    header: "Name",
-    accessor: "name",
-    className: "font-medium"
-  },
-  {
-    header: "Description",
-    accessor: "description",
-    cell: TruncatedCell
-  },
-  {
-    header: "Status",
-    accessor: "isActive",
-    cell: (item: any, value: boolean) => (
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center">
-          {StatusCell(item, value)}
-          {item.isMain && (
-            <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-              Main
-            </span>
-          )}
-        </div>
-      </div>
-    )
-  },
-  {
-    header: "Order",
-    accessor: "order"
-  },
-  {
-    header: "Subsections",
-    accessor: "subsections.length",
-    cell: CountBadgeCell
-  }
-]
 
 export default function PartnersPage() {
   const searchParams = useSearchParams()
@@ -61,23 +23,64 @@ export default function PartnersPage() {
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
   const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
+  const {t , i18n} = useTranslation()
 
-  const HEADER_CONFIG = useMemo (() => ({
-    title: "Partners Management",
-    description: "Manage your Partners inventory and multilingual content",
-      addButtonLabel: "Add New Nav Item",
-    emptyStateMessage: "No Partners found. Create your first Partners by clicking the \"Add New Partners\" button.",
-    noSectionMessage: "Please create a Partners section first before adding Partners.",
-    mainSectionRequiredMessage: "Please enter your main section data before adding Partners.",
-    emptyFieldsMessage: "Please complete all required fields in the main section before adding Partners.",
-    sectionIntegrationTitle: "Partners Section Content",
-    sectionIntegrationDescription: "Manage your Partners section content in multiple languages.",
-    addSectionButtonLabel: "Add Partners Section",
-    editSectionButtonLabel: "Edit Partners Section",
-    saveSectionButtonLabel: "Save Partners Section",
-    listTitle: "Partners List",
+  const HEADER_CONFIG = useMemo(() => ({
+    title: t('partners.management.title'),
+    description: t('partners.management.description'),
+    addButtonLabel: t('partners.management.addButtonLabel'),
+    emptyStateMessage: t('partners.management.emptyStateMessage'),
+    noSectionMessage: t('partners.management.noSectionMessage'),
+    mainSectionRequiredMessage: t('partners.management.mainSectionRequiredMessage'),
+    emptyFieldsMessage: t('partners.management.emptyFieldsMessage'),
+    sectionIntegrationTitle: t('partners.management.sectionIntegrationTitle'),
+    sectionIntegrationDescription: t('partners.management.sectionIntegrationDescription'),
+    addSectionButtonLabel: t('partners.management.addSectionButtonLabel'),
+    editSectionButtonLabel: t('partners.management.editSectionButtonLabel'),
+    saveSectionButtonLabel: t('partners.management.saveSectionButtonLabel'),
+    listTitle: t('partners.management.listTitle'),
     editPath: "partners/addPartners"
-  }), [] );
+  }), [t]);
+
+  const PARTNERS_COLUMNS = [
+    {
+      header: t('newsPage.columnName', 'Name'),
+      accessor: "name",
+      className: "font-medium"
+    },
+    {
+      header: t('newsPage.columnDescription', 'Description'),
+      accessor: "description",
+      cell: TruncatedCell
+    },
+    {
+      header: t('newsPage.columnStatus', 'Status'),
+      accessor: "isActive",
+      cell: (item: any, value: boolean) => (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center">
+            {StatusCell(item, value)}
+            {item.isMain && (
+              <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                {t('newsPage.main', 'Main')}
+              </span>
+            )}
+          </div>
+        </div>
+      )
+    },
+    {
+      header: t('newsPage.columnOrder', 'Order'),
+      accessor: "order"
+    },
+    {
+      header: t('newsPage.columnSubsections', 'Subsections'),
+      accessor: "subsections.length",
+      cell: CountBadgeCell
+    }
+  ]
+    const currentLanguage = i18n.language; // 'en', 'ar', 'tr'
+    const partnersSectionConfig = getPartnersSectionConfig(currentLanguage);
   // Refs to track previous values for debugging
   const prevHasMainSubSection = useRef(hasMainSubSection);
   const isFirstRender = useRef(true);
@@ -257,7 +260,6 @@ export default function PartnersPage() {
     }
   };
 
-  // IMPORTANT: Here's the crux of the button enabling/disabling logic
   // Added check for navItems.length > 0 to disable when there's already a navItem
   const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
@@ -266,7 +268,6 @@ export default function PartnersPage() {
     (navItems.length > 0); // This disables the button if there's already at least one NavItem
 
 
-    console.log("navItems.length", navItems.length)
 
 
   // Custom message for empty state 
@@ -279,7 +280,7 @@ export default function PartnersPage() {
   // Components
   const NavItemsTable = (
     <GenericTable
-      columns={HEADER_COLUMNS}
+      columns={PARTNERS_COLUMNS}
       data={navItems}
       onEdit={handleEdit}
       onDelete={showDeleteDialog}

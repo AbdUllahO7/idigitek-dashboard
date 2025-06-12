@@ -11,7 +11,7 @@ import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
-import { getNewsSectionConfig, newsSectionConfig } from "./NewsSectionConfig"
+import { getNewsSectionConfig } from "./NewsSectionConfig"
 import { useTranslation } from "react-i18next"
 
 export default function NewsPage() {

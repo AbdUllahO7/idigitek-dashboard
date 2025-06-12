@@ -1,5 +1,7 @@
 // src/utils/user-helpers.ts
 import { Shield, User as UserIcon } from "lucide-react";
+import { CountBadgeCell, StatusCell, TruncatedCell } from "../components/dashboard/MainSections/GenericTable";
+import { TFunction } from "i18next";
 
 // Get full name from user object
 export const getFullName = (user: any) => {
@@ -76,3 +78,4 @@ export const mapFormRoleToApiRole = (formRole: string): string => {
   if (role === "owner") return "owner";
   return "user";
 };
+

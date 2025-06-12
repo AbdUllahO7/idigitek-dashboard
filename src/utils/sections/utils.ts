@@ -103,3 +103,4 @@ export const createSectionsDefaultValues = (languageIds: string[], activeLanguag
 
   return defaultValues
 }
+

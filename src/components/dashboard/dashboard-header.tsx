@@ -105,15 +105,15 @@ export default function DashboardHeader({ isSidebarOpen, toggleSidebar }: Dashbo
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
-              {safeTranslate("Dashboard_sideBar.myAccount", "My Account")}
+              {safeTranslate("common.myAccount", "My Account")}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleProfileToggle}>
-              {safeTranslate("Dashboard_sideBar.nav.profile", "Profile")}
+              {safeTranslate("common.profile", "Profile")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
-              {safeTranslate("Dashboard_sideBar.logout", "Log out")}
+              {safeTranslate("common.logout", "Log out")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

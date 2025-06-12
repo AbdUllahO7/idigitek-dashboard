@@ -1073,6 +1073,7 @@
       "statusMain": "Ana",
       "columnOrder": "Sıra",
       "columnSubsections": "Alt Bölümler",
+      "columnActions": "Eylemler",
       "stillLoadingData": "Alt bölüm verileri hala yükleniyor...",
       "expectedSubsectionName": "Beklenen alt bölüm adı",
       "settingSectionData": "Bölüm verileri ayarlanıyor",
@@ -1466,7 +1467,7 @@
     "columnStatus": "Durum",
     "columnOrder": "Sıra",
     "columnSubsections": "Alt Bölümler",
-    
+    "columnActions": "Eylemler",
     "// Status Labels": "",
     "main": "Ana",
     "active": "Aktif",
@@ -3300,6 +3301,67 @@
       "description": "{{language}} için SSS içeriğini yönet",
       "addFaqButton": "SSS Ekle"
 
+  },
+  "partners": {
+      "management": {
+        "title": "Ortak Yönetimi",
+        "description": "Ortak envanterinizi ve çok dilli içeriğinizi yönetin",
+        "addButtonLabel": "Yeni Ortak Ekle",
+        "emptyStateMessage": "Ortak bulunamadı. \"Yeni Ortak Ekle\" düğmesine tıklayarak ilk ortağınızı oluşturun.",
+        "noSectionMessage": "Lütfen ortaklar eklemeden önce bir Ortaklar bölümü oluşturun.",
+        "mainSectionRequiredMessage": "Lütfen ortaklar eklemeden önce ana bölüm verilerinizi girin.",
+        "emptyFieldsMessage": "Lütfen ortaklar eklemeden önce ana bölümdeki tüm gerekli alanları doldurun.",
+        "sectionIntegrationTitle": "Ortaklar Bölümü İçeriği",
+        "sectionIntegrationDescription": "Ortaklar bölümü içeriğinizi birden fazla dilde yönetin.",
+        "addSectionButtonLabel": "Ortaklar Bölümü Ekle",
+        "editSectionButtonLabel": "Ortaklar Bölümünü Düzenle",
+        "saveSectionButtonLabel": "Ortaklar Bölümünü Kaydet",
+        "listTitle": "Ortaklar Listesi",
+        "editPath": "partners/addPartners"
+      },
+      "dialog": {
+        "createTitle": "Ortak Ekle",
+        "editTitle": "Ortak Düzenle",
+        "deleteTitle": "Ortak Sil",
+        "deleteConfirmation": "Bu ortağı silmek istediğinizden emin misiniz?",
+        "confirmText": "Onayla",
+        "cancelText": "İptal"
+      },
+      "table": {
+        "noData": "Kullanılabilir ortak yok",
+        "loading": "Ortaklar yükleniyor..."
+      }
+  },
+  "addPartners": {
+      "page": {
+        "createTitle": "Yeni Ortak Oluştur",
+        "editTitle": "Ortak Düzenle",
+        "createSubtitle": "Çok dilli içerikle yeni bir ortak oluşturun",
+        "editSubtitle": "\"{{name}}\" içeriğini birden fazla dilde düzenleme",
+        "defaultPartnerName": "Yeni Ortak"
+      },
+      "tabs": {
+        "images": "Resimler",
+        "basicInfo": "Temel Bilgiler",
+        "moreInfo": "Ek Bilgiler",
+        "content": "İçerik",
+        "settings": "Ayarlar"
+      },
+      "form": {
+        "loading": "Ortak verileri yükleniyor...",
+        "saving": "Ortak kaydediliyor...",
+        "saveSuccess": "Ortak başarıyla kaydedildi",
+        "saveError": "Ortak kaydedilemedi",
+        "validation": {
+          "nameRequired": "Ortak adı gereklidir",
+          "descriptionRequired": "Ortak açıklaması gereklidir",
+          "imageRequired": "Ortak resmi gereklidir"
+        }
+      },
+      "navigation": {
+        "backToPartners": "Ortaklara Dön",
+        "unsavedChanges": "Kaydedilmemiş değişiklikleriniz var. Ayrılmak istediğinizden emin misiniz?"
+      }
   },
   "common": {
     "welcome": "Hoş geldiniz",

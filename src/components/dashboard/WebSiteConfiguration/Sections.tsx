@@ -615,7 +615,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
             </div>
 
             <TabsContent value="current" className="space-y-6">
-              <div className="bg-white dark:bg-slate-950 rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+              <div className="bg-white dark:bg-slate-950 rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
                   <h3 className="text-xl font-semibold flex items-center gap-2">
                     <LayoutGrid className="h-5 w-5 text-primary" />
@@ -680,7 +680,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                           value={section}
                           className="cursor-move"
                         >
-                          <Card className="border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300 overflow-hidden bg-white dark:bg-slate-900">
+                          <Card className="border shadow-xl border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300 overflow-hidden bg-white dark:bg-slate-900">
                             <div className="p-4 flex items-center gap-4">
                               <div className="text-muted-foreground border border-dashed border-slate-200 dark:border-slate-700 p-1.5 rounded-md cursor-grab">
                                 <GripVertical className="h-5 w-5" />
@@ -859,7 +859,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                     
                     return (
                       <motion.div key={section.nameKey} variants={itemVariants} className="group">
-                        <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 border border-slate-200 dark:border-slate-800 group-hover:border-primary/50">
+                        <Card className="h-full shadow-xl overflow-hidden hover:shadow-xl transition-all duration-300 border border-slate-200 dark:border-slate-800 group-hover:border-primary/50">
                           <div className="relative h-32 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center">
                             <div className="text-primary group-hover:scale-110 transition-transform duration-300">
                               {section.icon}

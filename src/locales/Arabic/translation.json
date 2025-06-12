@@ -1086,6 +1086,7 @@
       "statusMain": "رئيسي",
       "columnOrder": "الترتيب",
       "columnSubsections": "الأقسام الفرعية",
+      "columnActions": "الإجراءات",
       "stillLoadingData": "لا يزال تحميل بيانات القسم الفرعي...",
       "expectedSubsectionName": "اسم القسم الفرعي المتوقع",
       "settingSectionData": "تعيين بيانات القسم",
@@ -1537,7 +1538,7 @@
     "columnStatus": "الحالة",
     "columnOrder": "الترتيب",
     "columnSubsections": "الأقسام الفرعية",
-    
+    "columnActions": "الإجراءات",
     "// Status Labels": "",
     "main": "رئيسي",
     "active": "نشط",
@@ -3362,6 +3363,67 @@
       "title": "قسم الأسئلة الشائعة",
       "description": "إدارة محتوى الأسئلة الشائعة للغة {{language}}",
       "addFaqButton": "إضافة سؤال شائع"
+  },
+  "partners": {
+      "management": {
+        "title": "إدارة الشركاء",
+        "description": "إدارة مخزون الشركاء والمحتوى متعدد اللغات",
+        "addButtonLabel": "إضافة شريك جديد",
+        "emptyStateMessage": "لم يتم العثور على شركاء. قم بإنشاء أول شريك لك بالنقر على زر \"إضافة شريك جديد\".",
+        "noSectionMessage": "يرجى إنشاء قسم الشركاء أولاً قبل إضافة الشركاء.",
+        "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة الشركاء.",
+        "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة الشركاء.",
+        "sectionIntegrationTitle": "محتوى قسم الشركاء",
+        "sectionIntegrationDescription": "إدارة محتوى قسم الشركاء بعدة لغات.",
+        "addSectionButtonLabel": "إضافة قسم الشركاء",
+        "editSectionButtonLabel": "تحرير قسم الشركاء",
+        "saveSectionButtonLabel": "حفظ قسم الشركاء",
+        "listTitle": "قائمة الشركاء",
+        "editPath": "partners/addPartners"
+      },
+      "dialog": {
+        "createTitle": "إضافة شريك",
+        "editTitle": "تحرير شريك",
+        "deleteTitle": "حذف شريك",
+        "deleteConfirmation": "هل أنت متأكد من رغبتك في حذف هذا الشريك؟",
+        "confirmText": "تأكيد",
+        "cancelText": "إلغاء"
+      },
+      "table": {
+        "noData": "لا توجد شركاء متاحون",
+        "loading": "جاري تحميل الشركاء..."
+      }
+  },
+  "addPartners": {
+      "page": {
+        "createTitle": "إنشاء شريك جديد",
+        "editTitle": "تحرير شريك",
+        "createSubtitle": "إنشاء شريك جديد بمحتوى متعدد اللغات",
+        "editSubtitle": "تحرير محتوى \"{{name}}\" عبر لغات متعددة",
+        "defaultPartnerName": "شريك جديد"
+      },
+      "tabs": {
+        "images": "الصور",
+        "basicInfo": "المعلومات الأساسية",
+        "moreInfo": "معلومات إضافية",
+        "content": "المحتوى",
+        "settings": "الإعدادات"
+      },
+      "form": {
+        "loading": "جاري تحميل بيانات الشريك...",
+        "saving": "جاري حفظ الشريك...",
+        "saveSuccess": "تم حفظ الشريك بنجاح",
+        "saveError": "فشل في حفظ الشريك",
+        "validation": {
+          "nameRequired": "اسم الشريك مطلوب",
+          "descriptionRequired": "وصف الشريك مطلوب",
+          "imageRequired": "صورة الشريك مطلوبة"
+        }
+      },
+      "navigation": {
+        "backToPartners": "العودة إلى الشركاء",
+        "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد من رغبتك في المغادرة؟"
+      }
   },
   "common": {
     "welcome": "مرحبا",

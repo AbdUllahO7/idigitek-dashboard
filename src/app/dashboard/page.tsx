@@ -422,7 +422,7 @@ export default function DashboardPage() {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 border-b border-slate-100 dark:border-slate-800">
               <div>
                 <CardTitle className="text-xl font-bold bg-gradient-to-r from-cyan-600 via-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center">
-                  <Users className="h-5 w-5 mr-2 text-purple-500" />
+                  <Users className="h-5 w-5 mr-2 ml-2 text-purple-500" />
                   {t('Dashboard.metrics.websiteUsers', 'Website Users')}
                 </CardTitle>
                 <CardDescription>
@@ -528,10 +528,10 @@ export default function DashboardPage() {
             <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 h-full">
               <CardHeader className="bg-gradient-to-r from-cyan-50 to-purple-50 dark:from-cyan-950/20 dark:to-purple-950/20 border-b border-slate-100 dark:border-slate-800">
                 <CardTitle className="flex items-center text-lg">
-                  <div className="bg-gradient-to-r from-cyan-500 to-purple-600 p-2 rounded-lg shadow-lg mr-3">
-                    <Layers className="h-5 w-5 text-white" />
+                  <div className="bg-gradient-to-r from-cyan-500 to-purple-600 p-2 rounded-lg shadow-lg ">
+                    <Layers className="h-5 w-5  text-white" />
                   </div>
-                  <span className="bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r mr-2 ml-2  from-cyan-600 to-purple-600 bg-clip-text text-transparent">
                     {t('Dashboard.charts.sectionDistribution', 'Section Distribution')}
                   </span>
                 </CardTitle>
@@ -556,7 +556,6 @@ export default function DashboardPage() {
                         outerRadius={90}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) => ` ${(percent * 100).toFixed(0)}%`}
                       >
                         {sectionChartData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -587,10 +586,10 @@ export default function DashboardPage() {
             <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 h-full">
               <CardHeader className="bg-gradient-to-r from-pink-50 to-orange-50 dark:from-pink-950/20 dark:to-orange-950/20 border-b border-slate-100 dark:border-slate-800">
                 <CardTitle className="flex items-center text-lg">
-                  <div className="bg-gradient-to-r from-pink-500 to-orange-600 p-2 rounded-lg shadow-lg mr-3">
+                  <div className="bg-gradient-to-r from-pink-500 to-orange-600 p-2 rounded-lg shadow-lg ">
                     <Globe className="h-5 w-5 text-white" />
                   </div>
-                  <span className="bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r mr-2 ml-2 from-pink-600 to-orange-600 bg-clip-text text-transparent">
                     {t('Dashboard.charts.languageDistribution', 'Language Distribution')}
                   </span>
                 </CardTitle>
@@ -615,7 +614,6 @@ export default function DashboardPage() {
                         outerRadius={90}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                       >
                         {languageChartData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -646,10 +644,10 @@ export default function DashboardPage() {
             <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500 h-full">
               <CardHeader className="bg-gradient-to-r from-purple-50 to-cyan-50 dark:from-purple-950/20 dark:to-cyan-950/20 border-b border-slate-100 dark:border-slate-800">
                 <CardTitle className="flex items-center text-lg">
-                  <div className="bg-gradient-to-r from-purple-500 to-cyan-600 p-2 rounded-lg shadow-lg mr-3">
+                  <div className="bg-gradient-to-r  from-purple-500 to-cyan-600 p-2 rounded-lg shadow-lg">
                     <UserCircle className="h-5 w-5 text-white" />
                   </div>
-                  <span className="bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r mr-2 ml-2 from-purple-600 to-cyan-600 bg-clip-text text-transparent">
                     {t('Dashboard.charts.userRoleDistribution', 'User Role Distribution')}
                   </span>
                 </CardTitle>
@@ -660,9 +658,9 @@ export default function DashboardPage() {
               <CardContent className="p-6">
                 <div className="h-[280px] w-full relative">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="h-32 w-32 rounded-full bg-purple-500/10 animate-pulse"></div>
+                    <div className="h-32 w-32 rounded-full bg-purple-500/10 animate-pulse mr-2 ml-2"></div>
                     <div className="absolute h-40 w-40 rounded-full border-4 border-purple-400/20 animate-spin duration-[15s]"></div>
-                    <div className="absolute h-48 w-48 rounded-full border-2 border-dashed border-cyan-400/30 animate-spin duration-[20s] animate-reverse"></div>
+                    <div className="absolute h-48 w-48 rounded-full border-2 mr-2 ml-2 border-dashed border-cyan-400/30 animate-spin duration-[20s] animate-reverse"></div>
                   </div>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -674,12 +672,12 @@ export default function DashboardPage() {
                         outerRadius={90}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                       >
                         {userRoleChartData.map((entry) => (
                           <Cell
                             key={`cell-${entry.name}`}
                             fill={ROLE_COLORS[entry.name as keyof typeof ROLE_COLORS] || "#06b6d4"}
+                            className="mr-2 ml-2"
                           />
                         ))}
                       </Pie>
@@ -706,7 +704,7 @@ export default function DashboardPage() {
       )}
 
       {/* Activity Overview */}
-      {!loading && !noWebsiteSelected && (
+      {/* {!loading && !noWebsiteSelected && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -715,10 +713,10 @@ export default function DashboardPage() {
           <Card className="overflow-hidden shadow-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 hover:shadow-2xl transition-all duration-500">
             <CardHeader className="bg-gradient-to-r from-cyan-50 via-purple-50 to-pink-50 dark:from-cyan-950/20 dark:via-purple-950/20 dark:to-pink-950/20 border-b border-slate-100 dark:border-slate-800">
               <CardTitle className="flex items-center text-lg">
-                <div className="bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 p-2 rounded-lg shadow-lg mr-3">
-                  <BarChart3 className="h-5 w-5 text-white" />
+                <div className="bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 p-2 rounded-lg shadow-lg ">
+                  <BarChart3 className="h-5 w-5 text-white " />
                 </div>
-                <span className="bg-gradient-to-r from-cyan-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r mr-2 ml-2 from-cyan-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                   {t('Dashboard.charts.activityOverview', 'Activity Overview')}
                 </span>
               </CardTitle>
@@ -772,7 +770,7 @@ export default function DashboardPage() {
             </CardFooter>
           </Card>
         </motion.div>
-      )}
+      )} */}
     </div>
   )
 }

@@ -85,7 +85,7 @@ export function GenericTable({
       )}
 
       {/* Table */}
-      <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden shadow-sm">
+      <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden shadow-xl">
         <Table>
           <TableHeader className="bg-gray-50 dark:bg-gray-800">
             <TableRow className="hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
@@ -102,7 +102,7 @@ export function GenericTable({
               ))}
               {actionColumn && (onEdit || onDelete || onView) && (
                 <TableHead className="text-right text-gray-700 dark:text-gray-300 font-medium text-sm">
-                  {defaultActionColumnHeader}
+                  {t('newsPage.columnActions')}
                 </TableHead>
               )}
             </TableRow>
@@ -161,8 +161,8 @@ export function GenericTable({
                     </TableCell>
                   ))}
                   {actionColumn && (onEdit || onDelete || onView) && (
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
+                    <TableCell className="text-center">
+                      <div className="flex justify-start gap-2">
                         {onView && (
                           <Button
                             variant="ghost"

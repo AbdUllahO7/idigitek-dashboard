@@ -1087,6 +1087,7 @@
       "statusMain": "Main",
       "columnOrder": "Order",
       "columnSubsections": "Subsections",
+      "columnActions": "Actions",
       "stillLoadingData": "Still loading subsection data...",
       "expectedSubsectionName": "Expected subsection name",
       "settingSectionData": "Setting section data",
@@ -1477,7 +1478,8 @@
     "columnStatus": "Status",
     "columnOrder": "Order",
     "columnSubsections": "Subsections",
-    
+    "columnActions": "Actions",
+
     "// Status Labels": "",
     "main": "Main",
     "active": "Active",
@@ -3354,7 +3356,67 @@
       "description": "Manage FAQ content for {{language}}",
       "addFaqButton": "Add FAQ"
   },
-
+  "partners": {
+      "management": {
+        "title": "Partners Management",
+        "description": "Manage your Partners inventory and multilingual content",
+        "addButtonLabel": "Add New Partner",
+        "emptyStateMessage": "No Partners found. Create your first Partner by clicking the \"Add New Partner\" button.",
+        "noSectionMessage": "Please create a Partners section first before adding Partners.",
+        "mainSectionRequiredMessage": "Please enter your main section data before adding Partners.",
+        "emptyFieldsMessage": "Please complete all required fields in the main section before adding Partners.",
+        "sectionIntegrationTitle": "Partners Section Content",
+        "sectionIntegrationDescription": "Manage your Partners section content in multiple languages.",
+        "addSectionButtonLabel": "Add Partners Section",
+        "editSectionButtonLabel": "Edit Partners Section",
+        "saveSectionButtonLabel": "Save Partners Section",
+        "listTitle": "Partners List",
+        "editPath": "partners/addPartners"
+      },
+      "dialog": {
+        "createTitle": "Add Partner",
+        "editTitle": "Edit Partner",
+        "deleteTitle": "Delete Partner",
+        "deleteConfirmation": "Are you sure you want to delete this partner?",
+        "confirmText": "Confirm",
+        "cancelText": "Cancel"
+      },
+      "table": {
+        "noData": "No partners available",
+        "loading": "Loading partners..."
+      }
+  },
+  "addPartners": {
+      "page": {
+        "createTitle": "Create New Partner",
+        "editTitle": "Edit Partner",
+        "createSubtitle": "Create a new partner with multilingual content",
+        "editSubtitle": "Editing \"{{name}}\" content across multiple languages",
+        "defaultPartnerName": "New Partner"
+      },
+      "tabs": {
+        "images": "Images",
+        "basicInfo": "Basic Information",
+        "moreInfo": "Additional Information",
+        "content": "Content",
+        "settings": "Settings"
+      },
+      "form": {
+        "loading": "Loading partner data...",
+        "saving": "Saving partner...",
+        "saveSuccess": "Partner saved successfully",
+        "saveError": "Failed to save partner",
+        "validation": {
+          "nameRequired": "Partner name is required",
+          "descriptionRequired": "Partner description is required",
+          "imageRequired": "Partner image is required"
+        }
+      },
+      "navigation": {
+        "backToPartners": "Back to Partners",
+        "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
+      }
+    },
   "common": {
     "welcome": "Welcome",
     "logout": "Log out",
