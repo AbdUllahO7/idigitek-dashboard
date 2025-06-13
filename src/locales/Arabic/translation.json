@@ -1358,7 +1358,7 @@
       "saveDescription": "تم حفظ المحتوى الخاص بك."
     }
   },
-   "addHeader": {
+  "addHeader": {
     "title": {
       "create": "إنشاء عنصر تنقل جديد",
       "edit": "تعديل عنصر التنقل"
@@ -1376,7 +1376,7 @@
     }
   },
   "tabsLayout" : {
-    "backButton" : "عد"
+    "backButton" : "رجوع"
   },
   "imageUploader": {
     "replaceImage": "استبدال الصورة",

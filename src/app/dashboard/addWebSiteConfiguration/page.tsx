@@ -168,7 +168,7 @@ export default function AdminManagementPage() {
         <div className="absolute bottom-0 left-1/3 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 bg-pink-400/10 dark:bg-pink-600/10 rounded-full blur-2xl md:blur-3xl animate-pulse delay-2000" />
       </div>
 
-      <div className="relative z-10 py-4 md:py-6 lg:py-8 px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 md:py-4 lg:py-6 px-2 sm:px-4 lg:px-6">
         <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 lg:space-y-12">
           
           {/* Enhanced Header Section - Fully Responsive */}
@@ -222,10 +222,10 @@ export default function AdminManagementPage() {
               className="w-full"
               dir={isRTL ? 'rtl' : 'ltr'}
             >
-              {/* Mobile-First Tab Navigation */}
-              <div className="flex justify-center mb-6 md:mb-8">
-                <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-xl md:rounded-2xl p-1 md:p-2 border border-white/20 dark:border-slate-700/50 shadow-xl w-full max-w-full md:max-w-fit overflow-x-auto">
-                  <TabsList className="grid grid-cols-3 bg-transparent gap-1 md:gap-2 min-w-full md:min-w-0">
+              {/* Mobile-First Tab Navigation - NO SCROLLING */}
+              <div className="flex justify-center mb-6 md:mb-8 px-2">
+                <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-xl md:rounded-2xl p-1 md:p-2 border border-white/20 dark:border-slate-700/50 shadow-xl w-full max-w-2xl">
+                  <TabsList className="grid grid-cols-3 bg-transparent gap-1 md:gap-2 w-full h-auto">
                     {tabConfig.map((tab) => {
                       const Icon = tab.icon;
                       const isActive = activeTab === tab.id;
@@ -235,18 +235,19 @@ export default function AdminManagementPage() {
                           key={tab.id}
                           value={tab.id} 
                           className={cn(
-                            "relative px-3 md:px-4 lg:px-6 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold transition-all duration-300 text-xs md:text-sm lg:text-base",
+                            "relative px-2 sm:px-3 md:px-4 lg:px-6 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold transition-all duration-300 text-xs sm:text-sm md:text-base",
                             "data-[state=active]:text-white data-[state=active]:shadow-lg",
                             "hover:scale-105 active:scale-95 touch-manipulation",
-                            "flex items-center justify-center gap-1 md:gap-2",
-                            isRTL ? 'flex-row-reverse' : '',
+                            "flex flex-col sm:flex-row items-center justify-center gap-1 md:gap-2",
+                            "min-h-12 sm:min-h-10 md:min-h-12",
+                            isRTL ? 'sm:flex-row-reverse' : '',
                             isActive 
                               ? `bg-gradient-to-r ${tab.gradient} text-white shadow-lg` 
                               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                           )}
                         >
                           <Icon className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
-                          <span className="hidden sm:inline md:hidden lg:inline">
+                          <span className="text-xs sm:text-sm md:text-base font-medium truncate max-w-full">
                             {t(`adminManagement.tabs.${tab.id}`, tab.label)}
                           </span>
                           
@@ -264,7 +265,6 @@ export default function AdminManagementPage() {
                 </div>
               </div>
 
-              {/* Enhanced Tab Content with Better Mobile Layout */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
@@ -304,7 +304,7 @@ export default function AdminManagementPage() {
             </Tabs>
           </motion.div>
 
-          {/* Enhanced Footer - Mobile Optimized */}
+          {/* Enhanced Footer  */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
