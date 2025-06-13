@@ -22,12 +22,12 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/src/comp
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { useWebSite } from "@/src/hooks/webConfiguration/use-WebSite"
 import WebsiteList from "@/src/components/dashboard/WebSiteConfiguration/WebSite"
-import { LanguageManagement } from "@/src/components/dashboard/WebSiteConfiguration/Languages"
-import { SectionManagement } from "@/src/components/dashboard/WebSiteConfiguration/Sections"
-import { ThemeManagement } from "@/src/components/dashboard/WebSiteConfiguration/ThemeManagement"
 import { useTranslation } from "react-i18next"
 import { useLanguage } from "@/src/context/LanguageContext"
 import { cn } from "@/src/lib/utils"
+import { SectionManagement } from "@/src/components/dashboard/WebSiteConfiguration/SectionManagement/Sections"
+import { LanguageManagement } from "@/src/components/dashboard/WebSiteConfiguration/LanguageManagement/Languages"
+import { ThemeManagement } from "@/src/components/dashboard/WebSiteConfiguration/ThemeManagement/ThemeManagement"
 
 // Modern Loading Component
 const ModernLoader = ({ text }: { text: string }) => (
@@ -197,21 +197,7 @@ export default function AdminManagementPage() {
                   {t('adminManagement.subtitle', 'Customize your website with advanced configuration options')}
                 </p>
 
-                {/* Quick Stats */}
-                <div className="flex items-center justify-center space-x-6 mt-6">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                      {websites.length} Website{websites.length !== 1 ? 's' : ''}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                      Premium Features
-                    </span>
-                  </div>
-                </div>
+                
               </div>
             </div>
           </motion.div>

@@ -370,6 +370,9 @@
   },
   "ProfilePage": {
     "title": "Profil Ayarlarım",
+    "subtitle" : "Kişisel bilgilerinizi ve hesap ayarlarınızı yönetin",
+    "personalInfo" : "Kişisel Bilgiler",
+    "readOnly" :"Salt okunur",
     "tabs": {
       "account": "Hesap Bilgileri"
     },
@@ -523,6 +526,8 @@
     "errorDescription": "Beklenmeyen bir hata oluştu",
     "tryAgain": "Tekrar Dene",
     "changesSaved": "Değişiklikler başarıyla kaydedildi!",
+    "title": "Dil Yönetimi",
+    "subtitle": "Web siteniz için çok dilli desteği yapılandırın ve yönetin",
     "addNew": {
       "title": "Yeni Dil Ekle",
       "description": "Web sitenizde desteklenecek yeni dil için detayları girin",
@@ -696,6 +701,7 @@
     "errors.unknown.resolution": "Lütfen tekrar deneyin veya sorun devam ederse destek ile iletişime geçin"
   },
   "sectionManagement": {
+    "subtitle":"Güzel, önceden tasarlanmış bölümlerle web sitenizin yapısını oluşturun",
     "description1": "Web siteniz için logo, menü öğeleri ve iletişim bilgileri içeren üst navigasyon çubuğu",
     "sections.hero.description": "Etkileyici başlıklar ve eylem çağrısı düğmeleri içeren göz alıcı ana banner",
     "sections.services.description": "Temel hizmetlerinizi ve tekliflerinizi detaylı açıklamalarla sergileyin",

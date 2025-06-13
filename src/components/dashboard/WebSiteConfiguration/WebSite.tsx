@@ -5,7 +5,7 @@ import { useWebSite } from "@/src/hooks/webConfiguration/use-WebSite"
 import WebSiteImageUploader from "@/src/app/dashboard/services/addService/Utils/WebSiteImageUploader"
 import { toast } from "@/src/hooks/use-toast"
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { PlusCircle, Edit2, Trash2, Upload, X, Save, ArrowLeft } from "lucide-react"
 import DeleteSectionDialog from "../../DeleteSectionDialog"
 import { useTranslation } from "react-i18next"
@@ -39,7 +39,17 @@ const WebsiteImageExampleFixed: React.FC = () => {
   const updateMutation = useUpdate()
   const uploadLogoMutation = useUploadLogo()
   const deleteMutation = useDelete()
-
+    useEffect(() => {
+      // Cleanup function to revoke blob URLs when component unmounts
+      return () => {
+        if (editingWebsite?.logo && editingWebsite.logo.startsWith("blob:")) {
+          URL.revokeObjectURL(editingWebsite.logo)
+        }
+        if (newWebsite.logo && newWebsite.logo.startsWith("blob:")) {
+          URL.revokeObjectURL(newWebsite.logo)
+        }
+      }
+    }, [editingWebsite?.logo, newWebsite.logo])
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const { logo, ...websiteData } = newWebsite
@@ -136,11 +146,29 @@ const WebsiteImageExampleFixed: React.FC = () => {
 
   const handleLogoUpload = (websiteId: string, file: File) => {
     setUploadingLogo((prev) => ({ ...prev, [websiteId]: true }))
+    
+    // Create a preview URL for immediate display
+    const previewUrl = URL.createObjectURL(file)
+    
+    // Update the editingWebsite state immediately if we're editing this website
+    if (editingWebsite && editingWebsite._id === websiteId) {
+      setEditingWebsite({ ...editingWebsite, logo: previewUrl })
+    }
+    
     uploadLogoMutation.mutate(
       { id: websiteId, file },
       {
-        onSuccess: () => {
+        onSuccess: (response) => {
           setUploadingLogo((prev) => ({ ...prev, [websiteId]: false }))
+          
+          // Clean up the preview URL
+          URL.revokeObjectURL(previewUrl)
+          
+          // Update with the actual server URL if available
+          if (editingWebsite && editingWebsite._id === websiteId && response?.logo) {
+            setEditingWebsite({ ...editingWebsite, logo: response.logo })
+          }
+          
           toast({
             title: t('websiteList.toastMessages.logoUploaded'),
             description: t('websiteList.toastMessages.logoUploadedDesc'),
@@ -148,6 +176,15 @@ const WebsiteImageExampleFixed: React.FC = () => {
         },
         onError: (error) => {
           setUploadingLogo((prev) => ({ ...prev, [websiteId]: false }))
+          
+          // Clean up the preview URL and revert the logo on error
+          URL.revokeObjectURL(previewUrl)
+          if (editingWebsite && editingWebsite._id === websiteId) {
+            // Revert to the original logo from the websites list
+            const originalWebsite = websites.find((w: { _id: string }) => w._id === websiteId)
+            setEditingWebsite({ ...editingWebsite, logo: originalWebsite?.logo || "" })
+          }
+          
           toast({
             title: t('websiteList.toastMessages.uploadFailed'),
             description: t('websiteList.toastMessages.uploadFailedDesc'),
@@ -159,6 +196,11 @@ const WebsiteImageExampleFixed: React.FC = () => {
   }
 
   const handleLogoRemove = (websiteId: string) => {
+    // Update the editingWebsite state immediately if we're editing this website
+    if (editingWebsite && editingWebsite._id === websiteId) {
+      setEditingWebsite({ ...editingWebsite, logo: "" })
+    }
+    
     updateMutation.mutate(
       {
         id: websiteId,
@@ -169,6 +211,19 @@ const WebsiteImageExampleFixed: React.FC = () => {
           toast({
             title: t('websiteList.toastMessages.logoRemoved'),
             description: t('websiteList.toastMessages.logoRemovedDesc'),
+          })
+        },
+        onError: (error) => {
+          // Revert the logo on error
+          if (editingWebsite && editingWebsite._id === websiteId) {
+            const originalWebsite = websites.find((w: { _id: string }) => w._id === websiteId)
+            setEditingWebsite({ ...editingWebsite, logo: originalWebsite?.logo || "" })
+          }
+          
+          toast({
+            title: t('websiteList.toastMessages.removeFailed'),
+            description: t('websiteList.toastMessages.removeFailedDesc'),
+            variant: "destructive",
           })
         },
       },
@@ -350,14 +405,14 @@ const WebsiteImageExampleFixed: React.FC = () => {
     if (editingWebsite) {
       return (
         <div className="space-y-6">
-          <div className={`flex items-center mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-center mb-2 ${isRTL ? '' : ''}`}>
             <button
               onClick={() => setEditingWebsite(null)}
               className={`${isRTL ? 'ml-3' : 'mr-3'} text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors`}
             >
               <ArrowLeft className={`h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
             </button>
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            <h2 className={`text-2xl font-semibold text-gray-900 dark:text-white ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
               {t('websiteList.editWebsite')}
             </h2>
           </div>
@@ -654,26 +709,7 @@ const WebsiteImageExampleFixed: React.FC = () => {
                       {t('websiteList.labels.created')}: {new Date(website.createdAt || Date.now()).toLocaleDateString()}
                     </span>
 
-                    {website.logo && (
-                      <div className={`flex space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
-                        <button
-                          className={`text-xs text-gray-500 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400 transition-colors flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}
-                          onClick={() => document.getElementById(`logo-upload-${website._id}`)?.click()}
-                          disabled={website._id ? uploadingLogo[website._id] : false}
-                        >
-                          <Upload className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
-                          {t('websiteList.buttons.changeLogo')}
-                        </button>
-                        <button
-                          className={`text-xs text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}
-                          onClick={() => website._id && handleLogoRemove(website._id)}
-                          disabled={website._id ? uploadingLogo[website._id] : false}
-                        >
-                          <X className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
-                          {t('websiteList.buttons.removeLogo')}
-                        </button>
-                      </div>
-                    )}
+                      
                   </div>
                 </div>
               </div>

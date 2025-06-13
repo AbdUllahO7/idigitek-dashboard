@@ -369,6 +369,9 @@
   },
   "ProfilePage": {
     "title": "My Profile Settings",
+    "subtitle" : "Manage your personal information and account settings",
+    "personalInfo" : "Personal Information",
+    "readOnly" :"Read only",
     "tabs": {
       "account": "Account Information"
     },
@@ -522,7 +525,8 @@
     "errorDescription": "An unexpected error occurred",
     "tryAgain": "Try Again",
     "changesSaved": "Changes saved successfully!",
-    
+    "title": "Language Management",
+    "subtitle" : "Configure and manage multilingual support for your website",
     "addNew": {
       "title": "Add New Language",
       "description": "Enter the details for a new language to support on your website",
@@ -703,6 +707,7 @@
     "errors.unknown.resolution": "Please try again or contact support if the problem persists"
   },
   "sectionManagement" : {
+    "subtitle":"Build your website structure with beautiful, pre-designed sections",
     "description1": "Top navigation bar with logo, menu items and contact information for your website",
     "sections.hero.description": "Eye-catching main banner with compelling headlines and call-to-action buttons",
     "sections.services.description": "Showcase your core services and offerings with detailed descriptions",

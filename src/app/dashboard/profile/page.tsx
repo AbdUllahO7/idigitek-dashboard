@@ -227,21 +227,15 @@ export default function ProfilePage() {
                   <div className={`absolute -bottom-2 -right-2 w-6 h-6 rounded-full ${statusInfo.dotColor} border-4 border-white dark:border-slate-800 shadow-lg`} />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                  <h1 className="text-2xl ml-2 mr-2 font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                     {t('ProfilePage.title', 'My Profile Settings')}
                   </h1>
-                  <p className="text-slate-600 dark:text-slate-400 mt-1">
+                  <p className="text-slate-600 ml-2 mr-2 dark:text-slate-400 mt-1">
                     {t('ProfilePage.subtitle', 'Manage your personal information and account settings')}
                   </p>
                 </div>
               </div>
-              <div className="hidden md:flex items-center space-x-2">
-                <Sparkles className="w-6 h-6 text-blue-500 dark:text-blue-400" />
-                <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                  {t('ProfilePage.welcome', 'Welcome back!')}
-                </span>
               </div>
-            </div>
           </div>
         </div>
 
@@ -342,21 +336,7 @@ export default function ProfilePage() {
                       </div>
                     </div>
 
-                    {/* Quick Stats */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">24/7</div>
-                          <div className="text-xs text-slate-500 dark:text-slate-400">Access</div>
-                        </div>
-                      </div>
-                      <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-green-600 dark:text-green-400">✓</div>
-                          <div className="text-xs text-slate-500 dark:text-slate-400">Verified</div>
-                        </div>
-                      </div>
-                    </div>
+                   
                   </CardContent>
                 </Card>
 
@@ -380,7 +360,7 @@ export default function ProfilePage() {
                       <div className="flex items-center space-x-2 mb-6">
                         <div className="w-1 h-6 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full" />
                         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                          {t('ProfilePage.personalInfo.title', 'Personal Information')}
+                          {t('ProfilePage.personalInfo', 'Personal Information')}
                         </h3>
                       </div>
                       

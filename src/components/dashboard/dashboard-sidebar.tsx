@@ -23,7 +23,6 @@ import {
   AlertTriangle,
   RefreshCw,
   ChevronRight,
-  Menu,
   X,
   Component,
   MessageCircle,
@@ -48,10 +47,18 @@ import { useTranslation } from "react-i18next"
 import { useLanguage } from "@/src/context/LanguageContext"
 
 /**
+ * Props for the DashboardSidebar component
+ */
+interface DashboardSidebarProps {
+  isSidebarOpen?: boolean
+  toggleSidebar?: () => void
+}
+
+/**
  * Navigation item interface
  */
 interface NavItem {
-  titleKey: string // Changed from title to titleKey for translation
+  titleKey: string
   href: string
   icon: React.ElementType
   sectionId?: string
@@ -197,7 +204,7 @@ const allNavItems: NavItem[] = [
  * Dashboard Sidebar component
  * Contains the main navigation for the dashboard
  */
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar }: DashboardSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [navItems, setNavItems] = useState<NavItem[]>([])
@@ -207,12 +214,11 @@ export default function DashboardSidebar() {
   const { websiteId } = useWebsiteContext()
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { t, ready } = useTranslation()
   const { isLoaded } = useLanguage()
 
   // Check if screen is mobile
-  const isMobile = useMediaQuery("(max-width: 768px)")
+  const isMobile = useMediaQuery("(max-width: 1024px)")
 
   // Store the mapping of section names to actual section IDs and orders
   const [sectionIdMapping, setSectionIdMapping] = useState<Map<string, string>>(new Map())
@@ -251,20 +257,6 @@ export default function DashboardSidebar() {
       })
   }, [refetchWebsiteSections])
 
-  // Listen for storage events that might indicate section changes
-  useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key?.includes("section") || event.key?.includes("website")) {
-        handleManualRefresh()
-      }
-    }
-
-    window.addEventListener("storage", handleStorageChange)
-    return () => {
-      window.removeEventListener("storage", handleStorageChange)
-    }
-  }, [handleManualRefresh])
-
   // When user changes, reset processing flags
   useEffect(() => {
     const currentUserId = user?.id || user?.id
@@ -281,7 +273,7 @@ export default function DashboardSidebar() {
     }
   }, [user, websiteId, refetchWebsiteSections])
 
-  // Listen for changes in the URL
+  // Listen for changes in the URL and close mobile menu when navigating
   useEffect(() => {
     if (pathname.includes("/addWebSiteConfiguration")) {
       const needsRefresh = true
@@ -290,12 +282,7 @@ export default function DashboardSidebar() {
       sessionStorage.removeItem("needsSectionRefresh")
       handleManualRefresh()
     }
-
-    // Close mobile menu when navigating
-    if (isMobile && isMobileMenuOpen) {
-      setIsMobileMenuOpen(false)
-    }
-  }, [pathname, handleManualRefresh, isMobile, isMobileMenuOpen])
+  }, [pathname, handleManualRefresh])
 
   // Filter nav items based on role and active sections
   const filterNavItems = (
@@ -306,9 +293,7 @@ export default function DashboardSidebar() {
   ) => {
     try {
       // Get active section IDs from the API data
-      const activeSectionIds = activeSections.map((section: Section) =>
-        section.name.toLowerCase().replace(/\s/g, "")
-      )
+      const activeSectionIds = activeSections.map((section: Section) => section.name.toLowerCase().replace(/\s/g, ""))
 
       // Start with all non-section-based nav items that match the user's role
       const baseNavItems = allNavItems.filter((item) => {
@@ -338,8 +323,8 @@ export default function DashboardSidebar() {
         // Sort section-specific items based on order from sectionOrderMap
         .sort((a, b) => {
           if (!a.sectionId || !b.sectionId) return 0
-          const orderA = sectionOrderMap.get(a.sectionId)?.order ?? Infinity
-          const orderB = sectionOrderMap.get(b.sectionId)?.order ?? Infinity
+          const orderA = sectionOrderMap.get(a.sectionId)?.order ?? Number.POSITIVE_INFINITY
+          const orderB = sectionOrderMap.get(b.sectionId)?.order ?? Number.POSITIVE_INFINITY
           return orderA - orderB
         })
 
@@ -406,7 +391,7 @@ export default function DashboardSidebar() {
       // Store active section IDs in localStorage for persistence
       const storageKey = currentUserId ? `selectedSections_${currentUserId}` : "selectedSections"
       const activeSectionIds = activeSections.map((section: { name: string }) =>
-        section.name.toLowerCase().replace(/\s/g, "")
+        section.name.toLowerCase().replace(/\s/g, ""),
       )
       localStorage.setItem(storageKey, JSON.stringify(activeSectionIds))
     }
@@ -416,7 +401,7 @@ export default function DashboardSidebar() {
       user?.role,
       websiteSections?.data?.filter((section: Section) => section.isActive) || [],
       sectionNameMap,
-      orderMapping
+      orderMapping,
     )
     setNavItems(filteredItems)
 
@@ -432,10 +417,15 @@ export default function DashboardSidebar() {
   /**
    * Handle navigation with loading indicator and section ID parameter
    */
-  const handleNavigation = (href: string, sectionId?: string) => {
+  const handleNavigation = useCallback((href: string, sectionId?: string) => {
     // Don't navigate if already navigating or if clicking the current page
     if (navigatingTo || pathname === href) {
       return
+    }
+
+    // Close mobile sidebar when navigating
+    if (isMobile && isSidebarOpen && toggleSidebar) {
+      toggleSidebar()
     }
 
     // Set the navigating state to show loading indicator
@@ -448,9 +438,6 @@ export default function DashboardSidebar() {
       targetUrl = `${href}?sectionId=${actualSectionId}`
     }
 
-    // Prefetch the page before navigating
-    router.prefetch(targetUrl)
-
     // Navigate to the new page with section ID if available
     router.push(targetUrl)
 
@@ -458,373 +445,209 @@ export default function DashboardSidebar() {
     setTimeout(() => {
       setNavigatingTo(null)
     }, 500)
-  }
+  }, [navigatingTo, pathname, isMobile, isSidebarOpen, toggleSidebar, sectionIdMapping, router])
 
-  // Toggle mobile menu
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
+  // Safe translation function
+  const safeTranslate = useCallback((key: string, fallback: string = "") => {
+    if (!ready || !t) {
+      return fallback || key.split(".").pop() || ""
+    }
+    try {
+      return t(key, fallback || key.split(".").pop() || "")
+    } catch (error) {
+      return fallback || key.split(".").pop() || ""
+    }
+  }, [ready, t])
 
-  // Sidebar content component to avoid duplication
-  const SidebarContent = () => (
-    <>
-      {/* User info display */}
-      <div className="px-4 py-3 mb-2">
-        <div className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
-            <UserCircle className="h-6 w-6" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-medium truncate">{user?.name || user?.email || t('Dashboard_sideBar.unknownUser', 'Unknown user')}</p>
-            <Badge variant="outline" className="mt-1 text-xs">
-              {user?.role || t('Dashboard_sideBar.unknownRole', 'Unknown')}
-            </Badge>
-          </div>
+  // Render navigation items
+  const renderNavItems = () => {
+    // Show loading state if still loading
+    if ((isLoading || userIsLoading || (websiteId && isLoadingSections)) && navItems.length === 0) {
+      return (
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-12 w-full animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800"></div>
+          ))}
         </div>
-        <div className="mt-2 flex justify-between items-center text-xs text-slate-500">
-          <span>
-            {lastRefreshTime ? (
-              <span className="flex items-center gap-1">
-                <RefreshCw className="h-3 w-3" />
-                {lastRefreshTime.toLocaleTimeString()}
-              </span>
-            ) : (
-              t('Dashboard_sideBar.notRefreshed', 'Not refreshed')
-            )}
-          </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleManualRefresh}
-            disabled={isRefreshing}
-            title={t('Dashboard_sideBar.refreshSections', 'Refresh sections')}
-            className="h-6 w-6 p-0"
-          >
-            <RefreshCw className={cn("h-3 w-3", isRefreshing && "animate-spin")} />
-          </Button>
-        </div>
-      </div>
+      )
+    }
 
-      <Separator className="mb-4" />
-
-      {/* Navigation items */}
-      <div className="flex-1 overflow-auto px-3">
-        {websiteSections?.data?.length === 0 && websiteId ? (
+    return (
+      <>
+        {/* Warning if no sections */}
+        {websiteSections?.data?.length === 0 && websiteId && (
           <div className="p-3 mb-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-center">
             <AlertTriangle className="h-5 w-5 text-amber-500 mx-auto mb-1" />
             <p className="text-amber-800 dark:text-amber-200 text-sm">
-              {t('Dashboard_sideBar.noActiveSections', 'No active sections found')}
+              {safeTranslate("Dashboard_sideBar.noActiveSections", "No active sections found")}
             </p>
             <Button
               variant="link"
               className="p-0 h-auto text-xs mt-1 text-amber-700 dark:text-amber-300"
               onClick={() => handleNavigation("/dashboard/addWebSiteConfiguration")}
             >
-              {t('Dashboard_sideBar.configureSections', 'Configure Sections')}
+              {safeTranslate("Dashboard_sideBar.configureSections", "Configure Sections")}
             </Button>
           </div>
-        ) : null}
+        )}
 
+        {/* Navigation items */}
         <nav className="space-y-1">
-          <TooltipProvider delayDuration={300}>
-            <AnimatePresence initial={false}>
-              {navItems.map((item, index) => {
-                const isActive = pathname === item.href
-                const isNavigating = navigatingTo === item.href
-                const translatedTitle = ready ? t(item.titleKey, item.titleKey.split('.').pop() || '') : item.titleKey.split('.').pop() || ''
+          {navItems.map((item, index) => {
+            const isActive = pathname === item.href
+            const isNavigating = navigatingTo === item.href
+            const translatedTitle = safeTranslate(item.titleKey, item.titleKey.split(".").pop() || "")
 
-                return (
-                  <motion.div
-                    key={item.href}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{
-                      duration: 0.2,
-                      delay: index * 0.05,
-                      ease: "easeOut",
-                    }}
-                  >
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant={isActive ? "default" : "ghost"}
-                          className={cn(
-                            "w-full justify-start rounded-lg py-2.5 px-3 text-sm font-medium transition-all",
-                            isActive
-                              ? "bg-primary text-primary-foreground shadow-md hover:bg-primary/90"
-                              : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200",
-                            item.sectionId && "border-l-2 border-slate-200 dark:border-slate-700 pl-4",
-                          )}
-                          onClick={() => handleNavigation(item.href, item.sectionId)}
-                          disabled={isNavigating}
-                        >
-                          {isNavigating ? (
-                            <Loader2 className="mr-3 h-5 w-5 animate-spin flex-shrink-0" />
-                          ) : (
-                            <item.icon
-                              className={cn(
-                                "mr-3 h-5 w-5 flex-shrink-0",
-                                isActive ? "text-primary-foreground" : "text-slate-500 dark:text-slate-400",
-                              )}
-                            />
-                          )}
-                          <span className="truncate">{translatedTitle}</span>
-                          {isActive && <ChevronRight className="ml-auto h-4 w-4 flex-shrink-0" />}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="right" className="hidden md:block">
-                        {translatedTitle}
-                      </TooltipContent>
-                    </Tooltip>
-                  </motion.div>
-                )
-              })}
-            </AnimatePresence>
-          </TooltipProvider>
+            return (
+              <Button
+                key={item.href}
+                variant={isActive ? "default" : "ghost"}
+                className={cn(
+                  "w-full justify-start rounded-lg py-3 px-3 text-sm font-medium transition-all h-auto",
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-md hover:bg-primary/90"
+                    : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200",
+                  item.sectionId && "border-l-2 border-slate-200 dark:border-slate-700 pl-4",
+                )}
+                onClick={() => handleNavigation(item.href, item.sectionId)}
+                disabled={isNavigating}
+              >
+                {isNavigating ? (
+                  <Loader2 className="mr-3 h-5 w-5 animate-spin flex-shrink-0" />
+                ) : (
+                  <item.icon
+                    className={cn(
+                      "mr-3 h-5 w-5 flex-shrink-0",
+                      isActive ? "text-primary-foreground" : "text-slate-500 dark:text-slate-400",
+                    )}
+                  />
+                )}
+                <span className="truncate text-left">{translatedTitle}</span>
+                {isActive && <ChevronRight className="ml-auto h-4 w-4 flex-shrink-0" />}
+              </Button>
+            )
+          })}
         </nav>
-      </div>
-
-      {/* Sidebar footer */}
-      <div className="mt-auto pt-4 border-t dark:border-slate-700">
-        <Link
-          href={`https://wa.me/905465234640`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 mx-3 p-3 rounded-lg bg-primary text-primary-foreground font-medium shadow-sm hover:bg-primary/90 transition-all"
-        >
-          <LifeBuoy className="h-5 w-5" />
-          <span>{t('Dashboard_sideBar.helpSupport', 'Help & Support')}</span>
-        </Link>
-      </div>
-    </>
-  )
-
-  // Show loading state while fetching sections or user
-  if (isLoading || userIsLoading || (websiteId && isLoadingSections) || !isLoaded || !ready) {
-    return (
-      <div className="flex h-full flex-col border-r dark:border-slate-700 bg-background dark:bg-slate-900">
-        <div className="flex h-16 items-center border-b dark:border-slate-700 px-6">
-          <div className="flex items-center gap-2 font-semibold">
-            <Home className="h-6 w-6" />
-            <span>{t('Dashboard_sideBar.title', 'Admin Dashboard')}</span>
-          </div>
-        </div>
-        <div className="flex-1 overflow-auto p-4">
-          <div className="space-y-3">
-            <div className="h-12 w-full animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800"></div>
-            <div className="h-10 w-full animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800"></div>
-            <div className="h-10 w-full animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800"></div>
-            <div className="h-10 w-full animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800"></div>
-            <div className="h-10 w-full animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800"></div>
-          </div>
-        </div>
-      </div>
+      </>
     )
   }
 
   // Mobile view
   if (isMobile) {
     return (
-      <>
-        {/* Mobile header */}
-        <div className="fixed top-0 left-0 right-0 z-40 h-16 flex items-center justify-between border-b dark:border-slate-700 bg-background dark:bg-slate-900 px-4">
-          <button
-            onClick={() => handleNavigation("/dashboard")}
-            className="flex items-center gap-2 font-semibold"
-            disabled={navigatingTo === "/dashboard"}
-          >
-            {navigatingTo === "/dashboard" ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
-            ) : (
-              <Home className="h-6 w-6" />
-            )}
-            <span>{t('Dashboard_sideBar.title', 'Admin Dashboard')}</span>
-          </button>
+      <AnimatePresence mode="wait">
+        {isSidebarOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+              onClick={toggleSidebar}
+            />
 
-          <Button variant="ghost" size="icon" onClick={toggleMobileMenu} className="ml-auto">
-            <Menu className="h-6 w-6" />
-          </Button>
-        </div>
-
-        {/* Mobile sidebar */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <>
-              {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.5 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-40 bg-black"
-                onClick={toggleMobileMenu}
-              />
-
-              {/* Sidebar */}
-              <motion.div
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="fixed top-0 right-0 z-50 h-full w-[280px] flex flex-col bg-background dark:bg-slate-900 shadow-xl"
-              >
-                <div className="flex h-16 items-center justify-between border-b dark:border-slate-700 px-4">
-                  <div className="flex items-center gap-2 font-semibold">
-                    <Home className="h-6 w-6" />
-                    <span>{t('Dashboard_sideBar.menu', 'Menu')}</span>
-                  </div>
-                  <Button variant="ghost" size="icon" onClick={toggleMobileMenu} className="ml-auto">
-                    <X className="h-6 w-6" />
-                  </Button>
+            {/* Mobile Sidebar */}
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ 
+                type: "spring", 
+                damping: 30, 
+                stiffness: 300,
+                duration: 0.3
+              }}
+              className="fixed top-0 left-0 z-50 h-full w-[320px] max-w-[85vw] bg-background dark:bg-slate-900 shadow-2xl border-r dark:border-slate-700 flex flex-col"
+            >
+              {/* Mobile Header */}
+              <div className="flex h-16 items-center justify-between border-b dark:border-slate-700 px-4 flex-shrink-0">
+                <div className="flex items-center gap-2 font-semibold">
+                  <Home className="h-6 w-6" />
+                  <span>{safeTranslate("Dashboard_sideBar.menu", "Menu")}</span>
                 </div>
-
-                <div className="flex flex-col h-[calc(100%-4rem)] overflow-hidden">
-                  <SidebarContent />
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-
-        {/* Content padding for fixed header */}
-        <div className="h-16" />
-      </>
-    )
-  }
-
-  // No website selected yet
-  if (!websiteId) {
-    return (
-      <div className="flex h-full flex-col border-r dark:border-slate-700 bg-background dark:bg-slate-900">
-        <div className="flex h-16 items-center border-b dark:border-slate-700 px-6">
-          <div className="flex items-center gap-2 font-semibold">
-            <Home className="h-6 w-6" />
-            <span>{t('Dashboard_sideBar.title', 'Admin Dashboard')}</span>
-          </div>
-        </div>
-        <div className="flex-1 overflow-auto p-6 flex flex-col items-center justify-center">
-          <div className="text-center max-w-xs">
-            <div className="bg-amber-50 dark:bg-amber-900/20 p-6 rounded-xl mb-6">
-              <AlertTriangle className="mx-auto h-12 w-12 text-amber-500 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{t('Dashboard_sideBar.noWebsiteSelected', 'No Website Selected')}</h3>
-              <p className="text-slate-600 dark:text-slate-300 mb-4">
-                {t('Dashboard_sideBar.selectWebsiteMessage', 'Please select a website to view available sections and manage content.')}
-              </p>
-              <Button className="w-full" onClick={() => handleNavigation("/dashboard/addWebSiteConfiguration")}>
-                {t('Dashboard_sideBar.configureWebsite', 'Configure Website')}
-              </Button>
-            </div>
-
-            <nav className="grid gap-2 mt-6">
-              {navItems
-                .filter((item) => !item.sectionId)
-                .map((item, index) => {
-                  const isActive = pathname === item.href
-                  const isNavigating = navigatingTo === item.href
-                  const translatedTitle = ready ? t(item.titleKey, item.titleKey.split('.').pop() || '') : item.titleKey.split('.').pop() || ''
-
-                  return (
-                    <motion.div
-                      key={item.href}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Button
-                        variant={isActive ? "default" : "outline"}
-                        className="w-full justify-start"
-                        onClick={() => handleNavigation(item.href, item.sectionId)}
-                        disabled={isNavigating}
-                      >
-                        {isNavigating ? (
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        ) : (
-                          <item.icon className="mr-2 h-5 w-5" />
-                        )}
-                        {translatedTitle}
-                      </Button>
-                    </motion.div>
-                  )
-                })}
-            </nav>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // Error fetching sections
-  if (isError) {
-    return (
-      <div className="flex h-full flex-col border-r dark:border-slate-700 bg-background dark:bg-slate-900">
-        <div className="flex h-16 items-center border-b dark:border-slate-700 px-6">
-          <div className="flex items-center gap-2 font-semibold">
-            <Home className="h-6 w-6" />
-            <span>{t('Dashboard_sideBar.title', 'Admin Dashboard')}</span>
-          </div>
-        </div>
-        <div className="flex-1 overflow-auto p-6 flex flex-col items-center justify-center">
-          <div className="text-center max-w-xs">
-            <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-xl mb-6">
-              <AlertTriangle className="mx-auto h-12 w-12 text-red-500 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{t('Dashboard_sideBar.errorLoadingSections', 'Error Loading Sections')}</h3>
-              <p className="text-red-600 dark:text-red-300 mb-4">
-                {(sectionsError as Error)?.message || t('Dashboard_sideBar.unknownError', 'Unknown error occurred while loading sections.')}
-              </p>
-              <div className="flex gap-2">
-                <Button variant="outline" className="flex-1" onClick={handleManualRefresh}>
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                  {t('Dashboard_sideBar.retry', 'Retry')}
-                </Button>
-                <Button className="flex-1" onClick={() => handleNavigation("/dashboard/settings")}>
-                  {t('Dashboard_sideBar.settings', 'Settings')}
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={toggleSidebar} 
+                  className="ml-auto hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  <X className="h-6 w-6" />
                 </Button>
               </div>
-            </div>
 
-            <nav className="grid gap-2 mt-6">
-              {navItems
-                .filter((item) => !item.sectionId)
-                .map((item, index) => {
-                  const isActive = pathname === item.href
-                  const isNavigating = navigatingTo === item.href
-                  const translatedTitle = ready ? t(item.titleKey, item.titleKey.split('.').pop() || '') : item.titleKey.split('.').pop() || ''
+              {/* Mobile User Info */}
+              <div className="px-4 py-3 border-b dark:border-slate-700 flex-shrink-0">
+                <div className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
+                    <UserCircle className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate text-sm">
+                      {user?.name || user?.email || safeTranslate("Dashboard_sideBar.unknownUser", "Unknown user")}
+                    </p>
+                    <Badge variant="outline" className="mt-1 text-xs">
+                      {user?.role || safeTranslate("Dashboard_sideBar.unknownRole", "Unknown")}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
 
-                  return (
-                    <motion.div
-                      key={item.href}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Button
-                        variant={isActive ? "default" : "outline"}
-                        className="w-full justify-start"
-                        onClick={() => handleNavigation(item.href, item.sectionId)}
-                        disabled={isNavigating}
-                      >
-                        {isNavigating ? (
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        ) : (
-                          <item.icon className="mr-2 h-5 w-5" />
-                        )}
-                        {translatedTitle}
-                      </Button>
-                    </motion.div>
-                  )
-                })}
-            </nav>
+              {/* Mobile Navigation */}
+              <div className="flex-1 overflow-y-auto px-3 py-2">
+                {renderNavItems()}
+              </div>
+
+              {/* Mobile Footer */}
+              <div className="p-3 border-t dark:border-slate-700 flex-shrink-0">
+                <Link
+                  href={`https://wa.me/905465234640`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 p-3 rounded-lg bg-primary text-primary-foreground font-medium shadow-sm hover:bg-primary/90 transition-all text-sm"
+                  onClick={() => {
+                    if (isMobile && isSidebarOpen && toggleSidebar) {
+                      toggleSidebar()
+                    }
+                  }}
+                >
+                  <LifeBuoy className="h-5 w-5" />
+                  <span>{safeTranslate("Dashboard_sideBar.helpSupport", "Help & Support")}</span>
+                </Link>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    )
+  }
+
+  // Desktop loading state
+  if (isLoading || userIsLoading || (websiteId && isLoadingSections) || !isLoaded || !ready) {
+    return (
+      <div className="flex h-full flex-col border-r dark:border-slate-700 bg-background dark:bg-slate-900">
+        <div className="flex h-16 items-center border-b dark:border-slate-700 px-6">
+          <div className="flex items-center gap-2 font-semibold">
+            <Home className="h-6 w-6" />
+            <span>{safeTranslate("Dashboard_sideBar.title", "Admin Dashboard")}</span>
+          </div>
+        </div>
+        <div className="flex-1 overflow-auto p-4">
+          <div className="space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-12 w-full animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800"></div>
+            ))}
           </div>
         </div>
       </div>
     )
   }
 
-  // Desktop view - normal sidebar
+  // Desktop view
   return (
     <div className="flex h-full flex-col border-r dark:border-slate-700 bg-background dark:bg-slate-900 shadow-sm">
-      {/* Sidebar header */}
-      
+      {/* Desktop Header */}
       <div className="flex h-16 items-center border-b dark:border-slate-700 px-4">
         <button
           onClick={() => handleNavigation("/dashboard")}
@@ -836,13 +659,26 @@ export default function DashboardSidebar() {
           ) : (
             <Home className="h-6 w-6 text-primary" />
           )}
-          <span className="text-lg">{t('Dashboard_sideBar.title', 'Admin Dashboard')}</span>
+          <span className="text-lg">{safeTranslate("Dashboard_sideBar.title", "Admin Dashboard")}</span>
         </button>
       </div>
+      
+      {/* Desktop Navigation */}
+      <div className="flex-1 overflow-auto p-2">
+        {renderNavItems()}
+      </div>
 
-      {/* Main sidebar content */}
-      <div className="flex flex-col h-[calc(100%-4rem)] p-2 overflow-hidden">
-        <SidebarContent />
+      {/* Desktop Footer */}
+      <div className="p-4 border-t dark:border-slate-700">
+        <Link
+          href={`https://wa.me/905465234640`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 p-3 rounded-lg bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-all text-sm"
+        >
+          <LifeBuoy className="h-4 w-4" />
+          <span>{safeTranslate("Dashboard_sideBar.helpSupport", "Help & Support")}</span>
+        </Link>
       </div>
     </div>
   )

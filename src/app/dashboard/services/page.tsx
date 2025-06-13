@@ -266,12 +266,7 @@ export default function ServicesPage() {
     refetchMainSubSection();
   };
 
-  // SIMPLIFIED LOGIC:
-  // Only disable the button if:
-  // 1. Default disabled (no section selected)
-  // 2. We're still loading subsection data
-  // 3. We need a main subsection and don't have one
- const isAddButtonDisabled: boolean = 
+  const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
     (Boolean(sectionId) && !hasMainSubSection);
