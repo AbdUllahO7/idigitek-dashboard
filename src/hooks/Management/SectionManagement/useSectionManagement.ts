@@ -117,8 +117,10 @@ export const useSectionManagement = (hasWebsite: boolean) => {
 
     if (orderedSections?.some((section: Section) => section.name === englishName || section.subName === predefinedSection.subName)) {
       toast({
-        title: "Duplicate section",
-        description: `A section named "${translatedName}" already exists.`,
+        title: ready ? t("useSectionManagement.toast.duplicateSection.title") : "Duplicate section",
+        description: ready ? 
+          t("useSectionManagement.toast.duplicateSection.description", { sectionName: translatedName }) : 
+          `A section named "${translatedName}" already exists.`,
         variant: "destructive",
       })
       return
@@ -128,16 +130,20 @@ export const useSectionManagement = (hasWebsite: boolean) => {
       createUserSectionMutation.mutate(newSectionData, {
         onSuccess: () => {
           toast({
-            title: "Section added",
-            description: `${translatedName} section has been added successfully.`,
+            title: ready ? t("useSectionManagement.toast.sectionAdded.title") : "Section added",
+            description: ready ? 
+              t("useSectionManagement.toast.sectionAdded.description", { sectionName: translatedName }) : 
+              `${translatedName} section has been added successfully.`,
           })
           showSuccessMessage()
           setActiveTab("current")
         },
         onError: (error: any) => {
           toast({
-            title: "Error adding section",
-            description: error.message || "An error occurred while adding the section.",
+            title: ready ? t("useSectionManagement.toast.errorAdding.title") : "Error adding section",
+            description: ready ? 
+              t("useSectionManagement.toast.errorAdding.description") : 
+              error.message || "An error occurred while adding the section.",
             variant: "destructive",
           })
         },
@@ -146,8 +152,10 @@ export const useSectionManagement = (hasWebsite: boolean) => {
       createSectionMutation.mutate(newSectionData, {
         onSuccess: (createdSection) => {
           toast({
-            title: "Section added",
-            description: `${translatedName} section has been added successfully.`,
+            title: ready ? t("useSectionManagement.toast.sectionAdded.title") : "Section added",
+            description: ready ? 
+              t("useSectionManagement.toast.sectionAdded.description", { sectionName: translatedName }) : 
+              `${translatedName} section has been added successfully.`,
           })
           showSuccessMessage()
           setActiveTab("current")
@@ -158,8 +166,10 @@ export const useSectionManagement = (hasWebsite: boolean) => {
         },
         onError: (error: any) => {
           toast({
-            title: "Error adding section",
-            description: error.message || "An error occurred while adding the section.",
+            title: ready ? t("useSectionManagement.toast.errorAdding.title") : "Error adding section",
+            description: ready ? 
+              t("useSectionManagement.toast.errorAdding.description") : 
+              error.message || "An error occurred while adding the section.",
             variant: "destructive",
           })
         },
@@ -170,8 +180,8 @@ export const useSectionManagement = (hasWebsite: boolean) => {
   const handleToggleActive = (section: Section) => {
     if (!section._id) {
       toast({
-        title: "Error",
-        description: "Section ID is missing.",
+        title: ready ? t("useSectionManagement.toast.error.title") : "Error",
+        description: ready ? t("useSectionManagement.toast.error.description") : "Section ID is missing.",
         variant: "destructive",
       })
       return
@@ -183,9 +193,14 @@ export const useSectionManagement = (hasWebsite: boolean) => {
       { id: section._id, isActive: newActiveStatus },
       {
         onSuccess: () => {
+          const toastKey = newActiveStatus ? "activated" : "deactivated"
           toast({
-            title: `Section ${newActiveStatus ? 'activated' : 'deactivated'}`,
-            description: `Section is now ${newActiveStatus ? 'visible' : 'hidden'} on your website.`,
+            title: ready ? 
+              t(`useSectionManagement.toast.sectionToggled.${toastKey}.title`) : 
+              `Section ${newActiveStatus ? 'activated' : 'deactivated'}`,
+            description: ready ? 
+              t(`useSectionManagement.toast.sectionToggled.${toastKey}.description`) : 
+              `Section is now ${newActiveStatus ? 'visible' : 'hidden'} on your website.`,
           })
           showSuccessMessage()
 
@@ -199,8 +214,10 @@ export const useSectionManagement = (hasWebsite: boolean) => {
         },
         onError: (error: any) => {
           toast({
-            title: "Error updating section",
-            description: error.message || "An error occurred while updating the section status.",
+            title: ready ? t("useSectionManagement.toast.errorUpdating.title") : "Error updating section",
+            description: ready ? 
+              t("useSectionManagement.toast.errorUpdating.description") : 
+              error.message || "An error occurred while updating the section status.",
             variant: "destructive",
           })
         },
@@ -223,8 +240,8 @@ export const useSectionManagement = (hasWebsite: boolean) => {
 
     if (orderData.length === 0) {
       toast({
-        title: "Error",
-        description: "No valid sections to reorder.",
+        title: ready ? t("useSectionManagement.toast.noValidSections.title") : "Error",
+        description: ready ? t("useSectionManagement.toast.noValidSections.description") : "No valid sections to reorder.",
         variant: "destructive",
       })
       return
@@ -233,16 +250,18 @@ export const useSectionManagement = (hasWebsite: boolean) => {
     updateSectionOrderMutation.mutate(orderData, {
       onSuccess: () => {
         toast({
-          title: "Order updated",
-          description: "Section order has been updated successfully.",
+          title: ready ? t("useSectionManagement.toast.orderUpdated.title") : "Order updated",
+          description: ready ? t("useSectionManagement.toast.orderUpdated.description") : "Section order has been updated successfully.",
         })
         showSuccessMessage()
         refetchSections()
       },
       onError: (error: any) => {
         toast({
-          title: "Error updating order",
-          description: error.message || "An error occurred while updating section order.",
+          title: ready ? t("useSectionManagement.toast.errorUpdatingOrder.title") : "Error updating order",
+          description: ready ? 
+            t("useSectionManagement.toast.errorUpdatingOrder.description") : 
+            error.message || "An error occurred while updating section order.",
           variant: "destructive",
         })
         if (websiteSections?.data) {
@@ -257,16 +276,18 @@ export const useSectionManagement = (hasWebsite: boolean) => {
       deleteSectionMutation.mutate(itemToDelete._id, {
         onSuccess: () => {
           toast({
-            title: "Section deleted",
-            description: `The section has been deleted successfully.`,
+            title: ready ? t("useSectionManagement.toast.sectionDeleted.title") : "Section deleted",
+            description: ready ? t("useSectionManagement.toast.sectionDeleted.description") : "The section has been deleted successfully.",
           })
           setItemToDelete(null)
           showSuccessMessage()
         },
         onError: (error: any) => {
           toast({
-            title: "Error deleting section",
-            description: error.message || "An error occurred while deleting the section.",
+            title: ready ? t("useSectionManagement.toast.errorDeleting.title") : "Error deleting section",
+            description: ready ? 
+              t("useSectionManagement.toast.errorDeleting.description") : 
+              error.message || "An error occurred while deleting the section.",
             variant: "destructive",
           })
         },

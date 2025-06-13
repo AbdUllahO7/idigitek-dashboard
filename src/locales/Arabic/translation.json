@@ -3978,6 +3978,89 @@
       }
     }
   },
+    "useSectionManagement": {
+      "current": "الأقسام الحالية",
+      "currentShort": "الحالية",
+      "addNew": "إضافة جديد",
+      "addNewShort": "إضافة",
+      "addNewSections": "إضافة أقسام مصممة مسبقاً",
+      "currentSections": "أقسام الموقع الحالية",
+      "searchPlaceholder": "البحث في الأقسام...",
+      "browseSections": "تصفح الأقسام المتاحة",
+      "noSectionsYet": "لا توجد أقسام بعد",
+      "noSectionsDescription": "أضف أقساماً مصممة مسبقاً لإنشاء هيكل موقعك. يمكن ترتيب الأقسام بأي ترتيب.",
+      "active": "نشط",
+      "hidden": "مخفي",
+      "dragToReorder": "اسحب الأقسام لإعادة ترتيبها",
+      "changesSaved": "تم حفظ التغييرات بنجاح!",
+      "categories": {
+        "all": "جميع الأقسام",
+        "header": "الرأس",
+        "hero": "البانر الرئيسي",
+        "about": "من نحن",
+        "services": "الخدمات",
+        "portfolio": "المعرض",
+        "testimonials": "الشهادات",
+        "contact": "الاتصال",
+        "footer": "التذييل",
+        "blog": "المدونة",
+        "team": "الفريق",
+        "pricing": "الأسعار",
+        "faq": "الأسئلة الشائعة"
+      },
+      "toast": {
+        "duplicateSection": {
+          "title": "قسم مكرر",
+          "description": "يوجد بالفعل قسم باسم \"{{sectionName}}\"."
+        },
+        "sectionAdded": {
+          "title": "تم إضافة القسم",
+          "description": "تم إضافة قسم {{sectionName}} بنجاح."
+        },
+        "errorAdding": {
+          "title": "خطأ في إضافة القسم",
+          "description": "حدث خطأ أثناء إضافة القسم."
+        },
+        "error": {
+          "title": "خطأ",
+          "description": "معرف القسم مفقود."
+        },
+        "sectionToggled": {
+          "activated": {
+            "title": "تم تفعيل القسم",
+            "description": "القسم الآن مرئي على موقعك."
+          },
+          "deactivated": {
+            "title": "تم إلغاء تفعيل القسم",
+            "description": "القسم الآن مخفي على موقعك."
+          }
+        },
+        "errorUpdating": {
+          "title": "خطأ في تحديث القسم",
+          "description": "حدث خطأ أثناء تحديث حالة القسم."
+        },
+        "orderUpdated": {
+          "title": "تم تحديث الترتيب",
+          "description": "تم تحديث ترتيب الأقسام بنجاح."
+        },
+        "errorUpdatingOrder": {
+          "title": "خطأ في تحديث الترتيب",
+          "description": "حدث خطأ أثناء تحديث ترتيب الأقسام."
+        },
+        "noValidSections": {
+          "title": "خطأ",
+          "description": "لا توجد أقسام صحيحة لإعادة الترتيب."
+        },
+        "sectionDeleted": {
+          "title": "تم حذف القسم",
+          "description": "تم حذف القسم بنجاح."
+        },
+        "errorDeleting": {
+          "title": "خطأ في حذف القسم",
+          "description": "حدث خطأ أثناء حذف القسم."
+        }
+      }
+    },
   "common": {
     "welcome": "مرحبا",
     "logout": "تسجيل الخروج",

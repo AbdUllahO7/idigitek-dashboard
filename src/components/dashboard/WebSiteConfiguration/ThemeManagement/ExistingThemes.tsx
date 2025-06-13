@@ -327,7 +327,7 @@ export const ExistingThemes = ({
 
                 {/* Actions */}
                 {!isEditing && (
-                  <div className="flex gap-2 pt-3 border-t">
+                  <div className="flex gap-2 pt-3 border-t flex-wrap max-w-[300px]">
                     {!theme.isActive && (
                       <Button
                         size="sm"

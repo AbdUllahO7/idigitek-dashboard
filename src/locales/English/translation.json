@@ -3969,6 +3969,89 @@
         }
       }
   },
+  "useSectionManagement": {
+      "current": "Current Sections",
+      "currentShort": "Current",
+      "addNew": "Add New",
+      "addNewShort": "Add",
+      "addNewSections": "Add Pre-designed Sections",
+      "currentSections": "Current Website Sections",
+      "searchPlaceholder": "Search sections...",
+      "browseSections": "Browse Available Sections",
+      "noSectionsYet": "No sections yet",
+      "noSectionsDescription": "Add pre-designed sections to create your website structure. Sections can be arranged in any order.",
+      "active": "Active",
+      "hidden": "Hidden",
+      "dragToReorder": "Drag sections to reorder them",
+      "changesSaved": "Changes saved successfully!",
+      "categories": {
+        "all": "All Sections",
+        "header": "Header",
+        "hero": "Hero",
+        "about": "About",
+        "services": "Services", 
+        "portfolio": "Portfolio",
+        "testimonials": "Testimonials",
+        "contact": "Contact",
+        "footer": "Footer",
+        "blog": "Blog",
+        "team": "Team",
+        "pricing": "Pricing",
+        "faq": "FAQ"
+      },
+      "toast": {
+        "duplicateSection": {
+          "title": "Duplicate section",
+          "description": "A section named \"{{sectionName}}\" already exists."
+        },
+        "sectionAdded": {
+          "title": "Section added",
+          "description": "{{sectionName}} section has been added successfully."
+        },
+        "errorAdding": {
+          "title": "Error adding section",
+          "description": "An error occurred while adding the section."
+        },
+        "error": {
+          "title": "Error",
+          "description": "Section ID is missing."
+        },
+        "sectionToggled": {
+          "activated": {
+            "title": "Section activated",
+            "description": "Section is now visible on your website."
+          },
+          "deactivated": {
+            "title": "Section deactivated", 
+            "description": "Section is now hidden on your website."
+          }
+        },
+        "errorUpdating": {
+          "title": "Error updating section",
+          "description": "An error occurred while updating the section status."
+        },
+        "orderUpdated": {
+          "title": "Order updated",
+          "description": "Section order has been updated successfully."
+        },
+        "errorUpdatingOrder": {
+          "title": "Error updating order",
+          "description": "An error occurred while updating section order."
+        },
+        "noValidSections": {
+          "title": "Error",
+          "description": "No valid sections to reorder."
+        },
+        "sectionDeleted": {
+          "title": "Section deleted",
+          "description": "The section has been deleted successfully."
+        },
+        "errorDeleting": {
+          "title": "Error deleting section",
+          "description": "An error occurred while deleting the section."
+        }
+      }
+  },
   "common": {
     "welcome": "Welcome",
     "logout": "Log out",

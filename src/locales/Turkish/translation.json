@@ -3917,6 +3917,89 @@
       }
     }
   },
+   "useSectionManagement": {
+      "current": "Mevcut Bölümler",
+      "currentShort": "Mevcut",
+      "addNew": "Yeni Ekle",
+      "addNewShort": "Ekle",
+      "addNewSections": "Önceden Tasarlanmış Bölümler Ekle",
+      "currentSections": "Mevcut Website Bölümleri",
+      "searchPlaceholder": "Bölümleri ara...",
+      "browseSections": "Mevcut Bölümlere Göz At",
+      "noSectionsYet": "Henüz bölüm yok",
+      "noSectionsDescription": "Website yapınızı oluşturmak için önceden tasarlanmış bölümler ekleyin. Bölümler herhangi bir sırada düzenlenebilir.",
+      "active": "Aktif",
+      "hidden": "Gizli",
+      "dragToReorder": "Bölümleri yeniden sıralamak için sürükleyin",
+      "changesSaved": "Değişiklikler başarıyla kaydedildi!",
+      "categories": {
+        "all": "Tüm Bölümler",
+        "header": "Başlık",
+        "hero": "Ana Banner",
+        "about": "Hakkımızda",
+        "services": "Hizmetler",
+        "portfolio": "Portföy",
+        "testimonials": "Referanslar",
+        "contact": "İletişim",
+        "footer": "Alt Bilgi",
+        "blog": "Blog",
+        "team": "Ekip",
+        "pricing": "Fiyatlar",
+        "faq": "SSS"
+      },
+      "toast": {
+        "duplicateSection": {
+          "title": "Yinelenen bölüm",
+          "description": "\"{{sectionName}}\" adında bir bölüm zaten mevcut."
+        },
+        "sectionAdded": {
+          "title": "Bölüm eklendi",
+          "description": "{{sectionName}} bölümü başarıyla eklendi."
+        },
+        "errorAdding": {
+          "title": "Bölüm ekleme hatası",
+          "description": "Bölüm eklenirken bir hata oluştu."
+        },
+        "error": {
+          "title": "Hata",
+          "description": "Bölüm ID'si eksik."
+        },
+        "sectionToggled": {
+          "activated": {
+            "title": "Bölüm etkinleştirildi",
+            "description": "Bölüm artık website'nizde görünür."
+          },
+          "deactivated": {
+            "title": "Bölüm devre dışı bırakıldı",
+            "description": "Bölüm artık website'nizde gizli."
+          }
+        },
+        "errorUpdating": {
+          "title": "Bölüm güncelleme hatası",
+          "description": "Bölüm durumu güncellenirken bir hata oluştu."
+        },
+        "orderUpdated": {
+          "title": "Sıralama güncellendi",
+          "description": "Bölüm sıralaması başarıyla güncellendi."
+        },
+        "errorUpdatingOrder": {
+          "title": "Sıralama güncelleme hatası",
+          "description": "Bölüm sıralaması güncellenirken bir hata oluştu."
+        },
+        "noValidSections": {
+          "title": "Hata",
+          "description": "Yeniden sıralanacak geçerli bölüm yok."
+        },
+        "sectionDeleted": {
+          "title": "Bölüm silindi",
+          "description": "Bölüm başarıyla silindi."
+        },
+        "errorDeleting": {
+          "title": "Bölüm silme hatası",
+          "description": "Bölüm silinirken bir hata oluştu."
+        }
+      }
+    },
   "common": {
     "welcome": "Hoş geldiniz",
     "logout": "Çıkış yap",
