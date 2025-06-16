@@ -23,6 +23,7 @@
     "nav": {
       "dashboard": "Dashboard",
       "users": "Users",
+      "Forms" : "Forms",
       "services": "Services",
       "header": "Header",
       "news": "News",
@@ -4009,6 +4010,78 @@
         }
       }
   },
+    "ContactForms": {
+      "title": "Contact Forms Management",
+      "subtitle": "Manage and respond to customer inquiries",
+      "stats": {
+        "total": "Total",
+        "pending": "Pending",
+        "read": "Read",
+        "responded": "Responded"
+      },
+      "tabs": {
+        "contacts": "Contact Messages",
+        "analytics": "Analytics"
+      },
+      "status": {
+        "pending": "Pending",
+        "read": "Read",
+        "responded": "Responded"
+      },
+      "search": {
+        "placeholder": "Search contacts..."
+      },
+      "filter": {
+        "status": "Filter by status",
+        "all": "All Status"
+      },
+      "empty": {
+        "title": "No contact forms found",
+        "description": "No contact forms match your current filters."
+      },
+      "actions": {
+        "title": "Actions",
+        "markRead": "Mark as Read",
+        "markResponded": "Mark as Responded",
+        "markPending": "Mark as Pending",
+        "delete": "Delete"
+      },
+      "pagination": {
+        "page": "Page",
+        "of": "of"
+      },
+      "analytics": {
+        "title": "Contact Forms Analytics",
+        "description": "Overview of contact form submissions and response rates",
+        "comingSoon": "Analytics Coming Soon",
+        "comingSoonDesc": "Detailed analytics and reporting features will be available soon."
+      },
+      "delete": {
+        "title": "Delete Contact",
+        "description": "Are you sure you want to delete this contact? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete",
+        "deleting": "Deleting..."
+      },
+      "toasts": {
+        "statusUpdated": {
+          "title": "Status Updated",
+          "description": "Contact status has been updated successfully."
+        },
+        "statusError": {
+          "title": "Update Failed",
+          "description": "Failed to update contact status."
+        },
+        "deleted": {
+          "title": "Contact Deleted",
+          "description": "Contact has been deleted successfully."
+        },
+        "deleteError": {
+          "title": "Delete Failed",
+          "description": "Failed to delete contact."
+        }
+      }
+    },
   "common": {
     "welcome": "Welcome",
     "logout": "Log out",

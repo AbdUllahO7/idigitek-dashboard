@@ -31,6 +31,7 @@ import {
   PenBoxIcon,
   Contact,
   TouchpadOff,
+  Files,
 } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "@/src/lib/utils"
@@ -41,8 +42,6 @@ import { useSections } from "@/src/hooks/webConfiguration/use-section"
 import Link from "next/link"
 import { useMediaQuery } from "@/src/hooks/useMediaQuery"
 import { Badge } from "../ui/badge"
-import { Separator } from "../ui/separator"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import { useTranslation } from "react-i18next"
 import { useLanguage } from "@/src/context/LanguageContext"
 
@@ -89,6 +88,12 @@ const allNavItems: NavItem[] = [
     href: "/dashboard/users",
     roles: ["superAdmin", "owner"],
     icon: Users,
+  },
+    {
+    titleKey: "Dashboard_sideBar.nav.Forms",
+    href: "/dashboard/ContactForm",
+    roles: ["superAdmin", "owner"],
+    icon: Files,
   },
   {
     titleKey: "Dashboard_sideBar.nav.services",

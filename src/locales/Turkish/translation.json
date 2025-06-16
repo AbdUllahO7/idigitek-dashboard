@@ -23,6 +23,7 @@
     "nav": {
       "dashboard": "Kontrol Paneli",
       "users": "Kullanıcılar",
+      "Forms" : "Formlar",
       "services": "Hizmetler",
       "header": "Başlık",
       "news": "Haberler",
@@ -3997,6 +3998,78 @@
         "errorDeleting": {
           "title": "Bölüm silme hatası",
           "description": "Bölüm silinirken bir hata oluştu."
+        }
+      }
+    },
+    "ContactForms": {
+      "title": "İletişim Formları Yönetimi",
+      "subtitle": "Müşteri sorularını yönet ve yanıtla",
+      "stats": {
+        "total": "Toplam",
+        "pending": "Beklemede",
+        "read": "Okundu",
+        "responded": "Yanıtlandı"
+      },
+      "tabs": {
+        "contacts": "İletişim Mesajları",
+        "analytics": "Analitik"
+      },
+      "status": {
+        "pending": "Beklemede",
+        "read": "Okundu",
+        "responded": "Yanıtlandı"
+      },
+      "search": {
+        "placeholder": "Kişilerde ara..."
+      },
+      "filter": {
+        "status": "Duruma göre filtrele",
+        "all": "Tüm Durumlar"
+      },
+      "empty": {
+        "title": "İletişim formu bulunamadı",
+        "description": "Mevcut filtrelerinizle eşleşen iletişim formu bulunmuyor."
+      },
+      "actions": {
+        "title": "İşlemler",
+        "markRead": "Okundu Olarak İşaretle",
+        "markResponded": "Yanıtlandı Olarak İşaretle",
+        "markPending": "Beklemede Olarak İşaretle",
+        "delete": "Sil"
+      },
+      "pagination": {
+        "page": "Sayfa",
+        "of": "/"
+      },
+      "analytics": {
+        "title": "İletişim Formları Analitikleri",
+        "description": "İletişim formu gönderimlerinin ve yanıt oranlarının genel görünümü",
+        "comingSoon": "Analitikler Yakında Geliyor",
+        "comingSoonDesc": "Detaylı analitik ve raporlama özellikleri yakında kullanılabilir olacak."
+      },
+      "delete": {
+        "title": "Kişiyi Sil",
+        "description": "Bu kişiyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+        "cancel": "İptal",
+        "confirm": "Sil",
+        "deleting": "Siliniyor..."
+      },
+      "toasts": {
+        "statusUpdated": {
+          "title": "Durum Güncellendi",
+          "description": "Kişi durumu başarıyla güncellendi."
+        },
+        "statusError": {
+          "title": "Güncelleme Başarısız",
+          "description": "Kişi durumu güncellenemedi."
+        },
+        "deleted": {
+          "title": "Kişi Silindi",
+          "description": "Kişi başarıyla silindi."
+        },
+        "deleteError": {
+          "title": "Silme Başarısız",
+          "description": "Kişi silinemedi."
         }
       }
     },
