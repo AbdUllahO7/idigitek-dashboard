@@ -3820,113 +3820,113 @@
         "reloadWarningDesc": "Failed to reload data after save."
       }
   },
-  "specialLinks": {
-      "languageCard": {
-        "title": "قسم التذييل",
-        "description": "إدارة محتوى التذييل لـ {{langCode}}",
-        "buttons": {
-          "addFooter": "إضافة تذييل"
-        }
-      },
-      "card": {
-        "title": "قسم التذييل {{number}}",
-        "translationMode": "وضع الترجمة",
-        "socialLinksCount": "{{count}} رابط (روابط) اجتماعية",
-        "footerTitle": {
-          "label": "عنوان التذييل",
-          "translate": "(ترجم)",
-          "placeholder": "أدخل عنوان التذييل"
-        },
-        "socialLinks": {
-          "title": "الروابط الاجتماعية",
-          "translateNames": "ترجمة الأسماء",
-          "primaryControl": "التحكم الأساسي",
-          "titleWithNumber": "رابط اجتماعي {{number}}",
-          "buttons": {
-            "collapse": "طي",
-            "expand": "توسيع",
-            "add": "إضافة رابط اجتماعي"
-          },
-          "noLinks": "لم تُضف روابط اجتماعية بعد",
-          "linkName": {
-            "label": "اسم الرابط",
-            "translate": "(ترجم هذا)",
-            "placeholder": "أدخل اسم الرابط"
-          },
-          "url": {
-            "label": "رابط الرابط الاجتماعي",
-            "placeholder": "https://example.com"
-          }
-        },
-        "imageManagement": {
-          "title": "إدارة الصور",
-          "description": "يتم إدارة الصور من اللغة الأساسية وتُشارك عبر جميع اللغات"
-        }
-      },
-      "form": {
-        "loading": "جارٍ تحميل بيانات قسم التذييل...",
-        "saving": {
-          "updating": "تحديث التذييلات",
-          "creating": "إنشاء التذييلات",
-          "description": "يرجى الانتظار بينما نحفظ التغييرات..."
-        },
-        "validation": {
-          "countMismatch": "يجب أن تحتوي كل لغة على نفس عدد التذييلات",
-          "errorTitle": "خطأ في التحقق",
-          "errorDescription": "يجب أن تحتوي جميع اللغات على نفس عدد التذييلات.",
-          "fieldsError": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح."
-        },
-        "buttons": {
-          "saving": "جارٍ الحفظ...",
-          "update": "تحديث التذييلات",
-          "save": "حفظ التذييلات"
-        },
-        "toasts": {
-          "cannotRemove": {
-            "title": "لا يمكن الإزالة",
-            "description": "يجب أن يكون لديك تذييل واحد على الأقل"
-          },
-          "footerDeleted": {
-            "title": "تم حذف التذييل",
-            "description": "تم حذف التذييل {{number}} من قاعدة البيانات"
-          },
-          "footerRemoved": {
-            "title": "تم إزالة التذييل",
-            "description": "تم إزالة التذييل بنجاح."
-          },
-          "errorRemoving": {
-            "title": "خطأ",
-            "description": "حدث خطأ أثناء إزالة التذييل."
-          },
-          "footerAdded": {
-            "title": "تم إضافة تذييل",
-            "description": "تم إضافة تذييل جديد. يرجى ملء التفاصيل وحفظ التغييرات."
-          },
-          "errorLoading": {
-            "title": "خطأ في تحميل البيانات",
-            "description": "فشل تحميل بيانات التذييل. يرجى المحاولة مرة أخرى."
-          },
-          "success": {
-            "updated": "تم تحديث قسم التذييلات بنجاح!",
-            "created": "تم إنشاء قسم التذييلات بنجاح!",
-            "allContentSaved": "تم حفظ جميع المحتويات."
-          },
-          "errorSaving": {
-            "updated": "خطأ في تحديث قسم التذييلات",
-            "created": "خطأ في إنشاء قسم التذييلات",
-            "unknown": "حدث خطأ غير معروف"
-          },
-          "warningReload": {
-            "title": "تحذير",
-            "description": "فشل إعادة تحميل البيانات بعد الحفظ."
-          }
-        },
-        "deleteDialog": {
-          "title": "حذف التذييل",
-          "confirm": "حذف التذييل"
-        }
-      }
-  },
+"specialLinks": {
+    "languageCard": {
+    "title": "Footer Section",
+    "description": "Manage footer content for {{langCode}}",
+    "buttons": {
+    "addFooter": "Add Footer"
+    }
+    },
+    "card": {
+    "title": "Footer Section {{number}}",
+    "translationMode": "Translation Mode",
+    "socialLinksCount": "{{count}} Social Link(s)",
+    "footerTitle": {
+    "label": "Footer Title",
+    "translate": "(Translate)",
+    "placeholder": "Enter Footer Title"
+    },
+    "socialLinks": {
+    "title": "Social Links",
+    "translateNames": "Translate Names",
+    "primaryControl": "Primary Control",
+    "titleWithNumber": "Social Link  {{number}}",
+    "buttons": {
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "add": "Add a social link"
+    },
+    "noLinks": "No social links added yet",
+    "linkName": {
+    "label": "Link Name",
+    "translate": "(Translate this)",
+    "placeholder": "Enter a link name"
+    },
+    "url": {
+    "label": "Social Link URL",
+    "placeholder": "https://example.com"
+    }
+    },
+    "imageManagement": {
+    "title": "Image Management",
+    "description": "Images are managed from the base language and shared across all languages"
+    }
+    },
+    "form": {
+    "loading": "Loading footer section data...",
+    "saving": {
+    "updating": "Updating footers",
+    "creating": "Creating footers",
+    "description": "Please wait while we save your changes..."
+    },
+    "validation": {
+    "countMismatch": "Each language must have the same number of footers.",
+    "errorTitle": "Validation Error.",
+    "errorDescription": "All languages ​​must have the same number of footers.",
+    "fieldsError": "Please fill in all required fields correctly."
+    },
+    "buttons": {
+    "saving": "Saving...",
+    "update": "Updating footers",
+    "save": "Save footers"
+    },
+    "toasts": {
+    "cannotRemove": {
+    "title": "Cannot remove",
+    "description": "You must have at least one footer"
+    },
+    "footerDeleted": {
+    "title": "Footer deleted",
+    "description": "Footer {{number}} was removed from the database"
+    },
+    "footerRemoved": {
+    "title": "Footer removed",
+    "description": "Footer removed successfully."
+    },
+    "errorRemoving": {
+    "title": "Error",
+    "description": "An error occurred while removing the footer."
+    },
+    "footerAdded": {
+    "title": "Footer added",
+    "description": "A new footer has been added. Please fill in the details and save the changes."
+    },
+    "errorLoading": {
+    "title": "Error loading data",
+    "description": "Failed to load footer data. Please try again."
+    },
+    "success": {
+    "updated": "The footer section was updated successfully!",
+    "created": "The footer section was created successfully!",
+    "allContentSaved": "All contents were saved."
+    },
+    "errorSaving": {
+    "updated": "Error updating the footer section",
+    "created": "Error creating the footer section",
+    "unknown": "An unknown error occurred"
+    },
+    "warningReload": {
+    "title": "Warning",
+    "description": "Failed to reload data after saving."
+    }
+    },
+    "deleteDialog": {
+    "title": "Delete Footer",
+    "confirm": "Delete Footer"
+    }
+    }
+},
   "useSectionManagement": {
       "current": "Current Sections",
       "currentShort": "Current",

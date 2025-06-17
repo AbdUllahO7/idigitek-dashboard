@@ -89,6 +89,7 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
   const { useCreate: useCreateContentElement } = useContentElements();
   const { useBulkUpsert: useBulkUpsertTranslations } = useContentTranslations();
   
+  
   const createSubSection = useCreateSubSection();
   const updateSubSection = useUpdateSubSection();
   const createContentElement = useCreateContentElement();
@@ -317,7 +318,7 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
           isActive: true,
           isMain: false,
           order: 0,
-          defaultContent: '',
+          defaultContent: 'contact section',
           sectionItem: ParentSectionId,
           languages: languageIds,
           WebSiteId: websiteId
@@ -348,42 +349,47 @@ const ContactInformationForm = forwardRef<any, ContactFormProps>((props, ref) =>
         return acc;
       }, {});
 
-      if (contentElements.length > 0) {
-        const textElements = contentElements.filter((e) => e.type === "text");
-        const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] = [];
-        const elementNameToKeyMap: Record<string, keyof typeof allFormValues[string]> = {
-          'Title': 'title',
-          'Description': 'description', 
-          'Location': 'location',
-          'PhoneText': 'phoneText',
-          'PhoneTextValue': 'phoneTextValue',
-          'Email': 'email',
-          'EmailValue': 'emailValue', 
-          'Office': 'office',
-          'OfficeValue': 'officeValue', 
-        };
+    if (contentElements.length > 0) {
+  const textElements = contentElements.filter((e) => e.type === "text");
+  const translations: (Omit<ContentTranslation, "_id"> & { id?: string; })[] = [];
+  const elementNameToKeyMap: Record<string, keyof typeof allFormValues[string]> = {
+    'Title': 'title',
+    'Description': 'description', 
+    'Location': 'location',
+    'PhoneText': 'phoneText',
+    'PhoneTextValue': 'phoneTextValue',
+    'Email': 'email',
+    'EmailValue': 'emailValue', 
+    'Office': 'office',
+    'OfficeValue': 'officeValue', 
+  };
 
-        Object.entries(allFormValues).forEach(([langCode, values]) => {
-          const langId = langCodeToIdMap[langCode];
-          if (!langId) return;
+  Object.entries(allFormValues).forEach(([langCode, values]) => {
+    const langId = langCodeToIdMap[langCode];
+    if (!langId) return;
 
-          textElements.forEach((element) => {
-            const key = elementNameToKeyMap[element.name];
-            if (key && values && typeof values === "object" && key in values) {
-              translations.push({
-                content: values[key],
-                language: langId,
-                contentElement: element._id,
-                isActive: true
-              });
-            }
+    textElements.forEach((element) => {
+      const key = elementNameToKeyMap[element.name];
+      if (key && values && typeof values === "object" && key in values) {
+        const content = values[key];
+        
+        // ✅ FIX: Only create translation if content is not empty
+        if (content && typeof content === 'string' && content.trim() !== '') {
+          translations.push({
+            content: content.trim(),
+            language: langId,
+            contentElement: element._id,
+            isActive: true
           });
-        });
-
-        if (translations.length > 0) {
-          await bulkUpsertTranslations.mutateAsync(translations);
         }
-      } else {
+      }
+    });
+  });
+
+  if (translations.length > 0) {
+    await bulkUpsertTranslations.mutateAsync(translations);
+  }
+} else {
         const elementTypes = [
           { type: "text", key: "title", name: "Title" },
           { type: "text", key: "description", name: "Description" }, 
