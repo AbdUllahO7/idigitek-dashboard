@@ -25,7 +25,6 @@ import DeleteSectionDialog from "@/src/components/DeleteSectionDialog";
 import { createChooseUsDefaultValues, createLanguageCodeMap } from "../../services/addService/Utils/Language-default-values";
 import { createFormRef, getAvailableIcons, getSubSectionCountsByLanguage, getSafeIconValue, useForceUpdate, validateSubSectionCounts } from "../../services/addService/Utils/Expose-form-data";
 import { processAndLoadData } from "../../services/addService/Utils/load-form-data";
-import { ValidationDialog } from "../../services/addService/Components/BenefitsForm/ValidationDialog";
 import { ChooseUsLanguageCard } from "./ChooseUsLanguageCard";
 import { ChooseUsFormProps, ChooseUsFormRef, ChoseUsFormState } from "@/src/api/types/sections/choseUS/ChooseUs.type";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
@@ -34,18 +33,21 @@ import { BackgroundImageSection } from "../../services/addService/Components/Her
 import apiClient from "@/src/lib/api-client";
 import { createChooseUsSchema } from "../../services/addService/Utils/language-specific-schemas";
 import { StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
+import { ValidationDialog } from "../../services/addService/Components/BenefitsForm/ValidationDialog";
+import { useTranslation } from "react-i18next";
 
 const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
   ({ languageIds, activeLanguages, onDataChange, slug, ParentSectionId }, ref) => {
     const { websiteId } = useWebsiteContext();
     const formSchema = createChooseUsSchema(languageIds, activeLanguages);
     const defaultValues = createChooseUsDefaultValues(languageIds, activeLanguages);
-    
+    const { t } = useTranslation();
+
     const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues,
-    mode: "onChange" // Enable validation on change for better UX
-  });
+      resolver: zodResolver(formSchema),
+      defaultValues,
+      mode: "onChange",
+    });
 
     // State management
     const [state, setState] = useState<ChoseUsFormState>({
@@ -117,7 +119,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
       onRemove: () => updateState({ hasUnsavedChanges: true }),
       validate: (file: { type: string }) => {
         const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
-        return validTypes.includes(file.type) || 'Only JPEG, PNG, GIF, or SVG files are allowed';
+        return validTypes.includes(file.type) || t('chooseUsForm.imageUploadFailedDescription');
       },
     });
 
@@ -190,23 +192,23 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         if (imageUrl) {
           form.setValue("backgroundImage", imageUrl, { shouldDirty: false });
           toast({
-            title: "Image Uploaded",
-            description: "Background image has been successfully uploaded.",
+            title: t('chooseUsForm.imageUploaded'),
+            description: t('chooseUsForm.imageUploadedDescription'),
           });
           return imageUrl;
         }
 
-        throw new Error("No image URL returned from server. Response: " + JSON.stringify(uploadResult.data));
+        throw new Error(t('chooseUsForm.imageUploadFailedDescription'));
       } catch (error) {
         console.error("Image upload failed:", error);
         toast({
-          title: "Image Upload Failed",
-          description: error instanceof Error ? error.message : "Failed to upload image",
+          title: t('chooseUsForm.imageUploadFailed'),
+          description: error instanceof Error ? error.message : t('chooseUsForm.imageUploadFailedDescription'),
           variant: "destructive",
         });
         throw error;
       }
-    }, [form, toast]);
+    }, [form, toast, t]);
 
     // Process choseUs data
     const processChoseUsData = useCallback(
@@ -347,8 +349,8 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
 
         if (currentChoseUs.length <= 1) {
           toast({
-            title: "Cannot remove",
-            description: "You need at least one benefit",
+            title: t('chooseUsForm.cannotRemove'),
+            description: t('chooseUsForm.cannotRemoveDescription'),
             variant: "destructive",
           });
           return;
@@ -375,8 +377,8 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
               });
 
               toast({
-                title: "ChoseUs deleted",
-                description: `ChoseUs ${benefitNumber} has been deleted from the database`,
+                title: t('chooseUsForm.choseUsDeleted'),
+                description: t('chooseUsForm.choseUsDeletedDescription', { number: benefitNumber }),
               });
             }
 
@@ -405,8 +407,8 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
           } catch (error) {
             console.error("Error removing choseUs elements:", error);
             toast({
-              title: "Error removing benefit",
-              description: "There was an error removing the choseUs from the database",
+              title: t('chooseUsForm.errorRemovingBenefit'),
+              description: t('chooseUsForm.errorRemovingBenefitDescription'),
               variant: "destructive",
             });
             return;
@@ -440,6 +442,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         forceUpdate,
         validateFormBenefitCounts,
         updateState,
+        t,
       ]
     );
 
@@ -455,8 +458,8 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
 
       if (!isValid) {
         toast({
-          title: "Validation Error",
-          description: "Please fill all required fields correctly",
+          title: t('chooseUsForm.validationError'),
+          description: t('chooseUsForm.validationErrorDescription'),
           variant: "destructive",
         });
         return false;
@@ -469,7 +472,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         let sectionId = existingSubSectionId;
         if (!sectionId) {
           if (!ParentSectionId) {
-            throw new Error("Parent section ID is required to create a subsection");
+            throw new Error(t('chooseUsForm.unknownError'));
           }
 
           const subsectionData = {
@@ -490,7 +493,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         }
 
         if (!sectionId) {
-          throw new Error("Failed to create or retrieve subsection ID");
+          throw new Error(t('chooseUsForm.unknownError'));
         }
 
         const langCodeToIdMap = activeLanguages.reduce((acc: { [x: string]: any }, lang: { languageID: string | number; _id: any }) => {
@@ -517,7 +520,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         if (bgImageElement && imageFile) {
           const imageUrl = await uploadImage(bgImageElement._id, imageFile);
           if (!imageUrl) {
-            throw new Error("Failed to upload background image");
+            throw new Error(t('chooseUsForm.imageUploadFailedDescription'));
           }
         }
 
@@ -627,8 +630,8 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
 
         toast({
           title: existingSubSectionId
-            ? "ChoseUs section updated successfully!"
-            : "ChoseUs section created successfully!",
+            ? t('chooseUsForm.choseUsUpdatedSuccess')
+            : t('chooseUsForm.choseUsCreatedSuccess'),
         });
 
         updateState({ hasUnsavedChanges: false });
@@ -664,10 +667,10 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         console.error("Operation failed:", error);
         toast({
           title: existingSubSectionId
-            ? "Error updating choseUs section"
-            : "Error creating choseUs section",
+            ? t('chooseUsForm.errorUpdatingChoseUs')
+            : t('chooseUsForm.errorCreatingChoseUs'),
           variant: "destructive",
-          description: error instanceof Error ? error.message : "Unknown error occurred",
+          description: error instanceof Error ? error.message : t('chooseUsForm.unknownError'),
         });
         return false;
       } finally {
@@ -692,6 +695,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
       updateState,
       imageFile,
       uploadImage,
+      t,
     ]);
 
     // Create form ref
@@ -732,7 +736,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
       setDeleteDialogOpen(true);
     };
 
-    // Render content conditionally without early return
+    // Render content
     const isLoading = slug && (isLoadingData || isLoadingSubsection) && !dataLoaded;
 
     return (
@@ -740,14 +744,14 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
         {isLoading ? (
           <div className="flex items-center justify-center p-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary mr-2" />
-            <p className="text-muted-foreground">Loading choseUs section data...</p>
+            <p className="text-muted-foreground">{t('chooseUsForm.loadingData')}</p>
           </div>
         ) : (
           <>
             <LoadingDialog
               isOpen={isSaving}
-              title={existingSubSectionId ? "Updating ChoseUs" : "Creating ChoseUs"}
-              description="Please wait while we save your changes..."
+              title={existingSubSectionId ? t('chooseUsForm.updatingChoseUs') : t('chooseUsForm.creatingChoseUs')}
+              description={t('chooseUsForm.savingChanges')}
             />
 
             <Form {...form}>
@@ -790,7 +794,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
                 <div className="flex items-center text-amber-500 mr-4">
                   <AlertTriangle className="h-4 w-4 mr-2" />
                   <span className="text-sm">
-                    Each language must have the same number of choseUs
+                    {t('chooseUsForm.benefitCountMismatchWarning')}
                   </span>
                 </div>
               )}
@@ -803,12 +807,12 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
                 {isSaving ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
+                    {t('chooseUsForm.saving')}
                   </>
                 ) : (
                   <>
                     <Save className="mr-2 h-4 w-4" />
-                    {existingSubSectionId ? "Update ChoseUs" : "Save ChoseUs"}
+                    {existingSubSectionId ? t('chooseUsForm.updateChoseUs') : t('chooseUsForm.saveChoseUs')}
                   </>
                 )}
               </Button>
@@ -817,15 +821,14 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
             <DeleteSectionDialog
               open={deleteDialogOpen}
               onOpenChange={setDeleteDialogOpen}
-              serviceName={stepToDelete ? `Step ${stepToDelete.index + 1}` : ""}
+              serviceName={stepToDelete ? t('chooseUsForm.stepLabel', { number: stepToDelete.index + 1 }) : ""}
               onConfirm={async () => {
                 if (stepToDelete) {
                   await removeChoseUs(stepToDelete.langCode, stepToDelete.index);
                 }
               }}
               isDeleting={isDeleting}
-              title="Delete Process"
-              confirmText="Delete Process"
+              itemType="section"
             />
 
             <ValidationDialog

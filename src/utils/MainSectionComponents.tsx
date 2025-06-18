@@ -4,7 +4,7 @@ import React, { ReactNode } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card"
 import { Button } from "@/src/components/ui/button"
 import { Skeleton } from "@/src/components/ui/skeleton"
-import {  Loader2,  Save, AlertTriangle} from 'lucide-react'
+import {  Loader2, AlertTriangle} from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert"
 import { Tabs,  TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { motion } from "framer-motion"
@@ -423,6 +423,106 @@ import {
   Bell,
   AlertCircle,
   Info,
+  // 100 Newly added icons
+  Home,
+  Menu,
+  ShoppingCart,
+  Package,
+  Users,
+  BarChart,
+  PieChart,
+  Activity,
+  Gift,
+  Camera,
+  Mic,
+  Send,
+  RefreshCw,
+  ChevronUp,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ExternalLink,
+  LogIn,
+  LogOut,
+  Shield,
+  Briefcase,
+  DollarSign,
+  Percent,
+  ShoppingBag,
+  Scissors,
+  Paperclip,
+  Flag,
+  Clock3,
+  Battery,
+  Wifi,
+  Bluetooth,
+  Cloud,
+  Archive,
+  Award,
+  Book,
+  Box,
+  Building,
+  CameraOff,
+  CheckCircle,
+  Circle,
+  Clipboard,
+  Code,
+  Database,
+  Feather,
+  FileText,
+  Grid,
+  HelpCircle,
+  Inbox,
+  Key,
+  Layers,
+  LifeBuoy,
+  Map,
+  Maximize,
+  Minimize,
+  PenTool,
+  Printer,
+  Save,
+  Server,
+  Sliders,
+  Table,
+  Terminal,
+  Thermometer,
+  ToggleLeft,
+  ToggleRight,
+  TrendingUp,
+  TrendingDown,
+  UserCheck,
+  UserMinus,
+  UserPlus,
+  Watch,
+  Airplay,
+  Anchor,
+  Aperture,
+  AtSign,
+  BarChart2,
+  BatteryCharging,
+  BellOff,
+  BookOpen,
+  Cast,
+  CheckSquare,
+  CloudOff,
+  Coffee,
+  CornerDownLeft,
+  CornerDownRight,
+  Cpu,
+  Crosshair,
+  Disc,
+  FileMinus,
+  FilePlus,
+  GitBranch,
+  GitCommit,
+  HardDrive,
+  Hash,
+  Hexagon,
 } from "lucide-react";
 
 export const IconComponent = ({ iconName }: { iconName: IconNames }) => {
@@ -478,6 +578,105 @@ export const IconComponent = ({ iconName }: { iconName: IconNames }) => {
     Bell: <Bell className="h-4 w-4" />,
     AlertCircle: <AlertCircle className="h-4 w-4" />,
     Info: <Info className="h-4 w-4" />,
+    Home: <Home className="h-4 w-4" />,
+    Menu: <Menu className="h-4 w-4" />,
+    ShoppingCart: <ShoppingCart className="h-4 w-4" />,
+    Package: <Package className="h-4 w-4" />,
+    Users: <Users className="h-4 w-4" />,
+    BarChart: <BarChart className="h-4 w-4" />,
+    PieChart: <PieChart className="h-4 w-4" />,
+    Activity: <Activity className="h-4 w-4" />,
+    Gift: <Gift className="h-4 w-4" />,
+    Camera: <Camera className="h-4 w-4" />,
+    Mic: <Mic className="h-4 w-4" />,
+    Send: <Send className="h-4 w-4" />,
+    RefreshCw: <RefreshCw className="h-4 w-4" />,
+    ChevronUp: <ChevronUp className="h-4 w-4" />,
+    ChevronDown: <ChevronDown className="h-4 w-4" />,
+    ChevronLeft: <ChevronLeft className="h-4 w-4" />,
+    ChevronRight: <ChevronRight className="h-4 w-4" />,
+    ArrowUp: <ArrowUp className="h-4 w-4" />,
+    ArrowDown: <ArrowDown className="h-4 w-4" />,
+    ArrowLeft: <ArrowLeft className="h-4 w-4" />,
+    ArrowRight: <ArrowRight className="h-4 w-4" />,
+    ExternalLink: <ExternalLink className="h-4 w-4" />,
+    LogIn: <LogIn className="h-4 w-4" />,
+    LogOut: <LogOut className="h-4 w-4" />,
+    Shield: <Shield className="h-4 w-4" />,
+    Briefcase: <Briefcase className="h-4 w-4" />,
+    DollarSign: <DollarSign className="h-4 w-4" />,
+    Percent: <Percent className="h-4 w-4" />,
+    ShoppingBag: <ShoppingBag className="h-4 w-4" />,
+    Scissors: <Scissors className="h-4 w-4" />,
+    Paperclip: <Paperclip className="h-4 w-4" />,
+    Flag: <Flag className="h-4 w-4" />,
+    Clock3: <Clock3 className="h-4 w-4" />,
+    Battery: <Battery className="h-4 w-4" />,
+    Wifi: <Wifi className="h-4 w-4" />,
+    Bluetooth: <Bluetooth className="h-4 w-4" />,
+    Cloud: <Cloud className="h-4 w-4" />,
+    Archive: <Archive className="h-4 w-4" />,
+    Award: <Award className="h-4 w-4" />,
+    Book: <Book className="h-4 w-4" />,
+    Box: <Box className="h-4 w-4" />,
+    Building: <Building className="h-4 w-4" />,
+    CameraOff: <CameraOff className="h-4 w-4" />,
+    CheckCircle: <CheckCircle className="h-4 w-4" />,
+    Circle: <Circle className="h-4 w-4" />,
+    Clipboard: <Clipboard className="h-4 w-4" />,
+    Code: <Code className="h-4 w-4" />,
+    Database: <Database className="h-4 w-4" />,
+    Feather: <Feather className="h-4 w-4" />,
+    FileText: <FileText className="h-4 w-4" />,
+    Grid: <Grid className="h-4 w-4" />,
+    HelpCircle: <HelpCircle className="h-4 w-4" />,
+    Inbox: <Inbox className="h-4 w-4" />,
+    Key: <Key className="h-4 w-4" />,
+    Layers: <Layers className="h-4 w-4" />,
+    LifeBuoy: <LifeBuoy className="h-4 w-4" />,
+    Map: <Map className="h-4 w-4" />,
+    Maximize: <Maximize className="h-4 w-4" />,
+    Minimize: <Minimize className="h-4 w-4" />,
+    PenTool: <PenTool className="h-4 w-4" />,
+    Printer: <Printer className="h-4 w-4" />,
+    Save: <Save className="h-4 w-4" />,
+    Server: <Server className="h-4 w-4" />,
+    Sliders: <Sliders className="h-4 w-4" />,
+    Table: <Table className="h-4 w-4" />,
+    Terminal: <Terminal className="h-4 w-4" />,
+    Thermometer: <Thermometer className="h-4 w-4" />,
+    ToggleLeft: <ToggleLeft className="h-4 w-4" />,
+    ToggleRight: <ToggleRight className="h-4 w-4" />,
+    TrendingUp: <TrendingUp className="h-4 w-4" />,
+    TrendingDown: <TrendingDown className="h-4 w-4" />,
+    UserCheck: <UserCheck className="h-4 w-4" />,
+    UserMinus: <UserMinus className="h-4 w-4" />,
+    UserPlus: <UserPlus className="h-4 w-4" />,
+    Watch: <Watch className="h-4 w-4" />,
+    Airplay: <Airplay className="h-4 w-4" />,
+    Anchor: <Anchor className="h-4 w-4" />,
+    Aperture: <Aperture className="h-4 w-4" />,
+    AtSign: <AtSign className="h-4 w-4" />,
+    BarChart2: <BarChart2 className="h-4 w-4" />,
+    BatteryCharging: <BatteryCharging className="h-4 w-4" />,
+    BellOff: <BellOff className="h-4 w-4" />,
+    BookOpen: <BookOpen className="h-4 w-4" />,
+    Cast: <Cast className="h-4 w-4" />,
+    CheckSquare: <CheckSquare className="h-4 w-4" />,
+    CloudOff: <CloudOff className="h-4 w-4" />,
+    Coffee: <Coffee className="h-4 w-4" />,
+    CornerDownLeft: <CornerDownLeft className="h-4 w-4" />,
+    CornerDownRight: <CornerDownRight className="h-4 w-4" />,
+    Cpu: <Cpu className="h-4 w-4" />,
+    Crosshair: <Crosshair className="h-4 w-4" />,
+    Disc: <Disc className="h-4 w-4" />,
+    FileMinus: <FileMinus className="h-4 w-4" />,
+    FilePlus: <FilePlus className="h-4 w-4" />,
+    GitBranch: <GitBranch className="h-4 w-4" />,
+    GitCommit: <GitCommit className="h-4 w-4" />,
+    HardDrive: <HardDrive className="h-4 w-4" />,
+    Hash: <Hash className="h-4 w-4" />,
+    Hexagon: <Hexagon className="h-4 w-4" />,
   };
 
   return icons[iconName] || <Car className="h-4 w-4" />;
@@ -534,4 +733,103 @@ export type IconNames =
   | 'Moon'
   | 'Bell'
   | 'AlertCircle'
-  | 'Info';
+  | 'Info'
+  | 'Home'
+  | 'Menu'
+  | 'ShoppingCart'
+  | 'Package'
+  | 'Users'
+  | 'BarChart'
+  | 'PieChart'
+  | 'Activity'
+  | 'Gift'
+  | 'Camera'
+  | 'Mic'
+  | 'Send'
+  | 'RefreshCw'
+  | 'ChevronUp'
+  | 'ChevronDown'
+  | 'ChevronLeft'
+  | 'ChevronRight'
+  | 'ArrowUp'
+  | 'ArrowDown'
+  | 'ArrowLeft'
+  | 'ArrowRight'
+  | 'ExternalLink'
+  | 'LogIn'
+  | 'LogOut'
+  | 'Shield'
+  | 'Briefcase'
+  | 'DollarSign'
+  | 'Percent'
+  | 'ShoppingBag'
+  | 'Scissors'
+  | 'Paperclip'
+  | 'Flag'
+  | 'Clock3'
+  | 'Battery'
+  | 'Wifi'
+  | 'Bluetooth'
+  | 'Cloud'
+  | 'Archive'
+  | 'Award'
+  | 'Book'
+  | 'Box'
+  | 'Building'
+  | 'CameraOff'
+  | 'CheckCircle'
+  | 'Circle'
+  | 'Clipboard'
+  | 'Code'
+  | 'Database'
+  | 'Feather'
+  | 'FileText'
+  | 'Grid'
+  | 'HelpCircle'
+  | 'Inbox'
+  | 'Key'
+  | 'Layers'
+  | 'LifeBuoy'
+  | 'Map'
+  | 'Maximize'
+  | 'Minimize'
+  | 'PenTool'
+  | 'Printer'
+  | 'Save'
+  | 'Server'
+  | 'Sliders'
+  | 'Table'
+  | 'Terminal'
+  | 'Thermometer'
+  | 'ToggleLeft'
+  | 'ToggleRight'
+  | 'TrendingUp'
+  | 'TrendingDown'
+  | 'UserCheck'
+  | 'UserMinus'
+  | 'UserPlus'
+  | 'Watch'
+  | 'Airplay'
+  | 'Anchor'
+  | 'Aperture'
+  | 'AtSign'
+  | 'BarChart2'
+  | 'BatteryCharging'
+  | 'BellOff'
+  | 'BookOpen'
+  | 'Cast'
+  | 'CheckSquare'
+  | 'CloudOff'
+  | 'Coffee'
+  | 'CornerDownLeft'
+  | 'CornerDownRight'
+  | 'Cpu'
+  | 'Crosshair'
+  | 'Disc'
+  | 'FileMinus'
+  | 'FilePlus'
+  | 'GitBranch'
+  | 'GitCommit'
+  | 'HardDrive'
+  | 'Hash'
+  | 'Hexagon';

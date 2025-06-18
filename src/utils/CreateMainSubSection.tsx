@@ -16,12 +16,11 @@ import {
 } from "@/src/components/ui/form"
 import { Input } from "@/src/components/ui/input"
 import { Textarea } from "@/src/components/ui/textarea"
-import { TabsContent } from "@/src/components/ui/tabs"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
-import { ActionButton, CancelButton, ErrorCard,LanguageTabs, LoadingCard, MainFormCard, SuccessCard, WarningCard } from "./MainSectionComponents"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import { ActionButton, CancelButton, ErrorCard, LoadingCard, MainFormCard, SuccessCard, WarningCard } from "./MainSectionComponents"
+import { ChevronDown, ChevronUp, Globe } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { CreateMainSubSectionProps } from "../api/types/utils/CreateMainSubSection.types"
 import { useWebsiteContext } from "../providers/WebsiteContext"
@@ -89,6 +88,112 @@ const findElementByFieldAcrossLanguages = (contentElements: any[], fieldId: stri
   return null
 }
 
+// Language Card Component
+const LanguageCard = ({ 
+  language, 
+  form, 
+  sectionConfig, 
+  isRtl, 
+  t, 
+  isDefault = false 
+}: {
+  language: any;
+  form: any;
+  sectionConfig: any;
+  isRtl: boolean;
+  t: any;
+  isDefault?: boolean;
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-xl border-2 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden ${
+        isDefault 
+          ? 'border-blue-500 dark:border-blue-400' 
+          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+      }`}
+    >
+      {/* Language Header */}
+      <div className={`px-6 py-4 border-b border-gray-200 dark:border-gray-700 ${
+        isDefault 
+          ? 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20' 
+          : 'bg-gray-50 dark:bg-gray-800/50'
+      }`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className={`p-2 rounded-full ${
+              isDefault 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-400 text-white'
+            }`}>
+              <Globe size={18} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mr-2 ml-2">
+                {language.name || language.language}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mr-2 ml-2">
+                {language.languageID} {isDefault && '(Default)'}
+              </p>
+            </div>
+          </div>
+          {isDefault && (
+            <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
+              {t('mainSubsection.defaultLanguage')}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Form Content */}
+      <div className="p-6">
+        <Form {...form}>
+          <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
+            {sectionConfig.fields.map((field: any) => (
+              <FormField
+                key={`${language.languageID}-${field.id}`}
+                control={form.control}
+                name={field.id}
+                render={({ field: formField }) => (
+                  <FormItem className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-100 dark:border-gray-800 shadow-sm">
+                    <FormLabel className="text-gray-800 dark:text-gray-200 font-medium flex items-center">
+                      {field.label}
+                      {field.required && <span className="text-red-500 ml-1">*</span>}
+                    </FormLabel>
+                    <FormControl>
+                      {field.type === 'textarea' ? (
+                        <Textarea
+                          placeholder={field.placeholder || `${t('mainSubsection.placeholderEnter')} ${field.label.toLowerCase()} ${t('mainSubsection.forLanguage')} ${language.name || language.language}`}
+                          {...formField}
+                          className="min-h-[120px] border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      ) : (
+                        <Input
+                          placeholder={field.placeholder || `${t('mainSubsection.placeholderEnter')} ${field.label.toLowerCase()} ${t('mainSubsection.forLanguage')} ${language.name || language.language}`}
+                          {...formField}
+                          className="border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      )}
+                    </FormControl>
+                    {field.description && (
+                      <FormDescription className="text-gray-500 dark:text-gray-400 text-sm italic mt-1">
+                        {field.description}
+                      </FormDescription>
+                    )}
+                    <FormMessage className="text-red-500 dark:text-red-400 font-medium text-sm mt-1" />
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
+        </Form>
+      </div>
+    </motion.div>
+  );
+};
+
 export default function CreateMainSubSection({
   sectionId,
   sectionConfig,
@@ -101,13 +206,12 @@ export default function CreateMainSubSection({
   const { language } = useLanguage()
   const isRtl = language === "ar"
   
-  // State
+  // State - Removed activeTab since we're using cards
   const [isCreating, setIsCreating] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const [isCreatingElements, setIsCreatingElements] = useState(false)
   const [subsectionExists, setSubsectionExists] = useState(false)
   const [subsection, setSubsection] = useState<any>(null)
-  const [activeTab, setActiveTab] = useState<string>("")
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([])
   const [isEditMode, setIsEditMode] = useState(true)
   const [contentElements, setContentElements] = useState<any[]>([])
@@ -262,16 +366,13 @@ export default function CreateMainSubSection({
     }
   }, [languages, formInstances])
   
-  // Initialize selected languages and active tab
+  // Initialize selected languages (removed activeTab initialization)
   useEffect(() => {
     if (languages.length > 0 && !languagesInitialized.current) {
       setSelectedLanguages(languages.map((lang: { _id: any }) => lang._id))
-      if (defaultLanguage) {
-        setActiveTab(defaultLanguage.languageID)
-      }
       languagesInitialized.current = true
     }
-  }, [languages, defaultLanguage])
+  }, [languages])
   
   // Process complete subsection data
   useEffect(() => {
@@ -413,7 +514,6 @@ export default function CreateMainSubSection({
       if (!form) continue
       const result = await form.trigger()
       if (!result) {
-        setActiveTab(lang.languageID)
         toast({
           title: t('mainSubsection.validationError'),
           description: `${t('mainSubsection.checkFormErrors')} ${lang.name || lang.language}.`,
@@ -678,56 +778,32 @@ export default function CreateMainSubSection({
     }
   }
   
-  // Render form content for each language tab
-  const renderLanguageForms = () => {
-    return languages.map((lang: { languageID: Key ; name: any; language: any }) => {
-      const form = languageForms[String(lang.languageID)]
-      if (!form) return null
-      return (
-        <TabsContent key={lang.languageID} value={String(lang.languageID)}>
-          <Form {...form}>
-            <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
-              {sectionConfig.fields.map((field: any) => (
-                <FormField
-                  key={`${lang.languageID}-${field.id}`}
-                  control={form.control}
-                  name={field.id}
-                  render={({ field: formField }) => (
-                    <FormItem className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-100 dark:border-gray-800 shadow-sm">
-                      <FormLabel className="text-gray-800 dark:text-gray-200 font-medium flex items-center">
-                        {field.label}
-                        {field.required && <span className="text-red-500 ml-1">{t('mainSubsection.requiredField')}</span>}
-                      </FormLabel>
-                      <FormControl>
-                        {field.type === 'textarea' ? (
-                          <Textarea
-                            placeholder={field.placeholder || `${t('mainSubsection.placeholderEnter')} ${field.label.toLowerCase()} ${t('mainSubsection.forLanguage')} ${lang.name || lang.language}`}
-                            {...formField}
-                            className="min-h-[120px] border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          />
-                        ) : (
-                          <Input
-                            placeholder={field.placeholder || `${t('mainSubsection.placeholderEnter')} ${field.label.toLowerCase()} ${t('mainSubsection.forLanguage')} ${lang.name || lang.language}`}
-                            {...formField}
-                            className="border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          />
-                        )}
-                      </FormControl>
-                      {field.description && (
-                        <FormDescription className="text-gray-500 dark:text-gray-400 text-sm italic mt-1">
-                          {field.description}
-                        </FormDescription>
-                      )}
-                      <FormMessage className="text-red-500 dark:text-red-400 font-medium text-sm mt-1" />
-                    </FormItem>
-                  )}
-                />
-              ))}
-            </div>
-          </Form>
-        </TabsContent>
-      )
-    })
+  // Render language cards instead of tabs
+  const renderLanguageCards = () => {
+    if (!languages || languages.length === 0) return null;
+
+    return (
+      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
+        {languages.map((lang: any) => {
+          const form = languageForms[String(lang.languageID)]
+          if (!form) return null;
+          
+          const isDefault = defaultLanguage && defaultLanguage.languageID === lang.languageID;
+          
+          return (
+            <LanguageCard
+              key={lang.languageID}
+              language={lang}
+              form={form}
+              sectionConfig={sectionConfig}
+              isRtl={isRtl}
+              t={t}
+              isDefault={isDefault}
+            />
+          );
+        })}
+      </div>
+    );
   }
   
   // Display states
@@ -807,13 +883,19 @@ export default function CreateMainSubSection({
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <LanguageTabs
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              languages={languages}
-            >
-              {renderLanguageForms()}
-            </LanguageTabs>
+            {/* Language cards container */}
+            <div className="mb-6">
+              <div className="flex items-center mb-4">
+                <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2 ml-2" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  {t('mainSubsection.languages')}
+                </h3>
+                <span className="ml-2 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
+                  {languages.length} {t('mainSubsection.languages')}
+                </span>
+              </div>
+              {renderLanguageCards()}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

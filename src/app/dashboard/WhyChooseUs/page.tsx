@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useGenericList } from "@/src/hooks/useGenericList"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
@@ -11,39 +11,24 @@ import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
-import { whyChooseUsSectionConfig } from "./whyChooseUsSectionConfig"
+import { getWhyChooseUsSectionConfig, whyChooseUsSectionConfig } from "./whyChooseUsSectionConfig"
+import { useTranslation } from "react-i18next"
+import { useLanguage } from "@/src/context/LanguageContext"
 
-// Configuration for the Chose Us page
-const ChoseUs_CONFIG = {
-  title: "Chose Us Management",
-  description: "Manage your Chose Us inventory and multilingual content",
-  addButtonLabel: "Add New Chose Us item",
-  emptyStateMessage: "No Chose Us found. Create your first Chose Us by clicking the \"Add New Chose Us\" button.",
-  noSectionMessage: "Please create a Chose Us section first before adding Chose Us.",
-  mainSectionRequiredMessage: "Please enter your main section data before adding Chose Us.",
-  emptyFieldsMessage: "Please complete all required fields in the main section before adding Chose Us.",
-  sectionIntegrationTitle: "Chose Us Section Content",
-  sectionIntegrationDescription: "Manage your Chose Us section content in multiple languages.",
-  addSectionButtonLabel: "Add Chose Us Section",
-  editSectionButtonLabel: "Edit Chose Us Section",
-  saveSectionButtonLabel: "Save Chose Us Section",
-  listTitle: "Chose Us List",
-  editPath: "WhyChooseUs/addChoseUs"
-}
-// Column definitions
-const ChoseUs_COLUMNS = [
+// Column definitions with translation support
+const getWhyChooseUsColumns = (t: any) => [
   {
-    header: "Name",
+    header: t('WhyChooseUsTable.name', 'Name'),
     accessor: "name",
     className: "font-medium"
   },
   {
-    header: "Description",
+    header: t('WhyChooseUsTable.description', 'Description'),
     accessor: "description",
     cell: TruncatedCell
   },
   {
-    header: "Status",
+    header: t('WhyChooseUsTable.status', 'Status'),
     accessor: "isActive",
     cell: (item: any, value: boolean) => (
       <div className="flex flex-col gap-2">
@@ -51,7 +36,7 @@ const ChoseUs_COLUMNS = [
           {StatusCell(item, value)}
           {item.isMain && (
             <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-              Main
+              {t('WhyChooseUsTable.main', 'Main')}
             </span>
           )}
         </div>
@@ -59,11 +44,11 @@ const ChoseUs_COLUMNS = [
     )
   },
   {
-    header: "Order",
+    header: t('WhyChooseUsTable.order', 'Order'),
     accessor: "order"
   },
   {
-    header: "Subsections",
+    header: t('WhyChooseUsTable.subsections', 'Subsections'),
     accessor: "subsections.length",
     cell: CountBadgeCell
   }
@@ -73,6 +58,34 @@ export default function ChoseUsPage() {
   const searchParams = useSearchParams()
   const sectionId = searchParams.get("sectionId")
   const { websiteId } = useWebsiteContext();
+  const { language } = useLanguage()
+  const { t } = useTranslation()
+
+  // Get translated why choose us section config based on current language
+  const whyChooseUsSectionConfigTranslated = useMemo(() => {
+    return getWhyChooseUsSectionConfig(language)
+  }, [language])
+
+  // Get translated configuration for the Why Choose Us page
+  const CHOSE_US_CONFIG = useMemo(() => ({
+    title: t('WhyChooseUsConfig.title', 'Why Choose Us Management'),
+    description: t('WhyChooseUsConfig.description', 'Manage your Why Choose Us inventory and multilingual content'),
+    addButtonLabel: t('WhyChooseUsConfig.addButtonLabel', 'Add New Why Choose Us item'),
+    emptyStateMessage: t('WhyChooseUsConfig.emptyStateMessage', 'No Why Choose Us found. Create your first Why Choose Us by clicking the "Add New Why Choose Us" button.'),
+    noSectionMessage: t('WhyChooseUsConfig.noSectionMessage', 'Please create a Why Choose Us section first before adding Why Choose Us.'),
+    mainSectionRequiredMessage: t('WhyChooseUsConfig.mainSectionRequiredMessage', 'Please enter your main section data before adding Why Choose Us.'),
+    emptyFieldsMessage: t('WhyChooseUsConfig.emptyFieldsMessage', 'Please complete all required fields in the main section before adding Why Choose Us.'),
+    sectionIntegrationTitle: t('WhyChooseUsConfig.sectionIntegrationTitle', 'Why Choose Us Section Content'),
+    sectionIntegrationDescription: t('WhyChooseUsConfig.sectionIntegrationDescription', 'Manage your Why Choose Us section content in multiple languages.'),
+    addSectionButtonLabel: t('WhyChooseUsConfig.addSectionButtonLabel', 'Add Why Choose Us Section'),
+    editSectionButtonLabel: t('WhyChooseUsConfig.editSectionButtonLabel', 'Edit Why Choose Us Section'),
+    saveSectionButtonLabel: t('WhyChooseUsConfig.saveSectionButtonLabel', 'Save Why Choose Us Section'),
+    listTitle: t('WhyChooseUsConfig.listTitle', 'Why Choose Us List'),
+    editPath: "WhyChooseUs/addChoseUs"
+  }), [t]);
+
+  // Get translated column definitions
+  const CHOSE_US_COLUMNS = useMemo(() => getWhyChooseUsColumns(t), [t])
   
   // State management - simplified to reduce circular dependencies
   const [pageState, setPageState] = useState({
@@ -99,7 +112,7 @@ export default function ChoseUsPage() {
     isLoading: isLoadingSectionSubsections
   } = useGetBySectionId(sectionId || "")
 
-  // Use the generic list hook for Chose Us management
+  // Use the generic list hook for Why Choose Us management
   const {
     section: industrySection,
     items: navItems,
@@ -120,7 +133,7 @@ export default function ChoseUsPage() {
   } = useGenericList({
     sectionId,
     apiHooks: useSectionItems(),
-    editPath: ChoseUs_CONFIG.editPath
+    editPath: CHOSE_US_CONFIG.editPath
   })
 
   // Process subsection data - Moved to a stable, memoized function to reduce rerenders
@@ -134,8 +147,8 @@ export default function ChoseUsPage() {
     let foundMainSubSection = false;
     let mainSubSection = null;
   
-    // Get expected name from configuration
-    const expectedSlug = whyChooseUsSectionConfig.name;
+    // Get expected name from configuration (now translated)
+    const expectedSlug = whyChooseUsSectionConfigTranslated.name;
     
     // First check if section-specific subsections exist
     if (sectionId && sectionSubsections?.data) {
@@ -195,7 +208,7 @@ export default function ChoseUsPage() {
     sectionId, 
     industrySection, 
     setSection,
-    whyChooseUsSectionConfig.name
+    whyChooseUsSectionConfigTranslated.name // Add this dependency to re-run when language changes
   ]);
 
   // Process data only when dependencies change
@@ -205,8 +218,8 @@ export default function ChoseUsPage() {
 
   // Handle main subsection creation - converted to useCallback to stabilize function reference
   const handleMainSubSectionCreated = useCallback((subsection: any) => {
-    // Check if subsection has the correct name
-    const expectedSlug = whyChooseUsSectionConfig.name;
+    // Check if subsection has the correct name (now using translated name)
+    const expectedSlug = whyChooseUsSectionConfigTranslated.name;
     const hasCorrectSlug = subsection.name === expectedSlug;
     const isMainSubSection = subsection.isMain === true && hasCorrectSlug;
     
@@ -234,24 +247,26 @@ export default function ChoseUsPage() {
     if (refetchMainSubSection) {
       refetchMainSubSection();
     }
-  }, [refetchMainSubSection, setSection, whyChooseUsSectionConfig.name]);
+  }, [refetchMainSubSection, setSection, whyChooseUsSectionConfigTranslated.name]);
 
-  // Compute derived values ONCE per render - not during render
-  const isAddButtonDisabled = 
+  // IMPORTANT: Here's the crux of the button enabling/disabling logic
+  // Added check for navItems.length > 0 to disable when there's already a section item
+  const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
-    (Boolean(sectionId) && !hasMainSubSection);
+    (Boolean(sectionId) && !hasMainSubSection) ||
+    (navItems.length > 0); // This disables the button if there's already at least one section item
 
   const emptyStateMessage = !industrySection && !sectionData 
-    ? ChoseUs_CONFIG.noSectionMessage 
+    ? CHOSE_US_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
-      ? ChoseUs_CONFIG.mainSectionRequiredMessage
-      : ChoseUs_CONFIG.emptyStateMessage;
+      ? CHOSE_US_CONFIG.mainSectionRequiredMessage
+      : CHOSE_US_CONFIG.emptyStateMessage;
 
   // Memoize component references to prevent recreation on each render
   const ChoseUsItemsTable = (
     <GenericTable
-      columns={ChoseUs_COLUMNS}
+      columns={CHOSE_US_COLUMNS}
       data={navItems}
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
@@ -264,7 +279,7 @@ export default function ChoseUsPage() {
       onOpenChange={setIsCreateDialogOpen}
       sectionId={sectionId || ""}
       onServiceCreated={handleItemCreated}
-      title="Chose Us"
+      title={t('WhyChooseUsConfig.title', 'Why Choose Us')}
     />
   );
 
@@ -284,9 +299,9 @@ export default function ChoseUsPage() {
     <div className="space-y-6">
       {/* Main list page with table and section integration */}
       <GenericListPage
-        config={ChoseUs_CONFIG}
+        config={CHOSE_US_CONFIG}
         sectionId={sectionId}
-        sectionConfig={whyChooseUsSectionConfig}
+        sectionConfig={whyChooseUsSectionConfigTranslated}
         isAddButtonDisabled={isAddButtonDisabled}
         tableComponent={ChoseUsItemsTable}
         createDialogComponent={CreateDialog}
@@ -302,7 +317,7 @@ export default function ChoseUsPage() {
       {sectionId && (
         <CreateMainSubSection 
           sectionId={sectionId}
-          sectionConfig={whyChooseUsSectionConfig}
+          sectionConfig={whyChooseUsSectionConfigTranslated}
           onSubSectionCreated={handleMainSubSectionCreated}
           onFormValidityChange={() => {/* We don't need to track form validity */}}
         />

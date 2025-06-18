@@ -686,7 +686,7 @@
     ]
   },
   "login": {
-    "brand.name": "سكايلاين",
+    "brand.name": "Idigitek",
     "brand.tagline": "سجل الدخول لفتح لوحة التحكم الشخصية وأدوات التحليل القوية",
     "auth.signIn": "تسجيل الدخول",
     "auth.signUp": "إنشاء حساب",
@@ -1120,6 +1120,7 @@
       "success": "نجح",
       "mainSubsectionCreated": "تم إنشاء القسم الفرعي الرئيسي بمحتوى في",
       "languages": "لغة/لغات.",
+      
       "errorCreatingSubsection": "خطأ في إنشاء القسم الفرعي",
       "unexpectedError": "حدث خطأ غير متوقع",
       "subsectionUpdated": "تم تحديث القسم الفرعي بمحتوى في",
@@ -4134,6 +4135,92 @@
         }
       }
     },
+    "WhyChooseUsConfig": {
+      "title": "إدارة لماذا تختارنا",
+      "description": "إدارة مخزون لماذا تختارنا والمحتوى متعدد اللغات",
+      "addButtonLabel": "إضافة عنصر جديد لماذا تختارنا",
+      "emptyStateMessage": "لم يتم العثور على لماذا تختارنا. أنشئ أول لماذا تختارنا عن طريق النقر على زر \"إضافة لماذا تختارنا جديد\".",
+      "noSectionMessage": "يرجى إنشاء قسم لماذا تختارنا أولاً قبل إضافة لماذا تختارنا.",
+      "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة لماذا تختارنا.",
+      "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة لماذا تختارنا.",
+      "sectionIntegrationTitle": "محتوى قسم لماذا تختارنا",
+      "sectionIntegrationDescription": "إدارة محتوى قسم لماذا تختارنا بلغات متعددة.",
+      "addSectionButtonLabel": "إضافة قسم لماذا تختارنا",
+      "editSectionButtonLabel": "تحرير قسم لماذا تختارنا",
+      "saveSectionButtonLabel": "حفظ قسم لماذا تختارنا",
+      "listTitle": "قائمة لماذا تختارنا",
+      "editPath": "WhyChooseUs/addChoseUs"
+    },
+    "WhyChooseUsTable": {
+      "name": "الاسم",
+      "description": "الوصف",
+      "status": "الحالة",
+      "order": "الترتيب",
+      "subsections": "الأقسام الفرعية",
+      "main": "رئيسي"
+    },
+    "AddWhyChooseUs": {
+      "createTitle": "إنشاء عنصر جديد لماذا تختارنا",
+      "editTitle": "تحرير عنصر لماذا تختارنا",
+      "createSubtitle": "إنشاء عنصر جديد لماذا تختارنا مع محتوى متعدد اللغات",
+      "editSubtitle": "تحرير محتوى \"{{itemName}}\" بلغات متعددة",
+      "editSubtitleDefault": "تحرير محتوى عنصر لماذا تختارنا بلغات متعددة",
+      "defaultItemName": "لماذا تختارنا جديد",
+      "tabLabel": "لماذا تختارنا",
+      "formSections": {
+        "whyChooseUs": "لماذا تختارنا"
+      },
+      "backToList": "العودة إلى قائمة لماذا تختارنا",
+      "loadingMessage": "جاري تحميل بيانات لماذا تختارنا...",
+      "savingMessage": "جاري حفظ عنصر لماذا تختارنا...",
+      "savedMessage": "تم حفظ عنصر لماذا تختارنا بنجاح",
+      "errorMessage": "خطأ في حفظ عنصر لماذا تختارنا"
+    },
+    "chooseUsForm": {
+      "loadingData": "جارٍ تحميل بيانات قسم لماذا تختارنا...",
+      "savingChanges": "يرجى الانتظار بينما نحفظ التغييرات...",
+      "updatingChoseUs": "تحديث لماذا تختارنا",
+      "creatingChoseUs": "إنشاء لماذا تختارنا",
+      "imageUploaded": "تم رفع الصورة",
+      "imageUploadedDescription": "تم رفع صورة الخلفية بنجاح.",
+      "imageUploadFailed": "فشل رفع الصورة",
+      "imageUploadFailedDescription": "فشل في رفع الصورة",
+      "cannotRemove": "لا يمكن الحذف",
+      "cannotRemoveDescription": "يجب أن يكون هناك ميزة واحدة على الأقل",
+      "choseUsDeleted": "تم حذف لماذا تختارنا",
+      "choseUsDeletedDescription": "تم حذف لماذا تختارنا {number} من قاعدة البيانات",
+      "errorRemovingBenefit": "خطأ في حذف الميزة",
+      "errorRemovingBenefitDescription": "حدث خطأ أثناء حذف لماذا تختارنا من قاعدة البيانات",
+      "validationError": "خطأ في التحقق",
+      "validationErrorDescription": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
+      "choseUsUpdatedSuccess": "تم تحديث قسم لماذا تختارنا بنجاح!",
+      "choseUsCreatedSuccess": "تم إنشاء قسم لماذا تختارنا بنجاح!",
+      "errorUpdatingChoseUs": "خطأ في تحديث قسم لماذا تختارنا",
+      "errorCreatingChoseUs": "خطأ في إنشاء قسم لماذا تختارنا",
+      "unknownError": "حدث خطأ غير معروف",
+      "benefitCountMismatch": "يجب أن تحتوي كل لغة على نفس عدد المزايا",
+      "saveChoseUs": "حفظ لماذا تختارنا",
+      "updateChoseUs": "تحديث لماذا تختارنا",
+      "deleteProcess": "حذف العملية",
+      "saving": "جارٍ الحفظ..."
+    },
+    "ChooseUsCard": {
+      "label": "العربية",
+      "reason": "السبب",
+      "icon_label": "أيقونة",
+      "icon_placeholder": "اختر أيقونة",
+      "title_label": "العنوان",
+      "title_placeholder": "أدخل عنوان الفائدة",
+      "description_label": "الوصف",
+      "description_placeholder": "أدخل وصف الفائدة",
+      "controlled_by_primary_language": "(يتم التحكم به بواسطة اللغة الأساسية)"
+    },
+     "ChooseUsLanguageCard": {
+    "sectionLabel": "قسم لماذا نحن",
+    "badgeFirstLang": "اللغة الافتراضية",
+    "description": "إدارة محتوى الفوائد للغة {{lang}}",
+    "addBenefit": "إضافة فائدة"
+  },
   "common": {
     "welcome": "مرحبا",
     "logout": "تسجيل الخروج",

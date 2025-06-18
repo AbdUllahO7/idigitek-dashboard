@@ -1,4 +1,4 @@
-// Updated AddIndustry.tsx to fix the edit mode data display issue
+// Updated AddIndustry.tsx with translation support
 
 "use client"
 
@@ -6,6 +6,9 @@ import { Layout } from "lucide-react"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
+import { useTranslation } from "react-i18next"
+import { useLanguage } from "@/src/context/LanguageContext"
+import { useMemo } from "react"
 
 import { FormData } from "@/src/api/types/sections/service/serviceSections.types"
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
@@ -13,12 +16,10 @@ import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useSearchParams } from "next/navigation"
 import ChooseUsForm from "./ChooseUsForm"
 
-
-// Form sections to collect data from
-const FORM_SECTIONS = ["Why Chose us "]
-
 export default function AddIndustry() {
   const searchParams = useSearchParams()
+  const { t } = useTranslation()
+  const { language } = useLanguage()
   
   // Get URL parameters
   const sectionId = searchParams.get('sectionId')
@@ -30,7 +31,7 @@ export default function AddIndustry() {
   const { useGetByWebsite: useGetAllLanguages } = useLanguages()
   const { useGetById: useGetSectionItemById } = useSectionItems()
   const { useGetBySectionItemId: useGetSubSectionsBySectionItemId } = useSubSections()
-    const { websiteId } = useWebsiteContext();
+  const { websiteId } = useWebsiteContext();
   
   // Get languages
   const { 
@@ -62,6 +63,11 @@ export default function AddIndustry() {
   
   // Filter active languages
   const activeLanguages = languagesData?.data?.filter((lang: { isActive: any }) => lang.isActive) || []
+  
+  // Form sections to collect data from - now translated
+  const FORM_SECTIONS = useMemo(() => [
+    t('AddWhyChooseUs.formSections.whyChooseUs', 'Why Choose Us')
+  ], [t])
   
   // Helper function to find a subsection by slug - FIXED to be case-insensitive
   const findSubsection = (baseSlug: string) => {
@@ -103,7 +109,7 @@ export default function AddIndustry() {
       return partialMatch;
     }
     
-      return undefined;
+    return undefined;
   };
   
   // Generate proper slugs for subsections
@@ -127,11 +133,31 @@ export default function AddIndustry() {
     return `${baseSlug.toLowerCase()}-${sectionItemId}`;
   };
   
+  // Get translated titles and subtitles
+  const getTitle = () => {
+    return isCreateMode 
+      ? t('AddWhyChooseUs.createTitle', 'Create New Why Choose Us item')
+      : t('AddWhyChooseUs.editTitle', 'Edit Why Choose Us item')
+  }
+  
+  const getSubtitle = () => {
+    if (isCreateMode) {
+      return t('AddWhyChooseUs.createSubtitle', 'Create a new Why Choose Us item with multilingual content')
+    }
+    
+    const itemName = sectionItemData?.data?.name
+    if (itemName) {
+      return t('AddWhyChooseUs.editSubtitle', 'Editing "{{itemName}}" content across multiple languages', { itemName })
+    }
+    
+    return t('AddWhyChooseUs.editSubtitleDefault', 'Editing Why Choose Us item content across multiple languages')
+  }
+  
   // Define tabs configuration
   const tabs = [
     {
       id: "ChoseUsItems",
-      label: "Chose Us",
+      label: t('AddWhyChooseUs.tabLabel', 'Why Choose Us'),
       icon: <Layout className="h-4 w-4" />,
       component: (
         <ChooseUsForm
@@ -151,7 +177,7 @@ export default function AddIndustry() {
     const heroData = formData.hero || {}
     
     // Get English title and description values or fallback to the first language
-    let ChoseUsName = "New Industry"
+    let ChoseUsName = t('AddWhyChooseUs.defaultItemName', 'New Why Choose Us')
     let ChoseUsDescription = ""
     
     // Loop through languages to find title and description
@@ -189,10 +215,8 @@ export default function AddIndustry() {
   
   return (
     <FormShell
-      title={isCreateMode ? "Create New ChoseUs item " : "Edit ChoseUs item "}
-      subtitle={isCreateMode 
-        ? "Create a new ChoseUs item with multilingual content" 
-        : `Editing "${sectionItemData?.data?.name || 'ChoseUs item'}" content across multiple languages`}
+      title={getTitle()}
+      subtitle={getSubtitle()}
       backUrl={`/dashboard/WhyChooseUs?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}

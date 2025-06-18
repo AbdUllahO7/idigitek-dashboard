@@ -132,10 +132,7 @@ export default function HeaderPage() {
     apiHooks: useSectionItems(),
     editPath: HEADER_CONFIG.editPath
   })
-  console.log("sectionId" , sectionId)
-  console.log("sectionSubsections", sectionSubsections)
-  console.log("headerSection", headerSection)
-  console.log("mainSubSectionData", mainSubSectionData)
+
 
 
   // Debug changes in hasMainSubSection
@@ -255,8 +252,6 @@ export default function HeaderPage() {
     }
   };
 
-  // IMPORTANT: Here's the crux of the button enabling/disabling logic
-  // Added check for navItems.length > 0 to disable when there's already a navItem
   const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||

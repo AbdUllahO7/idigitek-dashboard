@@ -681,7 +681,7 @@
     ]
   },
   "login": {
-    "brand.name": "Skyline",
+    "brand.name": "Idigitek",
     "brand.tagline": "Sign in to unlock your personalized dashboard and powerful analytics tools",
     "auth.signIn": "Sign in",
     "auth.signUp": "Sign up",
@@ -1137,6 +1137,7 @@
     "showContentForm": "Show Content Form",
     "enterFieldFor": "Enter",
     "forLanguage": "for",
+    "languageContent" :"language Content",
     "requiredField": "*",
     "metaFieldName": "Name",
     "metaFieldDescription": "Description",
@@ -2687,7 +2688,7 @@
       }
     }
   },
-    "benefitsForm": {
+  "benefitsForm": {
       "benefitCard": {
       "title": "Benefit {{number}}",
       "deleteDialog": {
@@ -2718,7 +2719,7 @@
       "description": "Manage Benefit Content for {{language}}",
       "addButton": "Add Benefit"
       }
-    },
+  },
   "benefitsFormForm": {
     "loadingDialogs": {
       "creating": {
@@ -3820,113 +3821,113 @@
         "reloadWarningDesc": "Failed to reload data after save."
       }
   },
-"specialLinks": {
-    "languageCard": {
-    "title": "Footer Section",
-    "description": "Manage footer content for {{langCode}}",
-    "buttons": {
-    "addFooter": "Add Footer"
-    }
-    },
-    "card": {
-    "title": "Footer Section {{number}}",
-    "translationMode": "Translation Mode",
-    "socialLinksCount": "{{count}} Social Link(s)",
-    "footerTitle": {
-    "label": "Footer Title",
-    "translate": "(Translate)",
-    "placeholder": "Enter Footer Title"
-    },
-    "socialLinks": {
-    "title": "Social Links",
-    "translateNames": "Translate Names",
-    "primaryControl": "Primary Control",
-    "titleWithNumber": "Social Link  {{number}}",
-    "buttons": {
-    "collapse": "Collapse",
-    "expand": "Expand",
-    "add": "Add a social link"
-    },
-    "noLinks": "No social links added yet",
-    "linkName": {
-    "label": "Link Name",
-    "translate": "(Translate this)",
-    "placeholder": "Enter a link name"
-    },
-    "url": {
-    "label": "Social Link URL",
-    "placeholder": "https://example.com"
-    }
-    },
-    "imageManagement": {
-    "title": "Image Management",
-    "description": "Images are managed from the base language and shared across all languages"
-    }
-    },
-    "form": {
-    "loading": "Loading footer section data...",
-    "saving": {
-    "updating": "Updating footers",
-    "creating": "Creating footers",
-    "description": "Please wait while we save your changes..."
-    },
-    "validation": {
-    "countMismatch": "Each language must have the same number of footers.",
-    "errorTitle": "Validation Error.",
-    "errorDescription": "All languages ​​must have the same number of footers.",
-    "fieldsError": "Please fill in all required fields correctly."
-    },
-    "buttons": {
-    "saving": "Saving...",
-    "update": "Updating footers",
-    "save": "Save footers"
-    },
-    "toasts": {
-    "cannotRemove": {
-    "title": "Cannot remove",
-    "description": "You must have at least one footer"
-    },
-    "footerDeleted": {
-    "title": "Footer deleted",
-    "description": "Footer {{number}} was removed from the database"
-    },
-    "footerRemoved": {
-    "title": "Footer removed",
-    "description": "Footer removed successfully."
-    },
-    "errorRemoving": {
-    "title": "Error",
-    "description": "An error occurred while removing the footer."
-    },
-    "footerAdded": {
-    "title": "Footer added",
-    "description": "A new footer has been added. Please fill in the details and save the changes."
-    },
-    "errorLoading": {
-    "title": "Error loading data",
-    "description": "Failed to load footer data. Please try again."
-    },
-    "success": {
-    "updated": "The footer section was updated successfully!",
-    "created": "The footer section was created successfully!",
-    "allContentSaved": "All contents were saved."
-    },
-    "errorSaving": {
-    "updated": "Error updating the footer section",
-    "created": "Error creating the footer section",
-    "unknown": "An unknown error occurred"
-    },
-    "warningReload": {
-    "title": "Warning",
-    "description": "Failed to reload data after saving."
-    }
-    },
-    "deleteDialog": {
-    "title": "Delete Footer",
-    "confirm": "Delete Footer"
-    }
-    }
-},
+  "specialLinks": {
+      "languageCard": {
+      "title": "Footer Section",
+      "description": "Manage footer content for {{langCode}}",
+      "buttons": {
+      "addFooter": "Add Footer"
+      }
+      },
+      "card": {
+      "title": "Footer Section {{number}}",
+      "translationMode": "Translation Mode",
+      "socialLinksCount": "{{count}} Social Link(s)",
+      "footerTitle": {
+      "label": "Footer Title",
+      "translate": "(Translate)",
+      "placeholder": "Enter Footer Title"
+      },
+      "socialLinks": {
+      "title": "Social Links",
+      "translateNames": "Translate Names",
+      "primaryControl": "Primary Control",
+      "titleWithNumber": "Social Link  {{number}}",
+      "buttons": {
+      "collapse": "Collapse",
+      "expand": "Expand",
+      "add": "Add a social link"
+      },
+      "noLinks": "No social links added yet",
+      "linkName": {
+      "label": "Link Name",
+      "translate": "(Translate this)",
+      "placeholder": "Enter a link name"
+      },
+      "url": {
+      "label": "Social Link URL",
+      "placeholder": "https://example.com"
+      }
+      },
+      "imageManagement": {
+      "title": "Image Management",
+      "description": "Images are managed from the base language and shared across all languages"
+      }
+      },
+      "form": {
+      "loading": "Loading footer section data...",
+      "saving": {
+      "updating": "Updating footers",
+      "creating": "Creating footers",
+      "description": "Please wait while we save your changes..."
+      },
+      "validation": {
+      "countMismatch": "Each language must have the same number of footers.",
+      "errorTitle": "Validation Error.",
+      "errorDescription": "All languages ​​must have the same number of footers.",
+      "fieldsError": "Please fill in all required fields correctly."
+      },
+      "buttons": {
+      "saving": "Saving...",
+      "update": "Updating footers",
+      "save": "Save footers"
+      },
+      "toasts": {
+      "cannotRemove": {
+      "title": "Cannot remove",
+      "description": "You must have at least one footer"
+      },
+      "footerDeleted": {
+      "title": "Footer deleted",
+      "description": "Footer {{number}} was removed from the database"
+      },
+      "footerRemoved": {
+      "title": "Footer removed",
+      "description": "Footer removed successfully."
+      },
+      "errorRemoving": {
+      "title": "Error",
+      "description": "An error occurred while removing the footer."
+      },
+      "footerAdded": {
+      "title": "Footer added",
+      "description": "A new footer has been added. Please fill in the details and save the changes."
+      },
+      "errorLoading": {
+      "title": "Error loading data",
+      "description": "Failed to load footer data. Please try again."
+      },
+      "success": {
+      "updated": "The footer section was updated successfully!",
+      "created": "The footer section was created successfully!",
+      "allContentSaved": "All contents were saved."
+      },
+      "errorSaving": {
+      "updated": "Error updating the footer section",
+      "created": "Error creating the footer section",
+      "unknown": "An unknown error occurred"
+      },
+      "warningReload": {
+      "title": "Warning",
+      "description": "Failed to reload data after saving."
+      }
+      },
+      "deleteDialog": {
+      "title": "Delete Footer",
+      "confirm": "Delete Footer"
+      }
+      }
+  },
   "useSectionManagement": {
       "current": "Current Sections",
       "currentShort": "Current",
@@ -4010,7 +4011,7 @@
         }
       }
   },
-    "ContactForms": {
+  "ContactForms": {
       "title": "Contact Forms Management",
       "subtitle": "Manage and respond to customer inquiries",
       "stats": {
@@ -4081,7 +4082,93 @@
           "description": "Failed to delete contact."
         }
       }
+  },
+  "WhyChooseUsConfig": {
+      "title": "Why Choose Us Management",
+      "description": "Manage your Why Choose Us inventory and multilingual content",
+      "addButtonLabel": "Add New Why Choose Us item",
+      "emptyStateMessage": "No Why Choose Us found. Create your first Why Choose Us by clicking the \"Add New Why Choose Us\" button.",
+      "noSectionMessage": "Please create a Why Choose Us section first before adding Why Choose Us.",
+      "mainSectionRequiredMessage": "Please enter your main section data before adding Why Choose Us.",
+      "emptyFieldsMessage": "Please complete all required fields in the main section before adding Why Choose Us.",
+      "sectionIntegrationTitle": "Why Choose Us Section Content",
+      "sectionIntegrationDescription": "Manage your Why Choose Us section content in multiple languages.",
+      "addSectionButtonLabel": "Add Why Choose Us Section",
+      "editSectionButtonLabel": "Edit Why Choose Us Section",
+      "saveSectionButtonLabel": "Save Why Choose Us Section",
+      "listTitle": "Why Choose Us List",
+      "editPath": "WhyChooseUs/addChoseUs"
+  },
+  "WhyChooseUsTable": {
+      "name": "Name",
+      "description": "Description",
+      "status": "Status",
+      "order": "Order",
+      "subsections": "Subsections",
+      "main": "Main"
+  },
+  "AddWhyChooseUs": {
+      "createTitle": "Create New Why Choose Us item",
+      "editTitle": "Edit Why Choose Us item",
+      "createSubtitle": "Create a new Why Choose Us item with multilingual content",
+      "editSubtitle": "Editing \"{{itemName}}\" content across multiple languages",
+      "editSubtitleDefault": "Editing Why Choose Us item content across multiple languages",
+      "defaultItemName": "New Why Choose Us",
+      "tabLabel": "Why Choose Us",
+      "formSections": {
+        "whyChooseUs": "Why Choose Us"
+      },
+      "backToList": "Back to Why Choose Us List",
+      "loadingMessage": "Loading Why Choose Us data...",
+      "savingMessage": "Saving Why Choose Us item...",
+      "savedMessage": "Why Choose Us item saved successfully",
+      "errorMessage": "Error saving Why Choose Us item"
+  },
+  "chooseUsForm": {
+      "loadingData": "Loading choseUs section data...",
+      "savingChanges": "Please wait while we save your changes...",
+      "updatingChoseUs": "Updating ChoseUs",
+      "creatingChoseUs": "Creating ChoseUs",
+      "imageUploaded": "Image Uploaded",
+      "imageUploadedDescription": "Background image has been successfully uploaded.",
+      "imageUploadFailed": "Image Upload Failed",
+      "imageUploadFailedDescription": "Failed to upload image",
+      "cannotRemove": "Cannot remove",
+      "cannotRemoveDescription": "You need at least one benefit",
+      "choseUsDeleted": "ChoseUs deleted",
+      "choseUsDeletedDescription": "ChoseUs {number} has been deleted from the database",
+      "errorRemovingBenefit": "Error removing benefit",
+      "errorRemovingBenefitDescription": "There was an error removing the choseUs from the database",
+      "validationError": "Validation Error",
+      "validationErrorDescription": "Please fill all required fields correctly",
+      "choseUsUpdatedSuccess": "ChoseUs section updated successfully!",
+      "choseUsCreatedSuccess": "ChoseUs section created successfully!",
+      "errorUpdatingChoseUs": "Error updating choseUs section",
+      "errorCreatingChoseUs": "Error creating choseUs section",
+      "unknownError": "Unknown error occurred",
+      "benefitCountMismatch": "Each language must have the same number of choseUs",
+      "saveChoseUs": "Save ChoseUs",
+      "updateChoseUs": "Update ChoseUs",
+      "deleteProcess": "Delete Process",
+      "saving": "Saving..."
+  },
+  "ChooseUsCard": {
+      "label": "English",
+      "reason": "Reason",
+      "icon_label": "Icon",
+      "icon_placeholder": "Select an icon",
+      "title_label": "Title",
+      "title_placeholder": "Enter benefit title",
+      "description_label": "Description",
+      "description_placeholder": "Enter benefit description",
+      "controlled_by_primary_language": "(Controlled by primary language)"
     },
+     "ChooseUsLanguageCard": {
+    "sectionLabel": "Choose Us Section",
+    "badgeFirstLang": "Default Language",
+    "description": "Manage benefits content for {{lang}}",
+    "addBenefit": "Add Benefit"
+  },
   "common": {
     "welcome": "Welcome",
     "logout": "Log out",

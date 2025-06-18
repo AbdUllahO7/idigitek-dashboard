@@ -583,14 +583,15 @@ const WebsiteImageExampleFixed: React.FC = () => {
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
             {t('websiteList.title')}
           </h2>
-          <button
-            className={`px-5 py-2 rounded-lg bg-teal-500 text-white hover:bg-teal-600 focus:ring-2 focus:ring-teal-300 disabled:opacity-50 transition-all duration-200 flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}
-            onClick={() => setShowCreateForm(true)}
-            disabled={websites.length > 0}
-          >
-            <PlusCircle className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-            {t('websiteList.createWebsite')}
-          </button>
+          {websites.length === 0 && (
+            <button
+              className={`px-5 py-2 rounded-lg bg-teal-500 text-white hover:bg-teal-600 focus:ring-2 focus:ring-teal-300 transition-all duration-200 flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}
+              onClick={() => setShowCreateForm(true)}
+            >
+              <PlusCircle className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+              {t('websiteList.createWebsite')}
+            </button>
+          )}
         </div>
 
         {websites.length === 0 ? (

@@ -675,7 +675,7 @@
     ]
   },
   "login": {
-    "brand.name": "Skyline",
+    "brand.name": "Idigitek",
     "brand.tagline": "Kişiselleştirilmiş kontrol panelinizi ve güçlü analiz araçlarınızı açmak için giriş yapın",
     "auth.signIn": "Giriş yap",
     "auth.signUp": "Kaydol",
@@ -4073,6 +4073,92 @@
         }
       }
     },
+    "WhyChooseUsConfig": {
+      "title": "Neden Bizi Seçin Yönetimi",
+      "description": "Neden Bizi Seçin envanterinizi ve çok dilli içeriğinizi yönetin",
+      "addButtonLabel": "Yeni Neden Bizi Seçin öğesi ekle",
+      "emptyStateMessage": "Neden Bizi Seçin bulunamadı. \"Yeni Neden Bizi Seçin Ekle\" düğmesine tıklayarak ilk Neden Bizi Seçin'inizi oluşturun.",
+      "noSectionMessage": "Neden Bizi Seçin eklemeden önce lütfen bir Neden Bizi Seçin bölümü oluşturun.",
+      "mainSectionRequiredMessage": "Neden Bizi Seçin eklemeden önce lütfen ana bölüm verilerinizi girin.",
+      "emptyFieldsMessage": "Neden Bizi Seçin eklemeden önce lütfen ana bölümdeki tüm gerekli alanları doldurun.",
+      "sectionIntegrationTitle": "Neden Bizi Seçin Bölüm İçeriği",
+      "sectionIntegrationDescription": "Neden Bizi Seçin bölüm içeriğinizi birden fazla dilde yönetin.",
+      "addSectionButtonLabel": "Neden Bizi Seçin Bölümü Ekle",
+      "editSectionButtonLabel": "Neden Bizi Seçin Bölümünü Düzenle",
+      "saveSectionButtonLabel": "Neden Bizi Seçin Bölümünü Kaydet",
+      "listTitle": "Neden Bizi Seçin Listesi",
+      "editPath": "WhyChooseUs/addChoseUs"
+    },
+    "WhyChooseUsTable": {
+      "name": "İsim",
+      "description": "Açıklama",
+      "status": "Durum",
+      "order": "Sıra",
+      "subsections": "Alt Bölümler",
+      "main": "Ana"
+    },
+    "AddWhyChooseUs": {
+      "createTitle": "Yeni Neden Bizi Seçin öğesi oluştur",
+      "editTitle": "Neden Bizi Seçin öğesini düzenle",
+      "createSubtitle": "Çok dilli içerikle yeni bir Neden Bizi Seçin öğesi oluşturun",
+      "editSubtitle": "\"{{itemName}}\" içeriğini birden fazla dilde düzenleme",
+      "editSubtitleDefault": "Neden Bizi Seçin öğesi içeriğini birden fazla dilde düzenleme",
+      "defaultItemName": "Yeni Neden Bizi Seçin",
+      "tabLabel": "Neden Bizi Seçin",
+      "formSections": {
+        "whyChooseUs": "Neden Bizi Seçin"
+      },
+      "backToList": "Neden Bizi Seçin Listesine Dön",
+      "loadingMessage": "Neden Bizi Seçin verileri yükleniyor...",
+      "savingMessage": "Neden Bizi Seçin öğesi kaydediliyor...",
+      "savedMessage": "Neden Bizi Seçin öğesi başarıyla kaydedildi",
+      "errorMessage": "Neden Bizi Seçin öğesi kaydedilirken hata"
+    },
+    "chooseUsForm": {
+      "loadingData": "Neden bizi seçmelisiniz bölümü verileri yükleniyor...",
+      "savingChanges": "Lütfen değişikliklerinizi kaydederken bekleyin...",
+      "updatingChoseUs": "Neden Bizi Seçmelisiniz Güncelleniyor",
+      "creatingChoseUs": "Neden Bizi Seçmelisiniz Oluşturuluyor",
+      "imageUploaded": "Resim Yüklendi",
+      "imageUploadedDescription": "Arka plan resmi başarıyla yüklendi.",
+      "imageUploadFailed": "Resim Yükleme Başarısız",
+      "imageUploadFailedDescription": "Resim yüklenemedi",
+      "cannotRemove": "Kaldırılamaz",
+      "cannotRemoveDescription": "En az bir fayda olmalı",
+      "choseUsDeleted": "Neden Bizi Seçmelisiniz silindi",
+      "choseUsDeletedDescription": "Neden Bizi Seçmelisiniz {number} veritabanından silindi",
+      "errorRemovingBenefit": "Fayda silme hatası",
+      "errorRemovingBenefitDescription": "Neden Bizi Seçmelisiniz veritabanından silinirken hata oluştu",
+      "validationError": "Doğrulama Hatası",
+      "validationErrorDescription": "Lütfen tüm zorunlu alanları doğru şekilde doldurun",
+      "choseUsUpdatedSuccess": "Neden Bizi Seçmelisiniz bölümü başarıyla güncellendi!",
+      "choseUsCreatedSuccess": "Neden Bizi Seçmelisiniz bölümü başarıyla oluşturuldu!",
+      "errorUpdatingChoseUs": "Neden Bizi Seçmelisiniz bölümü güncellenirken hata oluştu",
+      "errorCreatingChoseUs": "Neden Bizi Seçmelisiniz bölümü oluşturulurken hata oluştu",
+      "unknownError": "Bilinmeyen bir hata oluştu",
+      "benefitCountMismatch": "Her dilde aynı sayıda fayda olmalıdır",
+      "saveChoseUs": "Neden Bizi Seçmelisiniz Kaydet",
+      "updateChoseUs": "Neden Bizi Seçmelisiniz Güncelle",
+      "deleteProcess": "Süreci Sil",
+      "saving": "Kaydediliyor..."
+    },
+    "ChooseUsCard": {
+      "label": "Türkçe",
+      "reason": "Neden",
+      "icon_label": "Simge",
+      "icon_placeholder": "Bir simge seçin",
+      "title_label": "Başlık",
+      "title_placeholder": "Fayda başlığını girin",
+      "description_label": "Açıklama",
+      "description_placeholder": "Fayda açıklamasını girin",
+      "controlled_by_primary_language": "(Birincil dil tarafından kontrol edilir)"
+    },
+     "ChooseUsLanguageCard": {
+    "sectionLabel": "Neden Bizi Seçmelisiniz Bölümü",
+    "badgeFirstLang": "Varsayılan Dil",
+    "description": "{{lang}} dili için avantaj içeriğini yönetin",
+    "addBenefit": "Avantaj Ekle"
+  },
   "common": {
     "welcome": "Hoş geldiniz",
     "logout": "Çıkış yap",

@@ -364,9 +364,9 @@ export default function SignIn() {
                   initial={{ scale: 1.1, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 1.2 }}
-                  src=""
+                  src="/assets/iDIGITEK.webp"
                   alt="Abstract design"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain "
                 />
 
                 {/* Vertical grid lines */}

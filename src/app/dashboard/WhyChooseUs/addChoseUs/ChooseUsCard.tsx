@@ -10,6 +10,7 @@ import { Button } from "@/src/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { IconComponent, type IconNames } from "@/src/utils/MainSectionComponents"
 import { cn } from "@/src/lib/utils"
+import { useTranslation } from "react-i18next"
 
 interface BenefitCardProps {
   langCode: string
@@ -27,6 +28,7 @@ interface BenefitCardProps {
 export const ChooseUsCard = memo(
   ({ langCode, index, form, isFirstLanguage, syncIcons, availableIcons, onDelete }: BenefitCardProps) => {
     const [isCollapsed, setIsCollapsed] = useState(true)
+    const {t} = useTranslation()
     const handleDelete = () => onDelete(langCode, index)
 
     const currentIcon = form.watch(`${langCode}.${index}.icon`) || "Clock"
@@ -34,9 +36,7 @@ export const ChooseUsCard = memo(
     const currentDescription = form.watch(`${langCode}.${index}.description`) || ""
 
     return (
-      <Card
-        className=""
-      >
+      <Card className="">
         <CardHeader className="p-4 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -53,10 +53,10 @@ export const ChooseUsCard = memo(
               </div>
               <div className="flex flex-col">
                 <CardTitle className="text-base font-semibold flex items-center">
-                  <span className="mr-2">
-                    <IconComponent iconName={currentIcon}  />
+                  <span className="mr-2 ml-2">
+                    <IconComponent iconName={currentIcon} />
                   </span>
-                  Benefit {index + 1}
+                  {t("ChooseUsCard.reason")} {index + 1}
                   {currentTitle && <span className="ml-2 text-sm font-normal text-gray-600">- {currentTitle}</span>}
                 </CardTitle>
                 {currentDescription && (
@@ -106,7 +106,7 @@ export const ChooseUsCard = memo(
                   name={`${langCode}.${index}.icon`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium">Icon</FormLabel>
+                      <FormLabel className="text-sm font-medium">{t("ChooseUsCard.icon_label")}</FormLabel>
                       <Select
                         onValueChange={(value) => {
                           field.onChange(value)
@@ -117,7 +117,7 @@ export const ChooseUsCard = memo(
                       >
                         <FormControl>
                           <SelectTrigger className="h-11 hover:border-primary transition-colors">
-                            <SelectValue placeholder="Select an icon">
+                            <SelectValue placeholder={t("icon_placeholder")}>
                               <div className="flex items-center">
                                 <span className="mr-2">
                                   <IconComponent iconName={field.value || "Clock"} />
@@ -146,13 +146,13 @@ export const ChooseUsCard = memo(
                 />
               ) : (
                 <div className="space-y-2">
-                  <FormLabel className="text-sm font-medium text-muted-foreground">Icon</FormLabel>
-                  <div className="flex items-center h-11 px-3 border-2  rounded-md ">
+                  <FormLabel className="text-sm font-medium text-muted-foreground">{t("ChooseUsCard.icon_label")}</FormLabel>
+                  <div className="flex items-center h-11 px-3 border-2 rounded-md">
                     <span className="mr-2">
                       <IconComponent iconName={currentIcon} />
                     </span>
                     <span className="text-gray-600">{currentIcon}</span>
-                    <span className="ml-2 text-xs text-muted-foreground italic">(Controlled by primary language)</span>
+                    <span className="ml-2 text-xs text-muted-foreground italic">{t("ChooseUsCard.controlled_by_primary_language")}</span>
                   </div>
                   <input type="hidden" {...form.register(`${langCode}.${index}.icon`)} value={currentIcon} />
                 </div>
@@ -165,10 +165,10 @@ export const ChooseUsCard = memo(
               name={`${langCode}.${index}.title`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">Title</FormLabel>
+                  <FormLabel className="text-sm font-medium">{t("ChooseUsCard.title_label")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter benefit title"
+                      placeholder={t("ChooseUsCard.title_placeholder")}
                       className="h-11 hover:border-primary transition-colors focus:ring-2 focus:ring-primary/20"
                       {...field}
                     />
@@ -184,10 +184,10 @@ export const ChooseUsCard = memo(
               name={`${langCode}.${index}.description`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">Description</FormLabel>
+                  <FormLabel className="text-sm font-medium">{t("ChooseUsCard.description_label")}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Enter benefit description"
+                      placeholder={t("ChooseUsCard.description_placeholder")}
                       className="min-h-[100px] hover:border-primary transition-colors focus:ring-2 focus:ring-primary/20 resize-none"
                       {...field}
                     />
