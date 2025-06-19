@@ -14,8 +14,6 @@ import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { getHeroSectionConfig } from "./HeroSectionConfig"
 import { useTranslation } from "react-i18next"
 
-
-
 // Column definitions
 const Hero_COLUMNS = [
   {
@@ -66,7 +64,7 @@ export default function HeroPage() {
   const Hero_CONFIG = useMemo (() => ({
     title: "Hero Management",
     description: "Manage your Hero inventory and multilingual content",
-      addButtonLabel: "Add New Nav Item",
+      addButtonLabel: "Add New Hero Item",
     emptyStateMessage: "No Hero found. Create your first Hero by clicking the \"Add New Hero\" button.",
     noSectionMessage: "Please create a Hero section first before adding Hero.",
     mainSectionRequiredMessage: "Please enter your main section data before adding Hero.",
@@ -336,6 +334,7 @@ export default function HeroPage() {
           onFormValidityChange={() => {/* We don't need to track form validity */}}
         />
       )}
+
     </div>
   );
 }

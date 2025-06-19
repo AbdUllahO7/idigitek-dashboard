@@ -279,5 +279,50 @@ export const createContactInformationDefaultValues = (languageIds: string[], act
   return {  ...languageValues };
 };
 
+export const createNavigationDefaultValues = (
+  languageIds: string[],
+  activeLanguages: any[],
+  type: 'primary' | 'sub' = 'primary'
+) => {
+  // Create language code mapping
+  const languageCodes = activeLanguages.reduce((acc, lang) => {
+    acc[lang._id] = lang.languageID;
+    return acc;
+  }, {} as Record<string, string>);
+
+  // Create default item based on type
+  const createDefaultItem = (index: number = 1) => {
+    if (type === 'sub') {
+      return {
+        id: `subnav-${index}`,
+        name: "",
+        url: "",
+        order: 0,
+        isActive: true,
+      };
+    } else {
+      return {
+        id: `nav-${index}`,
+        title: "",
+        displayText: "",
+        url: "",
+        order: 0,
+      };
+    }
+  };
+
+  // Build default values object for each language
+  const defaultValues: Record<string, any[]> = {};
+  
+  languageIds.forEach((langId) => {
+    const langCode = languageCodes[langId] || langId;
+    defaultValues[langCode] = [createDefaultItem(1)];
+  });
+
+  return defaultValues;
+};
+
+// Create language code mapping utility
+
 // ex : 
 // const defaultValues = createHeroDefaultValues(languageIds, activeLanguages)

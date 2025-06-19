@@ -1,12 +1,12 @@
 "use client"
 
 import type { WebSiteProps } from "@/src/api/types/hooks/WebSite.types"
-import { useWebSite } from "@/src/hooks/webConfiguration/use-WebSite"
+import { useWebSite, type LogoProps } from "@/src/hooks/webConfiguration/use-WebSite"
 import WebSiteImageUploader from "@/src/app/dashboard/services/addService/Utils/WebSiteImageUploader"
 import { toast } from "@/src/hooks/use-toast"
 import type React from "react"
 import { useEffect, useState } from "react"
-import { PlusCircle, Edit2, Trash2, Upload, X, Save, ArrowLeft } from "lucide-react"
+import { PlusCircle, Edit2, Trash2, Upload, X, Save, ArrowLeft, Star, StarOff } from "lucide-react"
 import DeleteSectionDialog from "../../DeleteSectionDialog"
 import { useTranslation } from "react-i18next"
 import { useLanguage } from "@/src/context/LanguageContext"
@@ -28,7 +28,17 @@ const WebsiteImageExampleFixed: React.FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [websiteToDelete, setWebsiteToDelete] = useState<WebSiteProps | null>(null)
 
-  const { useGetMyWebsites, useCreate, useUpdate, useUploadLogo, useDelete } = useWebSite()
+  const { 
+    useGetMyWebsites, 
+    useCreate, 
+    useUpdate, 
+    useAddLogo, 
+    useRemoveLogo, 
+    useSetPrimaryLogo, 
+    useGetWebsiteLogos, 
+    useDelete 
+  } = useWebSite()
+  
   const { t } = useTranslation()
   const { language } = useLanguage()
   const isRTL = language === 'ar'
@@ -37,19 +47,23 @@ const WebsiteImageExampleFixed: React.FC = () => {
 
   const createMutation = useCreate()
   const updateMutation = useUpdate()
-  const uploadLogoMutation = useUploadLogo()
+  const addLogoMutation = useAddLogo()
+  const removeLogoMutation = useRemoveLogo()
+  const setPrimaryLogoMutation = useSetPrimaryLogo()
   const deleteMutation = useDelete()
-    useEffect(() => {
-      // Cleanup function to revoke blob URLs when component unmounts
-      return () => {
-        if (editingWebsite?.logo && editingWebsite.logo.startsWith("blob:")) {
-          URL.revokeObjectURL(editingWebsite.logo)
-        }
-        if (newWebsite.logo && newWebsite.logo.startsWith("blob:")) {
-          URL.revokeObjectURL(newWebsite.logo)
-        }
+
+  useEffect(() => {
+    // Cleanup function to revoke blob URLs when component unmounts
+    return () => {
+      if (editingWebsite?.logo && editingWebsite.logo.startsWith("blob:")) {
+        URL.revokeObjectURL(editingWebsite.logo)
       }
-    }, [editingWebsite?.logo, newWebsite.logo])
+      if (newWebsite.logo && newWebsite.logo.startsWith("blob:")) {
+        URL.revokeObjectURL(newWebsite.logo)
+      }
+    }
+  }, [editingWebsite?.logo, newWebsite.logo])
+
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const { logo, ...websiteData } = newWebsite
@@ -57,7 +71,7 @@ const WebsiteImageExampleFixed: React.FC = () => {
     createMutation.mutate(websiteData, {
       onSuccess: (createdWebsite) => {
         if (newLogoFile && createdWebsite?._id) {
-          handleLogoUpload(createdWebsite._id, newLogoFile)
+          handleAddLogo(createdWebsite._id, newLogoFile, true) // First logo is primary
         }
         setShowCreateForm(false)
         setNewWebsite({ name: "", description: "", logo: "", sector: "", phoneNumber: "", email: "", address: "" })
@@ -144,31 +158,15 @@ const WebsiteImageExampleFixed: React.FC = () => {
     setNewWebsite({ ...newWebsite, logo: "" })
   }
 
-  const handleLogoUpload = (websiteId: string, file: File) => {
+  // Add a new logo to website
+  const handleAddLogo = (websiteId: string, file: File, isPrimary: boolean = false) => {
     setUploadingLogo((prev) => ({ ...prev, [websiteId]: true }))
     
-    // Create a preview URL for immediate display
-    const previewUrl = URL.createObjectURL(file)
-    
-    // Update the editingWebsite state immediately if we're editing this website
-    if (editingWebsite && editingWebsite._id === websiteId) {
-      setEditingWebsite({ ...editingWebsite, logo: previewUrl })
-    }
-    
-    uploadLogoMutation.mutate(
-      { id: websiteId, file },
+    addLogoMutation.mutate(
+      { websiteId, file, isPrimary },
       {
-        onSuccess: (response) => {
+        onSuccess: () => {
           setUploadingLogo((prev) => ({ ...prev, [websiteId]: false }))
-          
-          // Clean up the preview URL
-          URL.revokeObjectURL(previewUrl)
-          
-          // Update with the actual server URL if available
-          if (editingWebsite && editingWebsite._id === websiteId && response?.logo) {
-            setEditingWebsite({ ...editingWebsite, logo: response.logo })
-          }
-          
           toast({
             title: t('websiteList.toastMessages.logoUploaded'),
             description: t('websiteList.toastMessages.logoUploadedDesc'),
@@ -176,18 +174,9 @@ const WebsiteImageExampleFixed: React.FC = () => {
         },
         onError: (error) => {
           setUploadingLogo((prev) => ({ ...prev, [websiteId]: false }))
-          
-          // Clean up the preview URL and revert the logo on error
-          URL.revokeObjectURL(previewUrl)
-          if (editingWebsite && editingWebsite._id === websiteId) {
-            // Revert to the original logo from the websites list
-            const originalWebsite = websites.find((w: { _id: string }) => w._id === websiteId)
-            setEditingWebsite({ ...editingWebsite, logo: originalWebsite?.logo || "" })
-          }
-          
           toast({
             title: t('websiteList.toastMessages.uploadFailed'),
-            description: t('websiteList.toastMessages.uploadFailedDesc'),
+            description: error?.message || t('websiteList.toastMessages.uploadFailedDesc'),
             variant: "destructive",
           })
         },
@@ -195,17 +184,10 @@ const WebsiteImageExampleFixed: React.FC = () => {
     )
   }
 
-  const handleLogoRemove = (websiteId: string) => {
-    // Update the editingWebsite state immediately if we're editing this website
-    if (editingWebsite && editingWebsite._id === websiteId) {
-      setEditingWebsite({ ...editingWebsite, logo: "" })
-    }
-    
-    updateMutation.mutate(
-      {
-        id: websiteId,
-        data: { logo: "" },
-      },
+  // Remove a specific logo
+  const handleRemoveLogo = (websiteId: string, logoId: string) => {
+    removeLogoMutation.mutate(
+      { websiteId, logoId },
       {
         onSuccess: () => {
           toast({
@@ -214,15 +196,31 @@ const WebsiteImageExampleFixed: React.FC = () => {
           })
         },
         onError: (error) => {
-          // Revert the logo on error
-          if (editingWebsite && editingWebsite._id === websiteId) {
-            const originalWebsite = websites.find((w: { _id: string }) => w._id === websiteId)
-            setEditingWebsite({ ...editingWebsite, logo: originalWebsite?.logo || "" })
-          }
-          
           toast({
             title: t('websiteList.toastMessages.removeFailed'),
-            description: t('websiteList.toastMessages.removeFailedDesc'),
+            description: error?.message || t('websiteList.toastMessages.removeFailedDesc'),
+            variant: "destructive",
+          })
+        },
+      },
+    )
+  }
+
+  // Set a logo as primary
+  const handleSetPrimary = (websiteId: string, logoId: string) => {
+    setPrimaryLogoMutation.mutate(
+      { websiteId, logoId },
+      {
+        onSuccess: () => {
+          toast({
+            title: t('websiteList.toastMessages.primaryLogoSet'),
+            description: t('websiteList.toastMessages.primaryLogoSetDesc'),
+          })
+        },
+        onError: (error) => {
+          toast({
+            title: t('websiteList.toastMessages.setPrimaryFailed'),
+            description: error?.message || t('websiteList.toastMessages.setPrimaryFailedDesc'),
             variant: "destructive",
           })
         },
@@ -239,6 +237,160 @@ const WebsiteImageExampleFixed: React.FC = () => {
       return t('websiteList.validation.imageTooLarge')
     }
     return true
+  }
+
+  // Logo Management Component for 2 logos
+  const LogoManager: React.FC<{ website: WebSiteProps }> = ({ website }) => {
+    const { data: logos = [] } = useGetWebsiteLogos(website._id || '')
+    const isUploading = website._id ? uploadingLogo[website._id] : false
+
+    const canAddLogo = logos.length < 2
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (file && website._id) {
+        const validationResult = validateImageFile(file)
+        if (validationResult === true) {
+          if (canAddLogo) {
+            const isPrimary = logos.length === 0 // First logo is primary
+            handleAddLogo(website._id, file, isPrimary)
+          } else {
+            toast({
+              title: t('websiteList.validation.maxLogosReached'),
+              description: t('websiteList.validation.maxLogosReachedDesc'),
+              variant: "destructive",
+            })
+          }
+        } else {
+          toast({
+            title: t('websiteList.validation.invalidFile'),
+            description: validationResult as string,
+            variant: "destructive",
+          })
+        }
+      }
+      // Reset input
+      e.target.value = ''
+    }
+
+    return (
+      <div className="space-y-4">
+        <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {t('websiteList.logos.title')} ({logos.length}/2)
+          </h4>
+          {canAddLogo && (
+            <button
+              type="button"
+              className={`px-3 py-1.5 text-xs rounded-md bg-teal-50 text-teal-600 hover:bg-teal-100 dark:bg-teal-900/20 dark:text-teal-400 dark:hover:bg-teal-900/30 transition-colors flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}
+              onClick={() => document.getElementById(`logo-upload-${website._id}`)?.click()}
+              disabled={isUploading}
+            >
+              <Upload className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              {t('websiteList.buttons.addLogo')}
+            </button>
+          )}
+        </div>
+
+        <input
+          id={`logo-upload-${website._id}`}
+          type="file"
+          accept="image/png,image/jpeg,image/svg+xml"
+          className="hidden"
+          onChange={handleFileSelect}
+          disabled={isUploading}
+        />
+
+        <div className={`grid grid-cols-2 gap-4 ${isRTL ? '' : ''}`}>
+          {/* Logo Slot 1 */}
+          <div className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 flex flex-col items-center justify-center">
+            {logos[0] ? (
+              <div className="relative w-full h-full">
+                <img
+                  src={logos[0].url}
+                  alt="Logo 1"
+                  className="w-full h-full object-contain rounded"
+                />
+                <div className={`absolute top-1 ${isRTL ? 'left-1' : 'right-1'} flex space-x-1 ${isRTL ? 'space-x-reverse' : ''}`}>
+                  <button
+                    onClick={() => website._id && handleSetPrimary(website._id, logos[0]._id)}
+                    className={`p-1 rounded-full ${logos[0].isPrimary ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-400'} hover:bg-yellow-200 transition-colors`}
+                    title={logos[0].isPrimary ? t('websiteList.logos.primary') : t('websiteList.logos.setPrimary')}
+                  >
+                    {logos[0].isPrimary ? <Star className="h-3 w-3 fill-current" /> : <StarOff className="h-3 w-3" />}
+                  </button>
+                  <button
+                    onClick={() => website._id && handleRemoveLogo(website._id, logos[0]._id)}
+                    className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                    title={t('websiteList.buttons.remove')}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+                {logos[0].isPrimary && (
+                  <div className="absolute bottom-1 left-1 bg-yellow-100 text-yellow-800 text-xs px-1 py-0.5 rounded">
+                    {t('websiteList.logos.primary')}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center text-gray-400 dark:text-gray-500">
+                <Upload className="h-6 w-6 mx-auto mb-1" />
+                <p className="text-xs">{t('websiteList.logos.slot1')}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Logo Slot 2 */}
+          <div className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 flex flex-col items-center justify-center">
+            {logos[1] ? (
+              <div className="relative w-full h-full">
+                <img
+                  src={logos[1].url}
+                  alt="Logo 2"
+                  className="w-full h-full object-contain rounded"
+                />
+                <div className={`absolute top-1 ${isRTL ? 'left-1' : 'right-1'} flex space-x-1 ${isRTL ? 'space-x-reverse' : ''}`}>
+                  <button
+                    onClick={() => website._id && handleSetPrimary(website._id, logos[1]._id)}
+                    className={`p-1 rounded-full ${logos[1].isPrimary ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-400'} hover:bg-yellow-200 transition-colors`}
+                    title={logos[1].isPrimary ? t('websiteList.logos.primary') : t('websiteList.logos.setPrimary')}
+                  >
+                    {logos[1].isPrimary ? <Star className="h-3 w-3 fill-current" /> : <StarOff className="h-3 w-3" />}
+                  </button>
+                  <button
+                    onClick={() => website._id && handleRemoveLogo(website._id, logos[1]._id)}
+                    className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                    title={t('websiteList.buttons.remove')}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+                {logos[1].isPrimary && (
+                  <div className="absolute bottom-1 left-1 bg-yellow-100 text-yellow-800 text-xs px-1 py-0.5 rounded">
+                    {t('websiteList.logos.primary')}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center text-gray-400 dark:text-gray-500">
+                <Upload className="h-6 w-6 mx-auto mb-1" />
+                <p className="text-xs">{t('websiteList.logos.slot2')}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {isUploading && (
+          <div className="flex items-center justify-center py-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-teal-500"></div>
+            <span className={`text-sm text-gray-500 dark:text-gray-400 ${isRTL ? 'mr-2' : 'ml-2'}`}>
+              {t('websiteList.loadingStates.uploading')}
+            </span>
+          </div>
+        )}
+      </div>
+    )
   }
 
   const renderContent = () => {
@@ -489,62 +641,10 @@ const WebsiteImageExampleFixed: React.FC = () => {
               />
             </div>
 
-            {editingWebsite.logo && (
-              <div className="mt-4">
-                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('websiteList.form.labels.logo')}
-                </label>
-                <div className={`flex items-center space-x-4 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                  <img
-                    src={editingWebsite.logo || "/placeholder.svg"}
-                    alt={`${editingWebsite.name} logo`}
-                    className="h-16 w-16 object-contain rounded-lg bg-gray-100 dark:bg-gray-700 p-1"
-                  />
-                  <div className={`flex space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
-                    <button
-                      type="button"
-                      className={`px-3 py-1.5 text-xs rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}
-                      onClick={() => document.getElementById(`logo-upload-${editingWebsite._id}`)?.click()}
-                      disabled={editingWebsite._id ? uploadingLogo[editingWebsite._id] : false}
-                    >
-                      <Upload className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
-                      {t('websiteList.buttons.change')}
-                    </button>
-                    <button
-                      type="button"
-                      className={`px-3 py-1.5 text-xs rounded-md bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 transition-colors flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}
-                      onClick={() => editingWebsite._id && handleLogoRemove(editingWebsite._id)}
-                      disabled={editingWebsite._id ? uploadingLogo[editingWebsite._id] : false}
-                    >
-                      <X className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
-                      {t('websiteList.buttons.remove')}
-                    </button>
-                  </div>
-                  <input
-                    id={`logo-upload-${editingWebsite._id}`}
-                    type="file"
-                    accept="image/png,image/jpeg,image/svg+xml"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file && editingWebsite._id) {
-                        const validationResult = validateImageFile(file)
-                        if (validationResult === true) {
-                          handleLogoUpload(editingWebsite._id, file)
-                        } else {
-                          toast({
-                            title: t('websiteList.validation.invalidFile'),
-                            description: validationResult as string,
-                            variant: "destructive",
-                          })
-                        }
-                      }
-                    }}
-                    disabled={editingWebsite._id ? uploadingLogo[editingWebsite._id] : false}
-                  />
-                </div>
-              </div>
-            )}
+            {/* Logo Management Section */}
+            <div>
+              <LogoManager website={editingWebsite} />
+            </div>
 
             <div className={`flex justify-end space-x-3 pt-4 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
               <button
@@ -609,115 +709,113 @@ const WebsiteImageExampleFixed: React.FC = () => {
         ) : (
           <div className="space-y-6">
             {websites.map((website: WebSiteProps) => (
-              <div
-                key={website._id}
-                className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300"
-                dir={isRTL ? 'rtl' : 'ltr'}
-              >
-                <div className={`flex items-start justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <div className={`flex items-start space-x-4 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    {website.logo ? (
-                      <div className="h-16 w-16 rounded-lg bg-gray-100 dark:bg-gray-700 p-1 flex items-center justify-center">
-                        <img
-                          src={website.logo || "/placeholder.svg"}
-                          alt={`${website.name} logo`}
-                          className="max-h-14 max-w-14 object-contain"
-                        />
-                      </div>
-                    ) : (
-                      <div className="h-16 w-16 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                        <button
-                          className="text-gray-400 hover:text-teal-500 dark:text-gray-500 dark:hover:text-teal-400 transition-colors"
-                          onClick={() => document.getElementById(`logo-upload-${website._id}`)?.click()}
-                          disabled={website._id ? uploadingLogo[website._id] : false}
-                        >
-                          {website._id && uploadingLogo[website._id] ? (
-                            <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-teal-500"></div>
-                          ) : (
-                            <Upload className="h-6 w-6" />
-                          )}
-                        </button>
-                        <input
-                          id={`logo-upload-${website._id}`}
-                          type="file"
-                          accept="image/png,image/jpeg,image/svg+xml"
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0]
-                            if (file && website._id) {
-                              const validationResult = validateImageFile(file)
-                              if (validationResult === true) {
-                                handleLogoUpload(website._id, file)
-                              } else {
-                                toast({
-                                  title: t('websiteList.validation.invalidFile'),
-                                  description: validationResult as string,
-                                  variant: "destructive",
-                                })
-                              }
-                            }
-                          }}
-                          disabled={website._id ? uploadingLogo[website._id] : false}
-                        />
-                      </div>
-                    )}
-
-                    <div className="flex-1">
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">{website.name}</h3>
-                      {website.description && (
-                        <p className="text-gray-600 dark:text-gray-300 text-sm mt-1 line-clamp-2">
-                          {website.description}
-                        </p>
-                      )}
-                      {website.sector && (
-                        <div className="mt-2">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
-                            {website.sector}
-                          </span>
-                        </div>
-                      )}
-                      {(website.phoneNumber || website.email || website.address) && (
-                        <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                          {website.phoneNumber && <p>{t('websiteList.labels.phone')}: {website.phoneNumber}</p>}
-                          {website.email && <p>{t('websiteList.labels.email')}: {website.email}</p>}
-                          {website.address && <p>{t('websiteList.labels.address')}: {website.address}</p>}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className={`flex space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
-                    <button
-                      className="p-2 rounded-md text-gray-500 hover:text-teal-600 hover:bg-teal-50 dark:text-gray-400 dark:hover:text-teal-400 dark:hover:bg-teal-900/20 transition-colors"
-                      onClick={() => setEditingWebsite(website)}
-                      aria-label="Edit website"
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </button>
-                    <button
-                      className="p-2 rounded-md text-gray-500 hover:text-red-600 hover:bg-red-50 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-red-900/20 transition-colors"
-                      onClick={() => openDeleteDialog(website)}
-                      aria-label="Delete website"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
-                  <div className={`flex justify-between items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {t('websiteList.labels.created')}: {new Date(website.createdAt || Date.now()).toLocaleDateString()}
-                    </span>
-
-                      
-                  </div>
-                </div>
-              </div>
+              <WebsiteCard key={website._id} website={website} />
             ))}
           </div>
         )}
       </>
+    )
+  }
+
+  // Website Card Component with 2 logos display
+  const WebsiteCard: React.FC<{ website: WebSiteProps }> = ({ website }) => {
+    const { data: logos = [] } = useGetWebsiteLogos(website._id || '')
+    const primaryLogo = logos.find(logo => logo.isPrimary) || logos[0]
+    const secondaryLogo = logos.find(logo => !logo.isPrimary)
+
+    return (
+      <div
+        className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300"
+        dir={isRTL ? 'rtl' : 'ltr'}
+      >
+        <div className={`flex items-start justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-start space-x-4 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+            {/* Logo Display */}
+            <div className="flex items-center space-x-2">
+              {primaryLogo ? (
+                <div className="h-16 w-16 rounded-lg bg-gray-100 dark:bg-gray-700 p-1 flex items-center justify-center relative">
+                  <img
+                    src={primaryLogo.url}
+                    alt={`${website.name} primary logo`}
+                    className="max-h-14 max-w-14 object-contain"
+                  />
+                  <div className="absolute -top-1 -right-1 bg-yellow-100 text-yellow-600 rounded-full p-1">
+                    <Star className="h-2 w-2 fill-current" />
+                  </div>
+                </div>
+              ) : (
+                <div className="h-16 w-16 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                  <Upload className="h-6 w-6 text-gray-400" />
+                </div>
+              )}
+              
+              {secondaryLogo && (
+                <div className="h-12 w-12 rounded-lg bg-gray-100 dark:bg-gray-700 p-1 flex items-center justify-center">
+                  <img
+                    src={secondaryLogo.url}
+                    alt={`${website.name} secondary logo`}
+                    className="max-h-10 max-w-10 object-contain"
+                  />
+                </div>
+              )}
+              
+              {logos.length > 0 && (
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  {logos.length}/2 {t('websiteList.logos.count')}
+                </div>
+              )}
+            </div>
+
+            <div className="flex-1">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">{website.name}</h3>
+              {website.description && (
+                <p className="text-gray-600 dark:text-gray-300 text-sm mt-1 line-clamp-2">
+                  {website.description}
+                </p>
+              )}
+              {website.sector && (
+                <div className="mt-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
+                    {website.sector}
+                  </span>
+                </div>
+              )}
+              {(website.phoneNumber || website.email || website.address) && (
+                <div className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  {website.phoneNumber && <p>{t('websiteList.labels.phone')}: {website.phoneNumber}</p>}
+                  {website.email && <p>{t('websiteList.labels.email')}: {website.email}</p>}
+                  {website.address && <p>{t('websiteList.labels.address')}: {website.address}</p>}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className={`flex space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
+            <button
+              className="p-2 rounded-md text-gray-500 hover:text-teal-600 hover:bg-teal-50 dark:text-gray-400 dark:hover:text-teal-400 dark:hover:bg-teal-900/20 transition-colors"
+              onClick={() => setEditingWebsite(website)}
+              aria-label="Edit website"
+            >
+              <Edit2 className="h-4 w-4" />
+            </button>
+            <button
+              className="p-2 rounded-md text-gray-500 hover:text-red-600 hover:bg-red-50 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-red-900/20 transition-colors"
+              onClick={() => openDeleteDialog(website)}
+              aria-label="Delete website"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+          <div className={`flex justify-between items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {t('websiteList.labels.created')}: {new Date(website.createdAt || Date.now()).toLocaleDateString()}
+            </span>
+          </div>
+        </div>
+      </div>
     )
   }
 
@@ -740,5 +838,5 @@ const WebsiteImageExampleFixed: React.FC = () => {
     </div>
   )
 }
-
+  
 export default WebsiteImageExampleFixed

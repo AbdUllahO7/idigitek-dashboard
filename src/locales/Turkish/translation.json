@@ -451,6 +451,13 @@
     "noWebsitesTitle": "Henüz Web Sitesi Yok",
     "noWebsitesDescription": "Henüz hiç web siteniz yok. Çevrimiçi varlığınızı başlatmak için bir tane oluşturun.",
     "errorLoadingTitle": "Web Siteleri Yüklenirken Hata",
+  "logos" : {
+      "title" : "logolar",
+      "primary" : "Birincil",
+      "count" : "logo Sayısı",
+      "slot1": "Ana logo",
+      "slot2": "İkincil logo"
+    },
     "form": {
       "labels": {
         "name": "Ad",
@@ -481,7 +488,8 @@
       "change": "Değiştir",
       "remove": "Kaldır",
       "changeLogo": "Logo Değiştir",
-      "removeLogo": "Logo Kaldır"
+      "removeLogo": "Logo Kaldır",
+      "addLogo" : "Logo Ekle"
     },
     "loadingStates": {
       "creating": "Oluşturuluyor...",

@@ -449,6 +449,55 @@ export const createFooterSpecialLinkSectionSchema = (languageIds: string[], acti
 
     return z.object(schemaShape);
 };
+const primaryNavigationSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().min(1, "Title is required"),
+  displayText: z.string().min(1, "Display text is required"),
+  url: z.string().url("Please enter a valid URL").or(z.literal("")),
+  order: z.number().min(0, "Order must be 0 or greater").default(0),
+});
 
+// Sub-navigation item schema
+const subNavigationSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, "Name is required"),
+  url: z.string().url("Please enter a valid URL").or(z.literal("")),
+  order: z.number().min(0, "Order must be 0 or greater").default(0),
+  isActive: z.boolean().default(true),
+});
+
+// Create navigation schema based on languages and type
+export const createNavigationSchema = (
+  languageIds: string[],
+  activeLanguages: any[],
+  type: 'primary' | 'sub' = 'primary'
+) => {
+  const itemSchema = type === 'sub' ? subNavigationSchema : primaryNavigationSchema;
+  
+  // Create language code mapping
+  const languageCodes = activeLanguages.reduce((acc, lang) => {
+    acc[lang._id] = lang.languageID;
+    return acc;
+  }, {} as Record<string, string>);
+
+  // Build schema object for each language
+  const schemaObject: Record<string, z.ZodArray<any>> = {};
+   languageIds.forEach((langId) => {
+    const langCode = languageCodes[langId] || langId;
+    schemaObject[langCode] = z.array(itemSchema).min(1, `At least one ${type === 'sub' ? 'sub-navigation' : 'navigation'} item is required`);
+  });
+
+  return z.object(schemaObject).refine(
+    (data) => {
+      // Check that all languages have the same number of items
+      const counts = Object.values(data).map((items: any[]) => items.length);
+      const firstCount = counts[0];
+      return counts.every(count => count === firstCount);
+    },
+    {
+      message: `All languages must have the same number of ${type === 'sub' ? 'sub-navigation' : 'navigation'} items`,
+    }
+  );
+};
 // Usage remains the same
 // const formSchema = createHeroSchema(languageIds, activeLanguages);

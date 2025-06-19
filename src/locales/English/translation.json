@@ -450,6 +450,13 @@
     "noWebsitesTitle": "No Websites Yet",
     "noWebsitesDescription": "You don't have any websites yet. Create one to get started with your online presence.",
     "errorLoadingTitle": "Error Loading Websites",
+    "logos" : {
+      "title" : "Logos",
+      "primary" : "Primary",
+      "count" : "Count",
+      "slot1": "Main logo",
+      "slot2": "Secondary logo"
+    },
     "form": {
       "labels": {
         "name": "Name",
@@ -480,7 +487,8 @@
       "change": "Change",
       "remove": "Remove",
       "changeLogo": "Change Logo",
-      "removeLogo": "Remove Logo"
+      "removeLogo": "Remove Logo",
+      "addLogo" : "Add Logo"
     },
     "loadingStates": {
       "creating": "Creating...",

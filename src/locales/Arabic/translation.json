@@ -455,6 +455,14 @@
     "noWebsitesTitle": "لا توجد مواقع بعد",
     "noWebsitesDescription": "ليس لديك أي مواقع إلكترونية بعد. أنشئ موقعاً للبدء في حضورك الرقمي.",
     "errorLoadingTitle": "خطأ في تحميل المواقع",
+    "logos" : {
+      "title" : "الشعارات",
+      "primary" : "أساسي",
+      "count": "عدد الشعارات",
+      "slot1" : "الشعار الاساسي",
+      "slot2" : "الشعار الثانوي"
+
+    },
     "form": {
       "labels": {
         "name": "الاسم",
@@ -485,7 +493,8 @@
       "change": "تغيير",
       "remove": "إزالة",
       "changeLogo": "تغيير الشعار",
-      "removeLogo": "إزالة الشعار"
+      "removeLogo": "إزالة الشعار",
+      "addLogo": "إضافة شعار"
     },
     "loadingStates": {
       "creating": "جاري الإنشاء...",

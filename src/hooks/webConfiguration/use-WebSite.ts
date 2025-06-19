@@ -4,6 +4,17 @@ import { WebSiteProps } from '@/src/api/types/hooks/WebSite.types';
 import { Roles } from '@/src/api/user.types';
 import { useAuth } from '@/src/context/AuthContext'; // Import your auth context
 
+// Logo interface (add this to your types file)
+export interface LogoProps {
+  _id: string;
+  url: string;
+  cloudinaryId: string;
+  width?: number;
+  height?: number;
+  isPrimary: boolean;
+  uploadedAt: string;
+}
+
 // Base WebSite hook
 export function useWebSite() {
   const queryClient = useQueryClient();
@@ -18,6 +29,7 @@ export function useWebSite() {
   const websiteKey = (id: string) => [...websitesKey, id];
   const myWebsitesKey = [...websitesKey, 'my'];
   const websiteUsersKey = (websiteId: string) => [...websitesKey, websiteId, 'users'];
+  const websiteLogosKey = (websiteId: string) => [...websitesKey, websiteId, 'logos'];
 
   // Get all websites
   const useGetAll = () => {
@@ -72,6 +84,19 @@ export function useWebSite() {
     });
   };
 
+  // Get all logos for a website
+  const useGetWebsiteLogos = (websiteId: string) => {
+    return useQuery({
+      queryKey: websiteLogosKey(websiteId),
+      queryFn: async () => {
+        const { data } = await apiClient.get(`${endpoint}/${websiteId}/logos`);
+        return data?.data?.logos || [];
+      },
+      enabled: !!websiteId,
+      staleTime: 30 * 1000, // 30 seconds
+    });
+  };
+
   // Create a new website
   const useCreate = () => {
     return useMutation({
@@ -114,7 +139,114 @@ export function useWebSite() {
     });
   };
 
-  // Upload logo for a website
+  // Add a new logo to a website
+  const useAddLogo = () => {
+    return useMutation({
+      mutationFn: async ({ 
+        websiteId, 
+        file, 
+        isPrimary = false 
+      }: { 
+        websiteId: string; 
+        file: File; 
+        isPrimary?: boolean 
+      }) => {
+        // Create form data for file upload
+        const formData = new FormData();
+        formData.append('logo', file);
+        formData.append('isPrimary', isPrimary.toString());
+        
+        try {
+          const response = await apiClient.post(
+            `${endpoint}/${websiteId}/logos`, 
+            formData, 
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            }
+          );
+          return response?.data?.data?.website;
+        } catch (error) {
+          console.error('Error adding logo:', error);
+          throw error;
+        }
+      },
+      onSuccess: (data, { websiteId }) => {
+        if (data) {
+          // Update specific website cache
+          queryClient.setQueryData(websiteKey(websiteId), data);
+          
+          // Invalidate logos cache for this website
+          queryClient.invalidateQueries({ queryKey: websiteLogosKey(websiteId) });
+          
+          // Invalidate lists that could contain this website
+          queryClient.invalidateQueries({ queryKey: websitesKey, exact: true });
+          queryClient.invalidateQueries({ queryKey: myWebsitesKey });
+        }
+      },
+    });
+  };
+
+  // Remove a specific logo from a website
+  const useRemoveLogo = () => {
+    return useMutation({
+      mutationFn: async ({ 
+        websiteId, 
+        logoId 
+      }: { 
+        websiteId: string; 
+        logoId: string 
+      }) => {
+        const { data } = await apiClient.delete(`${endpoint}/${websiteId}/logos/${logoId}`);
+        return data?.data?.website;
+      },
+      onSuccess: (data, { websiteId }) => {
+        if (data) {
+          // Update specific website cache
+          queryClient.setQueryData(websiteKey(websiteId), data);
+          
+          // Invalidate logos cache for this website
+          queryClient.invalidateQueries({ queryKey: websiteLogosKey(websiteId) });
+          
+          // Invalidate lists that could contain this website
+          queryClient.invalidateQueries({ queryKey: websitesKey, exact: true });
+          queryClient.invalidateQueries({ queryKey: myWebsitesKey });
+        }
+      },
+    });
+  };
+
+  // Set a logo as primary
+  const useSetPrimaryLogo = () => {
+    return useMutation({
+      mutationFn: async ({ 
+        websiteId, 
+        logoId 
+      }: { 
+        websiteId: string; 
+        logoId: string 
+      }) => {
+        const { data } = await apiClient.put(`${endpoint}/${websiteId}/logos/${logoId}/primary`);
+        return data?.data?.website;
+      },
+      onSuccess: (data, { websiteId }) => {
+        if (data) {
+          // Update specific website cache
+          queryClient.setQueryData(websiteKey(websiteId), data);
+          
+          // Invalidate logos cache for this website
+          queryClient.invalidateQueries({ queryKey: websiteLogosKey(websiteId) });
+          
+          // Invalidate lists that could contain this website
+          queryClient.invalidateQueries({ queryKey: websitesKey, exact: true });
+          queryClient.invalidateQueries({ queryKey: myWebsitesKey });
+        }
+      },
+    });
+  };
+
+  // Upload logo for a website (Legacy method - for backward compatibility)
   const useUploadLogo = () => {
     return useMutation({
       mutationFn: async ({ id, file }: { id: string; file: File }) => {
@@ -143,6 +275,9 @@ export function useWebSite() {
           // Update specific website cache
           queryClient.setQueryData(websiteKey(id), data);
           
+          // Invalidate logos cache for this website
+          queryClient.invalidateQueries({ queryKey: websiteLogosKey(id) });
+          
           // Invalidate lists that could contain this website
           queryClient.invalidateQueries({ queryKey: websitesKey, exact: true });
           queryClient.invalidateQueries({ queryKey: myWebsitesKey });
@@ -168,6 +303,9 @@ export function useWebSite() {
         
         // Remove users for this website from cache
         queryClient.removeQueries({ queryKey: websiteUsersKey(id) });
+        
+        // Remove logos for this website from cache
+        queryClient.removeQueries({ queryKey: websiteLogosKey(id) });
       },
     });
   };
@@ -208,7 +346,6 @@ export function useWebSite() {
     });
   };
 
-
   const resetWebsiteCache = () => {
     queryClient.invalidateQueries({ queryKey: ['websites'] });
   };
@@ -219,9 +356,13 @@ export function useWebSite() {
     useGetById,
     useGetMyWebsites,
     useGetWebsiteUsers,
+    useGetWebsiteLogos, // New hook for getting logos
     useCreate,
     useUpdate,
-    useUploadLogo,
+    useAddLogo, // New hook for adding logos
+    useRemoveLogo, // New hook for removing logos
+    useSetPrimaryLogo, // New hook for setting primary logo
+    useUploadLogo, // Legacy hook (kept for backward compatibility)
     useDelete,
     useAddUser,
     useRemoveUser,
