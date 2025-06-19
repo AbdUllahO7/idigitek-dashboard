@@ -22,26 +22,26 @@
     "settings": "الإعدادات",
     "nav": {
       "dashboard": "لوحة التحكم",
-      "users": "المستخدمون",
-      "services": "الخدمات",
-      "header": "شريط التنقل",
-      "news": "الأخبار",
-      "Forms" : "الاستمارات",
-      "industrySolutions": "الحلول الصناعية",
-      "whyChooseUs": "لماذا تختارنا",
-      "projects": "المشاريع",
-      "ourProcess": "عمليتنا",
-      "team": "الفريق",
-      "clientComments": "تعليقات العملاء",
-      "partners": "الشركاء",
-      "faq": "الأسئلة الشائعة",
-      "blog": "المدونة",
-      "contact": "اتصل بنا",
-      "hero": "اللوح الرئيسي",
-      "footer": "شريط الاسفل",
-      "profile": "الملف الشخصي",
-      "webConfigurations": "إعدادات الويب",
-      "idigitekAdmin": "مدير إيديجيتك"
+        "users": "المستخدمين",
+        "Forms": "النماذج",
+        "services": "عرض تقني",
+        "header": "رأس الصفحة",
+        "news": "شبكة مقالات عصرية",
+        "industrySolutions": "بطاقات فئات",
+        "whyChooseUs": "رسم تقني ثلاثي",
+        "projects": "بطاقات محفظة",
+        "ourProcess": "شبكة بطاقات مرقمة",
+        "team": "تخطيط شبكة",
+        "clientComments": "بطاقات تقييم",
+        "partners": "تخطيط منزلق",
+        "faq": "تخطيط منسدل مرقم",
+        "blog": "دوار ثلاث بطاقات",
+        "contact": "تصميم نموذج منقسم",
+        "hero": "واجهة تقنية",
+        "footer": "تذييل الصفحة",
+        "profile": "الملف الشخصي",
+        "webConfigurations": "إعدادات الويب",
+        "idigitekAdmin": "إدارة إيديجيتك"
     }
   },
     "Dashboard": {
@@ -721,83 +721,229 @@
     "errors.networkError.resolution": "يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى",
     "errors.unknown.resolution": "يرجى المحاولة مرة أخرى أو التواصل مع الدعم إذا استمرت المشكلة"
   },
-  "sectionManagement": {
-    "subtitle":"أنشئ هيكل موقع الويب الخاص بك بأقسام جميلة ومصممة مسبقًا",
-    "description1": "شريط التنقل العلوي مع الشعار وعناصر القائمة ومعلومات الاتصال لموقعك",
-    "sections.hero.description": "لافتة رئيسية جذابة مع عناوين مقنعة وأزرار دعوة للعمل",
-    "sections.services.description": "اعرض خدماتك الأساسية وعروضك مع أوصاف مفصلة",
-    "sections.news.description": "عرض آخر الأخبار والتحديثات والإعلانات للجمهور",
-    "sections.industrySolutions.description": "تقديم حلول مخصصة للصناعات المختلفة التي تخدمها",
-    "sections.whyChooseUs.description": "سلط الضوء على عروض القيمة الفريدة والمزايا التنافسية",
-    "sections.projects.description": "معرض أعمال للمشاريع المكتملة ودراسات الحالة",
-    "sections.ourProcess.description": "تفصيل خطوة بخطوة لسير العمل والمنهجية الخاصة بك",
-    "sections.team.description": "تعرف على قسم الفريق مع ملفات تعريف الموظفين والخبرات",
-    "sections.clientComments.description": "شهادات العملاء والمراجعات لبناء الثقة والمصداقية",
-    "sections.partners.description": "عرض شعارات ومعلومات حول شركائك التجاريين",
-    "sections.faq.description": "الأسئلة الشائعة لمعالجة استفسارات العملاء المشتركة",
-    "sections.blog.description": "قسم المدونة للمقالات والرؤى ومحتوى الفكر القيادي",
-    "sections.contact.description": "معلومات الاتصال والنماذج وتفاصيل الموقع لاستفسارات العملاء",
-    "sections.footer.description": "القسم السفلي مع الروابط ووسائل التواصل الاجتماعي ومعلومات إضافية عن الشركة",
-    "title": "أقسام الموقع",
-    "currentSections": "أقسام الموقع الحالية",
-    "addNewSections": "إضافة أقسام مصممة مسبقاً",
-    "searchPlaceholder": "البحث في الأقسام...",
-    "addNew": "إضافة جديد",
-    "categories.all": "جميع الأقسام",
-    "categories.layout": "التخطيط",
-    "categories.content": "المحتوى",
-    "noSectionsYet": "لا توجد أقسام حتى الآن",
-    "noSectionsDescription": "أضف أقسام مصممة مسبقاً لإنشاء هيكل موقعك الإلكتروني. يمكن ترتيب الأقسام بأي ترتيب.",
-    "browseSections": "تصفح الأقسام المتاحة",
-    "addToWebsite": "إضافة إلى الموقع",
-    "active": "نشط",
-    "hidden": "مخفي",
-    "deleteSection": "حذف القسم",
-    "deleteConfirmation": "سيؤدي هذا إلى حذف القسم نهائياً. لا يمكن التراجع عن هذا الإجراء, وسيتم فقدان أي محتوى في هذا القسم.",
-    "cancel": "إلغاء",
-    "delete": "حذف القسم",
-    "dragToReorder": "اسحب الأقسام لإعادة ترتيبها على موقعك",
-    "noSectionsFound": "لم يتم العثور على أقسام",
-    "noSectionsFoundDescription": "لم يتم العثور على أقسام تطابق بحثك",
-    "clearSearch": "مسح البحث",
-    "clearSearchLink": "مسح البحث",
-    "filterByCategory": "تصفية حسب الفئة",
-    "createWebsiteFirst": "يرجى إنشاء موقع إلكتروني أولاً لرؤية أقسامه.",
-    "createWebsiteBeforeAdding": "يرجى إنشاء موقع إلكتروني أولاً قبل إضافة الأقسام.",
-    "sectionCount": "أقسام",
-    "duplicateSection": "قسم مكرر",
-    "duplicateSectionMessage": "يوجد قسم بهذا الاسم بالفعل.",
-    "sectionAdded": "تمت إضافة القسم",
-    "sectionAddedSuccessfully": "تمت إضافة القسم بنجاح.",
-    "errorAddingSection": "خطأ في إضافة القسم",
-    "errorAddingSectionMessage": "حدث خطأ أثناء إضافة القسم.",
-    "sectionDeleted": "تم حذف القسم",
-    "sectionDeletedSuccessfully": "تم حذف القسم بنجاح.",
-    "errorDeletingSection": "خطأ في حذف القسم",
-    "errorDeletingSectionMessage": "حدث خطأ أثناء حذف القسم.",
-    "sectionActivated": "تم تفعيل القسم",
-    "sectionDeactivated": "تم إلغاء تفعيل القسم",
-    "sectionVisibilityChanged": "أصبح مرئياً على موقعك الإلكتروني.",
-    "sectionVisibilityHidden": "أصبح مخفياً على موقعك الإلكتروني.",
-    "errorUpdatingSection": "خطأ في تحديث القسم",
-    "errorUpdatingSectionMessage": "حدث خطأ أثناء تحديث حالة القسم.",
-    "orderUpdated": "تم تحديث الترتيب",
-    "orderUpdatedSuccessfully": "تم تحديث ترتيب الأقسام بنجاح.",
-    "errorUpdatingOrder": "خطأ في تحديث الترتيب",
-    "errorUpdatingOrderMessage": "حدث خطأ أثناء تحديث ترتيب الأقسام.",
-    "noValidSections": "لا توجد أقسام صالحة لإعادة الترتيب.",
-    "sectionIdMissing": "معرف القسم مفقود.",
-    "changesSaved": "تم حفظ التغييرات بنجاح!",
-    "hideSection": "إخفاء القسم",
-    "showSection": "إظهار القسم",
-    "deleteSectionTooltip": "حذف القسم",
-    "loadingSections": "جاري تحميل الأقسام...",
-    "errorLoadingSections": "خطأ في تحميل الأقسام",
-    "failedToFetchSections": "فشل في جلب الأقسام",
-    "tryAgain": "حاول مرة أخرى",
-    "current": "الحالية",
-    "available": "المتاحة"
-  },
+"sectionManagement": {
+      "subtitle": "ابني هيكل موقعك الإلكتروني بأقسام جميلة ومصممة مسبقاً",
+      "description1": "شريط التنقل العلوي مع الشعار وعناصر القائمة ومعلومات الاتصال لموقعك الإلكتروني",
+      "sections.hero.description": "بانر رئيسي جذاب مع عناوين مقنعة وأزرار دعوة للعمل",
+      "sections.services.description": "اعرض خدماتك وعروضك الأساسية مع أوصاف مفصلة",
+      "sections.news.description": "اعرض آخر الأخبار والتحديثات والإعلانات لجمهورك",
+      "sections.industrySolutions.description": "قدم حلول مخصصة للصناعات المختلفة التي تخدمها",
+      "sections.whyChooseUs.description": "سلط الضوء على مقترحات القيمة الفريدة والمزايا التنافسية",
+      "sections.projects.description": "معرض محفظة أعمال لمشاريعك المكتملة ودراسات الحالة",
+      "sections.ourProcess.description": "تفصيل خطوة بخطوة لسير العمل والمنهجية الخاصة بك",
+      "sections.team.description": "قسم تعريف بالفريق مع ملفات الموظفين والخبرات",
+      "sections.clientComments.description": "شهادات العملاء والمراجعات لبناء الثقة والمصداقية",
+      "sections.partners.description": "اعرض شعارات ومعلومات شركائك التجاريين",
+      "sections.faq.description": "الأسئلة الشائعة للإجابة على استفسارات العملاء الشائعة",
+      "sections.blog.description": "قسم المدونة للمقالات والرؤى ومحتوى القيادة الفكرية",
+      "sections.contact.description": "معلومات الاتصال والنماذج وتفاصيل الموقع لاستفسارات العملاء",
+      "sections.footer.description": "القسم السفلي مع الروابط ووسائل التواصل الاجتماعي ومعلومات الشركة الإضافية",
+      
+      "title": "أقسام الموقع الإلكتروني",
+      "currentSections": "أقسام الموقع الحالية",
+      "addNewSections": "إضافة أقسام مصممة مسبقاً",
+      "searchPlaceholder": "البحث في الأقسام...",
+      "addNew": "إضافة جديد",
+      "addNewMobile": "إضافة",
+      "browseSections": "تصفح الأقسام المتاحة",
+      "addToWebsite": "إضافة إلى الموقع",
+      
+      "categories": {
+        "all": "جميع الأقسام",
+        "layout": "التخطيط",
+        "content": "المحتوى"
+      },
+      
+      "status": {
+        "active": "نشط",
+        "hidden": "مخفي"
+      },
+      
+      "actions": {
+        "hideSection": "إخفاء القسم",
+        "showSection": "إظهار القسم",
+        "deleteSection": "حذف القسم",
+        "deleteSectionTooltip": "حذف القسم",
+        "duplicateSection": "تكرار القسم"
+      },
+      
+      "states": {
+        "noSectionsYet": "لا توجد أقسام بعد",
+        "noSectionsDescription": "أضف أقسام مصممة مسبقاً لإنشاء هيكل موقعك الإلكتروني. يمكن ترتيب الأقسام بأي ترتيب.",
+        "noSectionsFound": "لم يتم العثور على أقسام",
+        "noSectionsFoundDescription": "لم يتم العثور على أقسام تطابق بحثك",
+        "noSectionsFoundMatching": "لم يتم العثور على أقسام تطابق",
+        "inCategory": "في فئة {{category}}",
+        "loadingSections": "تحميل الأقسام...",
+        "errorLoadingSections": "خطأ في تحميل الأقسام",
+        "failedToFetchSections": "فشل في جلب الأقسام"
+      },
+      
+      "search": {
+        "clearSearch": "مسح البحث",
+        "clearSearchLink": "مسح البحث",
+        "showAllCategories": "إظهار جميع الفئات"
+      },
+      
+      "filter": {
+        "filterByCategory": "تصفية حسب الفئة"
+      },
+      
+      "requirements": {
+        "websiteRequired": "الموقع الإلكتروني مطلوب",
+        "createWebsiteFirst": "يرجى إنشاء موقع إلكتروني أولاً لرؤية أقسامه.",
+        "createWebsiteBeforeAdding": "يرجى إنشاء موقع إلكتروني أولاً قبل إضافة الأقسام."
+      },
+      
+      "reorder": {
+        "dragToReorder": "اسحب الأقسام لإعادة ترتيبها على موقعك الإلكتروني",
+        "sectionCount": "أقسام"
+      },
+      
+      "details": {
+        "details": "تفاصيل القسم",
+        "preview": "معاينة",
+        "type": "النوع:",
+        "order": "الترتيب:",
+        "status": "الحالة:",
+        "addedOn": "أضيف في"
+      },
+      
+      "messages": {
+        "duplicateSectionMessage": "يوجد قسم بهذا الاسم بالفعل.",
+        "sectionAdded": "تم إضافة القسم",
+        "sectionAddedSuccessfully": "تم إضافة القسم بنجاح.",
+        "errorAddingSection": "خطأ في إضافة القسم",
+        "errorAddingSectionMessage": "حدث خطأ أثناء إضافة القسم.",
+        "sectionDeleted": "تم حذف القسم",
+        "sectionDeletedSuccessfully": "تم حذف القسم بنجاح.",
+        "errorDeletingSection": "خطأ في حذف القسم",
+        "errorDeletingSectionMessage": "حدث خطأ أثناء حذف القسم.",
+        "sectionActivated": "تم تفعيل القسم",
+        "sectionDeactivated": "تم إلغاء تفعيل القسم",
+        "sectionVisibilityChanged": "أصبح مرئياً على موقعك الإلكتروني.",
+        "sectionVisibilityHidden": "أصبح مخفياً على موقعك الإلكتروني.",
+        "errorUpdatingSection": "خطأ في تحديث القسم",
+        "errorUpdatingSectionMessage": "حدث خطأ أثناء تحديث حالة القسم.",
+        "orderUpdated": "تم تحديث الترتيب",
+        "orderUpdatedSuccessfully": "تم تحديث ترتيب الأقسام بنجاح.",
+        "errorUpdatingOrder": "خطأ في تحديث الترتيب",
+        "errorUpdatingOrderMessage": "حدث خطأ أثناء تحديث ترتيب الأقسام.",
+        "noValidSections": "لا توجد أقسام صالحة لإعادة الترتيب.",
+        "sectionIdMissing": "معرف القسم مفقود.",
+        "changesSaved": "تم حفظ التغييرات بنجاح!"
+      },
+      
+      "modal": {
+        "deleteConfirmation": "سيؤدي هذا إلى حذف القسم نهائياً. لا يمكن التراجع عن هذا الإجراء، وسيتم فقدان أي محتوى في هذا القسم.",
+        "cancel": "إلغاء",
+        "delete": "حذف القسم",
+        "clickOutsideToClose": "انقر خارج النافذة للإغلاق"
+      },
+      
+      "navigation": {
+        "current": "الحالي",
+        "available": "المتاح",
+        "tryAgain": "حاول مرة أخرى"
+      },
+      
+      "descriptions": {
+        "defaultSectionDescription": "أضف قسم {{sectionName}} جميل إلى موقعك الإلكتروني بتصميم حديث ووظائف متقدمة.",
+        "collectionDescription": "تصفح مجموعتنا من الأقسام الجميلة - انقر على الصور لمعاينتها بحجم أكبر",
+        "imagePreviewTip": "انقر على صور الأقسام لعرضها بالحجم الكامل • وسع البطاقات لرؤية الميزات والمعلومات التفصيلية"
+      },
+      
+      "keyFeatures": "الميزات الرئيسية",
+      
+      "features": {
+        "fullyCustomizable": "قابل للتخصيص بالكامل",
+        "mobileResponsive": "متجاوب مع الهاتف المحمول",
+        "modernDesign": "تصميم حديث",
+        "easyToUse": "سهل الاستخدام",
+        "responsiveDesign": "تصميم متجاوب",
+        
+        "navigationMenu": "قائمة التنقل",
+        "logoDisplay": "عرض الشعار",
+        "searchIntegration": "دمج البحث",
+        
+        "callToAction": "دعوة للعمل",
+        "backgroundVideoImage": "فيديو/صورة الخلفية",
+        "animatedText": "نص متحرك",
+        "scrollIndicators": "مؤشرات التمرير",
+        
+        "serviceCards": "بطاقات الخدمات",
+        "iconIntegration": "دمج الأيقونات",
+        "hoverEffects": "تأثيرات التمرير",
+        "gridLayout": "تخطيط الشبكة",
+        
+        "articleGrid": "شبكة المقالات",
+        "categoryFilters": "مرشحات الفئات",
+        "readMore": "اقرأ المزيد",
+        "dateDisplay": "عرض التاريخ",
+        
+        "solutionCards": "بطاقات الحلول",
+        "industryIcons": "أيقونات الصناعة",
+        "customColors": "ألوان مخصصة",
+        "expandableContent": "محتوى قابل للتوسيع",
+        
+        "featureHighlights": "تسليط الضوء على الميزات",
+        "statistics": "الإحصائيات",
+        "iconAnimations": "رسوم الأيقونات المتحركة",
+        "testimonialIntegration": "دمج الشهادات",
+        
+        "portfolioGallery": "معرض المحفظة",
+        "imageLightbox": "صندوق ضوء الصور",
+        "categoryFiltering": "تصفية الفئات",
+        "projectDetails": "تفاصيل المشروع",
+        
+        "stepByStep": "خطوة بخطوة",
+        "progressIndicators": "مؤشرات التقدم",
+        "timelineView": "عرض الجدول الزمني",
+        "interactiveElements": "عناصر تفاعلية",
+        
+        "memberProfiles": "ملفات الأعضاء",
+        "socialLinks": "روابط التواصل الاجتماعي",
+        "hoverAnimations": "رسوم متحركة عند التمرير",
+        "roleDescriptions": "أوصاف الأدوار",
+        
+        "reviewCards": "بطاقات المراجعات",
+        "starRatings": "تقييمات النجوم",
+        "clientPhotos": "صور العملاء",
+        "carouselView": "عرض دوار",
+        
+        "logoSlider": "شريط تمرير الشعارات",
+        "linkIntegration": "دمج الروابط",
+        
+        "accordionLayout": "تخطيط الأكورديون",
+        "searchFunction": "وظيفة البحث",
+        "categoryTabs": "تبويبات الفئات",
+        "smoothAnimations": "رسوم متحركة ناعمة",
+        
+        "articleCards": "بطاقات المقالات",
+        "tagSystem": "نظام العلامات",
+        "authorInfo": "معلومات المؤلف",
+        "readingTime": "وقت القراءة",
+        
+        "contactForm": "نموذج الاتصال",
+        "mapIntegration": "دمج الخريطة",
+        "validation": "التحقق",
+        
+        "multiColumn": "متعدد الأعمدة",
+        "socialIcons": "أيقونات التواصل الاجتماعي",
+        "newsletter": "النشرة الإخبارية",
+        "copyrightInfo": "معلومات حقوق الطبع والنشر"
+      },
+      
+      "tips": {
+        "tips": "نصائح وميزات",
+        "tip1": "انقر على صور الأقسام لعرضها بالحجم الكامل",
+        "tip2": "وسع البطاقات لرؤية الميزات والمعلومات التفصيلية",
+        "tip3": "جميع الأقسام متجاوبة وقابلة للتخصيص بالكامل",
+        "tip4": "يمكن إعادة ترتيب الأقسام بعد إضافتها إلى موقعك الإلكتروني",
+        "tip5": "استخدم البحث ومرشحات الفئات للعثور على أقسام محددة",
+        "tip6": "تتضمن المعاينة تخطيطات وتصاميم الأقسام الفعلية"
+      }
+    },
   "themeManagement": {
     "pageTitle": "إعدادات مظهر الموقع",
     "websiteSelection": {

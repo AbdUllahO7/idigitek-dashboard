@@ -21,27 +21,27 @@
     "retry": "Tekrar Dene",
     "settings": "Ayarlar",
     "nav": {
-      "dashboard": "Kontrol Paneli",
+     "dashboard": "Kontrol Paneli",
       "users": "Kullanıcılar",
-      "Forms" : "Formlar",
-      "services": "Hizmetler",
+      "Forms": "Formlar",
+      "services": "Teknoloji Vitrin",
       "header": "Başlık",
-      "news": "Haberler",
-      "industrySolutions": "Endüstri Çözümleri",
-      "whyChooseUs": "Neden Bizi Seçmelisiniz",
-      "projects": "Projeler",
-      "ourProcess": "Süreçlerimiz",
-      "team": "Ekip",
-      "clientComments": "Müşteri Yorumları",
-      "partners": "Ortaklar",
-      "faq": "Sık Sorulan Sorular",
-      "blog": "Blog",
-      "contact": "İletişim",
-      "hero": "Ana Banner",
+      "news": "Modern Makale Izgara",
+      "industrySolutions": "Kategori Kartları",
+      "whyChooseUs": "3D Teknoloji Çizim",
+      "projects": "Portföy Kartları",
+      "ourProcess": "Numaralı Kart Izgara",
+      "team": "Izgara Düzeni",
+      "clientComments": "Değerlendirme Kartları",
+      "partners": "Slider Düzeni",
+      "faq": "Numaralı Açılır Düzen",
+      "blog": "Üç Kart Karusel",
+      "contact": "Bölünmüş Form Tasarım",
+      "hero": "Teknoloji Arayüz",
       "footer": "Alt Bilgi",
       "profile": "Profil",
       "webConfigurations": "Web Yapılandırmaları",
-      "idigitekAdmin": "Idigitek Yöneticisi"
+      "idigitekAdmin": "Idigitek Yönetim"
     }
   },
   "Dashboard": {
@@ -710,82 +710,228 @@
     "errors.unknown.resolution": "Lütfen tekrar deneyin veya sorun devam ederse destek ile iletişime geçin"
   },
   "sectionManagement": {
-    "subtitle":"Güzel, önceden tasarlanmış bölümlerle web sitenizin yapısını oluşturun",
-    "description1": "Web siteniz için logo, menü öğeleri ve iletişim bilgileri içeren üst navigasyon çubuğu",
-    "sections.hero.description": "Etkileyici başlıklar ve eylem çağrısı düğmeleri içeren göz alıcı ana banner",
-    "sections.services.description": "Temel hizmetlerinizi ve tekliflerinizi detaylı açıklamalarla sergileyin",
-    "sections.news.description": "Kitleniz için en son haberleri, güncellemeleri ve duyuruları görüntüleyin",
-    "sections.industrySolutions.description": "Hizmet verdiğiniz farklı endüstriler için özel çözümler sunun",
-    "sections.whyChooseUs.description": "Benzersiz değer önerilerinizi ve rekabet avantajlarınızı vurgulayın",
-    "sections.projects.description": "Tamamlanmış projelerinizin ve vaka çalışmalarınızın portföy vitrini",
-    "sections.ourProcess.description": "İş akışınızın ve metodolojinizin adım adım dökümü",
-    "sections.team.description": "Personel profilleri ve uzmanlıkları ile ekiple tanışma bölümü",
-    "sections.clientComments.description": "Güven ve kredibilite oluşturmak için müşteri görüşleri ve değerlendirmeleri",
-    "sections.partners.description": "İş ortaklarınızın logolarını ve bilgilerini görüntüleyin",
-    "sections.faq.description": "Yaygın müşteri sorularını ele almak için sık sorulan sorular",
-    "sections.blog.description": "Makaleler, içgörüler ve düşünce liderliği içerikleri için blog bölümü",
-    "sections.contact.description": "Müşteri soruları için iletişim bilgileri, formlar ve konum detayları",
-    "sections.footer.description": "Bağlantılar, sosyal medya ve ek şirket bilgileri içeren alt bölüm",
-    "title": "Web Sitesi Bölümleri",
-    "currentSections": "Mevcut Web Sitesi Bölümleri",
-    "addNewSections": "Önceden Tasarlanmış Bölümler Ekle",
-    "searchPlaceholder": "Bölümleri ara...",
-    "addNew": "Yeni Ekle",
-    "categories.all": "Tüm Bölümler",
-    "categories.layout": "Düzen",
-    "categories.content": "İçerik",
-    "noSectionsYet": "Henüz bölüm yok",
-    "noSectionsDescription": "Web sitesi yapınızı oluşturmak için önceden tasarlanmış bölümler ekleyin. Bölümler herhangi bir sırada düzenlenebilir.",
-    "browseSections": "Mevcut Bölümlere Göz At",
-    "addToWebsite": "Web Sitesine Ekle",
-    "active": "Aktif",
-    "hidden": "Gizli",
-    "deleteSection": "Bölümü Sil",
-    "deleteConfirmation": "Bu, bölümü kalıcı olarak silecektir. Bu işlem geri alınamaz ve bu bölümdeki herhangi bir içerik kaybolacaktır.",
-    "cancel": "İptal",
-    "delete": "Bölümü Sil",
-    "dragToReorder": "Web sitenizde yeniden sıralamak için bölümleri sürükleyin",
-    "noSectionsFound": "Bölüm bulunamadı",
-    "noSectionsFoundDescription": "Aramanızla eşleşen bölüm bulunamadı",
-    "clearSearch": "Aramayı Temizle",
-    "clearSearchLink": "Aramayı temizle",
-    "filterByCategory": "Kategoriye Göre Filtrele",
-    "createWebsiteFirst": "Bölümlerini görmek için lütfen önce bir web sitesi oluşturun.",
-    "createWebsiteBeforeAdding": "Bölüm eklemeden önce lütfen önce bir web sitesi oluşturun.",
-    "sectionCount": "bölüm",
-    "duplicateSection": "Tekrar eden bölüm",
-    "duplicateSectionMessage": "Bu adda bir bölüm zaten mevcut.",
-    "sectionAdded": "Bölüm eklendi",
-    "sectionAddedSuccessfully": "bölüm başarıyla eklendi.",
-    "errorAddingSection": "Bölüm ekleme hatası",
-    "errorAddingSectionMessage": "Bölüm eklenirken bir hata oluştu.",
-    "sectionDeleted": "Bölüm silindi",
-    "sectionDeletedSuccessfully": "Bölüm başarıyla silindi.",
-    "errorDeletingSection": "Bölüm silme hatası",
-    "errorDeletingSectionMessage": "Bölüm silinirken bir hata oluştu.",
-    "sectionActivated": "Bölüm etkinleştirildi",
-    "sectionDeactivated": "Bölüm devre dışı bırakıldı",
-    "sectionVisibilityChanged": "artık web sitenizde görünür.",
-    "sectionVisibilityHidden": "artık web sitenizde gizli.",
-    "errorUpdatingSection": "Bölüm güncelleme hatası",
-    "errorUpdatingSectionMessage": "Bölüm durumu güncellenirken bir hata oluştu.",
-    "orderUpdated": "Sıra güncellendi",
-    "orderUpdatedSuccessfully": "Bölüm sırası başarıyla güncellendi.",
-    "errorUpdatingOrder": "Sıra güncelleme hatası",
-    "errorUpdatingOrderMessage": "Bölüm sırası güncellenirken bir hata oluştu.",
-    "noValidSections": "Yeniden sıralanacak geçerli bölüm yok.",
-    "sectionIdMissing": "Bölüm ID'si eksik.",
-    "changesSaved": "Değişiklikler başarıyla kaydedildi!",
-    "hideSection": "Bölümü gizle",
-    "showSection": "Bölümü göster",
-    "deleteSectionTooltip": "Bölümü sil",
-    "loadingSections": "Bölümler yükleniyor...",
-    "errorLoadingSections": "Bölümler yüklenirken hata",
-    "failedToFetchSections": "Bölümler getirilemedi",
-    "tryAgain": "Tekrar Dene",
-    "current": "Mevcut",
-    "available": "Mevcut"
-  },
+      "subtitle": "Güzel, önceden tasarlanmış bölümlerle web sitenizin yapısını oluşturun",
+      "description1": "Web siteniz için logo, menü öğeleri ve iletişim bilgileri içeren üst gezinme çubuğu",
+      "sections.hero.description": "Çekici başlıklar ve harekete geçirici düğmeler içeren göz alıcı ana banner",
+      "sections.services.description": "Temel hizmetlerinizi ve tekliflerinizi detaylı açıklamalarla sergileyin",
+      "sections.news.description": "Kitleniz için en son haberleri, güncellemeleri ve duyuruları görüntüleyin",
+      "sections.industrySolutions.description": "Hizmet verdiğiniz farklı endüstriler için özel çözümler sunun",
+      "sections.whyChooseUs.description": "Benzersiz değer önerilerinizi ve rekabet avantajlarınızı vurgulayın",
+      "sections.projects.description": "Tamamlanan projelerinizin ve vaka çalışmalarınızın portföy vitrini",
+      "sections.ourProcess.description": "İş akışınızın ve metodolojinizin adım adım dökümü",
+      "sections.team.description": "Personel profilleri ve uzmanlıkları ile takımı tanıyın bölümü",
+      "sections.clientComments.description": "Güven ve güvenilirlik oluşturmak için müşteri referansları ve yorumları",
+      "sections.partners.description": "İş ortaklarınızın logoları ve bilgilerini görüntüleyin",
+      "sections.faq.description": "Yaygın müşteri sorularını ele almak için sık sorulan sorular",
+      "sections.blog.description": "Makaleler, görüşler ve düşünce liderliği içeriği için blog bölümü",
+      "sections.contact.description": "Müşteri sorguları için iletişim bilgileri, formlar ve konum detayları",
+      "sections.footer.description": "Bağlantılar, sosyal medya ve ek şirket bilgileri içeren alt bölüm",
+      
+      "title": "Web Sitesi Bölümleri",
+      "currentSections": "Mevcut Web Sitesi Bölümleri",
+      "addNewSections": "Önceden Tasarlanmış Bölümler Ekle",
+      "searchPlaceholder": "Bölümleri ara...",
+      "addNew": "Yeni Ekle",
+      "addNewMobile": "Ekle",
+      "browseSections": "Mevcut Bölümlere Göz At",
+      "addToWebsite": "Web Sitesine Ekle",
+      
+      "categories": {
+        "all": "Tüm Bölümler",
+        "layout": "Düzen",
+        "content": "İçerik"
+      },
+      
+      "status": {
+        "active": "Aktif",
+        "hidden": "Gizli"
+      },
+      
+      "actions": {
+        "hideSection": "Bölümü gizle",
+        "showSection": "Bölümü göster",
+        "deleteSection": "Bölümü Sil",
+        "deleteSectionTooltip": "Bölümü sil",
+        "duplicateSection": "Bölümü kopyala"
+      },
+      
+      "states": {
+        "noSectionsYet": "Henüz bölüm yok",
+        "noSectionsDescription": "Web sitenizin yapısını oluşturmak için önceden tasarlanmış bölümler ekleyin. Bölümler herhangi bir sırada düzenlenebilir.",
+        "noSectionsFound": "Bölüm bulunamadı",
+        "noSectionsFoundDescription": "Aramanızla eşleşen bölüm bulunamadı",
+        "noSectionsFoundMatching": "Eşleşen bölüm bulunamadı",
+        "inCategory": "{{category}} kategorisinde",
+        "loadingSections": "Bölümler yükleniyor...",
+        "errorLoadingSections": "Bölümler yüklenirken hata",
+        "failedToFetchSections": "Bölümler getirilemedi"
+      },
+      
+      "search": {
+        "clearSearch": "Aramayı Temizle",
+        "clearSearchLink": "Aramayı temizle",
+        "showAllCategories": "Tüm Kategorileri Göster"
+      },
+      
+      "filter": {
+        "filterByCategory": "Kategoriye Göre Filtrele"
+      },
+      
+      "requirements": {
+        "websiteRequired": "Web Sitesi Gerekli",
+        "createWebsiteFirst": "Bölümlerini görmek için önce bir web sitesi oluşturun.",
+        "createWebsiteBeforeAdding": "Bölüm eklemeden önce lütfen bir web sitesi oluşturun."
+      },
+      
+      "reorder": {
+        "dragToReorder": "Web sitenizdeki bölümleri yeniden sıralamak için sürükleyin",
+        "sectionCount": "bölüm"
+      },
+      
+      "details": {
+        "details": "Bölüm Detayları",
+        "preview": "Önizleme",
+        "type": "Tür:",
+        "order": "Sıra:",
+        "status": "Durum:",
+        "addedOn": "Eklenme tarihi"
+      },
+      
+      "messages": {
+        "duplicateSectionMessage": "Bu isimde bir bölüm zaten mevcut.",
+        "sectionAdded": "Bölüm eklendi",
+        "sectionAddedSuccessfully": "bölüm başarıyla eklendi.",
+        "errorAddingSection": "Bölüm eklenirken hata",
+        "errorAddingSectionMessage": "Bölüm eklenirken bir hata oluştu.",
+        "sectionDeleted": "Bölüm silindi",
+        "sectionDeletedSuccessfully": "Bölüm başarıyla silindi.",
+        "errorDeletingSection": "Bölüm silinirken hata",
+        "errorDeletingSectionMessage": "Bölüm silinirken bir hata oluştu.",
+        "sectionActivated": "Bölüm etkinleştirildi",
+        "sectionDeactivated": "Bölüm devre dışı bırakıldı",
+        "sectionVisibilityChanged": "artık web sitenizde görünür.",
+        "sectionVisibilityHidden": "artık web sitenizde gizli.",
+        "errorUpdatingSection": "Bölüm güncellenirken hata",
+        "errorUpdatingSectionMessage": "Bölüm durumu güncellenirken bir hata oluştu.",
+        "orderUpdated": "Sıra güncellendi",
+        "orderUpdatedSuccessfully": "Bölüm sırası başarıyla güncellendi.",
+        "errorUpdatingOrder": "Sıra güncellenirken hata",
+        "errorUpdatingOrderMessage": "Bölüm sırası güncellenirken bir hata oluştu.",
+        "noValidSections": "Yeniden sıralanacak geçerli bölüm yok.",
+        "sectionIdMissing": "Bölüm ID'si eksik.",
+        "changesSaved": "Değişiklikler başarıyla kaydedildi!"
+      },
+      
+      "modal": {
+        "deleteConfirmation": "Bu işlem bölümü kalıcı olarak silecektir. Bu eylem geri alınamaz ve bu bölümdeki tüm içerik kaybolacaktır.",
+        "cancel": "İptal",
+        "delete": "Bölümü Sil",
+        "clickOutsideToClose": "Kapatmak için dışarıya tıklayın"
+      },
+      
+      "navigation": {
+        "current": "Mevcut",
+        "available": "Mevcut",
+        "tryAgain": "Tekrar Dene"
+      },
+      
+      "descriptions": {
+        "defaultSectionDescription": "Modern tasarım ve işlevsellik ile web sitenize güzel bir {{sectionName}} bölümü ekleyin.",
+        "collectionDescription": "Güzel bölümler koleksiyonumuza göz atın - daha büyük önizleme için resimlere tıklayın",
+        "imagePreviewTip": "Tam boyutta görüntülemek için bölüm resimlerine tıklayın • Detaylı özellikler ve bilgileri görmek için kartları genişletin"
+      },
+      
+      "keyFeatures": "Temel Özellikler",
+      
+      "features": {
+        "fullyCustomizable": "Tamamen Özelleştirilebilir",
+        "mobileResponsive": "Mobil Uyumlu",
+        "modernDesign": "Modern Tasarım",
+        "easyToUse": "Kullanımı Kolay",
+        "responsiveDesign": "Duyarlı Tasarım",
+        
+        "navigationMenu": "Navigasyon Menüsü",
+        "logoDisplay": "Logo Gösterimi",
+        "searchIntegration": "Arama Entegrasyonu",
+        
+        "callToAction": "Harekete Geçirici",
+        "backgroundVideoImage": "Arka Plan Video/Resim",
+        "animatedText": "Animasyonlu Metin",
+        "scrollIndicators": "Kaydırma Göstergeleri",
+        
+        "serviceCards": "Hizmet Kartları",
+        "iconIntegration": "İkon Entegrasyonu",
+        "hoverEffects": "Hover Efektleri",
+        "gridLayout": "Izgara Düzeni",
+        
+        "articleGrid": "Makale Izgarası",
+        "categoryFilters": "Kategori Filtreleri",
+        "readMore": "Devamını Oku",
+        "dateDisplay": "Tarih Gösterimi",
+        
+        "solutionCards": "Çözüm Kartları",
+        "industryIcons": "Endüstri İkonları",
+        "customColors": "Özel Renkler",
+        "expandableContent": "Genişletilebilir İçerik",
+        
+        "featureHighlights": "Özellik Vurguları",
+        "statistics": "İstatistikler",
+        "iconAnimations": "İkon Animasyonları",
+        "testimonialIntegration": "Referans Entegrasyonu",
+        
+        "portfolioGallery": "Portföy Galerisi",
+        "imageLightbox": "Resim Lightbox",
+        "categoryFiltering": "Kategori Filtreleme",
+        "projectDetails": "Proje Detayları",
+        
+        "stepByStep": "Adım Adım",
+        "progressIndicators": "İlerleme Göstergeleri",
+        "timelineView": "Zaman Çizelgesi Görünümü",
+        "interactiveElements": "Etkileşimli Öğeler",
+        
+        "memberProfiles": "Üye Profilleri",
+        "socialLinks": "Sosyal Bağlantılar",
+        "hoverAnimations": "Hover Animasyonları",
+        "roleDescriptions": "Rol Açıklamaları",
+        
+        "reviewCards": "İnceleme Kartları",
+        "starRatings": "Yıldız Değerlendirmeleri",
+        "clientPhotos": "Müşteri Fotoğrafları",
+        "carouselView": "Carousel Görünümü",
+        
+        "logoSlider": "Logo Kaydırıcı",
+        "linkIntegration": "Bağlantı Entegrasyonu",
+        
+        "accordionLayout": "Akordeon Düzeni",
+        "searchFunction": "Arama İşlevi",
+        "categoryTabs": "Kategori Sekmeleri",
+        "smoothAnimations": "Pürüzsüz Animasyonlar",
+        
+        "articleCards": "Makale Kartları",
+        "tagSystem": "Etiket Sistemi",
+        "authorInfo": "Yazar Bilgisi",
+        "readingTime": "Okuma Süresi",
+        
+        "contactForm": "İletişim Formu",
+        "mapIntegration": "Harita Entegrasyonu",
+        "validation": "Doğrulama",
+        
+        "multiColumn": "Çok Sütunlu",
+        "socialIcons": "Sosyal İkonlar",
+        "newsletter": "Haber Bülteni",
+        "copyrightInfo": "Telif Hakkı Bilgisi"
+      },
+      
+      "tips": {
+        "tips": "İpuçları ve Özellikler",
+        "tip1": "Tam boyutta görüntülemek için bölüm resimlerine tıklayın",
+        "tip2": "Detaylı özellikler ve bilgileri görmek için kartları genişletin",
+        "tip3": "Tüm bölümler duyarlı ve tamamen özelleştirilebilir",
+        "tip4": "Bölümler web sitenize eklendikten sonra yeniden sıralanabilir",
+        "tip5": "Belirli bölümleri bulmak için arama ve kategori filtrelerini kullanın",
+        "tip6": "Önizleme gerçek bölüm düzenlerini ve tasarımlarını içerir"
+      }
+    },
   "themeManagement": {
     "pageTitle": "Web Sitesi Görünüm Ayarları",
     "websiteSelection": {

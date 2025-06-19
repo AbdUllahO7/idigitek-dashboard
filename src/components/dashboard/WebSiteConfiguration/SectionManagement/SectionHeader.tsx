@@ -1,10 +1,13 @@
 import { motion } from "framer-motion"
 import { Layers } from "lucide-react"
-import { useTranslation } from "react-i18next"
+import { TFunction } from "i18next"
 
-export const SectionHeader = () => {
-  const { t, ready } = useTranslation()
+interface SectionHeaderProps {
+  t: TFunction
+  ready: boolean
+}
 
+export const SectionHeader = ({ t, ready }: SectionHeaderProps) => {
   return (
     <motion.div 
       initial={{ opacity: 0, y: -20 }}

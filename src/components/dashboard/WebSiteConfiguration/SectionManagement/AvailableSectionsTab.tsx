@@ -41,6 +41,15 @@ const containerVariants = {
   },
 }
 
+const gridItemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: "spring", stiffness: 300, damping: 15 },
+  },
+}
+
 export const AvailableSectionsTab = ({
   hasWebsite,
   orderedSections,
@@ -76,10 +85,10 @@ export const AvailableSectionsTab = ({
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100 truncate">
-                {ready ? t("sectionManagement.addNewSections", "Add Pre-designed Sections") : "Add Pre-designed Sections"}
+                {t("sectionManagement.addNewSections")}
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden sm:block">
-                Choose from our collection of beautiful sections
+                {t("sectionManagement.descriptions.collectionDescription")}
               </p>
             </div>
           </div>
@@ -91,7 +100,7 @@ export const AvailableSectionsTab = ({
               <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4 absolute left-2.5 sm:left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
               <Input
                 type="search"
-                placeholder={ready ? t("sectionManagement.searchPlaceholder", "Search sections...") : "Search sections..."}
+                placeholder={t("sectionManagement.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
                 className="w-full sm:w-48 md:w-64 pl-8 sm:pl-10 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg md:rounded-xl text-sm"
@@ -106,10 +115,7 @@ export const AvailableSectionsTab = ({
                   className="flex items-center gap-2 justify-between bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg md:rounded-xl text-sm w-full sm:w-auto sm:min-w-32 touch-manipulation"
                 >
                   <span className="truncate">
-                    {ready ? 
-                      t(SECTION_CATEGORIES.find((cat) => cat.value === categoryFilter)?.labelKey || "sectionManagement.categories.all", "All Sections") : 
-                      "All Sections"
-                    }
+                    {t(SECTION_CATEGORIES.find((cat) => cat.value === categoryFilter)?.labelKey || "sectionManagement.categories.all")}
                   </span>
                   <Filter className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
                 </Button>
@@ -119,7 +125,7 @@ export const AvailableSectionsTab = ({
                 className="w-56 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
                 sideOffset={4}
               >
-                <DropdownMenuLabel className="text-sm">Filter by Category</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-sm">{t("sectionManagement.filter.filterByCategory")}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {SECTION_CATEGORIES.map((category) => (
                   <DropdownMenuItem
@@ -133,7 +139,7 @@ export const AvailableSectionsTab = ({
                     )}
                   >
                     {categoryFilter === category.value && <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />}
-                    {ready ? t(category.labelKey, category.labelKey.split('.').pop() || '') : category.labelKey.split('.').pop() || ''}
+                    {t(category.labelKey)}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -148,36 +154,53 @@ export const AvailableSectionsTab = ({
           <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl md:rounded-2xl p-4 md:p-6 text-center mb-4 md:mb-6">
             <AlertTriangle className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-amber-600 dark:text-amber-400 mx-auto mb-3 md:mb-4" />
             <h3 className="font-semibold text-amber-800 dark:text-amber-300 mb-2 text-sm sm:text-base">
-              Website Required
+              {t("sectionManagement.requirements.websiteRequired")}
             </h3>
             <p className="text-amber-700 dark:text-amber-400 text-xs sm:text-sm">
-              Please create a website first before adding sections.
+              {t("sectionManagement.requirements.createWebsiteBeforeAdding")}
             </p>
           </div>
         )}
 
-        {/* Responsive Grid */}
+        {/* Helper Text for Image Previews */}
+        {filteredPredefinedSections.length > 0 && (
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border border-purple-200 dark:border-purple-800/50 rounded-xl p-3 sm:p-4 mb-4 md:mb-6">
+            <div className="flex items-center gap-2 text-sm text-purple-700 dark:text-purple-300">
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+              <span className="font-medium">
+                {t("sectionManagement.descriptions.imagePreviewTip")}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Responsive Grid with Section Cards */}
         <motion.div 
           variants={containerVariants} 
           initial="hidden" 
           animate="visible"
           className="grid gap-3 sm:gap-4 md:gap-5 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
-          {filteredPredefinedSections.map((section) => {
-            const translatedName = ready ? t(section.nameKey, section.nameKey.split('.').pop() || '') : section.nameKey.split('.').pop() || ''
-            const translatedDescription = ready ? t(section.descriptionKey, '') : ''
+          {filteredPredefinedSections.map((section, index) => {
+            const translatedName = t(section.nameKey, section.nameKey.split('.').pop() || '')
+            const translatedDescription = t(section.descriptionKey, '')
             
             return (
-              <SectionCard
+              <motion.div
                 key={section.nameKey}
-                section={section}
-                translatedName={translatedName}
-                translatedDescription={translatedDescription}
-                onAdd={onAddSection}
-                isLoading={isLoading}
-                hasWebsite={hasWebsite}
-                t={t}
-              />
+                variants={gridItemVariants}
+                custom={index}
+              >
+                <SectionCard
+                  section={section}
+                  translatedName={translatedName}
+                  translatedDescription={translatedDescription}
+                  onAdd={onAddSection}
+                  isLoading={isLoading}
+                  hasWebsite={hasWebsite}
+                  t={t}
+                />
+              </motion.div>
             )
           })}
         </motion.div>
@@ -187,18 +210,66 @@ export const AvailableSectionsTab = ({
           <div className="text-center py-8 sm:py-12 md:py-16">
             <Search className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 mx-auto mb-3 md:mb-4 text-slate-300 dark:text-slate-600" />
             <h3 className="text-base sm:text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">
-              No sections found
+              {t("sectionManagement.states.noSectionsFound")}
             </h3>
             <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mb-3 md:mb-4 px-4 sm:px-0">
-              No sections found matching "{searchQuery}"
+              {t("sectionManagement.states.noSectionsFoundMatching")} "{searchQuery}"
+              {categoryFilter !== 'all' && ` ${t("sectionManagement.states.inCategory", { category: categoryFilter })}`}
             </p>
-            <Button 
-              variant="outline" 
-              onClick={() => onSearchChange("")}
-              className="rounded-lg md:rounded-xl text-sm touch-manipulation"
-            >
-              Clear Search
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 justify-center">
+              <Button 
+                variant="outline" 
+                onClick={() => onSearchChange("")}
+                className="rounded-lg md:rounded-xl text-sm touch-manipulation"
+              >
+                {t("sectionManagement.search.clearSearch")}
+              </Button>
+              {categoryFilter !== 'all' && (
+                <Button 
+                  variant="outline" 
+                  onClick={() => onCategoryChange('all')}
+                  className="rounded-lg md:rounded-xl text-sm touch-manipulation"
+                >
+                  {t("sectionManagement.search.showAllCategories")}
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Enhanced Tips Section with Image Information */}
+        {filteredPredefinedSections.length > 0 && (
+          <div className="mt-6 md:mt-8 p-4 md:p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border border-blue-200 dark:border-blue-800/50 rounded-xl md:rounded-2xl">
+            <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              {t("sectionManagement.tips.tips")}
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-slate-600 dark:text-slate-400">
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                <span>{t("sectionManagement.tips.tip1")}</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                <span>{t("sectionManagement.tips.tip2")}</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                <span>{t("sectionManagement.tips.tip3")}</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                <span>{t("sectionManagement.tips.tip4")}</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                <span>{t("sectionManagement.tips.tip5")}</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                <span>{t("sectionManagement.tips.tip6")}</span>
+              </div>
+            </div>
           </div>
         )}
       </div>

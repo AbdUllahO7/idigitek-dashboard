@@ -237,7 +237,6 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
             el.type === "file" && el.name === fileElementName
           )
           
-          console.log(`Looking for file element "${fileElementName}" for language ${langCode}:`, fileElement)
           
           if (fileElement?.fileUrl) {
             console.log(`Setting ${langCode}.uploadedFile to:`, fileElement.fileUrl)

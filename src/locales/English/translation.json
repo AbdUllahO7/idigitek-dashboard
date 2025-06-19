@@ -24,20 +24,20 @@
       "dashboard": "Dashboard",
       "users": "Users",
       "Forms" : "Forms",
-      "services": "Services",
+      "services": "Tech Showcase",
       "header": "Header",
-      "news": "News",
-      "industrySolutions": "Industry Solutions",
-      "whyChooseUs": "Why Choose Us",
-      "projects": "Projects",
-      "ourProcess": "Our Process",
-      "team": "Team",
-      "clientComments": "Client Comments",
-      "partners": "Partners",
-      "faq": "FAQ",
-      "blog": "Blog",
-      "contact": "Contact",
-      "hero": "Main Panner",
+      "news": "Modern Article Grid",
+      "industrySolutions": "Category Cards",
+      "whyChooseUs": "3D Tech Illustration",
+      "projects": "Portfolio Cards",
+      "ourProcess": "Numbered Card Grid",
+      "team": "Grid Layout",
+      "clientComments": "Review Cards",
+      "partners": "Slider Layout",
+      "faq": "Numbered Dropdown Layout",
+      "blog": "Three Card Carousel",
+      "contact": "Split Form Design",
+      "hero": "Tech Interface",
       "footer": "Footer",
       "profile": "Profile",
       "webConfigurations": "Web Configurations",
@@ -715,8 +715,8 @@
     "errors.networkError.resolution": "Please check your internet connection and try again",
     "errors.unknown.resolution": "Please try again or contact support if the problem persists"
   },
-  "sectionManagement" : {
-    "subtitle":"Build your website structure with beautiful, pre-designed sections",
+  "sectionManagement": {
+    "subtitle": "Build your website structure with beautiful, pre-designed sections",
     "description1": "Top navigation bar with logo, menu items and contact information for your website",
     "sections.hero.description": "Eye-catching main banner with compelling headlines and call-to-action buttons",
     "sections.services.description": "Showcase your core services and offerings with detailed descriptions",
@@ -732,65 +732,211 @@
     "sections.blog.description": "Blog section for articles, insights and thought leadership content",
     "sections.contact.description": "Contact information, forms and location details for customer inquiries",
     "sections.footer.description": "Bottom section with links, social media and additional company information",
+    
     "title": "Website Sections",
     "currentSections": "Current Website Sections",
     "addNewSections": "Add Pre-designed Sections",
     "searchPlaceholder": "Search sections...",
     "addNew": "Add New",
-    "categories.all": "All Sections",
-    "categories.layout": "Layout",
-    "categories.content": "Content",
-    "noSectionsYet": "No sections yet",
-    "noSectionsDescription": "Add pre-designed sections to create your website structure. Sections can be arranged in any order.",
+    "addNewMobile": "Add",
     "browseSections": "Browse Available Sections",
     "addToWebsite": "Add to Website",
-    "active": "Active",
-    "hidden": "Hidden",
-    "deleteSection": "Delete Section",
-    "deleteConfirmation": "This will permanently delete the section. This action cannot be undone, and any content in this section will be lost.",
-    "cancel": "Cancel",
-    "delete": "Delete Section",
-    "dragToReorder": "Drag sections to reorder them on your website",
-    "noSectionsFound": "No sections found",
-    "noSectionsFoundDescription": "No sections found matching your search",
-    "clearSearch": "Clear Search",
-    "clearSearchLink": "Clear search",
-    "filterByCategory": "Filter by Category",
-    "createWebsiteFirst": "Please create a website first to see its sections.",
-    "createWebsiteBeforeAdding": "Please create a website first before adding sections.",
-    "sectionCount": "sections",
-    "duplicateSection": "Duplicate section",
-    "duplicateSectionMessage": "A section with this name already exists.",
-    "sectionAdded": "Section added",
-    "sectionAddedSuccessfully": "section has been added successfully.",
-    "errorAddingSection": "Error adding section",
-    "errorAddingSectionMessage": "An error occurred while adding the section.",
-    "sectionDeleted": "Section deleted",
-    "sectionDeletedSuccessfully": "The section has been deleted successfully.",
-    "errorDeletingSection": "Error deleting section",
-    "errorDeletingSectionMessage": "An error occurred while deleting the section.",
-    "sectionActivated": "Section activated",
-    "sectionDeactivated": "Section deactivated",
-    "sectionVisibilityChanged": "is now visible on your website.",
-    "sectionVisibilityHidden": "is now hidden on your website.",
-    "errorUpdatingSection": "Error updating section",
-    "errorUpdatingSectionMessage": "An error occurred while updating the section status.",
-    "orderUpdated": "Order updated",
-    "orderUpdatedSuccessfully": "Section order has been updated successfully.",
-    "errorUpdatingOrder": "Error updating order",
-    "errorUpdatingOrderMessage": "An error occurred while updating section order.",
-    "noValidSections": "No valid sections to reorder.",
-    "sectionIdMissing": "Section ID is missing.",
-    "changesSaved": "Changes saved successfully!",
-    "hideSection": "Hide section",
-    "showSection": "Show section",
-    "deleteSectionTooltip": "Delete section",
-    "loadingSections": "Loading sections...",
-    "errorLoadingSections": "Error loading sections",
-    "failedToFetchSections": "Failed to fetch sections",
-    "tryAgain": "Try Again",
-    "current": "Current",
-    "available": "Available"
+    
+    "categories": {
+      "all": "All Sections",
+      "layout": "Layout",
+      "content": "Content"
+    },
+    
+    "status": {
+      "active": "Active",
+      "hidden": "Hidden"
+    },
+    
+    "actions": {
+      "hideSection": "Hide section",
+      "showSection": "Show section",
+      "deleteSection": "Delete Section",
+      "deleteSectionTooltip": "Delete section",
+      "duplicateSection": "Duplicate section"
+    },
+    
+    "states": {
+      "noSectionsYet": "No sections yet",
+      "noSectionsDescription": "Add pre-designed sections to create your website structure. Sections can be arranged in any order.",
+      "noSectionsFound": "No sections found",
+      "noSectionsFoundDescription": "No sections found matching your search",
+      "noSectionsFoundMatching": "No sections found matching",
+      "inCategory": "in {{category}} category",
+      "loadingSections": "Loading sections...",
+      "errorLoadingSections": "Error loading sections",
+      "failedToFetchSections": "Failed to fetch sections"
+    },
+    
+    "search": {
+      "clearSearch": "Clear Search",
+      "clearSearchLink": "Clear search",
+      "showAllCategories": "Show All Categories"
+    },
+    
+    "filter": {
+      "filterByCategory": "Filter by Category"
+    },
+    
+    "requirements": {
+      "websiteRequired": "Website Required",
+      "createWebsiteFirst": "Please create a website first to see its sections.",
+      "createWebsiteBeforeAdding": "Please create a website first before adding sections."
+    },
+    
+    "reorder": {
+      "dragToReorder": "Drag sections to reorder them on your website",
+      "sectionCount": "sections"
+    },
+    
+    "details": {
+      "details": "Section Details",
+      "preview": "Preview",
+      "type": "Type:",
+      "order": "Order:",
+      "status": "Status:",
+      "addedOn": "Added on"
+    },
+    
+    "messages": {
+      "duplicateSectionMessage": "A section with this name already exists.",
+      "sectionAdded": "Section added",
+      "sectionAddedSuccessfully": "section has been added successfully.",
+      "errorAddingSection": "Error adding section",
+      "errorAddingSectionMessage": "An error occurred while adding the section.",
+      "sectionDeleted": "Section deleted",
+      "sectionDeletedSuccessfully": "The section has been deleted successfully.",
+      "errorDeletingSection": "Error deleting section",
+      "errorDeletingSectionMessage": "An error occurred while deleting the section.",
+      "sectionActivated": "Section activated",
+      "sectionDeactivated": "Section deactivated",
+      "sectionVisibilityChanged": "is now visible on your website.",
+      "sectionVisibilityHidden": "is now hidden on your website.",
+      "errorUpdatingSection": "Error updating section",
+      "errorUpdatingSectionMessage": "An error occurred while updating the section status.",
+      "orderUpdated": "Order updated",
+      "orderUpdatedSuccessfully": "Section order has been updated successfully.",
+      "errorUpdatingOrder": "Error updating order",
+      "errorUpdatingOrderMessage": "An error occurred while updating section order.",
+      "noValidSections": "No valid sections to reorder.",
+      "sectionIdMissing": "Section ID is missing.",
+      "changesSaved": "Changes saved successfully!"
+    },
+    
+    "modal": {
+      "deleteConfirmation": "This will permanently delete the section. This action cannot be undone, and any content in this section will be lost.",
+      "cancel": "Cancel",
+      "delete": "Delete Section",
+      "clickOutsideToClose": "Click outside to close"
+    },
+    
+    "navigation": {
+      "current": "Current",
+      "available": "Available",
+      "tryAgain": "Try Again"
+    },
+    
+    "descriptions": {
+      "defaultSectionDescription": "Add a beautiful {{sectionName}} section to your website with modern design and functionality.",
+      "collectionDescription": "Browse our collection of beautiful sections - click on images to preview them larger",
+      "imagePreviewTip": "Click on section images to view them in full size • Expand cards to see detailed features and information"
+    },
+    
+    "keyFeatures": "Key Features",
+    
+    "features": {
+      "fullyCustomizable": "Fully Customizable",
+      "mobileResponsive": "Mobile Responsive",
+      "modernDesign": "Modern Design",
+      "easyToUse": "Easy to Use",
+      "responsiveDesign": "Responsive Design",
+      
+      "navigationMenu": "Navigation Menu",
+      "logoDisplay": "Logo Display",
+      "searchIntegration": "Search Integration",
+      
+      "callToAction": "Call-to-Action",
+      "backgroundVideoImage": "Background Video/Image",
+      "animatedText": "Animated Text",
+      "scrollIndicators": "Scroll Indicators",
+      
+      "serviceCards": "Service Cards",
+      "iconIntegration": "Icon Integration",
+      "hoverEffects": "Hover Effects",
+      "gridLayout": "Grid Layout",
+      
+      "articleGrid": "Article Grid",
+      "categoryFilters": "Category Filters",
+      "readMore": "Read More",
+      "dateDisplay": "Date Display",
+      
+      "solutionCards": "Solution Cards",
+      "industryIcons": "Industry Icons",
+      "customColors": "Custom Colors",
+      "expandableContent": "Expandable Content",
+      
+      "featureHighlights": "Feature Highlights",
+      "statistics": "Statistics",
+      "iconAnimations": "Icon Animations",
+      "testimonialIntegration": "Testimonial Integration",
+      
+      "portfolioGallery": "Portfolio Gallery",
+      "imageLightbox": "Image Lightbox",
+      "categoryFiltering": "Category Filtering",
+      "projectDetails": "Project Details",
+      
+      "stepByStep": "Step-by-Step",
+      "progressIndicators": "Progress Indicators",
+      "timelineView": "Timeline View",
+      "interactiveElements": "Interactive Elements",
+      
+      "memberProfiles": "Member Profiles",
+      "socialLinks": "Social Links",
+      "hoverAnimations": "Hover Animations",
+      "roleDescriptions": "Role Descriptions",
+      
+      "reviewCards": "Review Cards",
+      "starRatings": "Star Ratings",
+      "clientPhotos": "Client Photos",
+      "carouselView": "Carousel View",
+      
+      "logoSlider": "Logo Slider",
+      "linkIntegration": "Link Integration",
+      
+      "accordionLayout": "Accordion Layout",
+      "searchFunction": "Search Function",
+      "categoryTabs": "Category Tabs",
+      "smoothAnimations": "Smooth Animations",
+      
+      "articleCards": "Article Cards",
+      "tagSystem": "Tag System",
+      "authorInfo": "Author Info",
+      "readingTime": "Reading Time",
+      
+      "contactForm": "Contact Form",
+      "mapIntegration": "Map Integration",
+      "validation": "Validation",
+      
+      "multiColumn": "Multi-Column",
+      "socialIcons": "Social Icons",
+      "newsletter": "Newsletter",
+      "copyrightInfo": "Copyright Info"
+    },
+    
+    "tips": {
+      "tips": "Tips & Features",
+      "tip1": "Click on section images to view them in full size",
+      "tip2": "Expand cards to see detailed features and information",
+      "tip3": "All sections are responsive and fully customizable",
+      "tip4": "Sections can be reordered after adding to your website",
+      "tip5": "Use search and category filters to find specific sections",
+      "tip6": "Preview includes actual section layouts and designs"
+    }
   },
   "themeManagement": {
     "pageTitle": "Website Appearance Settings",
@@ -911,12 +1057,7 @@
       "purpleCreative": "Purple Creative",
       "roseElegant": "Rose Elegant"
     },
-    "fontPresets": {
-      "modernSans": "Modern Sans",
-      "classicSerif": "Classic Serif",
-      "techStack": "Tech Stack",
-      "editorial": "Editorial"
-    },
+
     "colorLabels": {
       "primary": {
         "label": "Main Brand Color",
@@ -4177,6 +4318,7 @@
     "description": "Manage benefits content for {{lang}}",
     "addBenefit": "Add Benefit"
   },
+
   "common": {
     "welcome": "Welcome",
     "logout": "Log out",

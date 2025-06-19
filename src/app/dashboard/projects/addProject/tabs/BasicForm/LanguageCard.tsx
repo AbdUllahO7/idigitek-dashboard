@@ -74,7 +74,7 @@ export const LanguageCard = memo(
 
         setUploadedFile(file)
         form.setValue(`${langCode}.uploadedFile`, file.name)
-        
+
         // Call the parent component's file upload handler
         if (onFileUpload) {
           onFileUpload(langCode, file)
@@ -85,12 +85,12 @@ export const LanguageCard = memo(
     const handleFileRemove = () => {
       setUploadedFile(null)
       form.setValue(`${langCode}.uploadedFile`, "")
-      
+
       // Call the parent component's file remove handler
       if (onFileRemove) {
         onFileRemove(langCode)
       }
-      
+
       if (fileInputRef.current) {
         fileInputRef.current.value = ""
       }
@@ -109,17 +109,17 @@ export const LanguageCard = memo(
       }
       if (currentFileUrl) {
         // Extract filename from URL, handling both direct filenames and URLs
-        const urlParts = currentFileUrl.split('/')
+        const urlParts = currentFileUrl.split("/")
         const lastPart = urlParts[urlParts.length - 1]
         // If it looks like a filename with extension, use it
-        if (lastPart.includes('.')) {
+        if (lastPart.includes(".")) {
           return decodeURIComponent(lastPart)
         }
         // Otherwise, try to extract filename from Cloudinary URL pattern
-        const filenamePart = currentFileUrl.match(/\/([^\/]+\.[^\/]+)(?:\?|$)/)
-        return filenamePart ? decodeURIComponent(filenamePart[1]) : 'Uploaded File'
+        const filenamePart = currentFileUrl.match(/\/([^/]+\.[^/]+)(?:\?|$)/)
+        return filenamePart ? decodeURIComponent(filenamePart[1]) : "Uploaded File"
       }
-      return 'Unknown File'
+      return "Unknown File"
     }
 
     return (
@@ -290,84 +290,100 @@ export const LanguageCard = memo(
               control={form.control}
               name={`${langCode}.uploadedFile`}
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="">
                   <FormLabel className="text-sm font-medium">
                     {t("projectLanguageCard.uploadFile", "Upload File")}
                   </FormLabel>
-                  <FormControl>
-                    <div className="space-y-3">
+                  <FormControl className="dark:black">
+                    <div className="space-y-3 dark:black">
                       <input
                         ref={fileInputRef}
                         type="file"
                         accept=".pdf,.doc,.docx,.txt"
                         onChange={handleFileSelect}
-                        className="hidden"
+                        className="hidden dark:black"
                       />
 
                       {!hasFile ? (
-                        <Button
-                          type="button"
-                          variant="outline"
+                        <div
                           onClick={triggerFileSelect}
-                          className="w-full h-24 border-2 border-dashed border-gray-300 hover:border-primary transition-colors flex flex-col items-center justify-center gap-2"
+                          className="group dark:black relative w-full h-32 border-2 border-dashed hover:border-primary/60 transition-all duration-200 rounded-lg cursor-pointer bg-gradient-to-br  hover:from-primary/5 hover:to-primary/10"
                         >
-                          <Upload className="h-6 w-6 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {t("projectLanguageCard.clickToUpload", "Click to upload file")}
-                          </span>
-                          <span className="text-xs text-gray-400">
-                            {t("projectLanguageCard.supportedFormats", "PDF, DOC, DOCX, TXT (Max 5MB)")}
-                          </span>
-                        </Button>
-                      ) : (
-                        <div className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
-                          <div className="flex items-center gap-3">
-                            <FileText className="h-5 w-5 text-primary" />
-                            <div>
-                              <p className="text-sm font-medium">
-                                {getDisplayFileName()}
+                          <div className="absolute inset-0 flex dark:black flex-col items-center justify-center gap-3">
+                            <div className="p-3 rounded-full  dark:black shadow-sm group-hover:shadow-md transition-shadow">
+                              <Upload className="h-6 w-6 text-gray-400 group-hover:text-primary transition-colors" />
+                            </div>
+                            <div className="text-center">
+                              <p className="text-sm font-medium text-gray-700 group-hover:text-primary transition-colors">
+                                {t("projectLanguageCard.clickToUpload", "Click to upload file")}
                               </p>
-                              {uploadedFile ? (
-                                <p className="text-xs text-gray-500">
-                                  {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
-                                </p>
-                              ) : currentFileUrl ? (
-                                <p className="text-xs text-green-600">
-                                  {t("projectLanguageCard.fileFromServer", "File from server")}
-                                </p>
-                              ) : null}
+                              <p className="text-xs text-gray-500 mt-1">
+                                {t("projectLanguageCard.supportedFormats", "PDF, DOC, DOCX, TXT (Max 5MB)")}
+                              </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            {currentFileUrl && !uploadedFile && (
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => window.open(currentFileUrl, '_blank')}
-                                className="h-8"
-                              >
-                                {t("projectLanguageCard.view", "View")}
-                              </Button>
-                            )}
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={triggerFileSelect}
-                              className="h-8"
-                            >
-                              {t("projectLanguageCard.replace", "Replace")}
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={handleFileRemove}
-                              className="h-8 hover:bg-red-50 hover:text-red-600"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                        </div>
+                      ) : (
+                        <div className="relative p-4 border  rounded-lg  shadow-sm hover:shadow-md transition-shadow">
+                          <div className="flex items-start gap-4">
+                            <div className="flex-shrink-0 p-2 bg-primary/10 rounded-lg">
+                              <FileText className="h-6 w-6 text-primary" />
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-semibold  truncate">
+                                    {getDisplayFileName()}
+                                  </h4>
+                                  <div className="flex items-center gap-3 mt-1">
+                                    {uploadedFile ? (
+                                      <span className="inline-flex items-center gap-1 text-xs text-gray-500">
+                                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                        {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
+                                      </span>
+                                    ) : currentFileUrl ? (
+                                      <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
+                                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                                        {t("projectLanguageCard.fileFromServer", "File from server")}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-1">
+                                  {currentFileUrl && !uploadedFile && (
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => window.open(currentFileUrl, "_blank")}
+                                      className="h-8 px-3 text-xs hover:bg-blue-50 hover:text-blue-600"
+                                    >
+                                      {t("projectLanguageCard.view", "View")}
+                                    </Button>
+                                  )}
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={triggerFileSelect}
+                                    className="h-8 px-3 text-xs hover:bg-gray-100"
+                                  >
+                                    {t("projectLanguageCard.replace", "Replace")}
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleFileRemove}
+                                    className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       )}

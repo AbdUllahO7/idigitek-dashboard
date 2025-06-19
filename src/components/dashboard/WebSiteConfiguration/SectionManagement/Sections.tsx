@@ -103,7 +103,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                   <Check className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>
                 <span className="font-medium text-sm sm:text-base">
-                  {t('sectionManagement.changesSaved', 'Changes saved successfully!')}
+                  {ready ? t('sectionManagement.changesSaved', 'Changes saved successfully!') : 'Changes saved successfully!'}
                 </span>
               </motion.div>
             )}
@@ -111,7 +111,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
 
           {/* Header - Responsive */}
           <div className="w-full">
-            <SectionHeader />
+            <SectionHeader t={t} ready={ready} />
           </div>
 
           {/* Enhanced Responsive Tabs */}
@@ -141,10 +141,10 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                     >
                       <Menu className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
                       <span className="hidden sm:inline md:hidden lg:inline">
-                        {t('sectionManagement.current', 'Current Sections')}
+                        { t('useSectionManagement.current') }
                       </span>
                       <span className="sm:hidden md:inline lg:hidden">
-                        {t('sectionManagement.currentShort', 'Current')}
+                        {ready ? t('sectionManagement.currentShort', 'Current') : 'Current'}
                       </span>
                       {activeTab === 'current' && (
                         <motion.div

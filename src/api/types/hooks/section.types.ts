@@ -19,6 +19,7 @@ export interface Section extends Resource {
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
+  subName?: string;
 }
 
 export interface SectionItem {
