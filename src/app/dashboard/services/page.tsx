@@ -13,6 +13,12 @@ import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { getServiceSectionConfig } from "./serviceSectionConfig"
+import { Tabs, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
+import { Navigation, Users } from "lucide-react"
+import { TabsContent } from "@radix-ui/react-tabs"
+import CreateNavigationSubSection from "../navigation/CreateNavigationSubSection"
+import { teamSectionConfig } from "../team/TeamSectionConfig"
+import { getTeamNavigationSectionConfig } from "../navigation/navigation-config"
 
 export default function ServicesPage() {
   const { t, i18n } = useTranslation() // i18n hook
@@ -22,9 +28,11 @@ export default function ServicesPage() {
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
   const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
+  const [hasNavigationSubSection, setHasNavigationSubSection] = useState<boolean>(false)
 
   // Get translated service section config based on current language
   const serviceSectionConfig = getServiceSectionConfig(i18n.language)
+  const teamNavigationConfig = getTeamNavigationSectionConfig(i18n.language);
 
   // Configuration for the Services page using i18n
   const SERVICES_CONFIG = {
@@ -125,85 +133,119 @@ export default function ServicesPage() {
   })
 
   // Determine if main subsection exists when data loads & set section data if needed
-  useEffect(() => {
-    console.log("Checking for main subsection...");
-    console.log("Subsection data state:", { 
-      mainSubSectionData, 
-      sectionSubsections,
-      isLoadingCompleteSubsections,
-      isLoadingSectionSubsections
-    });
-    
+  // Determine if main subsection exists when data loads & set section data if needed
+  useEffect(() => {    
     // First check if we are still loading
     if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
-      console.log("Still loading subsection data...");
       setIsLoadingMainSubSection(true);
       return;
     }
     
+    console.log('Team data check - sectionSubsections:', sectionSubsections?.data);
+    console.log('Team data check - mainSubSectionData:', mainSubSectionData?.data);
+    
     // We're done loading, now check the data
     let foundMainSubSection = false;
+    let foundNavigationSubSection = false;
     let mainSubSection = null;
     
-    // Get expected name from configuration
-    const expectedName = serviceSectionConfig.name;
-    console.log("Expected subsection name:", expectedName);
+    // Get expected names from configurations
+    const expectedTeamSlug = teamSectionConfig.name;
+    const expectedNavigationSlug = teamNavigationConfig.name;
     
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
       const sectionData = sectionSubsections.data;
       
       if (Array.isArray(sectionData)) {
-        // Find the main subsection in the array with correct name
+        // Find the main team subsection in the array with correct name
         mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedName
+          sub.isMain === true && sub.name === expectedTeamSlug
         );
         foundMainSubSection = !!mainSubSection;
+
+        // Check for navigation subsection - be more flexible in matching
+        const navigationSubSection = sectionData.find(sub => {
+          // Match by type first (most reliable)
+          if (sub.type === teamNavigationConfig.type) return true;
+          // Match by name
+          if (sub.name === expectedNavigationSlug) return true;
+          // Match by partial name (in case of slug differences)
+          if (sub.name && sub.name.toLowerCase().includes('navigation')) return true;
+          return false;
+        });
+        foundNavigationSubSection = !!navigationSubSection;
       } else {
-        // Single object response
-        foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedName;
-        mainSubSection = foundMainSubSection ? sectionData : null;
+        // Single object response - check if it's team or navigation
+        if (sectionData.isMain === true && sectionData.name === expectedTeamSlug) {
+          foundMainSubSection = true;
+          mainSubSection = sectionData;
+        }
+        
+        // Check if it's a navigation subsection
+        if (sectionData.type === teamNavigationConfig.type || 
+            sectionData.name === expectedNavigationSlug ||
+            (sectionData.name && sectionData.name.toLowerCase().includes('navigation'))) {
+          foundNavigationSubSection = true;
+        }
       }
-      
-      console.log("Section subsections check:", { 
-        foundMainSubSection, 
-        mainSubSection,
-        matchesSlug: mainSubSection ? mainSubSection.name === expectedName : false
-      });
     }
     
     // If we didn't find anything in the section-specific data, check the website-wide data
-    if (!foundMainSubSection && mainSubSectionData?.data) {
+    if ((!foundMainSubSection || !foundNavigationSubSection) && mainSubSectionData?.data) {
       const websiteData = mainSubSectionData.data;
       
       if (Array.isArray(websiteData)) {
-        // Find the main subsection in the array with correct name
-        mainSubSection = websiteData.find(sub => 
-          sub.isMain === true && sub.name === expectedName
-        );
-        foundMainSubSection = !!mainSubSection;
+        // Find the main team subsection in the array with correct name
+        if (!foundMainSubSection) {
+          mainSubSection = websiteData.find(sub => 
+            sub.isMain === true && sub.name === expectedTeamSlug
+          );
+          foundMainSubSection = !!mainSubSection;
+        }
+
+        // Check for navigation subsection - be more flexible in matching
+        if (!foundNavigationSubSection) {
+          const navigationSubSection = websiteData.find(sub => {
+            // Match by type first (most reliable)
+            if (sub.type === teamNavigationConfig.type) return true;
+            // Match by name
+            if (sub.name === expectedNavigationSlug) return true;
+            // Match by partial name (in case of slug differences)
+            if (sub.name && sub.name.toLowerCase().includes('navigation')) return true;
+            return false;
+          });
+          foundNavigationSubSection = !!navigationSubSection;
+        }
       } else {
-        // Single object response
-        foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedName;
-        mainSubSection = foundMainSubSection ? websiteData : null;
+        // Single object response - check what type it is
+        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedTeamSlug) {
+          foundMainSubSection = true;
+          mainSubSection = websiteData;
+        }
+        
+        // Check if it's a navigation subsection
+        if (!foundNavigationSubSection && (
+          websiteData.type === teamNavigationConfig.type || 
+          websiteData.name === expectedNavigationSlug ||
+          (websiteData.name && websiteData.name.toLowerCase().includes('navigation'))
+        )) {
+          foundNavigationSubSection = true;
+        }
       }
-      
-      console.log("Website subsections check:", { 
-        foundMainSubSection, 
-        mainSubSection,
-        matchesSlug: mainSubSection ? mainSubSection.name === expectedName : false
-      });
     }
     
-    console.log("Final subsection result:", { 
-      foundMainSubSection, 
-      mainSubSection,
-      name: mainSubSection?.name,
-      expectedName
+    // Update state based on what we found
+    console.log('Team detection results:', {
+      foundMainSubSection,
+      foundNavigationSubSection,
+      mainSubSection: mainSubSection?.name,
+      expectedTeamSlug,
+      expectedNavigationSlug
     });
     
-    // Update state based on what we found
     setHasMainSubSection(foundMainSubSection);
+    setHasNavigationSubSection(foundNavigationSubSection);
     setIsLoadingMainSubSection(false);
     
     // Extract section data from the main subsection if we found one
@@ -212,12 +254,10 @@ export default function ServicesPage() {
         ? { _id: mainSubSection.section } 
         : mainSubSection.section;
       
-      console.log("Setting section data:", sectionInfo);
-      
       // Set local section data
       setSectionData(sectionInfo);
       
-      // Update the serviceSection in useGenericList hook if not already set
+      // Update the teamSection in useGenericList hook if not already set
       if (serviceSection === null) {
         setSection(sectionInfo);
       }
@@ -231,7 +271,9 @@ export default function ServicesPage() {
     sectionId, 
     serviceSection, 
     setSection,
-    serviceSectionConfig.name // Add this dependency since it can change with language
+    teamSectionConfig.name,
+    teamNavigationConfig.name,
+    teamNavigationConfig.type
   ]);
 
   // Handle main subsection creation
@@ -320,6 +362,30 @@ export default function ServicesPage() {
       confirmText={t('servicesPage.dialogs.confirmText')}
     />
   );
+  // Handle navigation subsection creation
+   const handleNavigationSubSectionCreated = (subsection: any) => {
+    console.log('Navigation subsection created:', subsection);
+    
+    // Check if subsection has the correct name or type
+    const expectedSlug = teamNavigationConfig.name;
+    const expectedType = teamNavigationConfig.type;
+    const hasCorrectIdentifier = (
+      subsection.name === expectedSlug || 
+      subsection.type === expectedType ||
+      (subsection.name && subsection.name.toLowerCase().includes('navigation'))
+    );
+    
+    // Set that we have a navigation subsection now
+    setHasNavigationSubSection(hasCorrectIdentifier);
+    
+    // Force refetch of all subsection data
+    if (refetchMainSubSection) {
+      setTimeout(() => {
+        refetchMainSubSection();
+      }, 1000); // Give it a bit more time to ensure data is saved
+    }
+  };
+
 
   return (
     <div className="space-y-6">
@@ -340,13 +406,39 @@ export default function ServicesPage() {
       />
       
       {/* Main subsection management (only shown when section exists) */}
-      {sectionId && (
-        <CreateMainSubSection 
-          sectionId={sectionId}
-          sectionConfig={serviceSectionConfig}
-          onSubSectionCreated={handleMainSubSectionCreated}
-          onFormValidityChange={() => {/* Simplified: We don't care about form validity */}}
-        />
+     {sectionId && (
+        <Tabs defaultValue="content" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="content" className="flex items-center gap-2">
+              <Users size={16} />
+              Content Configuration
+            </TabsTrigger>
+            <TabsTrigger value="navigation" className="flex items-center gap-2">
+              <Navigation size={16} />
+              Navigation Configuration
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="content" className="mt-6">
+            {/* Main subsection management */}
+            <CreateMainSubSection 
+              sectionId={sectionId}
+              sectionConfig={teamSectionConfig}
+              onSubSectionCreated={handleMainSubSectionCreated}
+              onFormValidityChange={() => {/* We don't need to track form validity */}}
+            />
+          </TabsContent>
+          
+          <TabsContent value="navigation" className="mt-6">
+            {/* Navigation subsection management */}
+            <CreateNavigationSubSection 
+              sectionId={sectionId}
+              sectionConfig={teamNavigationConfig}
+              onSubSectionCreated={handleNavigationSubSectionCreated}
+              onFormValidityChange={() => {/* We don't need to track form validity */}}
+            />
+          </TabsContent>
+        </Tabs>
       )}
     </div>
   );
