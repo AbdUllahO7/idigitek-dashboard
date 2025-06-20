@@ -26,6 +26,7 @@ import { CreateMainSubSectionProps } from "@/src/api/types/utils/CreateMainSubSe
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations"
 import { ActionButton, CancelButton, ErrorCard, LoadingCard, MainFormCard, SuccessCard, WarningCard } from "@/src/utils/MainSectionComponents"
+import { SubNavigationManager } from "./SubNavigationManager"
 
 // Debounce utility
 function debounce(func: (...args: any[]) => void, wait: number) {
@@ -199,6 +200,7 @@ export default function CreateNavigationSubSection({
   const [hasEmptyRequiredFields, setHasEmptyRequiredFields] = useState(true)
   const [isExpanded, setIsExpanded] = useState(true)
   const [languageForms, setLanguageForms] = useState<Record<string, any>>({})
+  const [isRefreshingData, setIsRefreshingData] = useState(false)
   const languagesInitialized = useRef(false)
 
   const { websiteId } = useWebsiteContext();
@@ -822,16 +824,169 @@ export default function CreateNavigationSubSection({
     )
   }
   
-  if (subsectionExists && subsection && !isEditMode) {
+  if (subsectionExists && subsection) {
     return (
-      <SuccessCard
-        title="Navigation Configuration Available"
-        description="Team navigation has been configured and is ready to use."
-        onEdit={() => {
-          setIsEditMode(true)
-          setIsExpanded(true)
-        }}
-      />
+      <div className="space-y-6">
+        {!isEditMode && (
+          <SuccessCard
+            title="Navigation Configuration Available"
+            description="Team navigation has been configured and is ready to use."
+            onEdit={() => {
+              setIsEditMode(true)
+              setIsExpanded(true)
+            }}
+          />
+        )}
+        
+        {/* Show form when in edit mode */}
+        {isEditMode && (
+          <MainFormCard
+            title={
+              <div
+                className="flex items-center justify-between w-full cursor-pointer"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                <div className="flex items-center">
+                  <Link size={20} className="mr-3 text-blue-600 dark:text-blue-400" />
+                  <span>Edit Team Navigation</span>
+                </div>
+                <motion.div
+                  animate={{ rotate: isExpanded ? 0 : 180 }}
+                  transition={{ duration: 0.3 }}
+                  className="p-1 bg-gray-100 dark:bg-gray-800 rounded-full"
+                >
+                  {isExpanded ?
+                    <ChevronUp size={18} className="text-gray-600 dark:text-gray-300" /> :
+                    <ChevronDown size={18} className="text-gray-600 dark:text-gray-300" />}
+                </motion.div>
+              </div>
+            }
+            description="Update the navigation name and URL for the team section."
+          >
+            <AnimatePresence initial={false}>
+              {isExpanded && (
+                <motion.div
+                  key="content"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  {/* Language cards container */}
+                  <div className="mb-6">
+                    <div className="flex items-center mb-4">
+                      <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2 ml-2" />
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        Navigation Languages
+                      </h3>
+                      <span className="ml-2 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
+                        {languages.length} {t('mainSubsection.languages')}
+                      </span>
+                    </div>
+                    {renderLanguageCards()}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            
+            <div className="mt-8 flex flex-col md:flex-row gap-3">
+              {isExpanded ? (
+                <>
+                  <ActionButton
+                    isLoading={false}
+                    isCreating={isCreating}
+                    isCreatingElements={isCreatingElements}
+                    isUpdating={isUpdating}
+                    exists={subsectionExists}
+                    onClick={handleUpdateSubsection}
+                    className="flex-1"
+                  />
+                  <CancelButton
+                    onClick={() => {
+                      setIsEditMode(false)
+                      setIsExpanded(false)
+                    }}
+                    className="md:w-48"
+                  />
+                </>
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setIsExpanded(true)}
+                  className="w-full py-2.5 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 text-gray-700 dark:text-gray-200 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="flex items-center justify-center">
+                    <ChevronDown size={18} className="mr-2" />
+                    <span>Show Navigation Form</span>
+                  </div>
+                </motion.button>
+              )}
+            </div>
+          </MainFormCard>
+        )}
+        
+        {/* Sub-Navigation Management - Always show when parent navigation exists */}
+        <SubNavigationManager
+          subsectionId={subsection._id}
+          languages={languages}
+          sectionConfig={sectionConfig}
+          existingElements={contentElements}
+          existingTranslations={contentTranslations}
+          onSubNavigationChange={async (items, shouldRefresh) => {
+            console.log('Sub-navigation items updated:', items);
+            // Refetch data if requested
+            if (shouldRefresh) {
+              setIsRefreshingData(true);
+              try {
+                console.log('Refetching subsection data after sub-navigation save...');
+                // Wait a bit for server to process the changes
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                const result = await refetchCompleteSubsections();
+                if (result.data?.data) {
+                  // Update content elements and translations with fresh data
+                  const navigationSubsection = result.data.data.find((sub: { name: string; type: string; isMain: boolean }) => {
+                    if (sub.type === sectionConfig.type) return true;
+                    if (sub.name === sectionConfig.name) return true;
+                    if (sub.name && sub.name.toLowerCase().includes('navigation')) return true;
+                    return false;
+                  });
+                  
+                  if (navigationSubsection && navigationSubsection.elements) {
+                    setContentElements(navigationSubsection.elements);
+                    
+                    const translationMap: Record<string, any[]> = {};
+                    navigationSubsection.elements.forEach((element: { translations: string | any[]; _id: string | number }) => {
+                      if (element.translations && element.translations.length > 0) {
+                        translationMap[element._id] = Array.isArray(element.translations) ? element.translations : [];
+                      }
+                    });
+                    setContentTranslations(translationMap);
+                    
+                    console.log('Successfully refreshed navigation data');
+                  }
+                }
+              } catch (error) {
+                console.error('Error refetching subsection data:', error);
+              } finally {
+                setIsRefreshingData(false);
+              }
+            }
+          }}
+        />
+        
+        {/* Loading overlay when refreshing data */}
+        {isRefreshingData && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg flex items-center space-x-3">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+              <span className="text-gray-700 dark:text-gray-300">Refreshing navigation data...</span>
+            </div>
+          </div>
+        )}
+      </div>
     )
   }
   

@@ -15,8 +15,9 @@ import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { getTeamSectionConfig } from "./TeamSectionConfig"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Users, Navigation } from "lucide-react"
-import { getTeamNavigationSectionConfig } from "./navigation/team-navigation-config"
-import CreateNavigationSubSection from "./navigation/CreateNavigationSubSection"
+import { getTeamNavigationSectionConfig } from "../navigation/navigation-config"
+import CreateNavigationSubSection from "../navigation/CreateNavigationSubSection"
+
 
 export default function Team() {
   const searchParams = useSearchParams()
@@ -297,7 +298,7 @@ export default function Team() {
   };
 
   // Handle navigation subsection creation
-  const handleNavigationSubSectionCreated = (subsection: any) => {
+   const handleNavigationSubSectionCreated = (subsection: any) => {
     console.log('Navigation subsection created:', subsection);
     
     // Check if subsection has the correct name or type
