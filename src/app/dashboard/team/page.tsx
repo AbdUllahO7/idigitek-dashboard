@@ -13,18 +13,24 @@ import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { getTeamSectionConfig } from "./TeamSectionConfig"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
+import { Users, Navigation } from "lucide-react"
+import { getTeamNavigationSectionConfig } from "./navigation/team-navigation-config"
+import CreateNavigationSubSection from "./navigation/CreateNavigationSubSection"
 
 export default function Team() {
   const searchParams = useSearchParams()
   const sectionId = searchParams.get("sectionId")
   const [hasMainSubSection, setHasMainSubSection] = useState<boolean>(false)
+  const [hasNavigationSubSection, setHasNavigationSubSection] = useState<boolean>(false)
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
   const [sectionData, setSectionData] = useState<any>(null)
   const { websiteId } = useWebsiteContext();
   const { t, i18n } = useTranslation();
 
-  // Get translated configuration based on current language
+  // Get translated configurations based on current language
   const teamSectionConfig = getTeamSectionConfig(i18n.language);
+  const teamNavigationConfig = getTeamNavigationSectionConfig(i18n.language);
 
   // Configuration for the Team page using translations
   const TEAM_CONFIG = {
@@ -129,49 +135,112 @@ export default function Team() {
       setIsLoadingMainSubSection(true);
       return;
     }
+    
+    console.log('Team data check - sectionSubsections:', sectionSubsections?.data);
+    console.log('Team data check - mainSubSectionData:', mainSubSectionData?.data);
+    
     // We're done loading, now check the data
     let foundMainSubSection = false;
+    let foundNavigationSubSection = false;
     let mainSubSection = null;
     
-    // Get expected name from configuration
-    const expectedSlug = teamSectionConfig.name;
+    // Get expected names from configurations
+    const expectedTeamSlug = teamSectionConfig.name;
+    const expectedNavigationSlug = teamNavigationConfig.name;
     
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
       const sectionData = sectionSubsections.data;
       
       if (Array.isArray(sectionData)) {
-        // Find the main subsection in the array with correct name
+        // Find the main team subsection in the array with correct name
         mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedSlug
+          sub.isMain === true && sub.name === expectedTeamSlug
         );
         foundMainSubSection = !!mainSubSection;
+
+        // Check for navigation subsection - be more flexible in matching
+        const navigationSubSection = sectionData.find(sub => {
+          // Match by type first (most reliable)
+          if (sub.type === teamNavigationConfig.type) return true;
+          // Match by name
+          if (sub.name === expectedNavigationSlug) return true;
+          // Match by partial name (in case of slug differences)
+          if (sub.name && sub.name.toLowerCase().includes('navigation')) return true;
+          return false;
+        });
+        foundNavigationSubSection = !!navigationSubSection;
       } else {
-        // Single object response
-        foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedSlug;
-        mainSubSection = foundMainSubSection ? sectionData : null;
+        // Single object response - check if it's team or navigation
+        if (sectionData.isMain === true && sectionData.name === expectedTeamSlug) {
+          foundMainSubSection = true;
+          mainSubSection = sectionData;
+        }
+        
+        // Check if it's a navigation subsection
+        if (sectionData.type === teamNavigationConfig.type || 
+            sectionData.name === expectedNavigationSlug ||
+            (sectionData.name && sectionData.name.toLowerCase().includes('navigation'))) {
+          foundNavigationSubSection = true;
+        }
       }
     }
     
     // If we didn't find anything in the section-specific data, check the website-wide data
-    if (!foundMainSubSection && mainSubSectionData?.data) {
+    if ((!foundMainSubSection || !foundNavigationSubSection) && mainSubSectionData?.data) {
       const websiteData = mainSubSectionData.data;
       
       if (Array.isArray(websiteData)) {
-        // Find the main subsection in the array with correct name
-        mainSubSection = websiteData.find(sub => 
-          sub.isMain === true && sub.name === expectedSlug
-        );
-        foundMainSubSection = !!mainSubSection;
+        // Find the main team subsection in the array with correct name
+        if (!foundMainSubSection) {
+          mainSubSection = websiteData.find(sub => 
+            sub.isMain === true && sub.name === expectedTeamSlug
+          );
+          foundMainSubSection = !!mainSubSection;
+        }
+
+        // Check for navigation subsection - be more flexible in matching
+        if (!foundNavigationSubSection) {
+          const navigationSubSection = websiteData.find(sub => {
+            // Match by type first (most reliable)
+            if (sub.type === teamNavigationConfig.type) return true;
+            // Match by name
+            if (sub.name === expectedNavigationSlug) return true;
+            // Match by partial name (in case of slug differences)
+            if (sub.name && sub.name.toLowerCase().includes('navigation')) return true;
+            return false;
+          });
+          foundNavigationSubSection = !!navigationSubSection;
+        }
       } else {
-        // Single object response
-        foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedSlug;
-        mainSubSection = foundMainSubSection ? websiteData : null;
+        // Single object response - check what type it is
+        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedTeamSlug) {
+          foundMainSubSection = true;
+          mainSubSection = websiteData;
+        }
+        
+        // Check if it's a navigation subsection
+        if (!foundNavigationSubSection && (
+          websiteData.type === teamNavigationConfig.type || 
+          websiteData.name === expectedNavigationSlug ||
+          (websiteData.name && websiteData.name.toLowerCase().includes('navigation'))
+        )) {
+          foundNavigationSubSection = true;
+        }
       }
     }
     
     // Update state based on what we found
+    console.log('Team detection results:', {
+      foundMainSubSection,
+      foundNavigationSubSection,
+      mainSubSection: mainSubSection?.name,
+      expectedTeamSlug,
+      expectedNavigationSlug
+    });
+    
     setHasMainSubSection(foundMainSubSection);
+    setHasNavigationSubSection(foundNavigationSubSection);
     setIsLoadingMainSubSection(false);
     
     // Extract section data from the main subsection if we found one
@@ -197,7 +266,9 @@ export default function Team() {
     sectionId, 
     teamSection, 
     setSection,
-    teamSectionConfig.name
+    teamSectionConfig.name,
+    teamNavigationConfig.name,
+    teamNavigationConfig.type
   ]);
 
   // Handle main subsection creation
@@ -222,6 +293,30 @@ export default function Team() {
     // Refetch the main subsection data to ensure we have the latest
     if (refetchMainSubSection) {
       refetchMainSubSection();
+    }
+  };
+
+  // Handle navigation subsection creation
+  const handleNavigationSubSectionCreated = (subsection: any) => {
+    console.log('Navigation subsection created:', subsection);
+    
+    // Check if subsection has the correct name or type
+    const expectedSlug = teamNavigationConfig.name;
+    const expectedType = teamNavigationConfig.type;
+    const hasCorrectIdentifier = (
+      subsection.name === expectedSlug || 
+      subsection.type === expectedType ||
+      (subsection.name && subsection.name.toLowerCase().includes('navigation'))
+    );
+    
+    // Set that we have a navigation subsection now
+    setHasNavigationSubSection(hasCorrectIdentifier);
+    
+    // Force refetch of all subsection data
+    if (refetchMainSubSection) {
+      setTimeout(() => {
+        refetchMainSubSection();
+      }, 1000); // Give it a bit more time to ensure data is saved
     }
   };
 
@@ -288,14 +383,40 @@ export default function Team() {
         customEmptyMessage={emptyStateMessage}
       />
       
-      {/* Main subsection management (only shown when section exists) */}
+      {/* Section Configuration Tabs (only shown when section exists) */}
       {sectionId && (
-        <CreateMainSubSection 
-          sectionId={sectionId}
-          sectionConfig={teamSectionConfig}
-          onSubSectionCreated={handleMainSubSectionCreated}
-          onFormValidityChange={() => {/* We don't need to track form validity */}}
-        />
+        <Tabs defaultValue="content" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="content" className="flex items-center gap-2">
+              <Users size={16} />
+              Content Configuration
+            </TabsTrigger>
+            <TabsTrigger value="navigation" className="flex items-center gap-2">
+              <Navigation size={16} />
+              Navigation Configuration
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="content" className="mt-6">
+            {/* Main subsection management */}
+            <CreateMainSubSection 
+              sectionId={sectionId}
+              sectionConfig={teamSectionConfig}
+              onSubSectionCreated={handleMainSubSectionCreated}
+              onFormValidityChange={() => {/* We don't need to track form validity */}}
+            />
+          </TabsContent>
+          
+          <TabsContent value="navigation" className="mt-6">
+            {/* Navigation subsection management */}
+            <CreateNavigationSubSection 
+              sectionId={sectionId}
+              sectionConfig={teamNavigationConfig}
+              onSubSectionCreated={handleNavigationSubSectionCreated}
+              onFormValidityChange={() => {/* We don't need to track form validity */}}
+            />
+          </TabsContent>
+        </Tabs>
       )}
     </div>
   );
