@@ -56,6 +56,8 @@ export default function Team() {
   const { t, i18n } = useTranslation();
   const { toast } = useToast();
 
+  
+
   // Get translated configurations
   const teamSectionConfig = getTeamSectionConfig(i18n.language);
   const teamNavigationConfig = getTeamNavigationSectionConfig(i18n.language);
