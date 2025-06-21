@@ -429,15 +429,9 @@ export default function ServicesPage() {
             />
           </TabsContent>
           
-          <TabsContent value="navigation" className="mt-6">
-            {/* Navigation subsection management */}
-            <CreateNavigationSubSection 
-              sectionId={sectionId}
-              sectionConfig={teamNavigationConfig}
-              onSubSectionCreated={handleNavigationSubSectionCreated}
-              onFormValidityChange={() => {/* We don't need to track form validity */}}
-            />
-          </TabsContent>
+        
+          
+        
         </Tabs>
       )}
     </div>
