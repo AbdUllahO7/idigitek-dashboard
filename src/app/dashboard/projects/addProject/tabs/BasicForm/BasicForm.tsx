@@ -60,9 +60,6 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
     isSaving: false,
   })
 
-  // Add file storage state
-  const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({})
-
   // Use object state update for better performance and readability
   const updateState = useCallback(
     (newState: {
@@ -196,7 +193,7 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
         {
           groupElements: (elements) => ({
             project: elements.filter(
-              (el) => el.type === "text" || el.type === "image" || el.type === "file" || el.type === "boolean",
+              (el) => el.type === "text" || el.type === "image" || el.type === "boolean",
             ),
           }),
           processElementGroup: (groupId, elements, langId, getTranslationContent) => {
@@ -216,7 +213,6 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
               category: "",
               date: "",
               galleryText: "",
-              uploadedFile: "",
             }
 
             elements
@@ -237,7 +233,6 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
             galleryText: "",
             category: "",
             date: "",
-            uploadedFile: "",
           }),
         },
         {
@@ -285,34 +280,6 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
         const dynamicUrl = constructDynamicUrl(subsectionData._id)
         form.setValue("dynamicUrl", dynamicUrl)
       }
-
-      // Handle file elements for each language separately
-     if (subsectionData?.elements || subsectionData?.contentElements) {
-  const allElements = subsectionData.elements || subsectionData.contentElements || []
-  
-  
-  // Find and process file elements for each language
-  activeLanguages.forEach(language => {
-    const langCode = language.languageID
-    const fileElementName = `Uploaded File ${langCode.toUpperCase()}`
-    
-    const fileElement = allElements.find((el) => 
-      el.type === "file" && el.name === fileElementName
-    )
-    
-    if (fileElement) {
-      // Check multiple sources for the file URL
-      const fileUrl = fileElement.fileUrl || 
-                     fileElement.defaultContent || 
-                     (fileElement.translations && fileElement.translations[0]?.content)
-      
-      if (fileUrl && fileUrl !== "file-placeholder") {
-        form.setValue(`${langCode}.uploadedFile`, fileUrl, { shouldDirty: false })
-      }
-    }
-  })
-      }
-
     },
     [form, languageIds, activeLanguages, websiteId, constructDynamicUrl],
   )
@@ -364,20 +331,6 @@ const BasicForm = forwardRef<any, ProjectFormProps>((props, ref) => {
     return () => subscription.unsubscribe()
   }, [form, isLoadingData, dataLoaded, updateState])
 
-  // Debug effect to log form values for uploaded files
-useEffect(() => {
-  const subscription = form.watch((value) => {
-    activeLanguages.forEach(language => {
-      const langCode = language.languageID
-      const fileValue = value[langCode]?.uploadedFile
-      if (fileValue) {
-      }
-    })
-  })
-
-  return () => subscription.unsubscribe()
-}, [form, activeLanguages])
-
   // Image upload handler
   const uploadImage = useCallback(
     async (elementId: any, file: string | Blob) => {
@@ -416,66 +369,6 @@ useEffect(() => {
     },
     [form, toast, t],
   )
-  const uploadFile = useCallback(
-    async (elementId: any, file: File) => {
-      if (!file) return null
-
-      try {
-        const formData = new FormData()
-        formData.append("file", file)
-
-        const uploadResult = await apiClient.post(`/content-elements/${elementId}/file`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
-
-        const fileUrl = uploadResult.data?.fileUrl || uploadResult.data?.url || uploadResult.data?.data?.fileUrl
-
-        if (fileUrl) {
-          // CRITICAL FIX: Update the content element with the file URL
-          await apiClient.put(`/content-elements/${elementId}`, {
-            fileUrl: fileUrl,
-            defaultContent: fileUrl  // Also update defaultContent as backup
-          })
-
-          toast({
-            title: t("projectBasicForm.fileUploaded", "File Uploaded"),
-            description: t("projectBasicForm.fileUploadSuccess", "File has been successfully uploaded."),
-          })
-          return fileUrl
-        }
-
-        throw new Error("No file URL returned from server. Response: " + JSON.stringify(uploadResult.data))
-      } catch (error) {
-        console.error("File upload failed:", error)
-        toast({
-          title: t("projectBasicForm.fileUploadFailed", "File Upload Failed"),
-          description:
-            error instanceof Error ? error.message : t("projectBasicForm.fileUploadError", "Failed to upload file"),
-          variant: "destructive",
-        })
-        throw error
-      }
-    },
-    [toast, t],
-  )
-
-  // File upload handlers
-  const handleFileUpload = useCallback((langCode: string, file: File) => {
-    setUploadedFiles(prev => ({
-      ...prev,
-      [langCode]: file
-    }))
-    updateState({ hasUnsavedChanges: true })
-  }, [updateState])
-
-  const handleFileRemove = useCallback((langCode: string) => {
-    setUploadedFiles(prev => {
-      const newFiles = { ...prev }
-      delete newFiles[langCode]
-      return newFiles
-    })
-    updateState({ hasUnsavedChanges: true })
-  }, [updateState])
 
   // Save handler with optimized process
   const handleSave = useCallback(async () => {
@@ -583,27 +476,6 @@ useEffect(() => {
             defaultContent: finalDynamicUrl
           })
         }
-        for (const [langCode, file] of Object.entries(uploadedFiles)) {
-          const fileElement = contentElements.find((e) => 
-            e.type === "file" && e.name === `Uploaded File ${langCode.toUpperCase()}`
-          )
-          if (fileElement) {
-            const fileUrl = await uploadFile(fileElement._id, file)
-            if (fileUrl) {
-              // Update both form value and local state
-              form.setValue(`${langCode}.uploadedFile`, fileUrl, { shouldDirty: false })
-              
-              // Update the contentElements state to reflect the new file URL
-              updateState({
-                contentElements: contentElements.map(el => 
-                  el._id === fileElement._id 
-                    ? { ...el, fileUrl: fileUrl, defaultContent: fileUrl }
-                    : el
-                )
-              })
-            }
-          }
-        }
 
         // Update translations for text elements
         const textElements = contentElements.filter((e) => e.type === "text" && e.name !== "Dynamic URL")
@@ -662,15 +534,6 @@ useEffect(() => {
           { type: "text", key: "technologies", name: "Technologies" },
         ]
 
-        // Add file elements for each language that has uploaded files
-        Object.keys(uploadedFiles).forEach(langCode => {
-          elementTypes.push({
-            type: "file",
-            key: `uploadedFile_${langCode}`,
-            name: `Uploaded File ${langCode.toUpperCase()}`
-          })
-        })
-
         const createdElements = []
         for (const [index, el] of elementTypes.entries()) {
           let defaultContent = ""
@@ -686,8 +549,6 @@ useEffect(() => {
             const langValues = updatedFormValues[defaultLangCode]
             defaultContent =
               langValues && typeof langValues === "object" && el.key in langValues ? langValues[el.key] : ""
-          } else if (el.type === "file") {
-            defaultContent = "file-placeholder"
           }
 
           const elementData = {
@@ -711,29 +572,11 @@ useEffect(() => {
           await uploadImage(bgImageElement._id, imageFile)
         }
 
-        // Handle file uploads for each language
-          for (const [langCode, file] of Object.entries(uploadedFiles)) {
-          const fileElement = createdElements.find((e) => e.key === `uploadedFile_${langCode}`)
-          if (fileElement) {
-            const fileUrl = await uploadFile(fileElement._id, file)
-            if (fileUrl) {
-              // Update form value
-              form.setValue(`${langCode}.uploadedFile`, fileUrl, { shouldDirty: false })
-              
-              // Update the created element with the file URL
-              fileElement.fileUrl = fileUrl
-              fileElement.defaultContent = fileUrl
-            }
-          }
-        }
-
-
         // Create translations for new elements (excluding navigation fields)
         const textElements = createdElements.filter((e) => 
           e.key !== "backgroundImage" && 
           e.key !== "addSubNavigation" && 
-          e.key !== "dynamicUrl" && 
-          !e.key.startsWith("uploadedFile_")
+          e.key !== "dynamicUrl"
         )
         const translations:
           | (Omit<ContentTranslation, "_id"> & { id?: string })[]
@@ -771,9 +614,6 @@ useEffect(() => {
       })
 
       updateState({ hasUnsavedChanges: false })
-
-      // Clear uploaded files after successful save
-      setUploadedFiles({})
 
       // Update form state with saved data
       if (slug) {
@@ -839,8 +679,6 @@ useEffect(() => {
     updateState,
     updateSubSection,
     uploadImage,
-    uploadFile,
-    uploadedFiles,
     activeLanguages,
     websiteId,
     constructDynamicUrl,
@@ -857,12 +695,10 @@ useEffect(() => {
     extraMethods: {
       getImageFile: () => imageFile,
       saveData: handleSave,
-      getUploadedFiles: () => uploadedFiles,
     },
     extraData: {
       imageFile,
       existingSubSectionId,
-      uploadedFiles,
       addSubNavigation: form.getValues("addSubNavigation"),
       dynamicUrl: form.getValues("dynamicUrl"),
     },
@@ -921,7 +757,7 @@ useEffect(() => {
           imageType="logo"
         />
 
-        {/* {t('Navigation.NavigationSettings')} */}
+        {/* Navigation Settings */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -937,7 +773,8 @@ useEffect(() => {
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base font-medium">
-{t('Navigation.AddSubNavigation')}                    </FormLabel>
+                      {t('Navigation.AddSubNavigation')}
+                    </FormLabel>
                     <p className="text-sm text-muted-foreground">
                       {t('Navigation.enable')}
                     </p>
@@ -964,8 +801,6 @@ useEffect(() => {
                 langCode={langCode}
                 form={form}
                 isFirstLanguage={index === 0}
-                onFileUpload={handleFileUpload}
-                onFileRemove={handleFileRemove}
               />
             )
           })}

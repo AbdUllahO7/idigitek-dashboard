@@ -2,13 +2,13 @@
 
 import type React from "react"
 
-import { memo, useState, useRef, useEffect } from "react"
+import { memo, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/src/components/ui/form"
 import { Input } from "@/src/components/ui/input"
 import { Textarea } from "@/src/components/ui/textarea"
 import type { UseFormReturn } from "react-hook-form"
-import { CalendarIcon, ChevronDown, ChevronUp, X, FolderOpen, Upload, FileText, Trash2 } from "lucide-react"
+import { CalendarIcon, ChevronDown, ChevronUp, X, FolderOpen } from "lucide-react"
 import { format } from "date-fns"
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover"
 import { Button } from "@/src/components/ui/button"
@@ -22,98 +22,20 @@ interface LanguageCardProps {
   form: UseFormReturn<any>
   isFirstLanguage?: boolean
   onClose?: (langCode: string) => void
-  onFileUpload?: (langCode: string, file: File) => void
-  onFileRemove?: (langCode: string) => void
 }
 
 export const LanguageCard = memo(
-  ({ langCode, form, isFirstLanguage = false, onClose, onFileUpload, onFileRemove }: LanguageCardProps) => {
+  ({ langCode, form, isFirstLanguage = false, onClose }: LanguageCardProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false)
-    const [uploadedFile, setUploadedFile] = useState<File | null>(null)
-    const fileInputRef = useRef<HTMLInputElement>(null)
     const { t } = useTranslation()
     const { language } = useLanguage()
     const currentTitle = form.watch(`${langCode}.title`) || ""
     const currentDate = form.watch(`${langCode}.date`)
-    const currentFileUrl = form.watch(`${langCode}.uploadedFile`) || ""
-    const hasFile = uploadedFile || currentFileUrl
-
 
     const handleClose = () => {
       if (onClose && !isFirstLanguage) {
         onClose(langCode)
       }
-    }
-
-    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0]
-      if (file) {
-        // Validate file type (you can customize this)
-        const allowedTypes = [
-          "application/pdf",
-          "application/msword",
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "text/plain",
-        ]
-        if (!allowedTypes.includes(file.type)) {
-          alert(t("projectLanguageCard.invalidFileType", "Please select a valid file type (PDF, DOC, DOCX, TXT)"))
-          return
-        }
-
-        // Validate file size (5MB limit)
-        if (file.size > 5 * 1024 * 1024) {
-          alert(t("projectLanguageCard.fileTooLarge", "File size must be less than 5MB"))
-          return
-        }
-
-        setUploadedFile(file)
-        form.setValue(`${langCode}.uploadedFile`, file.name)
-
-        // Call the parent component's file upload handler
-        if (onFileUpload) {
-          onFileUpload(langCode, file)
-        }
-      }
-    }
-
-    const handleFileRemove = () => {
-      setUploadedFile(null)
-      form.setValue(`${langCode}.uploadedFile`, "")
-
-      // Call the parent component's file remove handler
-      if (onFileRemove) {
-        onFileRemove(langCode)
-      }
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
-    }
-
-    const triggerFileSelect = () => {
-      fileInputRef.current?.click()
-    }
-
-    // Check if we have a file (either uploaded or existing URL)
-
-    // Get file name to display
-    const getDisplayFileName = () => {
-      if (uploadedFile) {
-        return uploadedFile.name
-      }
-      if (currentFileUrl) {
-        // Extract filename from URL, handling both direct filenames and URLs
-        const urlParts = currentFileUrl.split("/")
-        const lastPart = urlParts[urlParts.length - 1]
-        // If it looks like a filename with extension, use it
-        if (lastPart.includes(".")) {
-          return decodeURIComponent(lastPart)
-        }
-        // Otherwise, try to extract filename from Cloudinary URL pattern
-        const filenamePart = currentFileUrl.match(/\/([^/]+\.[^/]+)(?:\?|$)/)
-        return filenamePart ? decodeURIComponent(filenamePart[1]) : "Uploaded File"
-      }
-      return "Unknown File"
     }
 
     return (
@@ -273,115 +195,6 @@ export const LanguageCard = memo(
                       className="min-h-[100px] hover:border-primary transition-colors focus:ring-2 focus:ring-primary/20 resize-none"
                       {...field}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* File Upload Field */}
-            <FormField
-              control={form.control}
-              name={`${langCode}.uploadedFile`}
-              render={({ field }) => (
-                <FormItem className="">
-                  <FormLabel className="text-sm font-medium">
-                    {t("projectLanguageCard.uploadFile", "Upload File")}
-                  </FormLabel>
-                  <FormControl className="dark:black">
-                    <div className="space-y-3 dark:black">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept=".pdf,.doc,.docx,.txt"
-                        onChange={handleFileSelect}
-                        className="hidden dark:black"
-                      />
-
-                      {!hasFile ? (
-                        <div
-                          onClick={triggerFileSelect}
-                          className="group dark:black relative w-full h-32 border-2 border-dashed hover:border-primary/60 transition-all duration-200 rounded-lg cursor-pointer bg-gradient-to-br  hover:from-primary/5 hover:to-primary/10"
-                        >
-                          <div className="absolute inset-0 flex dark:black flex-col items-center justify-center gap-3">
-                            <div className="p-3 rounded-full  dark:black shadow-sm group-hover:shadow-md transition-shadow">
-                              <Upload className="h-6 w-6 text-gray-400 group-hover:text-primary transition-colors" />
-                            </div>
-                            <div className="text-center">
-                              <p className="text-sm font-medium text-gray-700 group-hover:text-primary transition-colors">
-                                {t("projectLanguageCard.clickToUpload", "Click to upload file")}
-                              </p>
-                              <p className="text-xs text-gray-500 mt-1">
-                                {t("projectLanguageCard.supportedFormats", "PDF, DOC, DOCX, TXT (Max 5MB)")}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="relative p-4 border  rounded-lg  shadow-sm hover:shadow-md transition-shadow">
-                          <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 p-2 bg-primary/10 rounded-lg">
-                              <FileText className="h-6 w-6 text-primary" />
-                            </div>
-
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-3">
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="text-sm font-semibold  truncate">
-                                    {getDisplayFileName()}
-                                  </h4>
-                                  <div className="flex items-center gap-3 mt-1">
-                                    {uploadedFile ? (
-                                      <span className="inline-flex items-center gap-1 text-xs text-gray-500">
-                                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                                        {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
-                                      </span>
-                                    ) : currentFileUrl ? (
-                                      <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
-                                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                                        {t("projectLanguageCard.fileFromServer", "File from server")}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </div>
-
-                                <div className="flex items-center gap-1">
-                                  {currentFileUrl && !uploadedFile && (
-                                    <Button
-                                      type="button"
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => window.open(currentFileUrl, "_blank")}
-                                      className="h-8 px-3 text-xs hover:bg-blue-50 hover:text-blue-600"
-                                    >
-                                      {t("projectLanguageCard.view", "View")}
-                                    </Button>
-                                  )}
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={triggerFileSelect}
-                                    className="h-8 px-3 text-xs hover:bg-gray-100"
-                                  >
-                                    {t("projectLanguageCard.replace", "Replace")}
-                                  </Button>
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleFileRemove}
-                                    className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

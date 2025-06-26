@@ -1,6 +1,6 @@
 "use client"
 import { useSearchParams } from "next/navigation"
-import { Layout, Sparkles } from "lucide-react"
+import { Layout, Sparkles, FileText } from "lucide-react"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
@@ -11,6 +11,7 @@ import MoreInfoForm from "./tabs/MoreInfo/MoreInfoForm"
 import BasicForm from "./tabs/BasicForm/BasicForm"
 import MultiImageForm from "./tabs/MultiImageForm"
 import { useTranslation } from "react-i18next"
+import MultiFileForm from "./tabs/MultiFileForm/MultiFileForm"
 
 // Form sections to collect data from
 const FORM_SECTIONS = ["" ]
@@ -73,6 +74,8 @@ export default function AddProject() {
     const slugMappings: Record<string, string> = {
       'basic-info': 'basic-info',
       'more-info': 'more-info',
+      'multi-image': 'multi-image',
+      'multi-file': 'multi-file',
     };
     
     // Get the normalized version of the slug
@@ -161,9 +164,23 @@ export default function AddProject() {
         <MultiImageForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
-          slug={getSlug('project-moreInfo-section')}
+          slug={getSlug('project-images-section')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('project-moreInfo-section')}
+          initialData={findSubsection('project-images-section')}
+        />
+      )
+    },
+    {
+      id: "files",
+      label: t('addProject.filesTab', 'Files'),
+      icon: <FileText className="h-4 w-4" />,
+      component: (
+        <MultiFileForm
+          languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
+          activeLanguages={activeLanguages}
+          slug={getSlug('project-files-section')}
+          ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
+          initialData={findSubsection('project-files-section')}
         />
       )
     },
