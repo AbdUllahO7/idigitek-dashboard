@@ -61,6 +61,7 @@ interface GenericListPageProps {
   emptyCondition: boolean
   noSectionCondition: boolean
   customEmptyMessage?: string
+  showAddButton?: boolean
 }
 
 export function GenericListPage({
@@ -73,7 +74,8 @@ export function GenericListPage({
   isLoading = false,
   emptyCondition,
   noSectionCondition,
-  customEmptyMessage
+  customEmptyMessage,
+  showAddButton = true
 }: GenericListPageProps) {
   // Determine message to display in empty state
   const emptyMessage = customEmptyMessage || 
@@ -128,7 +130,9 @@ export function GenericListPage({
           </div>
           
           {/* Fixed Add Button with Tooltip */}
-                <Button
+          {
+            showAddButton &&
+                 <Button
                   className={`group transition-all duration-300 ${
                     isAddButtonDisabled ? "opacity-70 cursor-not-allowed" : "hover:scale-105"
                   }`}
@@ -143,6 +147,8 @@ export function GenericListPage({
                     </span>
                   )}
                 </Button>
+          }
+           
         </motion.div>
 
         <motion.div variants={animations.item}>

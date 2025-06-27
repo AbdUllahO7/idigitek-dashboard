@@ -299,6 +299,7 @@ export default function HeaderPage() {
     <div className="space-y-6">
       {/* Main list page with table and section integration */}
       <GenericListPage
+        showAddButton={false}
         config={HEADER_CONFIG}
         sectionId={sectionId}
         sectionConfig={headerSectionConfig}
