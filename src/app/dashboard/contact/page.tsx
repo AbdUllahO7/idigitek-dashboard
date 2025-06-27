@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/ta
 import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSection"
 import { Navigation, Users } from "lucide-react"
 import { getTeamNavigationSectionConfig } from "../team/navigation/team-navigation-config"
+import { ClickableImage } from "@/src/components/ClickableImage"
 
 // Contact {t('Navigation.NavigationConfiguration')} Function
 const getContactNavigationSectionConfig = (language: string = 'en') => {
@@ -397,6 +398,19 @@ export default function ContactPage() {
 
   return (
     <div className="space-y-6">
+       <ClickableImage
+              imageSrc="/assets/sections/contact.png"
+              imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+              size="large"
+              title={t('HeroManagement.tabLabel', 'Hero Section')}
+              subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+              t={t}
+              priority
+              className="w-full"
+              previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+            />
+      
+
       {/* Main list page with table and section integration */}
       <GenericListPage
         config={CONTACTS_CONFIG}

@@ -11,6 +11,7 @@ import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useTranslation } from "react-i18next"
 import FormBasicForm from "./basic/FormBasicForm"
 import SpecialFormBasicForm from "./specailLinks/FormBasicForm"
+import { ClickableImage } from "@/src/components/ClickableImage"
 
 // Form sections to collect data from
 const FORM_SECTIONS = ["footer"]
@@ -211,6 +212,18 @@ export default function AddFooter() {
   const isLoading = isLoadingLanguages || (!isCreateMode && (isLoadingSectionItem || isLoadingSubsections))
   
   return (
+   <>
+    <ClickableImage
+                  imageSrc="/assets/sections/footer.png"
+                  imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+                  size="large"
+                  title={t('HeroManagement.tabLabel', 'Hero Section')}
+                  subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+                  t={t}
+                  priority
+                  className="w-full"
+                  previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+                />
     <FormShell
       title={getTitle()}
       subtitle={getSubtitle()}
@@ -225,5 +238,6 @@ export default function AddFooter() {
       formSections={FORM_SECTIONS}
       isLoading={isLoading}
     />
+   </>
   )
 }

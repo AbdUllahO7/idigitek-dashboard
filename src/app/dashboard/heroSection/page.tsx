@@ -17,9 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/ta
 import { Navigation, Users } from "lucide-react"
 import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSection"
 import { getTeamNavigationSectionConfig } from "../team/navigation/team-navigation-config"
-
-// Column definitions
-
+import { ClickableImage } from "@/src/components/ClickableImage"
 
 export default function HeroPage() {
   const searchParams = useSearchParams()
@@ -48,6 +46,7 @@ export default function HeroPage() {
     listTitle: t('HeroManagement.backToList'),
     editPath: "heroSection/addHero"
   }), [t])
+
   const Hero_COLUMNS = [
     {
       header: t('servicesPage.table.columns.name'),
@@ -148,7 +147,6 @@ export default function HeroPage() {
       return
     }
 
-
     // We're done loading, now check the data
     let foundMainSubSection = false
     let foundNavigationSubSection = false
@@ -157,8 +155,6 @@ export default function HeroPage() {
     // Use NEWS configurations instead of team configurations
     const expectedNewsSlug = heroSectionConfig.name // This is correct for NEWS
     const expectedNavigationSlug = NavigationConfig.name // This is correct for NEWS navigation
-
-
 
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
@@ -182,8 +178,6 @@ export default function HeroPage() {
           return false
         })
         foundNavigationSubSection = !!navigationSubSection
-
-     
       } else {
         // Single object response - check if it's news main or navigation
         if (sectionData.isMain === true && sectionData.name === expectedNewsSlug) {
@@ -226,8 +220,6 @@ export default function HeroPage() {
           })
           foundNavigationSubSection = !!navigationSubSection
         }
-
-    
       } else {
         // Single object response - check what type it is
         if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedNewsSlug) {
@@ -263,7 +255,6 @@ export default function HeroPage() {
       if (heroSection === null) {
         setSection(sectionInfo)
       }
-
     }
 
   }, [
@@ -281,7 +272,6 @@ export default function HeroPage() {
 
   // Handle navigation subsection creation
   const handleNavigationSubSectionCreated = (subsection: any) => {
-
     // Check if subsection has the correct name or type for NEWS
     const expectedSlug = NavigationConfig.name
     const expectedType = NavigationConfig.type
@@ -294,8 +284,6 @@ export default function HeroPage() {
     // Set that we have a navigation subsection now
     setHasNavigationSubSection(hasCorrectIdentifier)
 
-
-
     // Force refetch of all subsection data
     if (refetchMainSubSection) {
       setTimeout(() => {
@@ -306,14 +294,12 @@ export default function HeroPage() {
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
-
     // Check if subsection has the correct name
     const expectedName = heroSectionConfig.subSectionName
     const hasCorrectName = subsection.name === expectedName
 
     // Set that we have a main subsection now (only if it also has the correct name)
     setHasMainSubSection(subsection.isMain === true && hasCorrectName)
-
 
     // If we have section data from the subsection, update it
     if (subsection.section) {
@@ -380,6 +366,19 @@ export default function HeroPage() {
 
   return (
     <div className="space-y-6">
+      {/* Hero Image Section - Now using ClickableImage component */}
+      <ClickableImage
+        imageSrc="/assets/sections/hero.png"
+        imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+        size="large"
+        title={t('HeroManagement.tabLabel', 'Hero Section')}
+        subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+        t={t}
+        priority
+        className="w-full"
+        previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+      />
+
       {/* Main list page with table and section integration */}
       <GenericListPage
         config={Hero_CONFIG}

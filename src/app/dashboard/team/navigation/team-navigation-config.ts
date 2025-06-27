@@ -64,20 +64,11 @@ export const getTeamNavigationSectionConfig = (language: string = 'en') => {
             type: "text", 
             required: true 
         },
-        { 
-            id: "url", 
-            label: translations.navigationUrl, 
-            type: "text", 
-            required: false,
-            showOnlyInDefault: true, // Only show in default language
-            placeholder: translations.urlPlaceholder,
-            description: translations.urlDescription
-        },
+     
         ] as FieldConfig[],
         // Define element mapping with translated values
         elementsMapping: {
         "name": translations.nameElement,
-        "url": translations.urlElement,
         }
     };
 };

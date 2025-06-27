@@ -29,7 +29,7 @@ export const useSectionManagement = (hasWebsite: boolean) => {
   const [showSavedSuccess, setShowSavedSuccess] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
-  const [activeTab, setActiveTab] = useState("current")
+  const [activeTab, setActiveTab] = useState("available")
   const [orderedSections, setOrderedSections] = useState<Section[]>([])
   const [isDragging, setIsDragging] = useState(false)
   

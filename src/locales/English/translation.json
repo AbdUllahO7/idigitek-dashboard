@@ -30,9 +30,11 @@
       "dashboard": "Dashboard",
       "users": "Users",
       "Forms" : "Forms",
+      "addNewSection" : "Add New Section",
       "services": "Tech Showcase",
       "header": "Header",
       "news": "Modern Article Grid",
+      "products": "Modern Card Design",
       "industrySolutions": "Category Cards",
       "whyChooseUs": "3D Tech Illustration",
       "projects": "Portfolio Cards",
@@ -4402,6 +4404,24 @@
     "tabLabel": "Section",
     "formSections": {
       "blog": "Section Content",
+      "navigation": "Navigation Configuration"
+    },
+    "backToList": "Back to Section List",
+    "loadingMessage": "Loading Section data...",
+    "savingMessage": "Saving Section item...",
+    "savedMessage": "Section item saved successfully",
+    "errorMessage": "Error saving Section item"
+  },
+  "ProductManagement": {
+    "createTitle": "Create New Section Item",
+    "editTitle": "Edit Section Item",
+    "createSubtitle": "Create a new SectionSection item with multilingual content",
+    "editSubtitle": "Editing \"{{itemName}}\" content across multiple languages",
+    "editSubtitleDefault": "Editing Section item content across multiple languages",
+    "defaultItemName": "New Section",
+    "tabLabel": "Section",
+    "formSections": {
+      "Product": "Section Content",
       "navigation": "Navigation Configuration"
     },
     "backToList": "Back to Section List",

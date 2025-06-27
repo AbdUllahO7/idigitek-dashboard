@@ -13,6 +13,7 @@ import IndustryItemsForm from "./IndustryForm"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useSearchParams } from "next/navigation"
 import { useTranslation } from "react-i18next"
+import { ClickableImage } from "@/src/components/ClickableImage"
 // Import your translation hook - adjust the import path as needed
 
 // Form sections to collect data from - now using translation key
@@ -203,6 +204,19 @@ export default function AddIndustry() {
   const itemName = sectionItemData?.data?.name || t("addIndustryPage.defaultItemName")
   
   return (
+   <>
+      <ClickableImage
+                imageSrc="/assets/sections/solutions.png"
+                imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+                size="large"
+                title={t('HeroManagement.tabLabel', 'Hero Section')}
+                subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+                t={t}
+                priority
+                className="w-full"
+                previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+              />
+              
     <FormShell
       title={isCreateMode ? t("addIndustryPage.createTitle") : t("addIndustryPage.editTitle")}
       subtitle={isCreateMode 
@@ -220,5 +234,6 @@ export default function AddIndustry() {
       formSections={getFormSections(t)}
       isLoading={isLoading}
     />
+   </>
   )
 }

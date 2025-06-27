@@ -12,6 +12,7 @@ import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import TeamForm from "./Team/TeamForm"
 import { FormDataTeam } from "@/src/api/types/sections/team/teamSection.type"
 import { useTranslation } from "react-i18next"
+import { ClickableImage } from "@/src/components/ClickableImage"
 
 
 // Form sections to collect data from
@@ -188,6 +189,19 @@ export default function AddTeam() {
   const isLoading = isLoadingLanguages || (!isCreateMode && (isLoadingSectionItem || isLoadingSubsections))
   
   return (
+   <>
+    <ClickableImage
+                  imageSrc="/assets/sections/team.png"
+                  imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+                  size="large"
+                  title={t('HeroManagement.tabLabel', 'Hero Section')}
+                  subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+                  t={t}
+                  priority
+                  className="w-full"
+                  previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+                />
+                
    <FormShell
       title={isCreateMode ? t("teamForm.addTeam.createTitle") : t("teamForm.addTeam.editTitle")}
       subtitle={
@@ -206,5 +220,6 @@ export default function AddTeam() {
       formSections={FORM_SECTIONS}
       isLoading={isLoading}
     />
+   </>
   )
 }

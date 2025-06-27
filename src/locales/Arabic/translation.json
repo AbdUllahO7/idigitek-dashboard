@@ -25,6 +25,7 @@
         "users": "المستخدمين",
         "Forms": "النماذج",
         "services": "عرض تقني",
+        "addNewSection" : "إضافة قسم جديد",
         "header": "رأس الصفحة",
         "news": "شبكة مقالات عصرية",
         "industrySolutions": "بطاقات فئات",
@@ -37,6 +38,7 @@
         "faq": "تخطيط منسدل مرقم",
         "blog": "دوار ثلاث بطاقات",
         "contact": "تصميم نموذج منقسم",
+        "products": "تصميم بطاقات عصري",
         "hero": "واجهة تقنية",
         "footer": "تذييل الصفحة",
         "profile": "الملف الشخصي",
@@ -717,7 +719,7 @@
       "description1": "شريط التنقل العلوي مع الشعار وعناصر القائمة ومعلومات الاتصال لموقعك الإلكتروني",
       "sections.hero.description": "بانر رئيسي جذاب مع عناوين مقنعة وأزرار دعوة للعمل",
       "sections.services.description": "اعرض خدماتك وعروضك الأساسية مع أوصاف مفصلة",
-      "sections.news.description": "اعرض آخر القسم والتحديثات والإعلانات لجمهورك",
+      "sections.news.description": "اعرض آخر   التحديثات والإعلانات لجمهورك",
       "sections.industrySolutions.description": "قدم حلول مخصصة للصناعات المختلفة التي تخدمها",
       "sections.whyChooseUs.description": "سلط الضوء على مقترحات القيمة الفريدة والمزايا التنافسية",
       "sections.projects.description": "معرض محفظة أعمال لمشاريعك المكتملة ودراسات الحالة",
@@ -4406,7 +4408,7 @@
   },
 "Navigation" : {
     "ContentConfiguration" : "تكوين المحتوى",
-    "NavigationConfiguration" : "تكوين التنقل",
+    "NavigationConfiguration" : "اعدادات الظهور على القائمة الرئيسية",
     "EditNavigation" : "تحرير التنقل",
     "CreateNavigation": "إنشاء التنقل",
     "description" : "تحديث اسم التنقل ورابطه للقسم",
@@ -4426,7 +4428,7 @@
     "tabLabel": "بدء إنشاء قسم خاص",
     "formSections": {
       "hero": "محتوىقسم",
-      "navigation": "تكوين التنقل"
+      "navigation": "اعدادات الظهور على القائمة الرئيسية "
     },
     "backToList": "العودة إلى قائمةقسم",
     "loadingMessage": "جاري تحميل بياناتقسم...",
@@ -4444,7 +4446,7 @@
     "tabLabel": "قسم",
     "formSections": {
       "blog": "محتوى القسم",
-      "navigation": "تكوين التنقل"
+      "navigation": "اعدادات الظهور على القائمة الرئيسية "
     },
     "backToList": "العودة إلى قائمة القسم",
     "loadingMessage": "جاري تحميل بيانات القسم...",

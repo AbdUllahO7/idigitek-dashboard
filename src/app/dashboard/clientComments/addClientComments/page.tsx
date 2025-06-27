@@ -10,6 +10,7 @@ import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useSearchParams } from "next/navigation"
 import ClientCommentsForm from "./ClientCommentsForm"
 import { useTranslation } from "react-i18next"
+import { ClickableImage } from "@/src/components/ClickableImage"
 
 // Form sections to collect data from
 const FORM_SECTIONS = ["Client Comments"]
@@ -187,6 +188,20 @@ export default function AddIndustry() {
   const isLoading = isLoadingLanguages || (!isCreateMode && (isLoadingSectionItem || isLoadingSubsections))
   
   return (
+<>
+         <ClickableImage
+                  imageSrc="/assets/sections/testimonials.png"
+                  imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+                  size="large"
+                  title={t('HeroManagement.tabLabel', 'Hero Section')}
+                  subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+                  t={t}
+                  priority
+                  className="w-full"
+                  previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+                />
+          
+                
     <FormShell
       title={isCreateMode 
         ? t('AddClientComment.createTitle', 'Create New Client Comment item') 
@@ -205,5 +220,6 @@ export default function AddIndustry() {
       formSections={FORM_SECTIONS}
       isLoading={isLoading}
     />
+</>
   )
 }

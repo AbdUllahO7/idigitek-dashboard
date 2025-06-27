@@ -23,7 +23,9 @@
     "nav": {
      "dashboard": "Kontrol Paneli",
       "users": "Kullanıcılar",
+      "ürünler": "Modern Card Design",
       "Forms": "Formlar",
+      "addNewSection" : "Yeni Bölüm Ekle",
       "services": "Teknoloji Vitrin",
       "header": "Başlık",
       "news": "Modern Makale Izgara",

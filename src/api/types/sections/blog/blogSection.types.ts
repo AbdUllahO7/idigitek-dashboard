@@ -14,3 +14,6 @@ export interface BlogsFormProps {
  export type FormDataBlog = {
     blog: MultilingualSectionData | Record<string, any>;
   }
+   export type FormDataProduct = {
+    product: MultilingualSectionData | Record<string, any>;
+  }

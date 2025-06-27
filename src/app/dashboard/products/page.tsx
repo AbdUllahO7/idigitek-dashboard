@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useState, useEffect, useRef, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useGenericList } from "@/src/hooks/useGenericList"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
@@ -11,57 +11,58 @@ import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
 import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
-import { useTranslation } from "react-i18next"
-import { getPartnersSectionConfig } from "./PartnersSectionConfig"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Navigation, Users } from "lucide-react"
 import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSection"
 import { getTeamNavigationSectionConfig } from "../team/navigation/team-navigation-config"
+import { useTranslation } from "react-i18next"
+import { getproductSectionConfig } from "./ProductSectionConfig"
 import { ClickableImage } from "@/src/components/ClickableImage"
 
 
 
-export default function PartnersPage() {
+export default function ProductPage() {
   const searchParams = useSearchParams()
+  const { t, i18n } = useTranslation()
   const sectionId = searchParams.get("sectionId")
   const [hasMainSubSection, setHasMainSubSection] = useState<boolean>(false)
   const [isLoadingMainSubSection, setIsLoadingMainSubSection] = useState<boolean>(true)
   const [sectionData, setSectionData] = useState<any>(null)
-  const { websiteId } = useWebsiteContext();
-  const {t , i18n} = useTranslation()
+  const { websiteId } = useWebsiteContext()
+  const NavigationConfig = getTeamNavigationSectionConfig(i18n.language)
   const [hasNavigationSubSection, setHasNavigationSubSection] = useState<boolean>(false)
-  const NavigationConfig = getTeamNavigationSectionConfig(i18n.language);
+  const currentLanguage = i18n.language;
+  const ProductSectionConfig = getproductSectionConfig(currentLanguage);
 
-  const HEADER_CONFIG = useMemo(() => ({
-    title: t('partners.management.title'),
-    description: t('partners.management.description'),
-    addButtonLabel: t('partners.management.addButtonLabel'),
-    emptyStateMessage: t('partners.management.emptyStateMessage'),
-    noSectionMessage: t('partners.management.noSectionMessage'),
-    mainSectionRequiredMessage: t('partners.management.mainSectionRequiredMessage'),
-    emptyFieldsMessage: t('partners.management.emptyFieldsMessage'),
-    sectionIntegrationTitle: t('partners.management.sectionIntegrationTitle'),
-    sectionIntegrationDescription: t('partners.management.sectionIntegrationDescription'),
-    addSectionButtonLabel: t('partners.management.addSectionButtonLabel'),
-    editSectionButtonLabel: t('partners.management.editSectionButtonLabel'),
-    saveSectionButtonLabel: t('partners.management.saveSectionButtonLabel'),
-    listTitle: t('partners.management.listTitle'),
-    editPath: "partners/addPartners"
-  }), [t]);
-
-  const PARTNERS_COLUMNS = [
+  const Product_CONFIG = useMemo(() => ({
+    title: t('ProductManagement.tabLabel'),
+    description: t('ProductManagement.createSubtitle'),
+    addButtonLabel: t('ProductManagement.createTitle'),
+    emptyStateMessage: t('ProductManagement.errorMessage'),
+    noSectionMessage: t('ProductManagement.createSubtitle'),
+    mainSectionRequiredMessage: t('ProductManagement.editSubtitleDefault'),
+    emptyFieldsMessage: t('ProductManagement.errorMessage'),
+    sectionIntegrationTitle: t('ProductManagement.formSections.Product'),
+    sectionIntegrationDescription: t('ProductManagement.editSubtitleDefault'),
+    addSectionButtonLabel: t('ProductManagement.createTitle'),
+    editSectionButtonLabel: t('ProductManagement.editTitle'),
+    saveSectionButtonLabel: t('ProductManagement.savedMessage'),
+    listTitle: t('ProductManagement.backToList'),
+    editPath: "products/addProducts"
+  }), [t])
+  const Product_COLUMNS = [
     {
-      header: t('newsPage.columnName', 'Name'),
+      header: t('servicesPage.table.columns.name'),
       accessor: "name",
       className: "font-medium"
     },
     {
-      header: t('newsPage.columnDescription', 'Description'),
+      header: t('servicesPage.table.columns.description'),
       accessor: "description",
       cell: TruncatedCell
     },
     {
-      header: t('newsPage.columnStatus', 'Status'),
+      header: t('servicesPage.table.columns.status'),
       accessor: "isActive",
       cell: (item: any, value: boolean) => (
         <div className="flex flex-col gap-2">
@@ -69,7 +70,7 @@ export default function PartnersPage() {
             {StatusCell(item, value)}
             {item.isMain && (
               <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                {t('newsPage.main', 'Main')}
+                {t('servicesPage.table.badges.main')}
               </span>
             )}
           </div>
@@ -77,21 +78,15 @@ export default function PartnersPage() {
       )
     },
     {
-      header: t('newsPage.columnOrder', 'Order'),
+      header: t('servicesPage.table.columns.order'),
       accessor: "order"
     },
     {
-      header: t('newsPage.columnSubsections', 'Subsections'),
+      header: t('servicesPage.table.columns.subsections'),
       accessor: "subsections.length",
       cell: CountBadgeCell
     }
   ]
-    const currentLanguage = i18n.language; // 'en', 'ar', 'tr'
-    const partnersSectionConfig = getPartnersSectionConfig(currentLanguage);
-  // Refs to track previous values for debugging
-  const prevHasMainSubSection = useRef(hasMainSubSection);
-  const isFirstRender = useRef(true);
-
   // Check if main subsection exists
   const { useGetMainByWebSiteId, useGetBySectionId } = useSubSections()
   
@@ -107,11 +102,11 @@ export default function PartnersPage() {
     isLoading: isLoadingSectionSubsections
   } = useGetBySectionId(sectionId || "")
 
-  // Use the generic list hook for Partners management
+  // Use the generic list hook for Product management
   const {
-    section: partnersSection,
-    items: navItems,
-    isLoadingItems: isLoadingNavItems,
+    section: ProductSection,
+    items: ProductItems,
+    isLoadingItems: isLoadingProductItems,
     isCreateDialogOpen,
     isDeleteDialogOpen,
     itemToDelete,
@@ -128,19 +123,11 @@ export default function PartnersPage() {
   } = useGenericList({
     sectionId,
     apiHooks: useSectionItems(),
-    editPath: HEADER_CONFIG.editPath
+    editPath: Product_CONFIG.editPath
   })
 
-
-  // Debug changes in hasMainSubSection
-  useEffect(() => {
-    prevHasMainSubSection.current = hasMainSubSection;
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-    }
-  }, [hasMainSubSection]);
-
-   useEffect(() => {    
+  // Determine if main subsection exists when data loads & set section data if needed
+  useEffect(() => {    
     // First check if we are still loading
     if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
       setIsLoadingMainSubSection(true);
@@ -152,49 +139,49 @@ export default function PartnersPage() {
     // We're done loading, now check the data
     let foundMainSubSection = false;
     let foundNavigationSubSection = false;
-    let mainSubSection = null;
+    let mainSubsection = null;
     
-    // 🔧 FIXED: Use NEWS configurations instead of team configurations
-    const expectedNewsSlug = partnersSectionConfig.name; // This is correct for NEWS
-    const expectedNavigationSlug = NavigationConfig.name; // This is correct for NEWS navigation
+    // Use Product configurations
+    const expectedProductSlug = ProductSectionConfig.name; // This is correct for Product
+    const expectedNavigationSlug = NavigationConfig.name; // This is correct for Product navigation
     
-   
+  
     
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
       const sectionData = sectionSubsections.data;
       
       if (Array.isArray(sectionData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
-        mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedNewsSlug
+        // Find the main Product subsection
+        mainSubsection = sectionData.find(sub => 
+          sub.isMain === true && sub.name === expectedProductSlug
         );
-        foundMainSubSection = !!mainSubSection;
+        foundMainSubSection = !!mainSubsection;
 
         // Check for navigation subsection - be more flexible in matching
-        const navigationSubSection = sectionData.find(sub => {
+        const navigationSubsection = sectionData.find(sub => {
           // Match by type first (most reliable)
           if (sub.type === NavigationConfig.type) return true;
           // Match by name
           if (sub.name === expectedNavigationSlug) return true;
           // Match by partial name (in case of slug differences)
-          if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
+          if (sub.name && sub.name.toLowerCase().includes('Product') && sub.name.toLowerCase().includes('navigation')) return true;
           return false;
         });
-        foundNavigationSubSection = !!navigationSubSection;
+        foundNavigationSubSection = !!navigationSubsection;
         
-    
+     
       } else {
-        // Single object response - check if it's news main or navigation
-        if (sectionData.isMain === true && sectionData.name === expectedNewsSlug) {
+        // Single object response - check if it's Product main or navigation
+        if (sectionData.isMain === true && sectionData.name === expectedProductSlug) {
           foundMainSubSection = true;
-          mainSubSection = sectionData;
+          mainSubsection = sectionData;
         }
         
-        // Check if it's a news navigation subsection
+        // Check if it's a Product navigation subsection
         if (sectionData.type === NavigationConfig.type || 
             sectionData.name === expectedNavigationSlug ||
-            (sectionData.name && sectionData.name.toLowerCase().includes('news') && sectionData.name.toLowerCase().includes('navigation'))) {
+            (sectionData.name && sectionData.name.toLowerCase().includes('Product') && sectionData.name.toLowerCase().includes('navigation'))) {
           foundNavigationSubSection = true;
         }
       }
@@ -205,64 +192,64 @@ export default function PartnersPage() {
       const websiteData = mainSubSectionData.data;
       
       if (Array.isArray(websiteData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
+        // Find the main Product subsection
         if (!foundMainSubSection) {
-          mainSubSection = websiteData.find(sub => 
-            sub.isMain === true && sub.name === expectedNewsSlug
+          mainSubsection = websiteData.find(sub => 
+            sub.isMain === true && sub.name === expectedProductSlug
           );
-          foundMainSubSection = !!mainSubSection;
+          foundMainSubSection = !!mainSubsection;
         }
 
         // Check for navigation subsection - be more flexible in matching
         if (!foundNavigationSubSection) {
-          const navigationSubSection = websiteData.find(sub => {
+          const navigationSubsection = websiteData.find(sub => {
             // Match by type first (most reliable)
             if (sub.type === NavigationConfig.type) return true;
             // Match by name
             if (sub.name === expectedNavigationSlug) return true;
             // Match by partial name (in case of slug differences)
-            if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
+            if (sub.name && sub.name.toLowerCase().includes('Product') && sub.name.toLowerCase().includes('navigation')) return true;
             return false;
           });
-          foundNavigationSubSection = !!navigationSubSection;
+          foundNavigationSubSection = !!navigationSubsection;
         }
         
-      
+   
       } else {
         // Single object response - check what type it is
-        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedNewsSlug) {
+        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedProductSlug) {
           foundMainSubSection = true;
-          mainSubSection = websiteData;
+          mainSubsection = websiteData;
         }
         
         // Check if it's a navigation subsection
         if (!foundNavigationSubSection && (
           websiteData.type === NavigationConfig.type || 
           websiteData.name === expectedNavigationSlug ||
-          (websiteData.name && websiteData.name.toLowerCase().includes('news') && websiteData.name.toLowerCase().includes('navigation'))
+          (websiteData.name && websiteData.name.toLowerCase().includes('Product') && websiteData.name.toLowerCase().includes('navigation'))
         )) {
           foundNavigationSubSection = true;
         }
       }
     }
     
-  
+
     
     setHasMainSubSection(foundMainSubSection);
     setHasNavigationSubSection(foundNavigationSubSection);
     setIsLoadingMainSubSection(false);
     
     // Extract section data from the main subsection if we found one
-    if (foundMainSubSection && mainSubSection && mainSubSection.section) {
-      const sectionInfo = typeof mainSubSection.section === 'string' 
-        ? { _id: mainSubSection.section } 
-        : mainSubSection.section;
+    if (foundMainSubSection && mainSubsection && mainSubsection.section) {
+      const sectionInfo = typeof mainSubsection.section === 'string' 
+        ? { _id: mainSubsection.section } 
+        : mainSubsection.section;
       
       // Set local section data
       setSectionData(sectionInfo);
       
-      // Update the newsSection in useGenericList hook if not already set
-      if (partnersSection === null) {
+      // Update the ProductSection in useGenericList hook if not already set
+      if (ProductSection === null) {
         setSection(sectionInfo);
       }
       
@@ -274,46 +261,22 @@ export default function PartnersPage() {
     isLoadingCompleteSubsections, 
     isLoadingSectionSubsections, 
     sectionId, 
-    partnersSection, 
+    ProductSection, 
     setSection,
-    partnersSectionConfig.name,        // 🔧 FIXED: Use news config
-    NavigationConfig.name,     // 🔧 FIXED: Use news navigation config
-    NavigationConfig.type      // 🔧 FIXED: Use news navigation config
+    ProductSectionConfig.name,        
+    NavigationConfig.name,     
+    NavigationConfig.type      
   ]);
-
-  // Handle navigation subsection creation
-  const handleNavigationSubSectionCreated = (subsection: any) => {    
-    // 🔧 FIXED: Check if subsection has the correct name or type for NEWS
-    const expectedSlug = NavigationConfig.name;
-    const expectedType = NavigationConfig.type;
-    const hasCorrectIdentifier = (
-      subsection.name === expectedSlug || 
-      subsection.type === expectedType ||
-      (subsection.name && subsection.name.toLowerCase().includes('news') && subsection.name.toLowerCase().includes('navigation'))
-    );
-    
-    // Set that we have a navigation subsection now
-    setHasNavigationSubSection(hasCorrectIdentifier);
-    
-
-    
-    // Force refetch of all subsection data
-    if (refetchMainSubSection) {
-      setTimeout(() => {
-        refetchMainSubSection();
-      }, 1000); // Give it a bit more time to ensure data is saved
-    }
-  };
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
     
     // Check if subsection has the correct name
-    const expectedName = partnersSectionConfig.subSectionName;
-    const hasCorrectName = subsection.name === expectedName;
+    const expectedSlug = ProductSectionConfig.name;
+    const hasCorrectSlug = subsection.name === expectedSlug;
     
     // Set that we have a main subsection now (only if it also has the correct name)
-    setHasMainSubSection(subsection.isMain === true && hasCorrectName);
+    setHasMainSubSection(subsection.isMain === true && hasCorrectSlug);
     
 
     
@@ -333,28 +296,49 @@ export default function PartnersPage() {
     }
   };
 
-  // Added check for navItems.length > 0 to disable when there's already a navItem
+  // Handle navigation subsection creation
+  const handleNavigationSubSectionCreated = (subsection: any) => {
+    
+    // Check if subsection has the correct name or type for Product
+    const expectedSlug = NavigationConfig.name;
+    const expectedType = NavigationConfig.type;
+    const hasCorrectIdentifier = (
+      subsection.name === expectedSlug || 
+      subsection.type === expectedType ||
+      (subsection.name && subsection.name.toLowerCase().includes('Product') && subsection.name.toLowerCase().includes('navigation'))
+    );
+    
+    // Set that we have a navigation subsection now
+    setHasNavigationSubSection(hasCorrectIdentifier);
+    
+
+    
+    // Force refetch of all subsection data
+    if (refetchMainSubSection) {
+      setTimeout(() => {
+        refetchMainSubSection();
+      }, 1000); // Give it a bit more time to ensure data is saved
+    }
+  };
+
+  // Logic for disabling the add button
   const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
-    (Boolean(sectionId) && !hasMainSubSection) ||
-    (navItems.length > 0); // This disables the button if there's already at least one NavItem
-
-
-
-
+    (Boolean(sectionId) && !hasMainSubSection);
+  
   // Custom message for empty state 
-  const emptyStateMessage = !partnersSection && !sectionData 
-    ? HEADER_CONFIG.noSectionMessage 
+  const emptyStateMessage = !ProductSection && !sectionData 
+    ? Product_CONFIG.noSectionMessage 
     : (!hasMainSubSection && !isLoadingMainSubSection && sectionId)
-      ? HEADER_CONFIG.mainSectionRequiredMessage
-      : HEADER_CONFIG.emptyStateMessage;
+      ? Product_CONFIG.mainSectionRequiredMessage
+      : Product_CONFIG.emptyStateMessage;
 
   // Components
-  const NavItemsTable = (
+  const ProductTable = (
     <GenericTable
-      columns={PARTNERS_COLUMNS}
-      data={navItems}
+      columns={Product_COLUMNS}
+      data={ProductItems}
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
     />
@@ -366,7 +350,7 @@ export default function PartnersPage() {
       onOpenChange={setIsCreateDialogOpen}
       sectionId={sectionId || ""}
       onServiceCreated={handleItemCreated}
-      title="Partners"
+      title={t('ProductManagement.tabLabel')}
     />
   );
 
@@ -377,37 +361,39 @@ export default function PartnersPage() {
       serviceName={itemToDelete?.name || ""}
       onConfirm={handleDelete}
       isDeleting={isDeleting}
+      title={t('ProductManagement.tabLabel')}
+      confirmText="Confirm"
     />
   );
 
   return (
     <div className="space-y-6">
-       <ClickableImage
-              imageSrc="/assets/sections/partners.png"
-              imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
-              size="large"
-              title={t('HeroManagement.tabLabel', 'Hero Section')}
-              subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
-              t={t}
-              priority
-              className="w-full"
-              previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
-            />
-      
+    <ClickableImage
+        imageSrc="/assets/sections/hero.png"
+        imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+        size="large"
+        title={t('HeroManagement.tabLabel', 'Hero Section')}
+        subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+        t={t}
+        priority
+        className="w-full"
+        previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+      />
+
 
       {/* Main list page with table and section integration */}
       <GenericListPage
-        config={HEADER_CONFIG}
+        config={Product_CONFIG}
         sectionId={sectionId}
-        sectionConfig={partnersSectionConfig}
+        sectionConfig={ProductSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={NavItemsTable}
+        tableComponent={ProductTable}
         createDialogComponent={CreateDialog}
         deleteDialogComponent={DeleteDialog}
         onAddNew={handleAddNew}
-        isLoading={isLoadingNavItems || isLoadingMainSubSection}
-        emptyCondition={navItems.length === 0}
-        noSectionCondition={!partnersSection && !sectionData}
+        isLoading={isLoadingProductItems || isLoadingMainSubSection}
+        emptyCondition={ProductItems.length === 0}
+        noSectionCondition={!ProductSection && !sectionData}
         customEmptyMessage={emptyStateMessage}
       />
       
@@ -417,18 +403,18 @@ export default function PartnersPage() {
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="content" className="flex items-center gap-2">
               <Users size={16} />
-              {t('Navigation.ContentConfiguration')}
+              {t('ProductManagement.formSections.Product')}
             </TabsTrigger>
             <TabsTrigger value="navigation" className="flex items-center gap-2">
               <Navigation size={16} />
-              {t('Navigation.NavigationConfiguration')}
+              {t('ProductManagement.formSections.navigation')}
             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="content" className="mt-6">
             <CreateMainSubSection 
               sectionId={sectionId}
-              sectionConfig={partnersSectionConfig}
+              sectionConfig={ProductSectionConfig}
               onSubSectionCreated={handleMainSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
             />
@@ -444,6 +430,7 @@ export default function PartnersPage() {
           </TabsContent>
         </Tabs>
       )}
+      
     </div>
   );
 }

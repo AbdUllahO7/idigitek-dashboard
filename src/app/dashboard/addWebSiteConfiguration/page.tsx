@@ -1,5 +1,6 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation" // ✅ Add this import
 import { motion, AnimatePresence } from "framer-motion"
 import { 
   Globe, 
@@ -131,10 +132,28 @@ const tabConfig = [
 export default function AdminManagementPage() {
   const { useGetMyWebsites } = useWebSite();
   const { data: websites = [], isLoading: isLoadingWebsites, error: websitesError } = useGetMyWebsites();
-  const [activeTab, setActiveTab] = useState("languages");
+  
+  // ✅ Read URL parameters to set initial tab
+  const searchParams = useSearchParams();
+  const urlTab = searchParams.get('tab');
+  
+  // ✅ Set initial tab based on URL parameter or default to "languages"
+  const [activeTab, setActiveTab] = useState(() => {
+    const validTabs = ["languages", "sections", "themes"];
+    return validTabs.includes(urlTab || "") ? urlTab! : "languages";
+  });
+  
   const { t } = useTranslation();
   const { isLoaded, language } = useLanguage();
   const isRTL = language === 'ar';
+
+  // ✅ Update active tab when URL parameter changes
+  useEffect(() => {
+    const validTabs = ["languages", "sections", "themes"];
+    if (urlTab && validTabs.includes(urlTab) && urlTab !== activeTab) {
+      setActiveTab(urlTab);
+    }
+  }, [urlTab, activeTab]);
 
   const activeTabConfig = tabConfig.find(tab => tab.id === activeTab);
 
@@ -216,7 +235,6 @@ export default function AdminManagementPage() {
             transition={{ delay: 0.4 }}
           >
             <Tabs 
-              defaultValue="languages" 
               value={activeTab} 
               onValueChange={setActiveTab}
               className="w-full"

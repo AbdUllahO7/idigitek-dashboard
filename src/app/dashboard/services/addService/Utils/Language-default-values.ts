@@ -41,6 +41,15 @@ const defaultValueDefinitions = {
     date: "", // Empty string for all languages
     backLinkText: "",
     }),
+    product: () => ({
+      title: "",
+      description: "",
+      content: "",
+      price: "",
+      category: "",
+      date: "", // Empty string for all languages
+      backLinkText: "",
+    }),
     processStep: () => [{
       icon: "Clock",
       title: "",
@@ -237,6 +246,9 @@ export const createSectionsDefaultValues = (languageIds: string[], activeLanguag
   };
 };
 export const createBlogDefaultValues = (languageIds: string[], activeLanguages: Language[] ,includeSubNavigation: boolean = false) => {
+    return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.blog);
+};
+export const createProductDefaultValues = (languageIds: string[], activeLanguages: Language[] ,includeSubNavigation: boolean = false) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.blog);
 };
 export const createHeroSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {

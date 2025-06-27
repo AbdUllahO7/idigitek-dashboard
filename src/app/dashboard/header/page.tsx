@@ -298,21 +298,6 @@ export default function HeaderPage() {
   return (
     <div className="space-y-6">
       {/* Main list page with table and section integration */}
-      <GenericListPage
-        showAddButton={false}
-        config={HEADER_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={headerSectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={NavItemsTable}
-        createDialogComponent={CreateDialog}
-        deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
-        isLoading={isLoadingNavItems || isLoadingMainSubSection}
-        emptyCondition={navItems.length === 0}
-        noSectionCondition={!headerSection && !sectionData}
-        customEmptyMessage={emptyStateMessage}
-      />
       
       {/* Main subsection management (only shown when section exists) */}
       {sectionId && (

@@ -54,6 +54,16 @@ export const PREDEFINED_SECTIONS: PredefinedSection[] = [
     bgColor: "from-orange-50 to-red-50 dark:from-orange-950/50 dark:to-red-950/50"
   },
   {
+    nameKey: "Dashboard_sideBar.nav.products",
+    subName: "Products",
+    descriptionKey: "sectionManagement.sections.products.description",
+    image: "/assets/sections/product.png",
+    icon: <MessageSquare className="h-8 w-8" />,
+    category: "content",
+    color: "from-orange-500 to-red-500",
+    bgColor: "from-orange-50 to-red-50 dark:from-orange-950/50 dark:to-red-950/50"
+  },
+  {
     nameKey: "Dashboard_sideBar.nav.industrySolutions",
     subName: "IndustrySolutions",
     descriptionKey: "sectionManagement.sections.industrySolutions.description",

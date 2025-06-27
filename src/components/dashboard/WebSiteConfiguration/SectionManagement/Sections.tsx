@@ -195,26 +195,7 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
               </div>
 
               {/* Current Sections Tab - Responsive Content */}
-              <TabsContent value="current" className="space-y-4 md:space-y-6 mt-0">
-                <div className="w-full">
-                  <CurrentSectionsTab
-                    hasWebsite={hasWebsite}
-                    orderedSections={orderedSections}
-                    searchQuery={searchQuery}
-                    onSearchChange={setSearchQuery}
-                    onAddNewClick={() => setActiveTab("available")}
-                    onToggleActive={handleToggleActive}
-                    onDelete={handleOpenDelete}
-                    onReorder={handleReorder}
-                    isToggling={toggleSectionActiveMutation.isPending}
-                    toggleSectionId={toggleSectionActiveMutation.variables?.id}
-                    t={t}
-                            onUpdateSection={sectionManagement.handleUpdateSection} // ✅ This fixes the error
-
-                    ready={ready}
-                  />
-                </div>
-              </TabsContent>
+             
 
               {/* Available Sections Tab - Responsive Content */}
               <TabsContent value="available" className="space-y-4 md:space-y-6 mt-0">
@@ -232,6 +213,26 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                       (createUserSectionMutation?.isPending ?? false)
                     }
                     t={t}
+                    ready={ready}
+                  />
+                </div>
+              </TabsContent>
+               <TabsContent value="current" className="space-y-4 md:space-y-6 mt-0">
+                <div className="w-full">
+                  <CurrentSectionsTab
+                    hasWebsite={hasWebsite}
+                    orderedSections={orderedSections}
+                    searchQuery={searchQuery}
+                    onSearchChange={setSearchQuery}
+                    onAddNewClick={() => setActiveTab("available")}
+                    onToggleActive={handleToggleActive}
+                    onDelete={handleOpenDelete}
+                    onReorder={handleReorder}
+                    isToggling={toggleSectionActiveMutation.isPending}
+                    toggleSectionId={toggleSectionActiveMutation.variables?.id}
+                    t={t}
+                            onUpdateSection={sectionManagement.handleUpdateSection} // ✅ This fixes the error
+
                     ready={ready}
                   />
                 </div>

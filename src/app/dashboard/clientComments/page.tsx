@@ -18,6 +18,7 @@ import { Navigation, Users } from "lucide-react"
 import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSection"
 import { contactSectionConfig } from "../contact/ContactSectionConfig"
 import { getTeamNavigationSectionConfig } from "../team/navigation/team-navigation-config"
+import { ClickableImage } from "@/src/components/ClickableImage"
 
 export default function ClientComments() {
   const { t, i18n } = useTranslation() // Explicitly use clientComments namespace
@@ -446,6 +447,19 @@ export default function ClientComments() {
 
   return (
     <div className="space-y-6">
+       <ClickableImage
+              imageSrc="/assets/sections/testimonials.png"
+              imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+              size="large"
+              title={t('HeroManagement.tabLabel', 'Hero Section')}
+              subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+              t={t}
+              priority
+              className="w-full"
+              previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+            />
+      
+
       {/* Main list page with table and section integration */}
       <GenericListPage
         config={ClientComments_CONFIG}

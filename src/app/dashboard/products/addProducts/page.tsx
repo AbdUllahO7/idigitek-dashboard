@@ -1,35 +1,38 @@
+// Updated AddProduct.tsx to fix the edit mode data display issue
+
 "use client"
 import { useSearchParams } from "next/navigation"
-import { Sparkles } from "lucide-react"
+import { Layout } from "lucide-react"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
+
 import { FormShell } from "@/src/components/dashboard/AddSectionlogic/FormShell"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
-import { FormDataPartners } from "@/src/api/types/sections/partners/partnersSection.type"
-import MultiImageForm from "../../projects/addProject/tabs/MultiImageForm"
-import { useTranslation } from "react-i18next"
+import ProductForm from "./Product/ProductForm"
+import { FormDataProduct } from "@/src/api/types/sections/blog/blogSection.types"
 import { ClickableImage } from "@/src/components/ClickableImage"
+import { useTranslation } from "react-i18next"
+
 
 // Form sections to collect data from
-const FORM_SECTIONS = [""]
+const FORM_SECTIONS = ["Product"]
 
-export default function AddPartners() {
+export default function AddProduct() {
   const searchParams = useSearchParams()
-  const { t } = useTranslation()
   
   // Get URL parameters
   const sectionId = searchParams.get('sectionId')
   const sectionItemId = searchParams.get('sectionItemId')
   const mode = searchParams.get('mode') || 'edit'
   const isCreateMode = mode === 'create'
-  const { websiteId } = useWebsiteContext();
+    const { websiteId } = useWebsiteContext();
 
   // API hooks
   const { useGetByWebsite: useGetAllLanguages } = useLanguages()
   const { useGetById: useGetSectionItemById } = useSectionItems()
   const { useGetBySectionItemId: useGetSubSectionsBySectionItemId } = useSubSections()
-  
+  const { t } = useTranslation()
   // Get languages
   const { 
     data: languagesData, 
@@ -70,8 +73,11 @@ export default function AddPartners() {
     
     // Create a mapping for known slug patterns
     const slugMappings: Record<string, string> = {
-      'basic-info': 'basic-info',
-      'more-info': 'more-info',
+      'process-steps': 'process-steps',
+      'Product-section': 'Product-section',
+      'benefits': 'benefits',
+      'features': 'features',
+      'faq-section': 'faq-section'
     };
     
     // Get the normalized version of the slug
@@ -102,12 +108,17 @@ export default function AddPartners() {
       return partialMatch;
     }
     
-    return undefined;
+      return undefined;
   };
   
   // Generate proper slugs for subsections
   const getSlug = (baseSlug: string) => {
     if (isCreateMode) return "";
+    
+    // Special case handling for processSteps - correct the capitalization
+    if (baseSlug === "Product-") {
+      baseSlug = "Product-";
+    }
     
     // Find the subsection
     const subsection = findSubsection(baseSlug);
@@ -121,37 +132,38 @@ export default function AddPartners() {
     return `${baseSlug.toLowerCase()}-${sectionItemId}`;
   };
   
-  // Define tabs configuration with translations
+  // Define tabs configuration
   const tabs = [
     {
-      id: "images",
-      label: t('addPartners.tabs.images'),
-      icon: <Sparkles className="h-4 w-4" />,
+      id: "Product",
+      label: "Product",
+      icon: <Layout className="h-4 w-4" />,
       component: (
-        <MultiImageForm
+        <ProductForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
-          slug={getSlug('Partners-image-section')}
+          slug={getSlug('Product-section')}
+          subSectionId = {sectionItemId}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
-          initialData={findSubsection('Partners-image-section')}
+          initialData={findSubsection('Product-section')}
         />
       )
-    },
+    }
   ]
-
+   
   // Define save handler for the service
-  const handleSavePartners = async (formData: FormDataPartners) => {
-    // Extract service info from Partners data for title/description
-    const PartnersData = formData.partners || {}
+  const handleSaveProduct = async (formData: FormDataProduct) => {
+    // Extract service info from Product data for title/description
+    const ProductData = formData.product || {}
     
     // Get English title and description values or fallback to the first language
-    let serviceName = t('addPartners.page.defaultPartnerName')
+    let serviceName = "New Product"
     let serviceDescription = ""
     
     // Loop through languages to find title and description
-    for (const langCode in PartnersData) {
-      if (langCode !== 'backgroundImage' && typeof PartnersData[langCode] === 'object') {
-        const langValues = PartnersData[langCode] as Record<string, any>
+    for (const langCode in ProductData) {
+      if (langCode !== 'backgroundImage' && typeof ProductData[langCode] === 'object') {
+        const langValues = ProductData[langCode] as Record<string, any>
         if (langValues?.title) {
           serviceName = langValues.title
         }
@@ -169,7 +181,7 @@ export default function AddPartners() {
     const servicePayload = {
       name: serviceName,
       description: serviceDescription,
-      image: PartnersData.backgroundImage || null,
+      image: ProductData.backgroundImage || null,
       isActive: true,
       section: sectionId
     }
@@ -178,54 +190,41 @@ export default function AddPartners() {
     return servicePayload
   }
   
-  // Generate page title and subtitle with translations
-  const getPageTitle = () => {
-    return isCreateMode 
-      ? t('addPartners.page.createTitle')
-      : t('addPartners.page.editTitle')
-  }
-  
-  const getPageSubtitle = () => {
-    if (isCreateMode) {
-      return t('addPartners.page.createSubtitle')
-    } else {
-      const partnerName = sectionItemData?.data?.name || t('addPartners.page.defaultPartnerName')
-      return t('addPartners.page.editSubtitle', { name: partnerName })
-    }
-  }
-  
   // Loading state
   const isLoading = isLoadingLanguages || (!isCreateMode && (isLoadingSectionItem || isLoadingSubsections))
   
   return (
-      <>
-       <ClickableImage
-          imageSrc="/assets/sections/partners.png"
-          imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
-          size="large"
-          title={t('HeroManagement.tabLabel', 'Hero Section')}
-          subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
-          t={t}
-          priority
-          className="w-full"
-          previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
-        />
+
+     <>
+     <ClickableImage
+            imageSrc="/assets/sections/hero.png"
+            imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+            size="large"
+            title={t('HeroManagement.tabLabel', 'Hero Section')}
+            subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
+    
           
-                
     <FormShell
-      title={getPageTitle()}
-      subtitle={getPageSubtitle()}
-      backUrl={`/dashboard/partners?sectionId=${sectionId}`}
+      title={isCreateMode ? "Create New Product" : "Edit Product"}
+      subtitle={isCreateMode 
+        ? "Create a new service with multilingual content" 
+        : `Editing "${sectionItemData?.data?.name || 'Product'}" content across multiple languages`}
+      backUrl={`/dashboard/products?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}
       sectionId={sectionId}
       sectionItemId={sectionItemId}
       mode={mode}
-      onSave={handleSavePartners}
+      onSave={handleSaveProduct}
       tabs={tabs}
       formSections={FORM_SECTIONS}
       isLoading={isLoading}
     />
-      </>
+     </>
   )
 }

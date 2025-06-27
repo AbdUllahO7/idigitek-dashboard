@@ -149,6 +149,7 @@ export const getSectionTypeDisplayName = (
     'hero': 'sectionManagement.sections.hero.name',
     'services': 'sectionManagement.sections.services.name',
     'news': 'sectionManagement.sections.news.name',
+    'products': 'sectionManagement.sections.products.products',
     'industrySolutions': 'sectionManagement.sections.industrySolutions.name',
     'whyChooseUs': 'sectionManagement.sections.whyChooseUs.name',
     'projects': 'sectionManagement.sections.projects.name',

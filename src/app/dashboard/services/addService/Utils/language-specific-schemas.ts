@@ -252,6 +252,34 @@ const schemaDefinitions = {
         ? z.string().min(1, { message: "Back link text is required" })
         : z.string().optional(),
     }),
+    product: (z: any, isRequired: boolean = true) =>
+    z.object({
+      title: isRequired
+        ? z.string().min(1, { message: "Title is required" })
+        : z.string().optional(),
+      description: isRequired
+        ? z.string().min(1, { message: "Description is required" })
+        : z.string().optional(),
+      content: isRequired
+        ? z.string().min(1, { message: "content is required" })
+        : z.string().optional(),
+      category: isRequired
+        ? z.string().min(1, { message: "Category is required" })
+        : z.string().optional(),
+      price: isRequired
+        ? z.string().min(1, { message: "Price is required" })
+        : z.string().optional(),
+      date: z
+        .string()
+        .refine(
+          (value: string | number | Date) => value === "" || !isNaN(new Date(value).getTime()),
+          { message: "Invalid date format" }
+        )
+        .optional(),
+      backLinkText: isRequired
+        ? z.string().min(1, { message: "Back link text is required" })
+        : z.string().optional(),
+    }),
   };
 
 export const createHeroSchema = (languageIds: string[], activeLanguages: Language[] ,   includeSubNavigation: boolean = false) => {
@@ -388,7 +416,11 @@ export const createBlogSchema = (languageIds: string[], activeLanguages: Languag
     ...createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.blog).shape,
     backgroundImage: z.string().optional(),
   });
-
+export const createProductSchema = (languageIds: string[], activeLanguages: Language[] , includeSubNavigation: boolean = false) =>
+  z.object({
+    ...createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.product).shape,
+    backgroundImage: z.string().optional(),
+  });
 export const createHeroSectionSchema = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageSchema(languageIds, activeLanguages, schemaDefinitions.heroSection);
 };
