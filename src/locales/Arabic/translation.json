@@ -24,22 +24,22 @@
       "dashboard": "لوحة التحكم",
         "users": "المستخدمين",
         "Forms": "النماذج",
-        "services": "عرض تقني",
+        "services": "عرض تفصيلي",
         "addNewSection" : "إضافة قسم جديد",
         "header": "رأس الصفحة",
         "news": "شبكة مقالات عصرية",
         "industrySolutions": "بطاقات فئات",
-        "whyChooseUs": "رسم تقني ثلاثي",
+        "whyChooseUs": "عرض النقاط المميزة",
         "projects": "بطاقات محفظة",
         "ourProcess": "شبكة بطاقات مرقمة",
-        "team": "تخطيط شبكة",
-        "clientComments": "بطاقات تقييم",
-        "partners": "تخطيط منزلق",
-        "faq": "تخطيط منسدل مرقم",
-        "blog": "دوار ثلاث بطاقات",
-        "contact": "تصميم نموذج منقسم",
+        "team": "أشخاص",
+        "clientComments": "بطاقات التقييم",
+        "partners": "سلايدر الشعارات",
+        "faq": "قائمة مرثمة قابلة للتوسيع",
+        "blog": "سلايدر بطاقات",
+        "contact": "تواصل معنا",
         "products": "تصميم بطاقات عصري",
-        "hero": "واجهة تقنية",
+        "hero": "مقدمة",
         "footer": "تذييل الصفحة",
         "profile": "الملف الشخصي",
         "webConfigurations": "إعدادات الويب",
@@ -710,16 +710,16 @@
     "errors.accountLocked.action": "تواصل مع الدعم",
     "errors.forbidden.resolution": "ليس لديك صلاحية للوصول إلى هذا المورد",
     "errors.serverError.resolution": "يرجى المحاولة مرة أخرى لاحقاً أو التواصل مع الدعم إذا استمرت المشكلة",
-    "errors.networkError.message": "خطأ في الاتصال بالشبكة",
-    "errors.networkError.resolution": "يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى",
+    "errors.networkError.message": "خطأ في القسم بالشبكة",
+    "errors.networkError.resolution": "يرجى التحقق من اقسام الإنترنت والمحاولة مرة أخرى",
     "errors.unknown.resolution": "يرجى المحاولة مرة أخرى أو التواصل مع الدعم إذا استمرت المشكلة"
   },
-"sectionManagement": {
+  "sectionManagement": {
       "subtitle": "ابني هيكل موقعك الإلكتروني بأقسام جميلة ومصممة مسبقاً",
-      "description1": "شريط التنقل العلوي مع الشعار وعناصر القائمة ومعلومات الاتصال لموقعك الإلكتروني",
+      "description1": " القسم العلوي مع الشعار وعناصر القائمة ومعلومات القسم لموقعك الإلكتروني",
       "sections.hero.description": "بانر رئيسي جذاب مع عناوين مقنعة وأزرار دعوة للعمل",
       "sections.services.description": "اعرض خدماتك وعروضك الأساسية مع أوصاف مفصلة",
-      "sections.news.description": "اعرض آخر   التحديثات والإعلانات لجمهورك",
+      "sections.news.description": "عرض الأخبار والمدونات والمزيد من الأقسام والتحديثات والإعلانات لجمهورك",
       "sections.industrySolutions.description": "قدم حلول مخصصة للصناعات المختلفة التي تخدمها",
       "sections.whyChooseUs.description": "سلط الضوء على مقترحات القيمة الفريدة والمزايا التنافسية",
       "sections.projects.description": "معرض محفظة أعمال لمشاريعك المكتملة ودراسات الحالة",
@@ -727,9 +727,9 @@
       "sections.team.description": "قسم تعريف بالفريق مع ملفات الموظفين والخبرات",
       "sections.clientComments.description": "شهادات العملاء والمراجعات لبناء الثقة والمصداقية",
       "sections.partners.description": "اعرض شعارات ومعلومات شركائك التجاريين",
-      "sections.faq.description": "الأسئلة الشائعة للإجابة على استفسارات العملاء الشائعة",
-      "sections.blog.description": "قسم القسم للمقالات والرؤى ومحتوى القيادة الفكرية",
-      "sections.contact.description": "معلومات الاتصال والنماذج وتفاصيل الموقع لاستفسارات العملاء",
+      "sections.faq.description": "القسم للإجابة على استفسارات العملاء الشائعة",
+      "sections.blog.description": "قسم للمقالات والرؤى ومحتوى القيادة الفكرية",
+      "sections.contact.description": "معلومات القسم والنماذج وتفاصيل الموقع لاستفسارات العملاء",
       "sections.footer.description": "القسم السفلي مع الروابط ووسائل التواصل الاجتماعي ومعلومات الشركة الإضافية",
       "addDialog": {
         "title": "إضافة قسم إلى الموقع الإلكتروني",
@@ -888,7 +888,7 @@
         "easyToUse": "سهل الاستخدام",
         "responsiveDesign": "تصميم متجاوب",
         
-        "navigationMenu": "قائمة التنقل",
+        "navigationMenu": "قائمة القسم",
         "logoDisplay": "عرض الشعار",
         "searchIntegration": "دمج البحث",
         
@@ -908,7 +908,7 @@
         "dateDisplay": "عرض التاريخ",
         
         "solutionCards": "بطاقات الحلول",
-        "industryIcons": "أيقونات الصناعة",
+        "industryIcons": "أيقونات القسم",
         "customColors": "ألوان مخصصة",
         "expandableContent": "محتوى قابل للتوسيع",
         
@@ -920,7 +920,7 @@
         "portfolioGallery": "معرض المحفظة",
         "imageLightbox": "صندوق ضوء الصور",
         "categoryFiltering": "تصفية الفئات",
-        "projectDetails": "تفاصيل المشروع",
+        "projectDetails": "تفاصيل القسم",
         
         "stepByStep": "خطوة بخطوة",
         "progressIndicators": "مؤشرات التقدم",
@@ -950,7 +950,7 @@
         "authorInfo": "معلومات المؤلف",
         "readingTime": "وقت القراءة",
         
-        "contactForm": "نموذج الاتصال",
+        "contactForm": "نموذج القسم",
         "mapIntegration": "دمج الخريطة",
         "validation": "التحقق",
         
@@ -1241,7 +1241,7 @@
     "errorsLoadRetry": "إعادة محاولة تحميل البيانات",
     "errorsActionFailed": "فشل الإجراء",
     "errorsActionRetry": "إعادة محاولة الإجراء",
-    "errorsNetworkError": "خطأ في الاتصال بالشبكة",
+    "errorsNetworkError": "خطأ في القسم بالشبكة",
     "errorsServerError": "حدث خطأ في الخادم",
     "errorsPermissionDenied": "تم رفض الإذن",
     "errorsNotFound": "البيانات غير موجودة",
@@ -1254,19 +1254,19 @@
     "confirmationsConfirm": "تأكيد"
   },
   "process": {
-      "title": "إدارة العمليات",
-      "description": "إدارة مخزون العمليات والمحتوى متعدد اللغات",
-      "addButtonLabel": "إضافة عنصر عملية جديد",
+      "title": "إدارة القسم",
+      "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
+      "addButtonLabel": "إضافة عنصر  جديد",
       "emptyStateMessage": "لم يتم العثور على عمليات. أنشئ عمليتك الأولى بالنقر على زر \"إضافة عملية جديدة\".",
-      "noSectionMessage": "يرجى إنشاء قسم عملية أولاً قبل إضافة العمليات.",
-      "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة العمليات.",
-      "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة العمليات.",
-      "sectionIntegrationTitle": "محتوى قسم العملية",
+      "noSectionMessage": "يرجى إنشاء قسم  أولاً   .",
+      "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي .",
+      "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي   .",
+      "sectionIntegrationTitle": "محتوى القسم ",
       "sectionIntegrationDescription": "إدارة محتوى قسم العملية بلغات متعددة.",
-      "addSectionButtonLabel": "إضافة قسم عملية",
-      "editSectionButtonLabel": "تحرير قسم العملية",
-      "saveSectionButtonLabel": "حفظ قسم العملية",
-      "listTitle": "قائمة العمليات",
+      "addSectionButtonLabel": "إضافة القسم ",
+      "editSectionButtonLabel": "تحرير القسم ",
+      "saveSectionButtonLabel": "حفظ القسم ",
+      "listTitle": "قائمة القسم",
       "editPath": "ourProcess/addProcess",
       "columnName": "الاسم",
       "columnDescription": "الوصف",
@@ -1278,7 +1278,7 @@
       "stillLoadingData": "لا يزال تحميل بيانات القسم الفرعي...",
       "expectedSubsectionName": "اسم القسم الفرعي المتوقع",
       "settingSectionData": "تعيين بيانات القسم",
-      "mainSubsectionCreated": "تم إنشاء القسم الفرعي الرئيسي",
+      "mainSubsectionCreated": "تم إنشاء القسم  الرئيسي",
       "sectionDataUpdated": "تم تحديث بيانات القسم",
       "refetchingData": "إعادة جلب البيانات",
       "noDataMessage": "لا توجد بيانات عملية متاحة",
@@ -1299,23 +1299,23 @@
       "validationError": "خطأ في التحقق",
       "checkFormErrors": "يرجى التحقق من الأخطاء في النموذج في",
       "success": "نجح",
-      "mainSubsectionCreated": "تم إنشاء القسم الفرعي الرئيسي بمحتوى في",
+      "mainSubsectionCreated": "تم إنشاء القسم الرئيسي بمحتوى في",
       "languages": "لغة/لغات.",
       
       "errorCreatingSubsection": "خطأ في إنشاء القسم الفرعي",
       "unexpectedError": "حدث خطأ غير متوقع",
       "subsectionUpdated": "تم تحديث القسم الفرعي بمحتوى في",
       "errorUpdatingSubsection": "خطأ في تحديث القسم الفرعي",
-      "couldNotCheckSubsection": "تعذر التحقق من وجود القسم الفرعي الرئيسي.",
+      "couldNotCheckSubsection": "تعذر التحقق من وجود القسم  الرئيسي.",
       "enterMainSectionData": "يرجى إدخال بيانات القسم الرئيسي!",
       "noActiveLanguagesTitle": "لا توجد لغات نشطة متاحة",
       "noActiveLanguagesMessage": "تحتاج إلى وجود لغة نشطة واحدة على الأقل قبل إنشاء قسم فرعي.",
-      "mainSubsectionAvailableTitle": "القسم الفرعي الرئيسي متاح",
-      "mainSubsectionAvailableDescription": "القسم الفرعي الرئيسي مُعد بالفعل لهذا القسم.",
-      "editMainSubsection": "تعديل القسم الفرعي الرئيسي",
-      "createMainSubsection": "إنشاء القسم الفرعي الرئيسي",
-      "updateContentDescription": "تحديث المحتوى لهذا القسم الفرعي الرئيسي عبر جميع اللغات.",
-      "completeRequiredFields": "أكمل الحقول المطلوبة لإنشاء القسم الفرعي الرئيسي لهذا القسم.",
+      "mainSubsectionAvailableTitle": "القسم الرئيسي متاح",
+      "mainSubsectionAvailableDescription": "القسم الرئيسي مُعد بالفعل لهذا القسم.",
+      "editMainSubsection": "تعديل القسم الرئيسي",
+      "createMainSubsection": "إنشاء القسم الرئيسي",
+      "updateContentDescription": "أدخل معلومات القسم الرئيسي الذي سيُعرض في مقدمة القسم.",
+      "completeRequiredFields": "أكمل الحقول المطلوبة لإنشاء القسم الرئيسي لهذا القسم.",
       "showContentForm": "إظهار نموذج المحتوى",
       "enterFieldFor": "أدخل",
       "forLanguage": "لـ",
@@ -1373,7 +1373,7 @@
       "editContent": "تعديل المحتوى",
       "cancel": "إلغاء",
       "saveChanges": "حفظ التغييرات",
-      "createMainSubsection": "إنشاء القسم الفرعي الرئيسي",
+      "createMainSubsection": "إنشاء القسم الرئيسي",
       "creatingSubsection": "جاري إنشاء القسم الفرعي...",
       "creatingContentElements": "جاري إنشاء عناصر المحتوى...",
       "updatingContent": "جاري تحديث المحتوى...",
@@ -1390,7 +1390,7 @@
       "almostDone": "شارف على الانتهاء...",
       "preparingData": "جاري تحضير البيانات...",
       "validatingInput": "جاري التحقق من الإدخال...",
-      "connectingToServer": "جاري الاتصال بالخادم...",
+      "connectingToServer": "جاري القسم بالخادم...",
       "processingRequest": "جاري معالجة الطلب...",
       "savingChanges": "جاري حفظ التغييرات...",
       "loadingContent": "جاري تحميل المحتوى...",
@@ -1398,7 +1398,7 @@
       "checkingStatus": "جاري فحص الحالة...",
       "initializingComponent": "جاري تهيئة المكون...",
       "configuringSettings": "جاري تكوين الإعدادات...",
-      "establishingConnection": "جاري إنشاء الاتصال...",
+      "establishingConnection": "جاري إنشاء القسم...",
       "synchronizingData": "جاري مزامنة البيانات...",
       "finalizing": "جاري الانتهاء...",
       "completed": "مكتمل",
@@ -1464,19 +1464,19 @@
       "sectionDescription": "وصف القسم"
   },
   "HeaderConfig" : {
-  "title": "إدارة شريط التنقل",
-  "description": "إدارة مخزون شريط التنقل والمحتوى متعدد اللغات",
+  "title": "إدارة  القسم",
+  "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
   "addButtonLabel": "إضافة عنصر تنقل جديد",
   "emptyStateMessage": "لم يتم العثور على رأس. قم بإنشاء أول رأس بالنقر على زر \"إضافة رأس جديد\".",
-  "noSectionMessage": "يرجى إنشاء قسم رأس أولاً قبل إضافة شريط التنقل.",
-  "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة شريط التنقل.",
-  "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة شريط التنقل.",
-  "sectionIntegrationTitle": "محتوى قسم شريط التنقل",
-  "sectionIntegrationDescription": "إدارة محتوى قسم شريط التنقل بلغات متعددة.",
-  "addSectionButtonLabel": "إضافة قسم رأس",
-  "editSectionButtonLabel": "تحرير قسم شريط التنقل",
-  "saveSectionButtonLabel": "حفظ قسم شريط التنقل",
-  "listTitle": "قائمة الرؤوس"
+  "noSectionMessage": "يرجى إنشاء قسم أولاً    .",
+  "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي  .",
+  "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي   .",
+  "sectionIntegrationTitle": "محتوى القسم ",
+  "sectionIntegrationDescription": "إدارة محتوى القسم بلغات متعددة.",
+  "addSectionButtonLabel": "إضافة قسم",
+  "editSectionButtonLabel": "تحرير القسم  ",
+  "saveSectionButtonLabel": "حفظ القسم  ",
+  "listTitle": "قائمة القسم"
   },
   "SectionTable" : {
   "name": "الاسم",
@@ -1544,18 +1544,18 @@
   "addHeader": {
     "title": {
       "create": "إنشاء عنصر تنقل جديد",
-      "edit": "تعديل عنصر التنقل"
+      "edit": "تعديل عنصر القسم"
     },
     "subtitle": {
       "create": "إنشاء عنصر تنقل جديد بمحتوى متعدد اللغات",
       "edit": "تعديل محتوى \"{{name}}\" عبر لغات متعددة"
     },
     "tabs": {
-      "navItems": "عناصر التنقل"
+      "navItems": "عناصر القسم"
     },
     "defaults": {
       "newHeader": "رأس جديد",
-      "navItem": "عنصر التنقل"
+      "navItem": "عنصر القسم"
     }
   },
   "tabsLayout" : {
@@ -1577,23 +1577,23 @@
     "backgroundImagePreview": "معاينة صورة الخلفية"
   },
   "navLanguageCard": {
-    "navigationSection": "قسم التنقل",
-    "manageNavigationItems": "إدارة عناصر التنقل لـ",
-    "navItem": "عنصر التنقل"
+    "navigationSection": " القسم",
+    "manageNavigationItems": "إدارة عناصر القسم لـ",
+    "navItem": "عنصر القسم"
   },
   "navForm": {
-    "loadingNavigationData": "تحميل بيانات قسم التنقل...",
-    "updatingNavigationSection": "تحديث قسم التنقل",
-    "creatingNavigationSection": "إنشاء قسم التنقل",
+    "loadingNavigationData": "تحميل بيانات القسم...",
+    "updatingNavigationSection": "تحديث القسم ",
+    "creatingNavigationSection": "إنشاء القسم ",
     "pleaseWaitSaving": "يرجى الانتظار بينما نحفظ التغييرات...",
-    "navigationItemAdded": "تم إضافة عنصر التنقل",
+    "navigationItemAdded": "تم إضافة عنصر القسم",
     "newNavigationItemAdded": "تم إضافة عنصر تنقل جديد.",
     "cannotRemove": "لا يمكن الإزالة",
     "needAtLeastOneItem": "تحتاج إلى عنصر تنقل واحد على الأقل",
-    "navigationItemDeleted": "تم حذف عنصر التنقل",
+    "navigationItemDeleted": "تم حذف عنصر القسم",
     "itemDeletedFromDatabase": "تم حذف العنصر {{number}} من قاعدة البيانات",
     "errorRemovingItem": "خطأ في إزالة العنصر",
-    "errorRemovingFromDatabase": "حدث خطأ في إزالة عنصر التنقل من قاعدة البيانات",
+    "errorRemovingFromDatabase": "حدث خطأ في إزالة عنصر القسم من قاعدة البيانات",
     "imageUploaded": "تم تحميل الصورة",
     "logoUploadedSuccessfully": "تم تحميل صورة الشعار بنجاح.",
     "imageUploadFailed": "فشل تحميل الصورة",
@@ -1601,31 +1601,31 @@
     "validationError": "خطأ في التحقق",
     "fillAllRequiredFields": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
     "creatingNewNavigationSection": "إنشاء قسم تنقل جديد...",
-    "settingUpNewContent": "إعداد محتوى التنقل الجديد.",
-    "navigationSectionUpdated": "تم تحديث قسم التنقل بنجاح!",
-    "navigationSectionCreated": "تم إنشاء قسم التنقل بنجاح!",
+    "settingUpNewContent": "إعداد محتوى القسم الجديد.",
+    "navigationSectionUpdated": "تم تحديث  القسم بنجاح!",
+    "navigationSectionCreated": "تم إنشاء  القسم بنجاح!",
     "allChangesSaved": "تم حفظ جميع التغييرات.",
     "refreshingContent": "تحديث المحتوى",
     "loadingUpdatedContent": "تحميل المحتوى المحدث...",
-    "errorUpdatingNavigationSection": "خطأ في تحديث قسم التنقل",
-    "errorCreatingNavigationSection": "خطأ في إنشاء قسم التنقل",
+    "errorUpdatingNavigationSection": "خطأ في تحديث القسم",
+    "errorCreatingNavigationSection": "خطأ في إنشاء  القسم",
     "unknownErrorOccurred": "حدث خطأ غير معروف",
     "addNavItem": "إضافة عنصر تنقل",
     "addNavItemToAllLanguages": "إضافة عنصر تنقل لجميع اللغات",
-    "sameNumberOfItems": "يجب أن تحتوي كل لغة على نفس عدد عناصر التنقل",
+    "sameNumberOfItems": "يجب أن تحتوي كل لغة على نفس عدد عناصر القسم",
     "saving": "جاري الحفظ...",
-    "updateNavigationContent": "تحديث محتوى التنقل",
-    "saveNavigationContent": "حفظ محتوى التنقل",
-    "navigationItemCountMismatch": "عدم تطابق عدد عناصر التنقل",
-    "countMismatchDescription": "يجب أن تحتوي كل لغة على نفس عدد عناصر التنقل قبل الحفظ. يرجى إضافة أو إزالة العناصر للتأكد من أن جميع اللغات لها نفس العدد:",
+    "updateNavigationContent": "تحديث محتوى القسم",
+    "saveNavigationContent": "حفظ محتوى القسم",
+    "navigationItemCountMismatch": "عدم تطابق عدد عناصر القسم",
+    "countMismatchDescription": "يجب أن تحتوي كل لغة على نفس عدد عناصر القسم قبل الحفظ. يرجى إضافة أو إزالة العناصر للتأكد من أن جميع اللغات لها نفس العدد:",
     "items": "عناصر",
     "close": "إغلاق",
-    "deleteNavigationItem": "حذف عنصر التنقل",
+    "deleteNavigationItem": "حذف عنصر القسم",
     "deleteItem": "حذف العنصر",
-    "navigationSection": "قسم التنقل",
-    "navigationSectionDescription": "قسم التنقل للموقع الإلكتروني",
+    "navigationSection": "قسم القسم",
+    "navigationSectionDescription": "قسم  للموقع الإلكتروني",
     "logo": "الشعار",
-    "navItem": "عنصر التنقل"
+    "navItem": "عنصر القسم"
   },
   "deleteDialog": {
     "defaultTitle": "حذف العنصر",
@@ -1637,7 +1637,7 @@
     "deleteSection": "حذف القسم",
     "deleteItem": "حذف العنصر",
     "deleteService": "حذف الخدمة",
-    "deleteProject": "حذف المشروع",
+    "deleteProject": "حذف القسم",
     "deleteUser": "حذف المستخدم",
     "deleteLanguage": "حذف اللغة",
     "deleteWebsite": "حذف الموقع",
@@ -1693,7 +1693,7 @@
 "errorsLoadRetry": "إعادة محاولة تحميل البيانات",
 "errorsActionFailed": "فشل الإجراء",
 "errorsActionRetry": "إعادة محاولة الإجراء",
-"errorsNetworkError": "خطأ في اتصال الشبكة",
+"errorsNetworkError": "خطأ في اقسام الشبكة",
 "errorsServerError": "حدث خطأ في الخادم",
 "errorsPermissionDenied": "رفض الإذن",
 "errorsNotFound": "لم يتم العثور على البيانات",
@@ -1710,14 +1710,14 @@
     "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
     "addButtonLabel": "إضافة خبر جديد",
     "emptyStateMessage": "لم يتم العثور على قسم. أنشئ أول خبر لك بالنقر على زر \"إضافة خبر جديد\".",
-    "noSectionMessage": "يرجى إنشاء قسم القسم أولاً قبل إضافة القسم.",
+    "noSectionMessage": "يرجى إنشاء القسم أولاً.",
     "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة القسم.",
     "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة القسم.",
     "sectionIntegrationTitle": "محتوى قسم القسم",
-    "sectionIntegrationDescription": "إدارة محتوى قسم القسم بلغات متعددة.",
-    "addSectionButtonLabel": "إضافة قسم القسم",
-    "editSectionButtonLabel": "تعديل قسم القسم",
-    "saveSectionButtonLabel": "حفظ قسم القسم",
+    "sectionIntegrationDescription": "إدارة محتوى القسم بلغات متعددة.",
+    "addSectionButtonLabel": "إضافة القسم",
+    "editSectionButtonLabel": "تعديل القسم",
+    "saveSectionButtonLabel": "حفظ القسم",
     "listTitle": "قائمة القسم",
     "editPath": "News/addNews",
     
@@ -1739,9 +1739,9 @@
     "createNewsTitle": "القسم"
   },
   "newsSectionConfig": {
-    "sectionName": "قسم القسم الأساسي",
-    "sectionDescription": "قسم القسم لإدارة معلومات الخدمة",
-    "subSectionName": "قسم القسم الأساسي",
+    "sectionName": " القسم الأساسي",
+    "sectionDescription": " القسم لإدارة معلومات الخدمة",
+    "subSectionName": " القسم الأساسي",
     "type": "قسم",
     
     "// Field Labels": "",
@@ -1846,13 +1846,13 @@
     "saveButton": "حفظ محتوى القسم",
     "updateButton": "تحديث محتوى القسم",
     "savingButton": "جارٍ الحفظ...",
-    "toastSuccessCreate": "تم إنشاء قسم القسم بنجاح!",
-    "toastSuccessUpdate": "تم تحديث قسم القسم بنجاح!",
+    "toastSuccessCreate": "تم إنشاء  القسم بنجاح!",
+    "toastSuccessUpdate": "تم تحديث  القسم بنجاح!",
     "toastSuccessDescription": "تم حفظ جميع المحتويات.",
     "toastValidationErrorTitle": "خطأ في التحقق",
     "toastValidationErrorDescription": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
-    "toastErrorCreateTitle": "خطأ في إنشاء قسم القسم",
-    "toastErrorUpdateTitle": "خطأ في تحديث قسم القسم",
+    "toastErrorCreateTitle": "خطأ في إنشاء  القسم",
+    "toastErrorUpdateTitle": "خطأ في تحديث  القسم",
     "toastErrorDescription": "حدث خطأ غير معروف",
     "toastImageUploadSuccessTitle": "تم رفع الصورة",
     "toastImageUploadSuccessDescription": "تم رفع صورة الخلفية بنجاح.",
@@ -1861,19 +1861,19 @@
   },
   "industryPage": {
     "// Page Configuration": "",
-    "title": "إدارة الصناعة",
-    "description": "إدارة مخزون الصناعة والمحتوى متعدد اللغات",
-    "addButtonLabel": "إضافة عنصر صناعة جديد",
-    "emptyStateMessage": "لم يتم العثور على صناعة. قم بإنشاء صناعتك الأولى عن طريق النقر على زر \"إضافة صناعة جديدة\".",
-    "noSectionMessage": "يرجى إنشاء قسم صناعة أولاً قبل إضافة الصناعة.",
-    "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة الصناعة.",
-    "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة الصناعة.",
-    "sectionIntegrationTitle": "محتوى قسم الصناعة",
-    "sectionIntegrationDescription": "إدارة محتوى قسم الصناعة بلغات متعددة.",
-    "addSectionButtonLabel": "إضافة قسم الصناعة",
-    "editSectionButtonLabel": "تعديل قسم الصناعة",
-    "saveSectionButtonLabel": "حفظ قسم الصناعة",
-    "listTitle": "قائمة الصناعة",
+    "title": "إدارة القسم",
+    "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
+    "addButtonLabel": "إضافة عنصر  جديد",
+    "emptyStateMessage": "لم يتم العثور على . قم بإنشاء صناعتك الأولى عن طريق النقر على زر \"إضافة  جديدة\".",
+    "noSectionMessage": "يرجى إنشاء القسم  أولاً .",
+    "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة القسم.",
+    "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة القسم.",
+    "sectionIntegrationTitle": "محتوى  القسم",
+    "sectionIntegrationDescription": "إدارة محتوى  القسم بلغات متعددة.",
+    "addSectionButtonLabel": "إضافة القسم",
+    "editSectionButtonLabel": "تعديل القسم",
+    "saveSectionButtonLabel": "حفظ القسم",
+    "listTitle": "قائمة القسم",
     
     "// Table Columns": "",
     "columnName": "الاسم",
@@ -1884,19 +1884,19 @@
     "main": "رئيسي",
     
     "// Dialog Titles": "",
-    "createIndustryTitle": "الصناعة",
-    "deleteIndustryItem": "حذف عنصر الصناعة",
+    "createIndustryTitle": "القسم",
+    "deleteIndustryItem": "حذف عنصر القسم",
     "confirmDelete": "تأكيد",
     
     "// Loading States": "",
-    "loadingData": "جاري تحميل بيانات الصناعة...",
+    "loadingData": "جاري تحميل بيانات القسم...",
     "loadingSubsections": "ما زال يتم تحميل بيانات الأقسام الفرعية...",
-    "loadingItems": "جاري تحميل عناصر الصناعة...",
+    "loadingItems": "جاري تحميل عناصر القسم...",
     
     "// Messages": "",
     "expectedSubsectionName": "اسم القسم الفرعي المتوقع:",
-    "subsectionCreated": "تم إنشاء القسم الفرعي الرئيسي:",
-    "subsectionNameCheck": "فحص اسم القسم الفرعي الرئيسي:",
+    "subsectionCreated": "تم إنشاء القسم الرئيسي:",
+    "subsectionNameCheck": "فحص اسم القسم الرئيسي:",
     "finalSubsectionResult": "نتيجة القسم الفرعي النهائي:",
     "settingSectionData": "تعيين بيانات القسم:",
     
@@ -1926,48 +1926,48 @@
   },
   "addIndustryPage": {
     "// Page Configuration": "",
-    "tabLabel": "عناصر الصناعة",
-    "createTitle": "إنشاء عنصر صناعة جديد",
-    "editTitle": "تعديل عنصر الصناعة",
-    "createSubtitle": "إنشاء عنصر صناعة جديد بمحتوى متعدد اللغات",
+    "tabLabel": "عناصر القسم",
+    "createTitle": "إنشاء عنصر  جديد",
+    "editTitle": "تعديل عنصر القسم",
+    "createSubtitle": "إنشاء عنصر  جديد بمحتوى متعدد اللغات",
     "editSubtitle": "تحرير محتوى \"{{name}}\" عبر عدة لغات",
-    "defaultItemName": "عنصر صناعة",
+    "defaultItemName": "عنصر ",
     
     "// Default Values": "",
-    "defaultIndustryName": "صناعة جديدة",
-    "defaultDescription": "وصف الصناعة",
+    "defaultIndustryName": "قسم جديدة",
+    "defaultDescription": "وصف القسم",
     
     "// Loading States": "",
     "loadingLanguages": "جاري تحميل اللغات...",
-    "loadingSectionItem": "جاري تحميل عنصر الصناعة...",
+    "loadingSectionItem": "جاري تحميل عنصر القسم...",
     "loadingSubsections": "جاري تحميل الأقسام الفرعية...",
     "loadingData": "جاري تحميل البيانات...",
     
     "// Form Sections": "",
-    "industryItemsSection": "عناصر الصناعة",
+    "industryItemsSection": "عناصر القسم",
     
     "// Messages": "",
     "searchingSubsection": "البحث عن قسم فرعي بالمعرف:",
     "subsectionFound": "تم العثور على القسم الفرعي:",
     "subsectionNotFound": "لم يتم العثور على القسم الفرعي, استخدام المعرف الافتراضي:",
-    "savingIndustry": "جاري حفظ عنصر الصناعة...",
-    "industrySaved": "تم حفظ عنصر الصناعة بنجاح",
-    "extractingIndustryInfo": "استخراج معلومات الصناعة من البيانات الأساسية",
-    "creatingIndustryPayload": "إنشاء حمولة عنصر الصناعة",
+    "savingIndustry": "جاري حفظ عنصر القسم...",
+    "industrySaved": "تم حفظ عنصر القسم بنجاح",
+    "extractingIndustryInfo": "استخراج معلومات القسم من البيانات الأساسية",
+    "creatingIndustryPayload": "إنشاء حمولة عنصر القسم",
     
     "// Navigation": "",
-    "backToList": "العودة إلى قائمة الصناعة",
+    "backToList": "العودة إلى قائمة القسم",
     
     "// Error Messages": "",
     "errorLoadingData": "خطأ في تحميل البيانات",
-    "errorSavingIndustry": "خطأ في حفظ عنصر الصناعة",
+    "errorSavingIndustry": "خطأ في حفظ عنصر القسم",
     "missingRequiredFields": "يرجى ملء جميع الحقول المطلوبة",
     "noLanguagesFound": "لم يتم العثور على لغات نشطة",
     
     "// Form Labels": "",
-    "industryName": "اسم الصناعة",
-    "industryDescription": "وصف الصناعة",
-    "industryImage": "صورة الصناعة",
+    "industryName": "اسم القسم",
+    "industryDescription": "وصف القسم",
+    "industryImage": "صورة القسم",
     "backgroundImage": "صورة الخلفية",
     "status": "الحالة",
     "active": "نشط",
@@ -1982,10 +1982,10 @@
     "update": "تحديث",
     
     "// Validation": "",
-    "nameRequired": "اسم الصناعة مطلوب",
-    "descriptionRequired": "وصف الصناعة مطلوب",
-    "nameMinLength": "يجب أن يكون اسم الصناعة 3 أحرف على الأقل",
-    "nameMaxLength": "لا يمكن أن يتجاوز اسم الصناعة 100 حرف",
+    "nameRequired": "اسم القسم مطلوب",
+    "descriptionRequired": "وصف القسم مطلوب",
+    "nameMinLength": "يجب أن يكون اسم القسم 3 أحرف على الأقل",
+    "nameMaxLength": "لا يمكن أن يتجاوز اسم القسم 100 حرف",
     "titleRequired": "العنوان مطلوب",
     "contentRequired": "المحتوى مطلوب",
     
@@ -1995,14 +1995,14 @@
     "defaultSlugPrefix": "industry",
     
     "// Success Messages": "",
-    "industryCreated": "تم إنشاء عنصر الصناعة بنجاح",
-    "industryUpdated": "تم تحديث عنصر الصناعة بنجاح",
+    "industryCreated": "تم إنشاء عنصر القسم بنجاح",
+    "industryUpdated": "تم تحديث عنصر القسم بنجاح",
     "dataLoaded": "تم تحميل البيانات بنجاح"
   },
   "industryLanguageCard": {
     "// Card Header": "",
-    "sectionTitle": "قسم الصناعة",
-    "cardDescription": "إدارة محتوى اللوح الرئيسي لـ {langCode}",
+    "sectionTitle": "قسم",
+    "cardDescription": "إدارة محتوى اللوح الرئيسي لـ {{langCode}}",
     "heroContent": "محتوى اللوح الرئيسي",
     
     "// Form Fields": "",
@@ -2047,12 +2047,12 @@
     "saving": "جاري الحفظ...",
     
     "// Dialog Titles": "",
-    "updatingIndustrySection": "تحديث قسم الصناعة",
-    "creatingIndustrySection": "إنشاء قسم الصناعة",
+    "updatingIndustrySection": "تحديث  القسم",
+    "creatingIndustrySection": "إنشاء القسم",
     "dialogDescription": "يرجى الانتظار أثناء حفظ التغييرات...",
     
     "// Section Names": "",
-    "sectionName": "قسم الصناعة",
+    "sectionName": " القسم",
     "heroSectionSlug": "hero-section",
     "backgroundImageName": "صورة الخلفية",
     "titleElementName": "العنوان",
@@ -2079,17 +2079,17 @@
     "unknownError": "حدث خطأ غير معروف",
     
     "// Success Messages": "",
-    "industryUpdated": "تم تحديث قسم الصناعة بنجاح!",
-    "industryCreated": "تم إنشاء قسم الصناعة بنجاح!",
+    "industryUpdated": "تم تحديث القسم بنجاح!",
+    "industryCreated": "تم إنشاء القسم بنجاح!",
     "allContentSaved": "تم حفظ جميع المحتويات.",
     
     "// Error Messages": "",
-    "errorUpdatingSection": "خطأ في تحديث قسم اللوح الرئيسي",
-    "errorCreatingSection": "خطأ في إنشاء قسم اللوح الرئيسي",
+    "errorUpdatingSection": "خطأ في تحديث القسم اللوح الرئيسي",
+    "errorCreatingSection": "خطأ في إنشاء القسم اللوح الرئيسي",
     
     "// Button Labels": "",
-    "updateIndustryContent": "تحديث محتوى الصناعة",
-    "saveIndustryContent": "حفظ محتوى الصناعة",
+    "updateIndustryContent": "تحديث محتوى القسم",
+    "saveIndustryContent": "حفظ محتوى القسم",
     "saveButton": "حفظ",
     "updateButton": "تحديث",
     
@@ -2114,7 +2114,7 @@
     
     "// Debug Messages": "",
     "processingInitialData": "معالجة البيانات الأولية",
-    "processingIndustryData": "معالجة بيانات الصناعة",
+    "processingIndustryData": "معالجة بيانات القسم",
     "mappingLanguageCodes": "تخطيط رموز اللغات",
     "handlingExistingContent": "التعامل مع المحتوى الموجود",
     "creatingNewContent": "إنشاء محتوى جديد",
@@ -2143,9 +2143,9 @@
       
       "// Messages": "",
       "emptyStateMessage": "لم يتم العثور على بطل. قم بإنشاء اللوح الرئيسي الأول الخاص بك بالنقر على زر \"إضافة بطل جديد\".",
-      "noSectionMessage": "يرجى إنشاء قسم اللوح الرئيسي أولاً قبل إضافة اللوح الرئيسي.",
-      "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة اللوح الرئيسي.",
-      "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة اللوح الرئيسي.",
+      "noSectionMessage": "يرجى إنشاء قسم اللوح الرئيسي أولاً    .",
+      "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي  .",
+      "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي    .",
       
       "// Section Integration": "",
       "sectionIntegrationTitle": "محتوى قسم اللوح الرئيسي",
@@ -2170,8 +2170,8 @@
       "// Debug Messages": "",
       "hasMainSubSectionChanged": "تغير hasMainSubSection من",
       "websiteSubsectionsCheck": "فحص الأقسام الفرعية للموقع:",
-      "mainSubsectionCreated": "تم إنشاء القسم الفرعي الرئيسي:",
-      "mainSubsectionNameCheck": "فحص اسم القسم الفرعي الرئيسي:",
+      "mainSubsectionCreated": "تم إنشاء القسم الرئيسي:",
+      "mainSubsectionNameCheck": "فحص اسم القسم  الرئيسي:",
       
       "// Component Status": "",
       "componentReady": "المكون جاهز",
@@ -2387,26 +2387,26 @@
   },
   "projectPage": {
       "// Page Configuration": "",
-      "title": "إدارة المشاريع",
-      "description": "إدارة مخزون المشاريع والمحتوى متعدد اللغات",
-      "listTitle": "قائمة المشاريع",
+      "title": "إدارة القسم",
+      "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
+      "listTitle": "قائمة القسم",
       "editPath": "projects/addProject",
       
       "// Button Labels": "",
-      "addButtonLabel": "إضافة عنصر مشروع جديد",
-      "addSectionButtonLabel": "إضافة قسم المشروع",
-      "editSectionButtonLabel": "تحرير قسم المشروع",
-      "saveSectionButtonLabel": "حفظ قسم المشروع",
+      "addButtonLabel": "إضافة عنصر قسم جديد",
+      "addSectionButtonLabel": "إضافة القسم ",
+      "editSectionButtonLabel": "تحرير القسم ",
+      "saveSectionButtonLabel": "حفظ القسم ",
       
       "// Messages": "",
-      "emptyStateMessage": "لم يتم العثور على مشروع. أنشئ مشروعك الأول بالنقر على زر \"إضافة مشروع جديد\".",
-      "noSectionMessage": "يرجى إنشاء قسم المشروع أولاً قبل إضافة المشروع.",
-      "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة المشروع.",
-      "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة المشروع.",
+      "emptyStateMessage": "لم يتم العثور على قسم. أنشئ قسم الأول بالنقر على زر \"إضافة قسم جديد\".",
+      "noSectionMessage": "يرجى إنشاء القسم  أولاً .",
+      "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي   .",
+      "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي .",
       
       "// Section Integration": "",
-      "sectionIntegrationTitle": "محتوى قسم المشروع",
-      "sectionIntegrationDescription": "إدارة محتوى قسم المشروع بلغات متعددة.",
+      "sectionIntegrationTitle": "محتوى القسم",
+      "sectionIntegrationDescription": "إدارة محتوى القسم  بلغات متعددة.",
       
       "// Table Headers": "",
       "name": "الاسم",
@@ -2417,14 +2417,14 @@
       "main": "رئيسي",
       
       "// Dialog Configuration": "",
-      "dialogTitle": "مشروع",
-      "deleteTitle": "حذف عنصر المشروع",
+      "dialogTitle": "قسم",
+      "deleteTitle": "حذف عنصر القسم",
       "confirmText": "تأكيد"
   },
   "addProject": {
       "// Page Titles": "",
-      "createTitle": "إنشاء مشروع جديد",
-      "editTitle": "تحرير المشروع",
+      "createTitle": "إنشاء قسم جديد",
+      "editTitle": "تحرير القسم",
       
       "// Page Subtitles": "",
       "createSubtitle": "إنشاء خدمة جديدة بمحتوى متعدد اللغات",
@@ -2436,33 +2436,33 @@
       "imagesTab": "الصور",
       
       "// Default Values": "",
-      "newProjectName": "مشروع جديد",
+      "newProjectName": "قسم جديد",
       
       "// Loading States": "",
       "loading": "جاري التحميل...",
       
       "// Navigation": "",
-      "backToProjects": "العودة إلى المشاريع"
+      "backToProjects": "العودة إلى القسم"
   },
   "projectLanguageCard": {
       "// Card Header": "",
-      "projectSection": "قسم المشروع",
+      "projectSection": "القسم ",
       "primaryLanguage": "اللغة الأساسية",
-      "manageContent": "إدارة محتوى المشروع لـ {{langCode}}",
-      "projectDateLabel": "تاريخ المشروع: {{date}}",
+      "manageContent": "إدارة محتوى القسم لـ {{langCode}}",
+      "projectDateLabel": "تاريخ القسم: {{date}}",
       
       "// Form Labels": "",
-      "projectTitle": "عنوان المشروع",
-      "projectDescription": "وصف المشروع",
-      "projectCategory": "فئة المشروع",
+      "projectTitle": "عنوان القسم",
+      "projectDescription": "وصف القسم",
+      "projectCategory": "فئة القسم",
       "galleryText": "نص المعرض",
-      "projectDate": "تاريخ المشروع",
+      "projectDate": "تاريخ القسم",
       "buttonText": "نص الزر",
       
       "// Placeholders": "",
-      "titlePlaceholder": "أدخل عنوان المشروع",
-      "descriptionPlaceholder": "أدخل وصف المشروع",
-      "categoryPlaceholder": "أدخل فئة المشروع",
+      "titlePlaceholder": "أدخل عنوان القسم",
+      "descriptionPlaceholder": "أدخل وصف القسم",
+      "categoryPlaceholder": "أدخل فئة القسم",
       "galleryTextPlaceholder": "أدخل نص المعرض",
       "datePlaceholder": "اختر تاريخاً",
       "buttonTextPlaceholder": "ابدأ الآن",
@@ -2474,14 +2474,14 @@
   },
   "projectBasicForm": {
       "// Loading States": "",
-      "loadingData": "جاري تحميل بيانات قسم المشروع...",
-      "savingUpdate": "تحديث قسم المشروع",
-      "savingCreate": "إنشاء قسم المشروع",
+      "loadingData": "جاري تحميل بيانات  القسم...",
+      "savingUpdate": "تحديث القسم ",
+      "savingCreate": "إنشاء القسم ",
       "savingDescription": "يرجى الانتظار بينما نحفظ التغييرات...",
       "saving": "جاري الحفظ...",
       
       "// Section Names": "",
-      "projectSection": "قسم المشروع",
+      "projectSection": "القسم ",
       
       "// Validation Messages": "",
       "validationError": "خطأ في التحقق",
@@ -2496,29 +2496,29 @@
       "imageUploadError": "فشل في تحميل الصورة",
       
       "// Success Messages": "",
-      "sectionUpdatedSuccess": "تم تحديث قسم المشروع بنجاح!",
-      "sectionCreatedSuccess": "تم إنشاء قسم المشروع بنجاح!",
+      "sectionUpdatedSuccess": "تم تحديث القسم  بنجاح!",
+      "sectionCreatedSuccess": "تم إنشاء القسم  بنجاح!",
       "allContentSaved": "تم حفظ جميع المحتويات.",
       
       "// Error Messages": "",
-      "errorUpdatingSection": "خطأ في تحديث قسم المشروع",
-      "errorCreatingSection": "خطأ في إنشاء قسم المشروع",
+      "errorUpdatingSection": "خطأ في تحديث القسم ",
+      "errorCreatingSection": "خطأ في إنشاء القسم ",
       "unknownError": "حدث خطأ غير معروف",
       
       "// Button Labels": "",
-      "updateContent": "تحديث محتوى المشروع",
-      "saveContent": "حفظ محتوى المشروع"
+      "updateContent": "تحديث محتوى القسم",
+      "saveContent": "حفظ محتوى القسم"
   },
   "projectMoreInfo": {
       "// Loading States": "",
-      "loadingData": "جاري تحميل بيانات قسم المشروع...",
-      "savingUpdate": "تحديث قسم المشروع",
-      "savingCreate": "إنشاء قسم المشروع",
+      "loadingData": "جاري تحميل بيانات القسم ...",
+      "savingUpdate": "تحديث القسم ",
+      "savingCreate": "إنشاء القسم ",
       "savingDescription": "يرجى الانتظار بينما نحفظ التغييرات...",
       "saving": "جاري الحفظ...",
       
       "// Section Names": "",
-      "projectSection": "قسم المشروع",
+      "projectSection": "القسم",
       
       "// Validation Messages": "",
       "validationError": "خطأ في التحقق",
@@ -2527,47 +2527,47 @@
       "failedToCreateSection": "فشل في إنشاء أو استرداد معرف القسم الفرعي",
       
       "// Success Messages": "",
-      "sectionUpdatedSuccess": "تم تحديث قسم المشروع بنجاح!",
-      "sectionCreatedSuccess": "تم إنشاء قسم المشروع بنجاح!",
+      "sectionUpdatedSuccess": "تم تحديث القسم  بنجاح!",
+      "sectionCreatedSuccess": "تم إنشاء القسم  بنجاح!",
       "allContentSaved": "تم حفظ جميع المحتويات.",
       
       "// Error Messages": "",
-      "errorUpdatingSection": "خطأ في تحديث قسم المشروع",
-      "errorCreatingSection": "خطأ في إنشاء قسم المشروع",
+      "errorUpdatingSection": "خطأ في تحديث القسم ",
+      "errorCreatingSection": "خطأ في إنشاء القسم ",
       "unknownError": "حدث خطأ غير معروف",
       
       "// Button Labels": "",
-      "updateContent": "تحديث محتوى المشروع",
-      "saveContent": "حفظ محتوى المشروع"
+      "updateContent": "تحديث محتوى القسم",
+      "saveContent": "حفظ محتوى القسم"
   },
   "projectMoreInfoLanguageCard": {
       "// Card Header": "",
-      "projectSection": "قسم المشروع",
-      "manageContent": "إدارة محتوى المشروع لـ {{langCode}}",
+      "projectSection": " القسم",
+      "manageContent": "إدارة محتوى القسم لـ {{langCode}}",
       
       "// Section Headers": "",
       "client": "العميل",
-      "industry": "الصناعة",
+      "industry": "القسم",
       "year": "السنة",
       "technologies": "التقنيات",
       
       "// Custom Name Labels": "",
       "clientCustomName": "اسم العميل المخصص",
-      "industryCustomName": "اسم الصناعة المخصص",
+      "industryCustomName": "اسم القسم المخصص",
       "yearCustomName": "اسم السنة المخصص",
       "technologiesCustomName": "اسم التقنيات المخصص",
       
       "// Value Labels": "",
       "clientValue": "قيمة العميل",
-      "industryValue": "قيمة الصناعة",
+      "industryValue": "قيمة القسم",
       "yearValue": "قيمة السنة",
       "technologiesValue": "قيمة التقنيات",
       
       "// Placeholders": "",
       "clientCustomNamePlaceholder": "أدخل اسماً مخصصاً للعميل",
       "clientValuePlaceholder": "أدخل اسم العميل",
-      "industryCustomNamePlaceholder": "أدخل اسماً مخصصاً للصناعة",
-      "industryValuePlaceholder": "أدخل الصناعة",
+      "industryCustomNamePlaceholder": "أدخل اسماً مخصصاً للقسم",
+      "industryValuePlaceholder": "أدخل القسم",
       "yearCustomNamePlaceholder": "أدخل اسماً مخصصاً للسنة",
       "yearValuePlaceholder": "أدخل السنة",
       "technologiesCustomNamePlaceholder": "أدخل اسماً مخصصاً للتقنيات",
@@ -2651,19 +2651,19 @@
     "enterDescription": "أدخل الوصف"
   },
   "teamManagement": {
-    "title": "إدارة الفريق",
-    "description": "إدارة مخزون الفريق والمحتوى متعدد اللغات",
-    "addButtonLabel": "إضافة عضو فريق جديد",
-    "emptyStateMessage": "لم يتم العثور على فريق. قم بإنشاء أول فريق لك من خلال النقر على زر \"إضافة فريق جديد\".",
-    "noSectionMessage": "يرجى إنشاء قسم الفريق أولاً قبل إضافة الفريق.",
-    "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة الفريق.",
-    "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة الفريق.",
-    "sectionIntegrationTitle": "محتوى قسم الفريق",
-    "sectionIntegrationDescription": "إدارة محتوى قسم الفريق بلغات متعددة.",
-    "addSectionButtonLabel": "إضافة قسم الفريق",
-    "editSectionButtonLabel": "تحرير قسم الفريق",
-    "saveSectionButtonLabel": "حفظ قسم الفريق",
-    "listTitle": "قائمة الفريق",
+    "title": "إدارة القسم",
+    "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
+    "addButtonLabel": "إضافة  قسم جديد",
+    "emptyStateMessage": "لم يتم العثور على قسم. قم بإنشاء أول قسم لك من خلال النقر على زر \"إضافة قسم جديد\".",
+    "noSectionMessage": "يرجى إنشاء القسم  أولاً .",
+    "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي   .",
+    "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي   .",
+    "sectionIntegrationTitle": "محتوى قسم القسم",
+    "sectionIntegrationDescription": "إدارة محتوى قسم القسم بلغات متعددة.",
+    "addSectionButtonLabel": "إضافة  القسم",
+    "editSectionButtonLabel": "تحرير القسم ",
+    "saveSectionButtonLabel": "حفظ القسم ",
+    "listTitle": "قائمة القسم",
     "name": "الاسم",
     "columnDescription": "الوصف",
     "status": "الحالة",
@@ -2671,35 +2671,35 @@
     "subsections": "الأقسام الفرعية",
     "main": "رئيسي",
     "team": "الفريق",
-    "deleteTeamItem": "حذف عضو الفريق",
+    "deleteTeamItem": "حذف عضو القسم",
     "confirm": "تأكيد"
   },
   "teamForm": {
-    "teamTabLabel": "الفريق",
-    "loadingTeamSectionData": "جارٍ تحميل بيانات قسم الفريق",
-    "creatingTeamSection": "جارٍ إنشاء قسم الفريق",
-    "updatingTeamSection": "جارٍ تحديث قسم الفريق",
+    "teamTabLabel": "القسم",
+    "loadingTeamSectionData": "جارٍ تحميل بيانات القسم",
+    "creatingTeamSection": "جارٍ إنشاء القسم",
+    "updatingTeamSection": "جارٍ تحديث قسم ",
     "pleaseWaitSaving": "يرجى الانتظار أثناء حفظ التغييرات...",
-    "saveTeamContent": "حفظ محتوى الفريق",
-    "updateTeamContent": "تحديث محتوى الفريق",
+    "saveTeamContent": "حفظ محتوى القسم",
+    "updateTeamContent": "تحديث محتوى القسم",
     "validationError": "خطأ في التحقق",
     "validationErrorDescription": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
     "imageUploaded": "تم رفع الصورة",
     "imageUploadedDescription": "تم رفع صورة الخلفية بنجاح",
     "imageUploadFailed": "فشل رفع الصورة",
     "imageUploadFailedDescription": "فشل في رفع الصورة, يرجى المحاولة مرة أخرى",
-    "teamSectionCreated": "تم إنشاء قسم الفريق بنجاح!",
-    "teamSectionUpdated": "تم تحديث قسم الفريق بنجاح!",
-    "errorCreatingTeamSection": "خطأ في إنشاء قسم الفريق",
-    "errorUpdatingTeamSection": "خطأ في تحديث قسم الفريق",
+    "teamSectionCreated": "تم إنشاء القسم  بنجاح!",
+    "teamSectionUpdated": "تم تحديث القسم  بنجاح!",
+    "errorCreatingTeamSection": "خطأ في إنشاء القسم ",
+    "errorUpdatingTeamSection": "خطأ في تحديث القسم ",
     "unknownError": "حدث خطأ غير معروف",
     "imageValidationError": "يُسمح فقط بملفات JPEG, PNG, GIF, أو SVG",
-    "parentSectionIdRequired": "معرف القسم الأصلي مطلوب لإنشاء قسم فرعي",
+    "parentSectionIdRequired": "معرف القسم الأصلي مطلوب ",
     "failedToCreateSubsection": "فشل في إنشاء أو استرجاع معرف القسم الفرعي",
     "contentSaved": "تم حفظ جميع المحتويات",
     "languageCard": {
-      "teamSectionTitle": "قسم الفريق",
-      "manageContentDescription": "إدارة محتوى الفريق للغة {{langCode}}",
+      "teamSectionTitle": "القسم",
+      "manageContentDescription": "إدارة محتوى القسم للغة {{langCode}}",
       "titleLabel": "العنوان",
       "titlePlaceholder": "أدخل العنوان",
       "jobLabel": "الوظيفة",
@@ -2708,41 +2708,41 @@
       "descriptionPlaceholder": "أدخل الوصف"
     },
     "addTeam": {
-      "createTitle": "إنشاء فريق جديد",
-      "editTitle": "تحرير الفريق",
-      "createSubtitle": "إنشاء فريق جديد بمحتوى متعدد اللغات",
+      "createTitle": "إنشاء قسم جديد",
+      "editTitle": "تحرير القسم",
+      "createSubtitle": "إنشاء قسم جديد بمحتوى متعدد اللغات",
       "editSubtitle": "تحرير محتوى \"{{name}}\" عبر عدة لغات",
-      "defaultTeamName": "فريق جديد"
+      "defaultTeamName": "قسم جديد"
     }
   },
   "clientComments": {
-    "title": "إدارة تعليقات العملاء",
-    "description": "إدارة مخزون تعليقات العملاء والمحتوى متعدد اللغات",
-    "addButtonLabel": "إضافة عنصر تعليقات عملاء جديد",
-    "emptyStateMessage": "لم يتم العثور على تعليقات عملاء. قم بإنشاء أول تعليقات عملاء بالنقر على زر \"إضافة عنصر تعليقات عملاء جديد\".",
-    "noSectionMessage": "يرجى إنشاء قسم تعليقات العملاء أولاً قبل إضافة تعليقات.",
-    "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة تعليقات العملاء.",
-    "emptyFieldsMessage": "يرجى ملء جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة تعليقات العملاء.",
-    "sectionIntegrationTitle": "محتوى قسم تعليقات العملاء",
-    "sectionIntegrationDescription": "إدارة محتوى قسم تعليقات العملاء بأكثر من لغة.",
-    "addSectionButtonLabel": "إضافة قسم تعليقات العملاء",
-    "editSectionButtonLabel": "تحرير قسم تعليقات العملاء",
-    "saveSectionButtonLabel": "حفظ قسم تعليقات العملاء",
-    "listTitle": "قائمة تعليقات العملاء",
+    "title": "إدارة القسم",
+    "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
+    "addButtonLabel": "إضافة عنصر  جديد",
+    "emptyStateMessage": "لم يتم العثور   . قم بإنشاء أول  بالنقر على زر \"إضافة عنصر  عملاء جديد\".",
+    "noSectionMessage": "يرجى إنشاء  القسم أولاً .",
+    "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة القسم.",
+    "emptyFieldsMessage": "يرجى ملء جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة القسم.",
+    "sectionIntegrationTitle": "محتوى قسم القسم",
+    "sectionIntegrationDescription": "إدارة محتوى قسم القسم بأكثر من لغة.",
+    "addSectionButtonLabel": "إضافة قسم القسم",
+    "editSectionButtonLabel": "تحرير قسم القسم",
+    "saveSectionButtonLabel": "حفظ قسم القسم",
+    "listTitle": "قائمة القسم",
     "columnName": "الاسم",
     "columnDescription": "الوصف",
     "columnStatus": "الحالة",
     "columnOrder": "الترتيب",
     "columnSubsections": "الأقسام الفرعية",
     "main": "رئيسي",
-    "createClientCommentsTitle": "تعليقات العملاء",
-    "deleteClientCommentsItem": "حذف عنصر تعليقات العملاء",
+    "createClientCommentsTitle": "القسم",
+    "deleteClientCommentsItem": "حذف عنصر القسم",
     "confirmDelete": "تأكيد"
   },
   "clientCommentsForm": {
-    "loadingData": "جارٍ تحميل بيانات قسم تعليقات العملاء...",
-    "updatingClientComments": "تحديث تعليقات العملاء",
-    "creatingClientComments": "إنشاء تعليقات العملاء",
+    "loadingData": "جارٍ تحميل بيانات قسم القسم...",
+    "updatingClientComments": "تحديث القسم",
+    "creatingClientComments": "إنشاء القسم",
     "savingChanges": "يرجى الانتظار بينما نحفظ التغييرات...",
     "cannotRemove": "لا يمكن الإزالة",
     "needOneClientComment": "يجب أن يكون لديك تعليق عميل واحد على الأقل",
@@ -2750,35 +2750,35 @@
     "stepDeletedDescription": "تم حذف الخطوة {{number}} من قاعدة البيانات",
     "errorRemovingStep": "خطأ في إزالة الخطوة",
     "errorRemovingStepDescription": "حدث خطأ أثناء إزالة الخطوة من قاعدة البيانات",
-    "clientCommentsDeleted": "تم حذف تعليقات العملاء",
-    "clientCommentsDeletedDescription": "تم حذف تعليقات العملاء {{number}} من قاعدة البيانات",
-    "errorRemovingClientComments": "خطأ في إزالة تعليقات العملاء",
-    "errorRemovingClientCommentsDescription": "حدث خطأ أثناء إزالة تعليقات العملاء من قاعدة البيانات",
+    "clientCommentsDeleted": "تم حذف القسم",
+    "clientCommentsDeletedDescription": "تم حذف القسم {{number}} من قاعدة البيانات",
+    "errorRemovingClientComments": "خطأ في إزالة القسم",
+    "errorRemovingClientCommentsDescription": "حدث خطأ أثناء إزالة القسم من قاعدة البيانات",
     "validationError": "خطأ في التحقق",
     "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
-    "clientCommentsUpdated": "تم تحديث قسم تعليقات العملاء بنجاح!",
-    "clientCommentsCreated": "تم إنشاء قسم تعليقات العملاء بنجاح!",
-    "errorUpdatingClientComments": "خطأ في تحديث قسم تعليقات العملاء",
-    "errorCreatingClientComments": "خطأ في إنشاء قسم تعليقات العملاء",
+    "clientCommentsUpdated": "تم تحديث قسم القسم بنجاح!",
+    "clientCommentsCreated": "تم إنشاء قسم القسم بنجاح!",
+    "errorUpdatingClientComments": "خطأ في تحديث قسم القسم",
+    "errorCreatingClientComments": "خطأ في إنشاء قسم القسم",
     "unknownError": "حدث خطأ غير معروف",
-    "sameNumberClientComments": "يجب أن يحتوي كل لغة على نفس عدد تعليقات العملاء",
-    "updateClientComments": "تحديث تعليقات العملاء",
-    "saveClientComments": "حفظ تعليقات العملاء",
+    "sameNumberClientComments": "يجب أن يحتوي كل لغة على نفس عدد القسم",
+    "updateClientComments": "تحديث القسم",
+    "saveClientComments": "حفظ القسم",
     "deleteComment": "حذف التعليق",
     "deleteCommentConfirm": "حذف التعليق"
   },
   "clientCommentsLanguageCard": {
-    "title": "قسم تعليقات العملاء",
-    "description": "إدارة محتوى تعليقات العملاء للغة {{langCode}}",
+    "title": "قسم القسم",
+    "description": "إدارة محتوى القسم للغة {{langCode}}",
     "addComment": "إضافة تعليق"
   },
   "AddClientComment": {
-    "createTitle": "إنشاء عنصر تعليقات عملاء جديد",
-    "editTitle": "تحرير عنصر تعليقات العملاء",
-    "createSubtitle": "إنشاء عنصر تعليقات عملاء جديد بمحتوى متعدد اللغات",
+    "createTitle": "إنشاء عنصر   جديد",
+    "editTitle": "تحرير عنصر القسم",
+    "createSubtitle": "إنشاء عنصر  جديد بمحتوى متعدد اللغات",
     "editSubtitle": "تحرير محتوى \"{{name}}\" عبر لغات متعددة",
     "defaultClientCommentName": "تعليق جديد",
-    "clientCommentsTabLabel": "تعليقات العملاء"
+    "clientCommentsTabLabel": "القسم"
   },
   "clientCommentsCard": {
     "commentTitle": "تعليق {{number}}",
@@ -2791,19 +2791,18 @@
     "descriptionPlaceholder": "أدخل الوصف"
   },
   "servicesPage": {
-    "title": "إدارة الخدمات",
-    "description": "إدارة مخزون الخدمات والمحتوى متعدد اللغات",
+    "title": "إدارة القسم",
+    "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
     "addButtonLabel": "إضافة خدمة جديدة",
     "emptyStateMessage": "لم يتم العثور على خدمات. أنشئ خدمتك الأولى بالنقر على زر \"إضافة خدمة جديدة\".",
-    "noSectionMessage": "يرجى إنشاء قسم الخدمات أولاً قبل إضافة الخدمات.",
-    "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة الخدمات.",
-    "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة الخدمات.",
-    "sectionIntegrationTitle": "محتوى قسم الخدمات",
-    "sectionIntegrationDescription": "إدارة محتوى قسم الخدمات بلغات متعددة.",
-    "addSectionButtonLabel": "إضافة قسم الخدمات",
-    "editSectionButtonLabel": "تحرير قسم الخدمات",
-    "saveSectionButtonLabel": "حفظ قسم الخدمات",
-    "listTitle": "قائمة الخدمات",
+    "noSectionMessage": "يرجى إنشاء  القسم أولاً قبل إضافة القسم.",
+    "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة القسم.",
+    "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة القسم.",
+    "sectionIntegrationTitle": "محتوى  القسم",
+    "sectionIntegrationDescription": "إدارة محتوى القسم بلغات متعددة.",
+    "addSectionButtonLabel": "إضافة  القسم",
+    "editSectionButtonLabel": "تحرير  القسم",
+    "listTitle": "قائمة القسم",
     "table": {
       "columns": {
         "name": "الاسم",
@@ -2837,7 +2836,7 @@
       "overview": "نظرة عامة",
       "features": "الميزات",
       "process": "العملية",
-      "faq": "الأسئلة الشائعة"
+      "faq": "القسم"
     },
     "defaults": {
       "serviceName": "خدمة جديدة"
@@ -2862,7 +2861,7 @@
       },
       "refreshing": {
         "title": "تحديث البيانات",
-        "description": "تحديث الواجهة بعد الحذف..."
+        "description": "تحديث  بعد الحذف..."
       }
     },
     "deleteDialog": {
@@ -2969,7 +2968,7 @@
       },
       "refreshing": {
         "title": "تحديث البيانات",
-        "description": "تحديث الواجهة بعد الحذف..."
+        "description": "تحديث  بعد الحذف..."
       }
     },
     "deleteDialogs": {
@@ -3044,7 +3043,7 @@
       },
       "refreshing": {
         "title": "تحديث البيانات",
-        "description": "تحديث الواجهة بعد الحذف..."
+        "description": "تحديث  بعد الحذف..."
       }
     },
     "deleteDialog": {
@@ -3271,7 +3270,7 @@
           "refreshingData": "تحديث البيانات",
           "pleaseWait": "يرجى الانتظار بينما نحفظ التغييرات...",
           "pleaseWaitDelete": "يرجى الانتظار بينما نحذف قسم خطوات العملية...",
-          "pleaseWaitRefresh": "تحديث الواجهة بعد الحذف..."
+          "pleaseWaitRefresh": "تحديث  بعد الحذف..."
         },
         "toast": {
           "stepAdded": "تمت إضافة الخطوة",
@@ -3301,10 +3300,10 @@
   },
   "faqForm": {
       "section": {
-        "title": "قسم الأسئلة الشائعة",
-        "description": "إدارة محتوى الأسئلة الشائعة لـ {{language}}"
+        "title": "تخصيص القسم",
+        "description": "إدارة محتوى القسم {{language}}"
       },
-      "item": {
+      "item": { 
         "defaultTitle": "السؤال الشائع {{number}}",
         "fields": {
           "question": {
@@ -3319,24 +3318,24 @@
       },
       "actions": {
         "addFaq": "إضافة سؤال شائع",
-        "save": "حفظ محتوى الأسئلة الشائعة",
-        "update": "تحديث محتوى الأسئلة الشائعة",
-        "delete": "حذف قسم الأسئلة الشائعة",
+        "save": "حفظ محتوى القسم",
+        "update": "تحديث محتوى القسم",
+        "delete": "حذف قسم القسم",
         "saving": "جاري الحفظ...",
         "deleting": "جاري الحذف..."
       },
       "loading": {
-        "loadingData": "جاري تحميل بيانات قسم الأسئلة الشائعة...",
-        "creatingSection": "إنشاء قسم الأسئلة الشائعة",
-        "updatingSection": "تحديث قسم الأسئلة الشائعة",
-        "deletingSection": "حذف قسم الأسئلة الشائعة",
+        "loadingData": "جاري تحميل بيانات قسم القسم...",
+        "creatingSection": "إنشاء قسم القسم",
+        "updatingSection": "تحديث قسم القسم",
+        "deletingSection": "حذف قسم القسم",
         "refreshingData": "تحديث البيانات",
         "pleaseWait": "يرجى الانتظار بينما نحفظ التغييرات...",
-        "pleaseWaitDelete": "يرجى الانتظار بينما نحذف قسم الأسئلة الشائعة...",
-        "pleaseWaitRefresh": "تحديث الواجهة بعد الحذف..."
+        "pleaseWaitDelete": "يرجى الانتظار بينما نحذف قسم القسم...",
+        "pleaseWaitRefresh": "تحديث  بعد الحذف..."
       },
       "validation": {
-        "faqCountMismatch": "يجب أن يكون لكل لغة نفس عدد الأسئلة الشائعة",
+        "faqCountMismatch": "يجب أن يكون لكل لغة نفس عدد القسم",
         "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
         "cannotRemove": "لا يمكن الإزالة",
         "needAtLeastOneFaq": "تحتاج إلى سؤال شائع واحد على الأقل"
@@ -3348,16 +3347,16 @@
           "confirmText": "حذف السؤال الشائع"
         },
         "deleteSection": {
-          "title": "حذف قسم الأسئلة الشائعة",
-          "description": "هل أنت متأكد من رغبتك في حذف قسم الأسئلة الشائعة بالكامل؟ لا يمكن التراجع عن هذا الإجراء.",
+          "title": "حذف قسم القسم",
+          "description": "هل أنت متأكد من رغبتك في حذف القسم بالكامل؟ لا يمكن التراجع عن هذا الإجراء.",
           "warnings": [
             "ستتم إزالة جميع الأسئلة والأجوبة الشائعة نهائياً",
             "لا يمكن التراجع عن هذا الإجراء"
           ]
         },
         "validationError": {
-          "title": "عدم تطابق عدد الأسئلة الشائعة",
-          "description": "يجب أن تحتوي كل لغة على نفس عدد الأسئلة الشائعة قبل الحفظ. يرجى إضافة أو إزالة الأسئلة الشائعة للتأكد من أن جميع اللغات لها نفس العدد:",
+          "title": "عدم تطابق عدد القسم",
+          "description": "يجب أن تحتوي كل لغة على نفس عدد القسم قبل الحفظ. يرجى إضافة أو إزالة القسم للتأكد من أن جميع اللغات لها نفس العدد:",
           "close": "إغلاق"
         }
       },
@@ -3368,15 +3367,15 @@
         "faqDeletedDesc": "تم حذف السؤال الشائع {{number}} من قاعدة البيانات",
         "faqRemoved": "تمت إزالة السؤال الشائع",
         "faqRemovedDesc": "تمت إزالة السؤال الشائع بنجاح.",
-        "sectionCreated": "تم إنشاء قسم الأسئلة الشائعة بنجاح!",
-        "sectionUpdated": "تم تحديث قسم الأسئلة الشائعة بنجاح!",
+        "sectionCreated": "تم إنشاء  القسم بنجاح!",
+        "sectionUpdated": "تم تحديث  القسم بنجاح!",
         "contentSaved": "تم حفظ جميع التغييرات.",
         "creatingSection": "إنشاء قسم أسئلة شائعة جديد...",
-        "creatingSectionDesc": "إعداد محتوى الأسئلة الشائعة الجديد.",
+        "creatingSectionDesc": "إعداد محتوى القسم الجديد.",
         "refreshingContent": "تحديث المحتوى",
         "refreshingContentDesc": "تحميل المحتوى المحدث...",
-        "errorCreating": "خطأ في إنشاء قسم الأسئلة الشائعة",
-        "errorUpdating": "خطأ في تحديث قسم الأسئلة الشائعة",
+        "errorCreating": "خطأ في إنشاء قسم القسم",
+        "errorUpdating": "خطأ في تحديث قسم القسم",
         "errorRemoving": "خطأ في إزالة السؤال الشائع",
         "errorRemovingDesc": "حدث خطأ في إزالة السؤال الشائع من قاعدة البيانات",
         "validationError": "خطأ في التحقق"
@@ -3384,8 +3383,8 @@
   },
   "faqFormSection": {
       "section": {
-        "title": "قسم الأسئلة الشائعة",
-        "description": "إدارة محتوى الأسئلة الشائعة باللغة العربية"
+        "title": "قسم القسم",
+        "description": "إدارة محتوى القسم باللغة العربية"
       },
       "item": {
         "defaultTitle": "سؤال شائع {{number}}",
@@ -3402,24 +3401,24 @@
       },
       "actions": {
         "addFaq": "إضافة سؤال شائع",
-        "save": "حفظ محتوى الأسئلة الشائعة",
-        "update": "تحديث محتوى الأسئلة الشائعة",
-        "delete": "حذف قسم الأسئلة الشائعة",
+        "save": "حفظ محتوى القسم",
+        "update": "تحديث محتوى القسم",
+        "delete": "حذف قسم القسم",
         "saving": "جاري الحفظ...",
         "deleting": "جاري الحذف..."
       },
       "loading": {
-        "loadingData": "جاري تحميل بيانات قسم الأسئلة الشائعة...",
-        "creatingSection": "إنشاء قسم الأسئلة الشائعة",
-        "updatingSection": "تحديث قسم الأسئلة الشائعة",
-        "deletingSection": "حذف قسم الأسئلة الشائعة",
+        "loadingData": "جاري تحميل بيانات قسم القسم...",
+        "creatingSection": "إنشاء قسم القسم",
+        "updatingSection": "تحديث قسم القسم",
+        "deletingSection": "حذف قسم القسم",
         "refreshingData": "تحديث البيانات",
         "pleaseWait": "يرجى الانتظار أثناء حفظ التغييرات...",
-        "pleaseWaitDelete": "يرجى الانتظار أثناء حذف قسم الأسئلة الشائعة...",
-        "pleaseWaitRefresh": "تحديث الواجهة بعد الحذف..."
+        "pleaseWaitDelete": "يرجى الانتظار أثناء حذف قسم القسم...",
+        "pleaseWaitRefresh": "تحديث  بعد الحذف..."
       },
       "validation": {
-        "faqCountMismatch": "يجب أن يحتوي كل لغة على نفس عدد الأسئلة الشائعة",
+        "faqCountMismatch": "يجب أن يحتوي كل لغة على نفس عدد القسم",
         "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
         "cannotRemove": "لا يمكن الإزالة",
         "needAtLeastOneFaq": "تحتاج إلى سؤال شائع واحد على الأقل"
@@ -3431,16 +3430,16 @@
           "confirmText": "حذف سؤال شائع"
         },
         "deleteSection": {
-          "title": "حذف قسم الأسئلة الشائعة",
-          "description": "هل أنت متأكد من حذف قسم الأسئلة الشائعة بالكامل؟ لا يمكن التراجع عن هذا الإجراء.",
+          "title": "حذف القسم",
+          "description": "هل أنت متأكد من حذف  القسم بالكامل؟ لا يمكن التراجع عن هذا الإجراء.",
           "warnings": [
             "سيتم إزالة جميع الأسئلة والإجابات الشائعة نهائيًا",
             "لا يمكن التراجع عن هذا الإجراء"
           ]
         },
         "validationError": {
-          "title": "عدم تطابق عدد الأسئلة الشائعة",
-          "description": "يجب أن يحتوي كل لغة على نفس عدد الأسئلة الشائعة قبل الحفظ. يرجى إضافة أو إزالة الأسئلة الشائعة للتأكد من أن جميع اللغات لديها نفس العدد:",
+          "title": "عدم تطابق عدد القسم",
+          "description": "يجب أن يحتوي كل لغة على نفس عدد القسم قبل الحفظ. يرجى إضافة أو إزالة القسم للتأكد من أن جميع اللغات لديها نفس العدد:",
           "close": "إغلاق"
         }
       },
@@ -3451,18 +3450,19 @@
         "faqDeletedDesc": "تم حذف السؤال الشائع {{number}} من قاعدة البيانات",
         "faqRemoved": "تم إزالة سؤال شائع",
         "faqRemovedDesc": "تم إزالة السؤال الشائع بنجاح.",
-        "sectionCreated": "تم إنشاء قسم الأسئلة الشائعة بنجاح!",
-        "sectionUpdated": "تم تحديث قسم الأسئلة الشائعة بنجاح!",
+        "sectionCreated": "تم إنشاء  القسم بنجاح!",
+        "sectionUpdated": "تم تحديث  القسم بنجاح!",
         "contentSaved": "تم حفظ جميع التغييرات.",
         "creatingSection": "إنشاء قسم أسئلة شائعة جديد...",
-        "creatingSectionDesc": "إعداد محتوى الأسئلة الشائعة الجديد.",
+        "creatingSectionDesc": "إعداد محتوى القسم الجديد.",
         "refreshingContent": "تحديث المحتوى",
         "refreshingContentDesc": "تحميل المحتوى المحدث...",
-        "errorCreating": "خطأ في إنشاء قسم الأسئلة الشائعة",
-        "errorUpdating": "خطأ في تحديث قسم الأسئلة الشائعة",
+        "errorCreating": "خطأ في إنشاء قسم القسم",
+        "errorUpdating": "خطأ في تحديث قسم القسم",
         "errorRemoving": "خطأ في إزالة سؤال شائع",
         "errorRemovingDesc": "حدث خطأ أثناء إزالة السؤال الشائع من قاعدة البيانات",
-        "validationError": "خطأ في التحقق"
+        "validationError": "خطأ في التحقق",
+        "noSectionMessage" : "يرجى إنشاء  القسم أولاً ."
       },
       "table": {
         "name": "الاسم",
@@ -3475,36 +3475,36 @@
   },
   "addFaq": {
       "createTitle": "إنشاء عنصر أسئلة شائعة جديد",
-      "editTitle": "تعديل عنصر الأسئلة الشائعة",
+      "editTitle": "تعديل عنصر القسم",
       "createSubtitle": "إنشاء عنصر أسئلة شائعة جديد بمحتوى متعدد اللغات",
       "editSubtitle": "تعديل محتوى \"{{name}}\" عبر لغات متعددة",
-      "backUrl": "العودة إلى لوحة تحكم الأسئلة الشائعة",
+      "backUrl": "العودة إلى لوحة تحكم القسم",
       "tabs": {
-        "faqItems": "عناصر الأسئلة الشائعة"
+        "faqItems": "عناصر القسم"
       },
       "defaultHeaderName": "رأس جديد"
   },
   "addFaqForm": {
-      "loadingText": "جارٍ تحميل بيانات قسم الأسئلة الشائعة...",
+      "loadingText": "جارٍ تحميل بيانات قسم القسم...",
       "saveButton": {
-        "create": "حفظ محتوى الأسئلة الشائعة",
-        "update": "تحديث محتوى الأسئلة الشائعة",
+        "create": "حفظ محتوى القسم",
+        "update": "تحديث محتوى القسم",
         "saving": "جارٍ الحفظ..."
       },
       "validation": {
         "errorTitle": "خطأ في التحقق",
         "errorDescription": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
-        "mismatchTitle": "عدم تطابق عدد الأسئلة الشائعة",
-        "mismatchDescription": "يجب أن تحتوي كل لغة على نفس عدد الأسئلة الشائعة قبل الحفظ. يرجى إضافة أو إزالة الأسئلة لضمان تطابق العدد.",
-        "mismatchWarning": "يجب أن تحتوي كل لغة على نفس عدد الأسئلة الشائعة",
+        "mismatchTitle": "عدم تطابق عدد القسم",
+        "mismatchDescription": "يجب أن تحتوي كل لغة على نفس عدد القسم قبل الحفظ. يرجى إضافة أو إزالة الأسئلة لضمان تطابق العدد.",
+        "mismatchWarning": "يجب أن تحتوي كل لغة على نفس عدد القسم",
         "languageCount": "{lang}: {count} أسئلة شائعة"
       },
       "dialog": {
-        "createTitle": "إنشاء قسم الأسئلة الشائعة",
-        "updateTitle": "تحديث قسم الأسئلة الشائعة",
+        "createTitle": "إنشاء قسم القسم",
+        "updateTitle": "تحديث قسم القسم",
         "createDescription": "يرجى الانتظار بينما نحفظ التغييرات...",
-        "deleteTitle": "حذف الأسئلة الشائعة",
-        "deleteConfirm": "حذف الأسئلة الشائعة"
+        "deleteTitle": "حذف القسم",
+        "deleteConfirm": "حذف القسم"
       },
       "toast": {
         "addFaq": "تمت إضافة سؤال شائع",
@@ -3514,14 +3514,14 @@
         "cannotDelete": "لا يمكن الحذف",
         "cannotDeleteDescription": "يجب أن يكون هناك سؤال شائع واحد على الأقل",
         "createSection": "جارٍ إنشاء قسم أسئلة شائعة جديد...",
-        "createSectionDescription": "جارٍ إعداد محتوى الأسئلة الشائعة الجديد.",
-        "createSuccess": "تم إنشاء قسم الأسئلة الشائعة بنجاح!",
-        "updateSuccess": "تم تحديث قسم الأسئلة الشائعة بنجاح!",
+        "createSectionDescription": "جارٍ إعداد محتوى القسم الجديد.",
+        "createSuccess": "تم إنشاء  القسم بنجاح!",
+        "updateSuccess": "تم تحديث  القسم بنجاح!",
         "saveSuccessDescription": "تم حفظ جميع التغييرات.",
         "refreshing": "جارٍ تحديث المحتوى",
         "refreshingDescription": "جارٍ تحميل المحتوى المحدث...",
-        "createError": "خطأ في إنشاء قسم الأسئلة الشائعة",
-        "updateError": "خطأ في تحديث قسم الأسئلة الشائعة",
+        "createError": "خطأ في إنشاء قسم القسم",
+        "updateError": "خطأ في تحديث قسم القسم",
         "deleteError": "خطأ في حذف السؤال الشائع",
         "deleteErrorDescription": "حدث خطأ أثناء حذف السؤال الشائع من قاعدة البيانات",
         "errorDescription": "حدث خطأ غير معروف"
@@ -3530,7 +3530,7 @@
   "faqItem": {
       "title": "السؤال الشائع {{number}}",
       "questionLabel": "السؤال",
-      "questionPlaceholder": "أدخل سؤال الأسئلة الشائعة",
+      "questionPlaceholder": "أدخل سؤال القسم",
       "answerLabel": "الإجابة",
       "answerPlaceholder": "أدخل الإجابة التفصيلية لهذا السؤال",
       "socialLinks": {
@@ -3549,47 +3549,47 @@
       }
   },
   "faqLanguageCard": {
-      "title": "قسم الأسئلة الشائعة",
-      "description": "إدارة محتوى الأسئلة الشائعة للغة {{language}}",
+      "title": "قسم القسم",
+      "description": "إدارة محتوى القسم للغة {{language}}",
       "addFaqButton": "إضافة سؤال شائع"
   },
   "partners": {
       "management": {
-        "title": "إدارة الشركاء",
-        "description": "إدارة مخزون الشركاء والمحتوى متعدد اللغات",
-        "addButtonLabel": "إضافة شريك جديد",
-        "emptyStateMessage": "لم يتم العثور على شركاء. قم بإنشاء أول شريك لك بالنقر على زر \"إضافة شريك جديد\".",
-        "noSectionMessage": "يرجى إنشاء قسم الشركاء أولاً قبل إضافة الشركاء.",
-        "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة الشركاء.",
-        "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة الشركاء.",
-        "sectionIntegrationTitle": "محتوى قسم الشركاء",
-        "sectionIntegrationDescription": "إدارة محتوى قسم الشركاء بعدة لغات.",
-        "addSectionButtonLabel": "إضافة قسم الشركاء",
-        "editSectionButtonLabel": "تحرير قسم الشركاء",
-        "saveSectionButtonLabel": "حفظ قسم الشركاء",
-        "listTitle": "قائمة الشركاء",
+        "title": "إدارة القسم",
+        "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
+        "addButtonLabel": "إضافة قسم جديد",
+        "emptyStateMessage": "لم يتم العثور على شركاء. قم بإنشاء أول قسم لك بالنقر على زر \"إضافة قسم جديد\".",
+        "noSectionMessage": "يرجى إنشاء  القسم أولاً   .",
+        "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي   .",
+        "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي   .",
+        "sectionIntegrationTitle": "محتوى القسم",
+        "sectionIntegrationDescription": "إدارة محتوى  القسم بعدة لغات.",
+        "addSectionButtonLabel": "إضافة  القسم",
+        "editSectionButtonLabel": "تحرير  القسم",
+        "saveSectionButtonLabel": "حفظ  القسم",
+        "listTitle": "قائمة القسم",
         "editPath": "partners/addPartners"
       },
       "dialog": {
-        "createTitle": "إضافة شريك",
-        "editTitle": "تحرير شريك",
-        "deleteTitle": "حذف شريك",
-        "deleteConfirmation": "هل أنت متأكد من رغبتك في حذف هذا الشريك؟",
+        "createTitle": "إضافة قسم",
+        "editTitle": "تحرير قسم",
+        "deleteTitle": "حذف قسم",
+        "deleteConfirmation": "هل أنت متأكد من رغبتك في حذف هذا القسم؟",
         "confirmText": "تأكيد",
         "cancelText": "إلغاء"
       },
       "table": {
         "noData": "لا توجد شركاء متاحون",
-        "loading": "جاري تحميل الشركاء..."
+        "loading": "جاري تحميل القسم..."
       }
   },
   "addPartners": {
       "page": {
-        "createTitle": "إنشاء شريك جديد",
-        "editTitle": "تحرير شريك",
-        "createSubtitle": "إنشاء شريك جديد بمحتوى متعدد اللغات",
+        "createTitle": "إنشاء قسم جديد",
+        "editTitle": "تحرير قسم",
+        "createSubtitle": "إنشاء قسم جديد بمحتوى متعدد اللغات",
         "editSubtitle": "تحرير محتوى \"{{name}}\" عبر لغات متعددة",
-        "defaultPartnerName": "شريك جديد"
+        "defaultPartnerName": "قسم جديد"
       },
       "tabs": {
         "images": "الصور",
@@ -3599,36 +3599,36 @@
         "settings": "الإعدادات"
       },
       "form": {
-        "loading": "جاري تحميل بيانات الشريك...",
-        "saving": "جاري حفظ الشريك...",
-        "saveSuccess": "تم حفظ الشريك بنجاح",
-        "saveError": "فشل في حفظ الشريك",
+        "loading": "جاري تحميل بيانات القسم...",
+        "saving": "جاري حفظ القسم...",
+        "saveSuccess": "تم حفظ القسم بنجاح",
+        "saveError": "فشل في حفظ القسم",
         "validation": {
-          "nameRequired": "اسم الشريك مطلوب",
-          "descriptionRequired": "وصف الشريك مطلوب",
-          "imageRequired": "صورة الشريك مطلوبة"
+          "nameRequired": "اسم القسم مطلوب",
+          "descriptionRequired": "وصف القسم مطلوب",
+          "imageRequired": "صورة القسم مطلوبة"
         }
       },
       "navigation": {
-        "backToPartners": "العودة إلى الشركاء",
+        "backToPartners": "العودة إلى القسم",
         "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد من رغبتك في المغادرة؟"
       }
   },
   "contactPage": {
       "config": {
-        "title": "إدارة جهات الاتصال",
-        "description": "إدارة مخزون جهات الاتصال والمحتوى متعدد اللغات",
-        "addButtonLabel": "إضافة عنصر اتصال جديد",
-        "emptyStateMessage": "لا توجد جهات اتصال. أنشئ أول جهة اتصال بالنقر على زر \"إضافة اتصال جديد\".",
-        "noSectionMessage": "يرجى إنشاء قسم اتصال أولاً قبل إضافة جهات الاتصال.",
-        "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة جهات الاتصال.",
-        "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة جهات الاتصال.",
-        "sectionIntegrationTitle": "إدارة قسم الاتصال",
-        "sectionIntegrationDescription": "إدارة محتوى قسم الاتصال بعدة لغات.",
-        "addSectionButtonLabel": "إضافة قسم اتصال",
-        "editSectionButtonLabel": "تحرير قسم الاتصال",
-        "saveSectionButtonLabel": "حفظ قسم الاتصال",
-        "listTitle": "قائمة جهات الاتصال",
+        "title": "إدارة القسم",
+        "description": "إدارة مخزون  القسم والمحتوى متعدد اللغات",
+        "addButtonLabel": "إضافة عنصر  جديد",
+        "emptyStateMessage": "لا توجد جهات اقسام. أنشئ أول  اقسام بالنقر على زر \"إضافة اقسام جديد\".",
+        "noSectionMessage": "يرجى إنشاء قسم أولاً   ",
+        "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي .",
+        "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي .",
+        "sectionIntegrationTitle": "إدارة القسم ",
+        "sectionIntegrationDescription": "إدارة محتوى القسم بعدة لغات.",
+        "addSectionButtonLabel": "إضافة القسم ",
+        "editSectionButtonLabel": "تحرير القسم ",
+        "saveSectionButtonLabel": "حفظ القسم ",
+        "listTitle": "قائمة القسم",
         "editPath": "contact/addContact"
       },
       "table": {
@@ -3647,25 +3647,25 @@
       },
       "dialogs": {
         "create": {
-          "title": "جهة اتصال",
-          "subtitle": "إنشاء عنصر اتصال جديد"
+          "title": "إنشاء عنصر القسم",
+          "subtitle": "إنشاء عنصر  جديد"
         },
         "delete": {
-          "title": "حذف عنصر الاتصال",
+          "title": "حذف عنصر القسم",
           "confirmText": "تأكيد",
           "cancelText": "إلغاء",
-          "message": "هل أنت متأكد من رغبتك في حذف عنصر الاتصال هذا؟"
+          "message": "هل أنت متأكد من رغبتك في حذف عنصر القسم هذا؟"
         }
       },
       "messages": {
-        "loading": "جاري تحميل جهات الاتصال...",
-        "noData": "لا توجد بيانات اتصال متاحة",
-        "createSuccess": "تم إنشاء عنصر الاتصال بنجاح",
-        "createError": "فشل في إنشاء عنصر الاتصال",
-        "deleteSuccess": "تم حذف عنصر الاتصال بنجاح",
-        "deleteError": "فشل في حذف عنصر الاتصال",
-        "updateSuccess": "تم تحديث عنصر الاتصال بنجاح",
-        "updateError": "فشل في تحديث عنصر الاتصال"
+        "loading": "جاري تحميل القسم...",
+        "noData": "لا توجد بيانات قسم متاحة",
+        "createSuccess": "تم إنشاء عنصر القسم بنجاح",
+        "createError": "فشل في إنشاء عنصر القسم",
+        "deleteSuccess": "تم حذف عنصر القسم بنجاح",
+        "deleteError": "فشل في حذف عنصر القسم",
+        "updateSuccess": "تم تحديث عنصر القسم بنجاح",
+        "updateError": "فشل في تحديث عنصر القسم"
       },
       "actions": {
         "add": "إضافة",
@@ -3679,14 +3679,14 @@
   },
   "addContact": {
       "page": {
-        "createTitle": "إنشاء جهة اتصال جديدة",
-        "editTitle": "تحرير جهة الاتصال",
-        "createSubtitle": "إنشاء جهة اتصال جديدة بمحتوى متعدد اللغات",
+        "createTitle": " إنشاء قسم جديدة",
+        "editTitle": "تحرير  القسم",
+        "createSubtitle": "إنشاء  اقسام جديدة بمحتوى متعدد اللغات",
         "editSubtitle": "تحرير محتوى \"{{name}}\" عبر لغات متعددة",
-        "defaultContactName": "جهة اتصال جديدة"
+        "defaultContactName": " اقسام جديدة"
       },
       "tabs": {
-        "contact": "معلومات الاتصال",
+        "contact": "معلومات القسم",
         "contactSendMessage": "إرسال رسالة",
         "basicInfo": "المعلومات الأساسية",
         "settings": "الإعدادات",
@@ -3694,27 +3694,27 @@
         "location": "الموقع والعنوان"
       },
       "form": {
-        "loading": "جاري تحميل بيانات الاتصال...",
-        "saving": "جاري حفظ بيانات الاتصال...",
-        "saveSuccess": "تم حفظ بيانات الاتصال بنجاح",
-        "saveError": "فشل في حفظ بيانات الاتصال",
-        "contactInfoDescription": "أدخل معلومات الاتصال بعدة لغات.",
-        "sendMessageDescription": "قم بتكوين نموذج الاتصال وإعدادات المراسلة.",
+        "loading": "جاري تحميل بيانات القسم...",
+        "saving": "جاري حفظ بيانات القسم...",
+        "saveSuccess": "تم حفظ بيانات القسم بنجاح",
+        "saveError": "فشل في حفظ بيانات القسم",
+        "contactInfoDescription": "أدخل معلومات القسم بعدة لغات.",
+        "sendMessageDescription": "قم بتكوين نموذج القسم وإعدادات المراسلة.",
         "validation": {
-          "nameRequired": "اسم جهة الاتصال مطلوب",
-          "descriptionRequired": "وصف جهة الاتصال مطلوب",
+          "nameRequired": "اسم  القسم مطلوب",
+          "descriptionRequired": "وصف  القسم مطلوب",
           "emailRequired": "عنوان البريد الإلكتروني مطلوب",
           "phoneRequired": "رقم الهاتف مطلوب",
           "addressRequired": "العنوان مطلوب"
         }
       },
       "navigation": {
-        "backToContact": "العودة إلى جهات الاتصال",
+        "backToContact": "العودة إلى  القسم",
         "unsavedChanges": "لديك تغييرات غير محفوظة. هل أنت متأكد من رغبتك في المغادرة؟"
       },
       "fields": {
-        "contactTitle": "عنوان الاتصال",
-        "contactDescription": "وصف الاتصال",
+        "contactTitle": "عنوان القسم",
+        "contactDescription": "وصف القسم",
         "emailAddress": "عنوان البريد الإلكتروني",
         "phoneNumber": "رقم الهاتف",
         "address": "العنوان",
@@ -3725,13 +3725,13 @@
         "website": "الموقع الإلكتروني",
         "socialMedia": "روابط وسائل التواصل الاجتماعي",
         "workingHours": "ساعات العمل",
-        "contactForm": "إعدادات نموذج الاتصال"
+        "contactForm": "إعدادات نموذج القسم"
       }
   },
   "contactInformationForm": {
       "deleteManager": {
-        "sectionName": "قسم معلومات الاتصال",
-        "warning1": "ستفقد جميع معلومات الاتصال",
+        "sectionName": "قسم معلومات القسم",
+        "warning1": "ستفقد جميع معلومات القسم",
         "warning2": "ستتم إزالة تفاصيل الهاتف والبريد الإلكتروني",
         "warning3": "ستحذف بيانات موقع المكتب"
       },
@@ -3740,41 +3740,41 @@
         "fillRequired": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح"
       },
       "subsection": {
-        "name": "قسم معلومات الاتصال"
+        "name": "قسم معلومات القسم"
       },
       "success": {
-        "updated": "تم تحديث معلومات الاتصال بنجاح!",
-        "created": "تم إنشاء معلومات الاتصال بنجاح!",
+        "updated": "تم تحديث معلومات القسم بنجاح!",
+        "created": "تم إنشاء معلومات القسم بنجاح!",
         "saved": "تم حفظ جميع المحتويات."
       },
       "error": {
-        "updating": "خطأ في تحديث معلومات الاتصال",
-        "creating": "خطأ في إنشاء معلومات الاتصال",
+        "updating": "خطأ في تحديث معلومات القسم",
+        "creating": "خطأ في إنشاء معلومات القسم",
         "unknown": "حدث خطأ غير معروف"
       },
       "loading": {
-        "updating": "تحديث معلومات الاتصال",
-        "creating": "إنشاء معلومات الاتصال",
+        "updating": "تحديث معلومات القسم",
+        "creating": "إنشاء معلومات القسم",
         "saveDescription": "يرجى الانتظار بينما نحفظ التغييرات...",
-        "deleting": "حذف معلومات الاتصال",
-        "deleteDescription": "يرجى الانتظار بينما نحذف معلومات الاتصال...",
+        "deleting": "حذف معلومات القسم",
+        "deleteDescription": "يرجى الانتظار بينما نحذف معلومات القسم...",
         "refreshing": "تحديث البيانات",
-        "refreshDescription": "تحديث الواجهة بعد الحذف..."
+        "refreshDescription": "تحديث بعد الحذف..."
       },
       "delete": {
-        "title": "حذف معلومات الاتصال",
-        "description": "هل أنت متأكد من رغبتك في حذف قسم معلومات الاتصال هذا؟ لا يمكن التراجع عن هذا الإجراء."
+        "title": "حذف معلومات القسم",
+        "description": "هل أنت متأكد من رغبتك في حذف قسم معلومات القسم هذا؟ لا يمكن التراجع عن هذا الإجراء."
       },
       "button": {
-        "delete": "حذف معلومات الاتصال",
+        "delete": "حذف معلومات القسم",
         "saving": "جاري الحفظ...",
-        "update": "تحديث معلومات الاتصال",
-        "save": "حفظ معلومات الاتصال"
+        "update": "تحديث معلومات القسم",
+        "save": "حفظ معلومات القسم"
       }
   },
   "contactInformationFormCard": {
-      "title": "قسم الاتصال",
-      "description": "إدارة محتوى الاتصال لـ {{langCode}}",
+      "title": " القسم",
+      "description": "إدارة محتوى القسم لـ {{langCode}}",
       "fields": {
         "title": "العنوان",
         "description": "الوصف",
@@ -3803,7 +3803,7 @@
   },
   "sendUsaMessageForm": {
       "deleteManager": {
-        "sectionName": "نموذج الاتصال",
+        "sectionName": "نموذج القسم",
         "warning1": "ستفقد جميع إرسالات النموذج",
         "warning2": "ستتم إزالة إعدادات إشعارات البريد الإلكتروني"
       },
@@ -3812,53 +3812,53 @@
         "fillRequired": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح"
       },
       "subsection": {
-        "name": "نموذج الاتصال"
+        "name": "نموذج القسم"
       },
       "success": {
-        "updated": "تم تحديث نموذج الاتصال بنجاح!",
-        "created": "تم إنشاء نموذج الاتصال بنجاح!",
+        "updated": "تم تحديث نموذج القسم بنجاح!",
+        "created": "تم إنشاء نموذج القسم بنجاح!",
         "saved": "تم حفظ جميع المحتويات."
       },
       "error": {
-        "updating": "خطأ في تحديث نموذج الاتصال",
-        "creating": "خطأ في إنشاء نموذج الاتصال",
+        "updating": "خطأ في تحديث نموذج القسم",
+        "creating": "خطأ في إنشاء نموذج القسم",
         "unknown": "حدث خطأ غير معروف"
       },
       "loading": {
-        "data": "جاري تحميل بيانات نموذج الاتصال...",
-        "updating": "تحديث نموذج الاتصال",
-        "creating": "إنشاء نموذج الاتصال",
+        "data": "جاري تحميل بيانات نموذج القسم...",
+        "updating": "تحديث نموذج القسم",
+        "creating": "إنشاء نموذج القسم",
         "saveDescription": "يرجى الانتظار بينما نحفظ التغييرات...",
-        "deleting": "حذف نموذج الاتصال",
-        "deleteDescription": "يرجى الانتظار بينما نحذف نموذج الاتصال...",
+        "deleting": "حذف نموذج القسم",
+        "deleteDescription": "يرجى الانتظار بينما نحذف نموذج القسم...",
         "refreshing": "تحديث البيانات",
-        "refreshDescription": "تحديث الواجهة بعد الحذف..."
+        "refreshDescription": "تحديث بعد الحذف..."
       },
       "delete": {
         "success": {
-          "title": "تم حذف نموذج الاتصال بنجاح!",
+          "title": "تم حذف نموذج القسم بنجاح!",
           "withElements": "تم حذف القسم الفرعي و {{count}} عناصر المحتوى.",
-          "simple": "تم إزالة نموذج الاتصال."
+          "simple": "تم إزالة نموذج القسم."
         },
         "error": {
-          "title": "فشل في حذف نموذج الاتصال",
+          "title": "فشل في حذف نموذج القسم",
           "unknown": "حدث خطأ غير معروف"
         },
         "dialog": {
-          "title": "حذف نموذج الاتصال",
-          "description": "هل أنت متأكد من رغبتك في حذف نموذج الاتصال هذا؟ لا يمكن التراجع عن هذا الإجراء."
+          "title": "حذف نموذج القسم",
+          "description": "هل أنت متأكد من رغبتك في حذف نموذج القسم هذا؟ لا يمكن التراجع عن هذا الإجراء."
         }
       },
       "button": {
-        "delete": "حذف نموذج الاتصال",
+        "delete": "حذف نموذج القسم",
         "saving": "جاري الحفظ...",
-        "update": "تحديث نموذج الاتصال",
-        "save": "حفظ نموذج الاتصال"
+        "update": "تحديث نموذج القسم",
+        "save": "حفظ نموذج القسم"
       }
   },
   "sendUsaMessageFormCard": {
-      "title": "نموذج الاتصال",
-      "description": "إدارة محتوى نموذج الاتصال لـ {{langCode}}",
+      "title": "نموذج القسم",
+      "description": "إدارة محتوى نموذج القسم لـ {{langCode}}",
       "sections": {
         "formFields": "حقول النموذج"
       },
@@ -3892,19 +3892,19 @@
   },
   "footerPage": {
       "config": {
-        "title": "إدارة الشريط",
-        "description": "إدارة مخزون الشريط والمحتوى متعدد اللغات",
+        "title": "إدارة القسم",
+        "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
         "addButtonLabel": "إضافة شريط جديد",
         "emptyStateMessage": "لا يوجد تذييل. أنشئ أول شريطبالنقر على زر \"إضافة شريطجديد\".",
-        "noSectionMessage": "يرجى إنشاء قسم شريطأولاً قبل إضافة الشريط.",
-        "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة الشريط.",
-        "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة الشريط.",
-        "sectionIntegrationTitle": "إدارة قسم الشريط",
-        "sectionIntegrationDescription": "إدارة محتوى قسم الشريط بعدة لغات.",
-        "addSectionButtonLabel": "إضافة قسم تذييل",
-        "editSectionButtonLabel": "تحرير قسم الشريط",
-        "saveSectionButtonLabel": "حفظ قسم الشريط",
-        "listTitle": "قائمة الشريط"
+        "noSectionMessage": " إنشاء  القسم أولاً   .",
+        "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي .",
+        "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي   .",
+        "sectionIntegrationTitle": "إدارة القسم ",
+        "sectionIntegrationDescription": "إدارة محتوى القسم بعدة لغات.",
+        "addSectionButtonLabel": "إضافة قسم ",
+        "editSectionButtonLabel": "تحرير القسم ",
+        "saveSectionButtonLabel": "حفظ القسم ",
+        "listTitle": "قائمة القسم"
       },
       "table": {
         "columns": {
@@ -3926,21 +3926,21 @@
           "subtitle": "إنشاء عنصر شريطجديد"
         },
         "delete": {
-          "title": "حذف عنصر الشريط",
+          "title": "حذف عنصر القسم",
           "confirmText": "تأكيد",
           "cancelText": "إلغاء",
-          "message": "هل أنت متأكد من رغبتك في حذف عنصر الشريط هذا؟"
+          "message": "هل أنت متأكد من رغبتك في حذف عنصر القسم هذا؟"
         }
       },
       "messages": {
-        "loading": "جاري تحميل الشريط...",
+        "loading": "جاري تحميل القسم...",
         "noData": "لا توجد بيانات شريطمتاحة",
-        "createSuccess": "تم إنشاء عنصر الشريط بنجاح",
-        "createError": "فشل في إنشاء عنصر الشريط",
-        "deleteSuccess": "تم حذف عنصر الشريط بنجاح",
-        "deleteError": "فشل في حذف عنصر الشريط",
-        "updateSuccess": "تم تحديث عنصر الشريط بنجاح",
-        "updateError": "فشل في تحديث عنصر الشريط"
+        "createSuccess": "تم إنشاء عنصر القسم بنجاح",
+        "createError": "فشل في إنشاء عنصر القسم",
+        "deleteSuccess": "تم حذف عنصر القسم بنجاح",
+        "deleteError": "فشل في حذف عنصر القسم",
+        "updateSuccess": "تم تحديث عنصر القسم بنجاح",
+        "updateError": "فشل في تحديث عنصر القسم"
       },
       "actions": {
         "add": "إضافة",
@@ -4184,12 +4184,12 @@
         "services": "الخدمات",
         "portfolio": "المعرض",
         "testimonials": "الشهادات",
-        "contact": "الاتصال",
+        "contact": "القسم",
         "footer": "التذييل",
         "blog": "القسم",
         "team": "الفريق",
         "pricing": "الأسعار",
-        "faq": "الأسئلة الشائعة"
+        "faq": "القسم"
       },
       "toast": {
         "duplicateSection": {
@@ -4249,7 +4249,7 @@
       }
     },
     "ContactForms": {
-      "title": "إدارة نماذج الاتصال",
+      "title": "إدارة نماذج القسم",
       "subtitle": "إدارة والرد على استفسارات العملاء",
       "stats": {
         "total": "الإجمالي",
@@ -4258,7 +4258,7 @@
         "responded": "تم الرد"
       },
       "tabs": {
-        "contacts": "رسائل الاتصال",
+        "contacts": "رسائل القسم",
         "analytics": "التحليلات"
       },
       "status": {
@@ -4267,15 +4267,15 @@
         "responded": "تم الرد"
       },
       "search": {
-        "placeholder": "البحث في جهات الاتصال..."
+        "placeholder": "البحث في جهات القسم..."
       },
       "filter": {
         "status": "التصفية حسب الحالة",
         "all": "جميع الحالات"
       },
       "empty": {
-        "title": "لم يتم العثور على نماذج اتصال",
-        "description": "لا توجد نماذج اتصال تطابق المرشحات الحالية."
+        "title": "لم يتم العثور على نماذج اقسام",
+        "description": "لا توجد نماذج اقسام تطابق المرشحات الحالية."
       },
       "actions": {
         "title": "الإجراءات",
@@ -4289,14 +4289,14 @@
         "of": "من"
       },
       "analytics": {
-        "title": "تحليلات نماذج الاتصال",
-        "description": "نظرة عامة على إرسالات نماذج الاتصال ومعدلات الاستجابة",
+        "title": "تحليلات نماذج القسم",
+        "description": "نظرة عامة على إرسالات نماذج القسم ومعدلات الاستجابة",
         "comingSoon": "التحليلات قادمة قريباً",
         "comingSoonDesc": "ستكون ميزات التحليلات والتقارير التفصيلية متاحة قريباً."
       },
       "delete": {
-        "title": "حذف جهة الاتصال",
-        "description": "هل أنت متأكد من أنك تريد حذف جهة الاتصال هذه؟ لا يمكن التراجع عن هذا الإجراء.",
+        "title": "حذف  القسم",
+        "description": "هل أنت متأكد من أنك تريد حذف  القسم هذه؟ لا يمكن التراجع عن هذا الإجراء.",
         "cancel": "إلغاء",
         "confirm": "حذف",
         "deleting": "جاري الحذف..."
@@ -4304,36 +4304,36 @@
       "toasts": {
         "statusUpdated": {
           "title": "تم تحديث الحالة",
-          "description": "تم تحديث حالة جهة الاتصال بنجاح."
+          "description": "تم تحديث حالة  القسم بنجاح."
         },
         "statusError": {
           "title": "فشل التحديث",
-          "description": "فشل في تحديث حالة جهة الاتصال."
+          "description": "فشل في تحديث حالة  القسم."
         },
         "deleted": {
-          "title": "تم حذف جهة الاتصال",
-          "description": "تم حذف جهة الاتصال بنجاح."
+          "title": "تم حذف  القسم",
+          "description": "تم حذف  القسم بنجاح."
         },
         "deleteError": {
           "title": "فشل الحذف",
-          "description": "فشل في حذف جهة الاتصال."
+          "description": "فشل في حذف  القسم."
         }
       }
     },
     "WhyChooseUsConfig": {
-      "title": "إدارة لماذا تختارنا",
-      "description": "إدارة مخزون لماذا تختارنا والمحتوى متعدد اللغات",
-      "addButtonLabel": "إضافة عنصر جديد لماذا تختارنا",
-      "emptyStateMessage": "لم يتم العثور على لماذا تختارنا. أنشئ أول لماذا تختارنا عن طريق النقر على زر \"إضافة لماذا تختارنا جديد\".",
-      "noSectionMessage": "يرجى إنشاء قسم لماذا تختارنا أولاً قبل إضافة لماذا تختارنا.",
-      "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة لماذا تختارنا.",
-      "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة لماذا تختارنا.",
-      "sectionIntegrationTitle": "محتوى قسم لماذا تختارنا",
-      "sectionIntegrationDescription": "إدارة محتوى قسم لماذا تختارنا بلغات متعددة.",
-      "addSectionButtonLabel": "إضافة قسم لماذا تختارنا",
-      "editSectionButtonLabel": "تحرير قسم لماذا تختارنا",
-      "saveSectionButtonLabel": "حفظ قسم لماذا تختارنا",
-      "listTitle": "قائمة لماذا تختارنا",
+      "title": "إدارة القسم",
+      "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
+      "addButtonLabel": "إضافة عنصر جديد ",
+      "emptyStateMessage": "لم يتم العثور علىالقسم. أنشئ أولالقسم عن طريق النقر على زر \"إضافةالقسم جديد\".",
+      "noSectionMessage": "يرجى إنشاء  القسم أولاً .",
+      "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي  .",
+      "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي .",
+      "sectionIntegrationTitle": "محتوى قسمالقسم",
+      "sectionIntegrationDescription": "إدارة محتوى  القسم بلغات متعددة.",
+      "addSectionButtonLabel": "إضافة  القسم",
+      "editSectionButtonLabel": "تحرير  القسم",
+      "saveSectionButtonLabel": "حفظ  القسم",
+      "listTitle": "قائمةالقسم",
       "editPath": "WhyChooseUs/addChoseUs"
     },
     "WhyChooseUsTable": {
@@ -4345,47 +4345,47 @@
       "main": "رئيسي"
     },
     "AddWhyChooseUs": {
-      "createTitle": "إنشاء عنصر جديد لماذا تختارنا",
-      "editTitle": "تحرير عنصر لماذا تختارنا",
-      "createSubtitle": "إنشاء عنصر جديد لماذا تختارنا مع محتوى متعدد اللغات",
+      "createTitle": "إنشاء عنصر جديدالقسم",
+      "editTitle": "تحرير عنصرالقسم",
+      "createSubtitle": "إنشاء عنصر جديدالقسم مع محتوى متعدد اللغات",
       "editSubtitle": "تحرير محتوى \"{{itemName}}\" بلغات متعددة",
-      "editSubtitleDefault": "تحرير محتوى عنصر لماذا تختارنا بلغات متعددة",
+      "editSubtitleDefault": "تحرير محتوى عنصرالقسم بلغات متعددة",
       "defaultItemName": "لماذا تختارنا جديد",
       "tabLabel": "لماذا تختارنا",
       "formSections": {
         "whyChooseUs": "لماذا تختارنا"
       },
-      "backToList": "العودة إلى قائمة لماذا تختارنا",
-      "loadingMessage": "جاري تحميل بيانات لماذا تختارنا...",
-      "savingMessage": "جاري حفظ عنصر لماذا تختارنا...",
-      "savedMessage": "تم حفظ عنصر لماذا تختارنا بنجاح",
-      "errorMessage": "خطأ في حفظ عنصر لماذا تختارنا"
+      "backToList": "العودة إلى قائمةالقسم",
+      "loadingMessage": "جاري تحميل بياناتالقسم...",
+      "savingMessage": "جاري حفظ عنصرالقسم...",
+      "savedMessage": "تم حفظ عنصرالقسم بنجاح",
+      "errorMessage": "خطأ في حفظ عنصرالقسم"
     },
     "chooseUsForm": {
-      "loadingData": "جارٍ تحميل بيانات قسم لماذا تختارنا...",
+      "loadingData": "جارٍ تحميل بيانات قسمالقسم...",
       "savingChanges": "يرجى الانتظار بينما نحفظ التغييرات...",
-      "updatingChoseUs": "تحديث لماذا تختارنا",
-      "creatingChoseUs": "إنشاء لماذا تختارنا",
+      "updatingChoseUs": "تحديثالقسم",
+      "creatingChoseUs": "إنشاءالقسم",
       "imageUploaded": "تم رفع الصورة",
       "imageUploadedDescription": "تم رفع صورة الخلفية بنجاح.",
       "imageUploadFailed": "فشل رفع الصورة",
       "imageUploadFailedDescription": "فشل في رفع الصورة",
       "cannotRemove": "لا يمكن الحذف",
       "cannotRemoveDescription": "يجب أن يكون هناك ميزة واحدة على الأقل",
-      "choseUsDeleted": "تم حذف لماذا تختارنا",
-      "choseUsDeletedDescription": "تم حذف لماذا تختارنا {number} من قاعدة البيانات",
+      "choseUsDeleted": "تم حذفالقسم",
+      "choseUsDeletedDescription": "تم حذفالقسم {number} من قاعدة البيانات",
       "errorRemovingBenefit": "خطأ في حذف الميزة",
-      "errorRemovingBenefitDescription": "حدث خطأ أثناء حذف لماذا تختارنا من قاعدة البيانات",
+      "errorRemovingBenefitDescription": "حدث خطأ أثناء حذفالقسم من قاعدة البيانات",
       "validationError": "خطأ في التحقق",
       "validationErrorDescription": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
-      "choseUsUpdatedSuccess": "تم تحديث قسم لماذا تختارنا بنجاح!",
-      "choseUsCreatedSuccess": "تم إنشاء قسم لماذا تختارنا بنجاح!",
-      "errorUpdatingChoseUs": "خطأ في تحديث قسم لماذا تختارنا",
-      "errorCreatingChoseUs": "خطأ في إنشاء قسم لماذا تختارنا",
+      "choseUsUpdatedSuccess": "تم تحديث قسمالقسم بنجاح!",
+      "choseUsCreatedSuccess": "تم إنشاء قسمالقسم بنجاح!",
+      "errorUpdatingChoseUs": "خطأ في تحديث قسمالقسم",
+      "errorCreatingChoseUs": "خطأ في إنشاء قسمالقسم",
       "unknownError": "حدث خطأ غير معروف",
       "benefitCountMismatch": "يجب أن تحتوي كل لغة على نفس عدد المزايا",
-      "saveChoseUs": "حفظ لماذا تختارنا",
-      "updateChoseUs": "تحديث لماذا تختارنا",
+      "saveChoseUs": "حفظالقسم",
+      "updateChoseUs": "تحديثالقسم",
       "deleteProcess": "حذف العملية",
       "saving": "جارٍ الحفظ..."
     },
@@ -4409,25 +4409,25 @@
 "Navigation" : {
     "ContentConfiguration" : "تكوين المحتوى",
     "NavigationConfiguration" : "اعدادات الظهور على القائمة الرئيسية",
-    "EditNavigation" : "تحرير التنقل",
-    "CreateNavigation": "إنشاء التنقل",
-    "description" : "تحديث اسم التنقل ورابطه للقسم",
-    "description1":"قم بتكوين إعدادات التنقل لقسمك.",
-    "NavigationLanguages" : "لغات التنقل",
-    "NavigationSettings" : "إعدادات التنقل",
+    "EditNavigation" : "تحرير اعدادات القسم",
+    "CreateNavigation": "إنشاء القسم",
+    "description" : "تحديث اسم القسم ",
+    "description1":"قم بتكوين إعدادات  لقسمك.",
+    "NavigationLanguages" : "لغات القسم",
+    "NavigationSettings" : "إعدادات القسم",
     "AddSubNavigation" : "إضافة تنقل فرعي",
-    "enable": "تفعيل التنقل الفرعي لهذه الخدمة"
+    "enable": "تفعيل القسم الفرعي لهذه الخدمة"
   },
   "HeroManagement": {
     "createTitle": "إنشاء عنصر قسم جديد",
-    "editTitle": "تعديل عنصرقسم",
+    "editTitle": "تعديل عنصر قسم",
     "createSubtitle": "إنشاء عنصرقسم جديد بمحتوى متعدد اللغات",
     "editSubtitle": "تعديل محتوى \"{{itemName}}\" عبر لغات متعددة",
     "editSubtitleDefault": "تعديل محتوى عنصرقسم عبر لغات متعددة",
     "defaultItemName": "واجهة تقنية جديد",
     "tabLabel": "بدء إنشاء قسم خاص",
     "formSections": {
-      "hero": "محتوىقسم",
+      "hero": "تكوين المحتوى",
       "navigation": "اعدادات الظهور على القائمة الرئيسية "
     },
     "backToList": "العودة إلى قائمةقسم",
@@ -4454,7 +4454,24 @@
     "savedMessage": "تم حفظ عنصر القسم بنجاح",
     "errorMessage": "خطأ أثناء حفظ عنصر القسم"
   },
-  
+   "ProductManagement": {
+    "createTitle": "إنشاء عنصر قسم جديد",
+    "editTitle": "تعديل عنصر قسم",
+    "createSubtitle": "إنشاء عنصر قسم جديد بمحتوى متعدد اللغات",
+    "editSubtitle": "تعديل محتوى \"{{itemName}}\" عبر لغات متعددة",
+    "editSubtitleDefault": "تعديل محتوى عنصر قسم عبر لغات متعددة",
+    "defaultItemName": "قسم جديدة",
+    "tabLabel": "قسم",
+    "formSections": {
+      "blog": "محتوى القسم",
+      "navigation": "اعدادات الظهور على القائمة الرئيسية "
+    },
+    "backToList": "العودة إلى قائمة القسم",
+    "loadingMessage": "جاري تحميل بيانات القسم...",
+    "savingMessage": "جاري حفظ عنصر القسم...",
+    "savedMessage": "تم حفظ عنصر القسم بنجاح",
+    "errorMessage": "خطأ أثناء حفظ عنصر القسم"
+  },
   "common": {
     "welcome": "مرحبا",
     "logout": "تسجيل الخروج",

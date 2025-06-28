@@ -100,9 +100,10 @@ export default function ChoseUsPage() {
     }, [basicInfo, sectionId]);
   
   // Get translated why choose us section config based on current language
-  const whyChooseUsSectionConfigTranslated = useMemo(() => {
-    return getWhyChooseUsSectionConfig(language)
-  }, [language])
+    const whyChooseUsSectionConfig = useMemo(() => 
+    getWhyChooseUsSectionConfig(i18n.language), 
+    [i18n.language]
+  );
 
   // Get translated configuration for the Why Choose Us page
   const CHOSE_US_CONFIG = useMemo(() => ({
@@ -186,7 +187,7 @@ export default function ChoseUsPage() {
     let mainSubSection = null;
   
     // Get expected name from configuration (now translated)
-    const expectedSlug = whyChooseUsSectionConfigTranslated.name;
+    const expectedSlug = whyChooseUsSectionConfig.name;
     
     // First check if section-specific subsections exist
     if (sectionId && sectionSubsections?.data) {
@@ -246,7 +247,7 @@ export default function ChoseUsPage() {
     sectionId, 
     industrySection, 
     setSection,
-    whyChooseUsSectionConfigTranslated.name // Add this dependency to re-run when language changes
+    whyChooseUsSectionConfig.name // Add this dependency to re-run when language changes
   ]);
 
   // Process data only when dependencies change
@@ -410,7 +411,7 @@ export default function ChoseUsPage() {
   // Handle main subsection creation - converted to useCallback to stabilize function reference
   const handleMainSubSectionCreated = useCallback((subsection: any) => {
     // Check if subsection has the correct name (now using translated name)
-    const expectedSlug = whyChooseUsSectionConfigTranslated.name;
+    const expectedSlug = whyChooseUsSectionConfig.name;
     const hasCorrectSlug = subsection.name === expectedSlug;
     const isMainSubSection = subsection.isMain === true && hasCorrectSlug;
     
@@ -438,7 +439,7 @@ export default function ChoseUsPage() {
     if (refetchMainSubSection) {
       refetchMainSubSection();
     }
-  }, [refetchMainSubSection, setSection, whyChooseUsSectionConfigTranslated.name]);
+  }, [refetchMainSubSection, setSection, whyChooseUsSectionConfig.name]);
 
   // IMPORTANT: Here's the crux of the button enabling/disabling logic
   // Added check for navItems.length > 0 to disable when there's already a section item
@@ -505,7 +506,7 @@ export default function ChoseUsPage() {
       <GenericListPage
         config={CHOSE_US_CONFIG}
         sectionId={sectionId}
-        sectionConfig={whyChooseUsSectionConfigTranslated}
+        sectionConfig={whyChooseUsSectionConfig}
         isAddButtonDisabled={isAddButtonDisabled}
         tableComponent={ChoseUsItemsTable}
         createDialogComponent={CreateDialog}

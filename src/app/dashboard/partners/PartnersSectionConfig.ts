@@ -10,7 +10,7 @@ export const partnersSectionTranslations = {
     sectionBadgeLabel: "Section Badge",
     sectionTitleLabel: "Section Title",
     sectionDescriptionLabel: "Section Description",
-    partnersDetailsLabel: "Partners Details",
+    partnersDetailsLabel: "Section Details",
     type: "Partners",
     badgeElement: "Badge",
     titleElement: "Title",
@@ -18,17 +18,17 @@ export const partnersSectionTranslations = {
     partnersDetailsElement: "PartnersDetails"
   },
   ar: {
-    sectionName: "قسم الشركاء الأساسي",
-    sectionDescription: "قسم الشركاء لإدارة معلومات الصناعة",
+    sectionName: "القسم  الأساسي",
+    sectionDescription: " القسم لإدارة معلومات الصناعة",
     sectionBadgeLabel: "شارة القسم",
     sectionTitleLabel: "عنوان القسم",
     sectionDescriptionLabel: "وصف القسم",
-    partnersDetailsLabel: "تفاصيل الشركاء",
+    partnersDetailsLabel: "تفاصيل القسم",
     type: "شركاء",
     badgeElement: "الشارة",
     titleElement: "العنوان",
     descriptionElement: "الوصف",
-    partnersDetailsElement: "تفاصيل الشركاء"
+    partnersDetailsElement: "تفاصيل القسم"
   },
   tr: {
     sectionName: "Temel Ortak Bölümü",
@@ -36,12 +36,12 @@ export const partnersSectionTranslations = {
     sectionBadgeLabel: "Bölüm Rozeti",
     sectionTitleLabel: "Bölüm Başlığı",
     sectionDescriptionLabel: "Bölüm Açıklaması",
-    partnersDetailsLabel: "Ortak Detayları",
+    partnersDetailsLabel: "Bölüm Detayları",
     type: "Ortak",
     badgeElement: "Rozet",
     titleElement: "Başlık",
     descriptionElement: "Açıklama",
-    partnersDetailsElement: "Ortak Detayları"
+    partnersDetailsElement: "Bölüm Detayları"
   }
 };
 

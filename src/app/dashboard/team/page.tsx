@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { useTranslation } from "react-i18next"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useGenericList } from "@/src/hooks/useGenericList"
@@ -30,9 +30,17 @@ export default function Team() {
   const { websiteId } = useWebsiteContext();
   const { t, i18n } = useTranslation();
 
-  // Get translated configurations based on current language
-  const teamSectionConfig = getTeamSectionConfig(i18n.language);
-  const NavigationConfig = getTeamNavigationSectionConfig(i18n.language);
+  // Memoize configurations to make them reactive to language changes
+  const teamSectionConfig = useMemo(() => 
+    getTeamSectionConfig(i18n.language), 
+    [i18n.language]
+  );
+  
+  const NavigationConfig = useMemo(() => 
+    getTeamNavigationSectionConfig(i18n.language), 
+    [i18n.language]
+  );
+
   // Get basic section info for both navigation and main content pre-population
   const {useGetBasicInfoByWebsiteId} = useSections()
   const { data: basicInfo } = useGetBasicInfoByWebsiteId(websiteId)
@@ -64,38 +72,38 @@ export default function Team() {
     };
   }, [basicInfo, sectionId]);
 
-  // Configuration for the Team page using translations
-  const TEAM_CONFIG = {
-    title: t('teamManagement.title'),
-    description: t('teamManagement.description'),
-    addButtonLabel: t('teamManagement.addButtonLabel'),
-    emptyStateMessage: t('teamManagement.emptyStateMessage'),
-    noSectionMessage: t('teamManagement.noSectionMessage'),
-    mainSectionRequiredMessage: t('teamManagement.mainSectionRequiredMessage'),
-    emptyFieldsMessage: t('teamManagement.emptyFieldsMessage'),
-    sectionIntegrationTitle: t('teamManagement.sectionIntegrationTitle'),
-    sectionIntegrationDescription: t('teamManagement.sectionIntegrationDescription'),
-    addSectionButtonLabel: t('teamManagement.addSectionButtonLabel'),
-    editSectionButtonLabel: t('teamManagement.editSectionButtonLabel'),
-    saveSectionButtonLabel: t('teamManagement.saveSectionButtonLabel'),
-    listTitle: t('teamManagement.listTitle'),
+  // Configuration for the Team page - Memoized and reactive to language changes
+  const TEAM_CONFIG = useMemo(() => ({
+    title: t('teamManagement.title', 'Team Management'),
+    description: t('teamManagement.description', 'Manage your team members and multilingual content'),
+    addButtonLabel: t('teamManagement.addButtonLabel', 'Add New Team Member'),
+    emptyStateMessage: t('teamManagement.emptyStateMessage', 'No team members found. Create your first team member by clicking the "Add New Team Member" button.'),
+    noSectionMessage: t('teamManagement.noSectionMessage', 'Please create a Team section first before adding team members.'),
+    mainSectionRequiredMessage: t('teamManagement.mainSectionRequiredMessage', 'Please enter your main section data before adding team members.'),
+    emptyFieldsMessage: t('teamManagement.emptyFieldsMessage', 'Please complete all required fields in the main section before adding team members.'),
+    sectionIntegrationTitle: t('teamManagement.sectionIntegrationTitle', 'Team Section Content'),
+    sectionIntegrationDescription: t('teamManagement.sectionIntegrationDescription', 'Manage your team section content in multiple languages.'),
+    addSectionButtonLabel: t('teamManagement.addSectionButtonLabel', 'Add Team Section'),
+    editSectionButtonLabel: t('teamManagement.editSectionButtonLabel', 'Edit Team Section'),
+    saveSectionButtonLabel: t('teamManagement.saveSectionButtonLabel', 'Save Team Section'),
+    listTitle: t('teamManagement.listTitle', 'Team Members List'),
     editPath: "team/addTeam"
-  };
+  }), [t]);
 
-  // Team table column definitions with translations
-  const TEAM_COLUMNS = [
+  // Team table column definitions with translations - Memoized and reactive to language changes
+  const TEAM_COLUMNS = useMemo(() => [
     {
-      header: t('teamManagement.name'),
+      header: t('teamManagement.name', 'Name'),
       accessor: "name",
       className: "font-medium"
     },
     {
-      header: t('teamManagement.description'),
+      header: t('teamManagement.description', 'Description'),
       accessor: "description",
       cell: TruncatedCell
     },
     {
-      header: t('teamManagement.status'),
+      header: t('teamManagement.status', 'Status'),
       accessor: "isActive",
       cell: (item: any, value: boolean) => (
         <div className="flex flex-col gap-2">
@@ -103,7 +111,7 @@ export default function Team() {
             {StatusCell(item, value)}
             {item.isMain && (
               <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                {t('teamManagement.main')}
+                {t('teamManagement.main', 'Main')}
               </span>
             )}
           </div>
@@ -111,15 +119,15 @@ export default function Team() {
       )
     },
     {
-      header: t('teamManagement.order'),
+      header: t('teamManagement.order', 'Order'),
       accessor: "order"
     },
     {
-      header: t('teamManagement.subsections'),
+      header: t('teamManagement.subsections', 'Subsections'),
       accessor: "subsections.length",
       cell: CountBadgeCell
     }
-  ];
+  ], [t]);
 
   // Check if main subsection exists
   const { useGetMainByWebSiteId, useGetBySectionId } = useSubSections()
@@ -168,8 +176,6 @@ export default function Team() {
       return;
     }
     
-   
-    
     // We're done loading, now check the data
     let foundMainSubSection = false;
     let foundNavigationSubSection = false;
@@ -197,7 +203,7 @@ export default function Team() {
           // Match by name
           if (sub.name === expectedNavigationSlug) return true;
           // Match by partial name (in case of slug differences)
-          if (sub.name && sub.name.toLowerCase().includes('navigation')) return true;
+          if (sub.name && sub.name.toLowerCase().includes('team') && sub.name.toLowerCase().includes('navigation')) return true;
           return false;
         });
         foundNavigationSubSection = !!navigationSubSection;
@@ -211,7 +217,7 @@ export default function Team() {
         // Check if it's a navigation subsection
         if (sectionData.type === NavigationConfig.type || 
             sectionData.name === expectedNavigationSlug ||
-            (sectionData.name && sectionData.name.toLowerCase().includes('navigation'))) {
+            (sectionData.name && sectionData.name.toLowerCase().includes('team') && sectionData.name.toLowerCase().includes('navigation'))) {
           foundNavigationSubSection = true;
         }
       }
@@ -238,7 +244,7 @@ export default function Team() {
             // Match by name
             if (sub.name === expectedNavigationSlug) return true;
             // Match by partial name (in case of slug differences)
-            if (sub.name && sub.name.toLowerCase().includes('navigation')) return true;
+            if (sub.name && sub.name.toLowerCase().includes('team') && sub.name.toLowerCase().includes('navigation')) return true;
             return false;
           });
           foundNavigationSubSection = !!navigationSubSection;
@@ -254,14 +260,12 @@ export default function Team() {
         if (!foundNavigationSubSection && (
           websiteData.type === NavigationConfig.type || 
           websiteData.name === expectedNavigationSlug ||
-          (websiteData.name && websiteData.name.toLowerCase().includes('navigation'))
+          (websiteData.name && websiteData.name.toLowerCase().includes('team') && websiteData.name.toLowerCase().includes('navigation'))
         )) {
           foundNavigationSubSection = true;
         }
       }
     }
-    
-
     
     setHasMainSubSection(foundMainSubSection);
     setHasNavigationSubSection(foundNavigationSubSection);
@@ -295,8 +299,8 @@ export default function Team() {
     NavigationConfig.type
   ]);
 
-  // Handle main subsection creation
-  const handleMainSubSectionCreated = (subsection: any) => {
+  // Handle main subsection creation - converted to useCallback to stabilize function reference
+  const handleMainSubSectionCreated = useCallback((subsection: any) => {
     // Check if subsection has the correct name
     const expectedSlug = teamSectionConfig.name;
     const hasCorrectSlug = subsection.name === expectedSlug;
@@ -318,18 +322,17 @@ export default function Team() {
     if (refetchMainSubSection) {
       refetchMainSubSection();
     }
-  };
+  }, [teamSectionConfig.name, setSection, refetchMainSubSection]);
 
-  // Handle navigation subsection creation
-  const handleNavigationSubSectionCreated = (subsection: any) => {
-    
+  // Handle navigation subsection creation - converted to useCallback to stabilize function reference
+  const handleNavigationSubSectionCreated = useCallback((subsection: any) => {
     // Check if subsection has the correct name or type
     const expectedSlug = NavigationConfig.name;
     const expectedType = NavigationConfig.type;
     const hasCorrectIdentifier = (
       subsection.name === expectedSlug || 
       subsection.type === expectedType ||
-      (subsection.name && subsection.name.toLowerCase().includes('navigation'))
+      (subsection.name && subsection.name.toLowerCase().includes('team') && subsection.name.toLowerCase().includes('navigation'))
     );
     
     // Set that we have a navigation subsection now
@@ -341,7 +344,7 @@ export default function Team() {
         refetchMainSubSection();
       }, 1000); // Give it a bit more time to ensure data is saved
     }
-  };
+  }, [NavigationConfig.name, NavigationConfig.type, refetchMainSubSection]);
 
   // Logic for disabling the add button
   const isAddButtonDisabled: boolean = 
@@ -356,52 +359,51 @@ export default function Team() {
       ? TEAM_CONFIG.mainSectionRequiredMessage
       : TEAM_CONFIG.emptyStateMessage;
 
-  // Components
-  const TeamTable = (
+  // Memoize component references to prevent recreation on each render
+  const TeamTable = useMemo(() => (
     <GenericTable
       columns={TEAM_COLUMNS}
       data={teamItems}
       onEdit={handleEdit}
       onDelete={showDeleteDialog}
     />
-  );
+  ), [TEAM_COLUMNS, teamItems, handleEdit, showDeleteDialog]);
 
-  const CreateDialog = (
+  const CreateDialog = useMemo(() => (
     <DialogCreateSectionItem
       open={isCreateDialogOpen}
       onOpenChange={setIsCreateDialogOpen}
       sectionId={sectionId || ""}
       onServiceCreated={handleItemCreated}
-      title={t('teamManagement.team')}
+      title={t('teamManagement.team', 'Team')}
     />
-  );
+  ), [isCreateDialogOpen, setIsCreateDialogOpen, sectionId, handleItemCreated, t]);
 
-  const DeleteDialog = (
+  const DeleteDialog = useMemo(() => (
     <DeleteSectionDialog
       open={isDeleteDialogOpen}
       onOpenChange={setIsDeleteDialogOpen}
       serviceName={itemToDelete?.name || ""}
       onConfirm={handleDelete}
       isDeleting={isDeleting}
-      title={t('teamManagement.deleteTeamItem')}
-      confirmText={t('teamManagement.confirm')}
+      title={t('teamManagement.deleteTeamItem', 'Delete Team Item')}
+      confirmText={t('teamManagement.confirm', 'Confirm')}
     />
-  );
+  ), [isDeleteDialogOpen, setIsDeleteDialogOpen, itemToDelete, handleDelete, isDeleting, t]);
 
   return (
     <div className="space-y-6">
-       <ClickableImage
-              imageSrc="/assets/sections/team.png"
-              imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
-              size="large"
-              title={t('HeroManagement.tabLabel', 'Hero Section')}
-              subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
-              t={t}
-              priority
-              className="w-full"
-              previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
-            />
-      
+      <ClickableImage
+        imageSrc="/assets/sections/team.png"
+        imageAlt={t('teamManagement.sectionImage', 'Team Section')}
+        size="large"
+        title={t('teamManagement.sectionImageTitle', 'Team Section')}
+        subtitle={t('teamManagement.sectionImageSubtitle', 'Click to view full size')}
+        t={t}
+        priority
+        className="w-full"
+        previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+      />
 
       {/* Main list page with table and section integration */}
       <GenericListPage
@@ -425,11 +427,11 @@ export default function Team() {
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="content" className="flex items-center gap-2">
               <Users size={16} />
-              {t('Navigation.ContentConfiguration')}
+              {t('Navigation.ContentConfiguration', 'Content Configuration')}
             </TabsTrigger>
             <TabsTrigger value="navigation" className="flex items-center gap-2">
               <Navigation size={16} />
-              {t('Navigation.NavigationConfiguration')}
+              {t('Navigation.NavigationConfiguration', 'Navigation Configuration')}
             </TabsTrigger>
           </TabsList>
           

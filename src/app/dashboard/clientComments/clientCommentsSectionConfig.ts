@@ -3,46 +3,46 @@ import { FieldConfig } from "@/src/api/types/hooks/MultilingualSection.types";
 // Translation keys for clientComments section
 export const clientCommentsSectionTranslations = {
     en: {
-        sectionName: "Chose Us Section Basic",
-        sectionDescription: "Chose Us section for managing industry information",
+        sectionName: "Client Comments Section Basic",
+        sectionDescription: "Client Comments section for managing testimonials and feedback",
         subSectionName: "Basic",
         sectionBadgeLabel: "Section Badge",
-        sectionTitleLabel: "Section Title",
+        sectionTitleLabel: "Section Title", 
         sectionDescriptionLabel: "Section Description",
-        industryDetailsLabel: "Client Comments Details",
+        clientCommentsDetailsLabel: "Client Comments Details",
         type: "ClientComments",
         badgeElement: "Badge",
         titleElement: "Title",
         descriptionElement: "Description",
-        industryDetailsElement: "ClientCommentsDetails",
+        clientCommentsDetailsElement: "ClientCommentsDetails",
     },
     ar: {
-        sectionName: "قسم اخترنا الأساسي",
-        sectionDescription: "قسم اخترنا لإدارة معلومات الصناعة",
+        sectionName: "Client Comments Section Basic",
+        sectionDescription: "قسم تعليقات العملاء لإدارة الشهادات والتعليقات",
         subSectionName: "أساسي",
         sectionBadgeLabel: "شارة القسم",
         sectionTitleLabel: "عنوان القسم",
         sectionDescriptionLabel: "وصف القسم",
-        industryDetailsLabel: "تفاصيل تعليقات العملاء",
+        clientCommentsDetailsLabel: "تفاصيل تعليقات العملاء",
         type: "تعليقات العملاء",
         badgeElement: "شارة",
         titleElement: "عنوان",
         descriptionElement: "وصف",
-        industryDetailsElement: "تفاصيل تعليقات العملاء",
+        clientCommentsDetailsElement: "تفاصيل تعليقات العملاء",
     },
     tr: {
-        sectionName: "Bizi Seçin Temel Bölümü",
-        sectionDescription: "Endüstri bilgilerini yönetmek için Bizi Seçin bölümü",
+        sectionName: "Client Comments Section Basic",
+        sectionDescription: "Müşteri yorumları ve geri bildirimleri yönetmek için bölüm",
         subSectionName: "Temel",
         sectionBadgeLabel: "Bölüm Rozeti",
         sectionTitleLabel: "Bölüm Başlığı",
         sectionDescriptionLabel: "Bölüm Açıklaması",
-        industryDetailsLabel: "Müşteri Yorumları Detayları",
+        clientCommentsDetailsLabel: "Müşteri Yorumları Detayları",
         type: "Müşteri Yorumları",
         badgeElement: "Rozet",
         titleElement: "Başlık",
         descriptionElement: "Açıklama",
-        industryDetailsElement: "MüşteriYorumlarıDetayları",
+        clientCommentsDetailsElement: "MüşteriYorumlarıDetayları",
     },
 };
 
@@ -52,38 +52,38 @@ export const getClientCommentsSectionConfig = (language: string = 'en') => {
 
     return {
         name: translations.sectionName,
-        slug: "Choose-main",
+        slug: "client-comments-main", // Fixed slug to be more descriptive
         subSectionName: translations.subSectionName,
         description: translations.sectionDescription,
         isMain: true,
         type: translations.type,
         // Define fields with translated labels
         fields: [
-        {
-            id: "sectionBadge",
-            label: translations.sectionBadgeLabel,
-            type: "text",
-            required: true,
-        },
-        {
-            id: "sectionTitle",
-            label: translations.sectionTitleLabel,
-            type: "text",
-            required: true,
-        },
-        {
-            id: "sectionDescription",
-            label: translations.sectionDescriptionLabel,
-            type: "textarea",
-            required: false,
-        },
+            {
+                id: "sectionBadge",
+                label: translations.sectionBadgeLabel,
+                type: "text",
+                required: true,
+            },
+            {
+                id: "sectionTitle",
+                label: translations.sectionTitleLabel,
+                type: "text",
+                required: true,
+            },
+            {
+                id: "sectionDescription",
+                label: translations.sectionDescriptionLabel,
+                type: "textarea",
+                required: false,
+            },
         ] as FieldConfig[],
         // Define element mapping with translated values
         elementsMapping: {
-        sectionBadge: translations.badgeElement,
-        sectionTitle: translations.titleElement,
-        sectionDescription: translations.descriptionElement,
-        industryDetails: translations.industryDetailsElement,
+            sectionBadge: translations.badgeElement,
+            sectionTitle: translations.titleElement,
+            sectionDescription: translations.descriptionElement,
+            clientCommentsDetails: translations.clientCommentsDetailsElement,
         },
     };
 };

@@ -1,4 +1,3 @@
-
 // "use client"
 
 // import { forwardRef, useEffect, useState, useRef, useMemo } from "react"
@@ -15,7 +14,7 @@
 // import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 // import { createFormRef } from "../../services/addService/Utils/Expose-form-data"
 // import apiClient from "@/src/lib/api-client"
-// import { createLanguageCodeMap, createSectionsDefaultValues } from "../../services/addService/Utils/Language-default-values"
+// import { createLanguageCodeMap } from "../../services/addService/Utils/Language-default-values"
 // import { useImageUploader } from "../../services/addService/Utils/Image-uploader"
 // import { LoadingDialog } from "@/src/utils/MainSectionComponents"
 // import { NavLanguageCard } from "./NavLanguageCard"
@@ -24,9 +23,10 @@
 // import { Language } from "@/src/api/types/hooks/language.types"
 // import { SubSection } from "@/src/api/types/hooks/section.types"
 // import { ContentElement } from "@/src/api/types/hooks/content.types"
+// import { createSectionsDefaultValues, createSectionsSchema, processAndLoadNavData, sectionsFormData } from "../../../../utils/sections/utils"
 // import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations"
 // import { useTranslation } from "react-i18next"
-// import { createSectionsSchema } from "../../services/addService/Utils/language-specific-schemas"
+
 
 // interface NavFormProps {
 //   languageIds: string[]
@@ -802,6 +802,5 @@
 // )
 
 // NavItemsForm.displayName = "NavItemsForm"
-
 
 // export default NavItemsForm

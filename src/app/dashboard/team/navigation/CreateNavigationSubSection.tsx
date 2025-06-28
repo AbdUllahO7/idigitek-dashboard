@@ -1149,11 +1149,7 @@ export default function CreateNavigationSubSection({
           <div className="flex items-center">
             <Link size={20} className="mr-3 text-blue-600 dark:text-blue-400" />
             <span>{subsectionExists ? t('Navigation.EditNavigation') : t('Navigation.CreateNavigation')}</span>
-            {sectionInfo && !subsectionExists && (
-              <span className="ml-2 px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
-                🧭 Using section data
-              </span>
-            )}
+           
           </div>
           <motion.div
             animate={{ rotate: isExpanded ? 0 : 180 }}
@@ -1167,11 +1163,7 @@ export default function CreateNavigationSubSection({
         </div>
       }
       description={
-        subsectionExists
-          ? t('Navigation.description')
-          : sectionInfo 
-            ? `Creating navigation using section "${sectionInfo.subName}" data. Fields will be pre-populated with section names.`
-            : t('Navigation.description1')
+      ""
       }
     >
       <AnimatePresence initial={false}>
@@ -1201,9 +1193,7 @@ export default function CreateNavigationSubSection({
             <div className="mb-6">
               <div className="flex items-center mb-4">
                 <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2 ml-2" />
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  🧭 Navigation Languages
-                </h3>
+               
                 <span className="ml-2 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
                   {languages.length} {t('mainSubsection.languages')}
                 </span>
