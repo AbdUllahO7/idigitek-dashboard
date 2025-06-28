@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useGenericList } from "@/src/hooks/useGenericList"
@@ -18,6 +18,7 @@ import { Users, Navigation } from "lucide-react"
 import { getTeamNavigationSectionConfig } from "./navigation/team-navigation-config"
 import CreateNavigationSubSection from "./navigation/CreateNavigationSubSection"
 import { ClickableImage } from "@/src/components/ClickableImage"
+import { useSections } from "@/src/hooks/webConfiguration/use-section"
 
 export default function Team() {
   const searchParams = useSearchParams()
@@ -32,6 +33,36 @@ export default function Team() {
   // Get translated configurations based on current language
   const teamSectionConfig = getTeamSectionConfig(i18n.language);
   const NavigationConfig = getTeamNavigationSectionConfig(i18n.language);
+  // Get basic section info for both navigation and main content pre-population
+  const {useGetBasicInfoByWebsiteId} = useSections()
+  const { data: basicInfo } = useGetBasicInfoByWebsiteId(websiteId)
+  
+  //  Process section data for both navigation and main content use
+  const sectionInfoForNavigation = useMemo(() => {
+    if (!basicInfo?.data?.length) return null;
+    
+    // Find the current section in the basic info
+    const currentSection = sectionId ? 
+      basicInfo.data.find(section => section.id === sectionId) : 
+      basicInfo.data[0]; // Use first section if no specific sectionId
+    
+    if (!currentSection) return null;
+    
+    return {
+      id: currentSection.id,
+      name: currentSection.name,
+      subName: currentSection.subName,
+      // Create navigation-friendly data structure
+      navigationData: {
+        availableLanguages: ['en', 'ar', 'tr'], // Languages available in section data
+        fallbackValues: {
+          // Use section name as navigation label, subName as URL
+          navigationLabel: currentSection.name,
+          navigationUrl: `/${currentSection.subName.toLowerCase()}`
+        }
+      }
+    };
+  }, [basicInfo, sectionId]);
 
   // Configuration for the Team page using translations
   const TEAM_CONFIG = {
@@ -409,6 +440,7 @@ export default function Team() {
               sectionConfig={teamSectionConfig}
               onSubSectionCreated={handleMainSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
+              sectionInfo={sectionInfoForNavigation}
             />
           </TabsContent>
           
@@ -419,6 +451,7 @@ export default function Team() {
               sectionConfig={NavigationConfig}
               onSubSectionCreated={handleNavigationSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
+              sectionInfo={sectionInfoForNavigation}
             />
           </TabsContent>
         </Tabs>

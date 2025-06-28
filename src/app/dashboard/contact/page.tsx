@@ -18,6 +18,7 @@ import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSe
 import { Navigation, Users } from "lucide-react"
 import { getTeamNavigationSectionConfig } from "../team/navigation/team-navigation-config"
 import { ClickableImage } from "@/src/components/ClickableImage"
+import { useSections } from "@/src/hooks/webConfiguration/use-section"
 
 // Contact {t('Navigation.NavigationConfiguration')} Function
 const getContactNavigationSectionConfig = (language: string = 'en') => {
@@ -59,6 +60,36 @@ export default function ContactPage() {
   const currentLanguage = i18n.language; // 'en', 'ar', 'tr'
   const contactSectionConfig = getContactSectionConfig(currentLanguage);
   const [hasNavigationSubSection, setHasNavigationSubSection] = useState<boolean>(false)
+   // Get basic section info for both navigation and main content pre-population
+    const {useGetBasicInfoByWebsiteId} = useSections()
+    const { data: basicInfo } = useGetBasicInfoByWebsiteId(websiteId)
+    
+    //  Process section data for both navigation and main content use
+    const sectionInfoForNavigation = useMemo(() => {
+      if (!basicInfo?.data?.length) return null;
+      
+      // Find the current section in the basic info
+      const currentSection = sectionId ? 
+        basicInfo.data.find(section => section.id === sectionId) : 
+        basicInfo.data[0]; // Use first section if no specific sectionId
+      
+      if (!currentSection) return null;
+      
+      return {
+        id: currentSection.id,
+        name: currentSection.name,
+        subName: currentSection.subName,
+        // Create navigation-friendly data structure
+        navigationData: {
+          availableLanguages: ['en', 'ar', 'tr'], // Languages available in section data
+          fallbackValues: {
+            // Use section name as navigation label, subName as URL
+            navigationLabel: currentSection.name,
+            navigationUrl: `/${currentSection.subName.toLowerCase()}`
+          }
+        }
+      };
+    }, [basicInfo, sectionId]);
   
   // Use Contact {t('Navigation.NavigationConfiguration')} instead of Team
   const contactNavigationConfig = getTeamNavigationSectionConfig(i18n.language);
@@ -446,6 +477,7 @@ export default function ContactPage() {
               sectionId={sectionId}
               sectionConfig={contactSectionConfig}
               onSubSectionCreated={handleMainSubSectionCreated}
+              sectionInfo={sectionInfoForNavigation}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
             />
           </TabsContent>
@@ -456,6 +488,7 @@ export default function ContactPage() {
               sectionConfig={contactNavigationConfig}
               onSubSectionCreated={handleNavigationSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
+              sectionInfo={sectionInfoForNavigation}
             />
           </TabsContent>
         </Tabs>

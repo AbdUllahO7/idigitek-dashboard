@@ -197,7 +197,7 @@ export default function AddProduct() {
 
      <>
      <ClickableImage
-            imageSrc="/assets/sections/hero.png"
+            imageSrc="/assets/sections/products.png"
             imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
             size="large"
             title={t('HeroManagement.tabLabel', 'Hero Section')}

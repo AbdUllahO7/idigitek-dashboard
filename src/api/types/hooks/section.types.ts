@@ -327,3 +327,19 @@ export interface SectionValidationResult {
   errors: MultilingualValidationError[];
 }
 
+export interface BasicSectionInfo {
+  id: string;
+  name: {
+    en: string;
+    ar: string;
+    tr: string;
+  };
+  subName: string;
+}
+
+// 🎯 NEW: Basic section info response
+export interface BasicSectionInfoResponse {
+  success: boolean;
+  count: number;
+  data: BasicSectionInfo[];
+}

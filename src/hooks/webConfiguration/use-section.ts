@@ -9,13 +9,12 @@ import {
   SectionResponse,
   SectionQueryParams,
   SupportedLanguage,
-  MultilingualName,
-  MultilingualDescription,
-  SectionOrderUpdateRequest
+  SectionOrderUpdateRequest,
+  BasicSectionInfo,
+  BasicSectionInfoResponse
 } from '@/src/api/types/hooks/section.types';
 import { useAuth } from '@/src/context/AuthContext';
 import { useLanguage } from '@/src/context/LanguageContext';
-import { toast } from '../use-toast';
 import { getMultilingualDescription, getMultilingualName } from '../Management/SectionManagement/MultilingualManagement';
 
 // Base section hook
@@ -38,10 +37,14 @@ export function useSections() {
   const allCompleteDataKey = [...sectionsKey, 'allComplete'];
   const websiteSectionsKey = (websiteId: string) => [...sectionsKey, 'website', websiteId];
   const websiteSectionsCompleteKey = (websiteId: string) => [...websiteSectionsKey(websiteId), 'complete'];
+  
+  // 🎯 NEW: Basic section info query keys
+  const basicSectionsKey = [...sectionsKey, 'basic'];
+  const websiteBasicSectionsKey = (websiteId: string) => [...basicSectionsKey, 'website', websiteId];
 
   // 🎯 UPDATED: Helper function to get section name by current language using utility
-  const getSectionNameByLanguage = (section: Section): string => {
-    if (section.displayName) {
+  const getSectionNameByLanguage = (section: Section | BasicSectionInfo): string => {
+    if ('displayName' in section && section.displayName) {
       return section.displayName; // Use server-provided display name
     }
     
@@ -55,6 +58,55 @@ export function useSections() {
     }
     
     return getMultilingualDescription(section, language as SupportedLanguage);
+  };
+
+  // 🎯 NEW: Get basic section information (id, name, subName) - lightweight
+  const useGetBasicInfo = (activeOnly = true) => {
+    return useQuery({
+      queryKey: [...basicSectionsKey, { activeOnly }],
+      queryFn: async (): Promise<BasicSectionInfoResponse> => {
+        try {
+          const params: any = {};
+          if (activeOnly) {
+            params.isActive = true;
+          }
+          
+          const { data } = await apiClient.get(`${endpoint}/basic`, { params });
+          return data;
+        } catch (error: any) {
+          console.error("Error fetching basic section info:", error);
+          throw error;
+        }
+      },
+      staleTime: 5 * 60 * 1000, // Cache for 5 minutes since basic info changes less frequently
+    });
+  };
+
+  // 🎯 NEW: Get basic section information for a specific website
+  const useGetBasicInfoByWebsiteId = (
+    websiteId: string,
+    includeInactive = false,
+    enabled = true
+  ) => {
+    return useQuery({
+      queryKey: [...websiteBasicSectionsKey(websiteId), { includeInactive }],
+      queryFn: async (): Promise<BasicSectionInfoResponse> => {
+        try {
+          const params: any = {};
+          if (includeInactive) {
+            params.includeInactive = true;
+          }
+          
+          const { data } = await apiClient.get(`${endpoint}/basic/website/${websiteId}`, { params });
+          return data;
+        } catch (error: any) {
+          console.error(`Error fetching basic section info for website ${websiteId}:`, error);
+          throw error;
+        }
+      },
+      enabled: !!websiteId && enabled,
+      staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    });
   };
 
   // Get all sections (optionally with section items count)
@@ -154,6 +206,9 @@ export function useSections() {
       onSuccess: (data) => {
         // Invalidate all section queries to ensure fresh data
         queryClient.invalidateQueries({ queryKey: sectionsKey });
+        // 🎯 NEW: Also invalidate basic section info cache
+        queryClient.invalidateQueries({ queryKey: basicSectionsKey });
+        
         if (data._id) {
           queryClient.setQueryData(sectionKey(data._id), data);
         }
@@ -164,6 +219,10 @@ export function useSections() {
           });
           queryClient.invalidateQueries({ 
             queryKey: websiteSectionsCompleteKey(data.WebSiteId.toString()) 
+          });
+          // 🎯 NEW: Invalidate website basic info cache
+          queryClient.invalidateQueries({ 
+            queryKey: websiteBasicSectionsKey(data.WebSiteId.toString()) 
           });
         }
       },
@@ -196,6 +255,8 @@ export function useSections() {
         queryClient.invalidateQueries({ queryKey: sectionsKey });
         queryClient.invalidateQueries({ queryKey: completeDataKey(id) });
         queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        // 🎯 NEW: Invalidate basic section info cache
+        queryClient.invalidateQueries({ queryKey: basicSectionsKey });
         
         if (data.WebSiteId) {
           queryClient.invalidateQueries({ 
@@ -204,12 +265,16 @@ export function useSections() {
           queryClient.invalidateQueries({ 
             queryKey: websiteSectionsCompleteKey(data.WebSiteId.toString()) 
           });
+          // 🎯 NEW: Invalidate website basic info cache
+          queryClient.invalidateQueries({ 
+            queryKey: websiteBasicSectionsKey(data.WebSiteId.toString()) 
+          });
         }
       },
     });
   };
 
-  // Toggle active status (unchanged)
+  // Toggle active status
   const useToggleActive = () => {
     return useMutation({
       mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }): Promise<Section> => {
@@ -226,6 +291,8 @@ export function useSections() {
         queryClient.invalidateQueries({ queryKey: sectionsKey });
         queryClient.invalidateQueries({ queryKey: completeDataKey(id) });
         queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        // 🎯 NEW: Invalidate basic section info cache since active status affects basic info
+        queryClient.invalidateQueries({ queryKey: basicSectionsKey });
         
         if (data.WebSiteId) {
           queryClient.invalidateQueries({ 
@@ -234,12 +301,16 @@ export function useSections() {
           queryClient.invalidateQueries({ 
             queryKey: websiteSectionsCompleteKey(data.WebSiteId.toString()) 
           });
+          // 🎯 NEW: Invalidate website basic info cache
+          queryClient.invalidateQueries({ 
+            queryKey: websiteBasicSectionsKey(data.WebSiteId.toString()) 
+          });
         }
       },
     });
   };
 
-  // Delete a section (unchanged)
+  // Delete a section
   const useDelete = (hardDelete: boolean = false) => {
     return useMutation({
       mutationFn: async (id: string): Promise<{ websiteId?: string }> => {
@@ -262,6 +333,8 @@ export function useSections() {
         queryClient.removeQueries({ queryKey: completeDataKey(id) });
         queryClient.invalidateQueries({ queryKey: sectionsKey });
         queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        // 🎯 NEW: Invalidate basic section info cache
+        queryClient.invalidateQueries({ queryKey: basicSectionsKey });
         
         if (websiteId) {
           queryClient.invalidateQueries({ 
@@ -269,6 +342,10 @@ export function useSections() {
           });
           queryClient.invalidateQueries({ 
             queryKey: websiteSectionsCompleteKey(websiteId.toString()) 
+          });
+          // 🎯 NEW: Invalidate website basic info cache
+          queryClient.invalidateQueries({ 
+            queryKey: websiteBasicSectionsKey(websiteId.toString()) 
           });
         }
       },
@@ -291,6 +368,8 @@ export function useSections() {
         // Invalidate all section queries to ensure fresh data
         queryClient.invalidateQueries({ queryKey: sectionsKey });
         queryClient.invalidateQueries({ queryKey: allCompleteDataKey });
+        // 🎯 NEW: Invalidate basic section info cache since order affects basic info
+        queryClient.invalidateQueries({ queryKey: basicSectionsKey });
         
         // Update individual section cache and invalidate website-specific queries
         updatedSections.forEach(section => {
@@ -304,6 +383,10 @@ export function useSections() {
             queryClient.invalidateQueries({ 
               queryKey: websiteSectionsCompleteKey(section.WebSiteId.toString()) 
             });
+            // 🎯 NEW: Invalidate website basic info cache
+            queryClient.invalidateQueries({ 
+              queryKey: websiteBasicSectionsKey(section.WebSiteId.toString()) 
+            });
           }
         });
       },
@@ -313,10 +396,13 @@ export function useSections() {
   // Add a manual function to clear all section-related cache for a user
   const clearUserSectionsCache = () => {
     queryClient.invalidateQueries({ queryKey: sectionsKey });
+    // 🎯 NEW: Also clear basic section info cache
+    queryClient.invalidateQueries({ queryKey: basicSectionsKey });
   };
 
   // Return all hooks, including helper functions
   return {
+    // Existing hooks
     useGetAll,
     useGetById,
     useGetByWebsiteId,             
@@ -326,6 +412,10 @@ export function useSections() {
     useDelete,
     useUpdateOrder,
     clearUserSectionsCache,
+    
+    // 🎯 NEW: Basic section info hooks
+    useGetBasicInfo,
+    useGetBasicInfoByWebsiteId,
     
     // Helper functions
     getSectionNameByLanguage,

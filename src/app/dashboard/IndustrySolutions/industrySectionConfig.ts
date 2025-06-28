@@ -62,7 +62,7 @@ export const getIndustrySectionConfig = (language: string = 'en') => {
         id: "sectionBadge", 
         label: translations.sectionBadgeLabel, 
         type: "text", 
-        required: true 
+        required: false 
       },
       { 
         id: "sectionTitle", 

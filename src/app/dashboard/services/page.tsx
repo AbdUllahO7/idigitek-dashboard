@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useTranslation } from "react-i18next" // or your i18n hook
 import { useSectionItems } from "@/src/hooks/webConfiguration/use-section-items"
 import { useGenericList } from "@/src/hooks/useGenericList"
@@ -18,6 +18,7 @@ import { Navigation, Users } from "lucide-react"
 import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSection"
 import { getTeamNavigationSectionConfig } from "../team/navigation/team-navigation-config"
 import { ClickableImage } from "@/src/components/ClickableImage"
+import { useSections } from "@/src/hooks/webConfiguration/use-section"
 
 export default function ServicesPage() {
   const { t, i18n } = useTranslation() // i18n hook
@@ -29,7 +30,39 @@ export default function ServicesPage() {
   const { websiteId } = useWebsiteContext();
   const NavigationConfig = getTeamNavigationSectionConfig(i18n.language);
   const [hasNavigationSubSection, setHasNavigationSubSection] = useState<boolean>(false)
+  
+  // Get basic section info for both navigation and main content pre-population
+  const {useGetBasicInfoByWebsiteId} = useSections()
+  const { data: basicInfo } = useGetBasicInfoByWebsiteId(websiteId)
+  
+  //  Process section data for both navigation and main content use
+  const sectionInfoForNavigation = useMemo(() => {
+    if (!basicInfo?.data?.length) return null;
+    
+    // Find the current section in the basic info
+    const currentSection = sectionId ? 
+      basicInfo.data.find(section => section.id === sectionId) : 
+      basicInfo.data[0]; // Use first section if no specific sectionId
+    
+    if (!currentSection) return null;
+    
+    return {
+      id: currentSection.id,
+      name: currentSection.name,
+      subName: currentSection.subName,
+      // Create navigation-friendly data structure
+      navigationData: {
+        availableLanguages: ['en', 'ar', 'tr'], // Languages available in section data
+        fallbackValues: {
+          // Use section name as navigation label, subName as URL
+          navigationLabel: currentSection.name,
+          navigationUrl: `/${currentSection.subName.toLowerCase()}`
+        }
+      }
+    };
+  }, [basicInfo, sectionId]);
 
+  
   // Get translated service section config based on current language
   const serviceSectionConfig = getServiceSectionConfig(i18n.language)
 
@@ -133,13 +166,13 @@ export default function ServicesPage() {
  // Handle navigation subsection creation
   const handleNavigationSubSectionCreated = (subsection: any) => {
     
-    // 🔧 FIXED: Check if subsection has the correct name or type for NEWS
+    // 🔧 FIXED: Check if subsection has the correct name or type for SERVICES
     const expectedSlug = NavigationConfig.name;
     const expectedType = NavigationConfig.type;
     const hasCorrectIdentifier = (
       subsection.name === expectedSlug || 
       subsection.type === expectedType ||
-      (subsection.name && subsection.name.toLowerCase().includes('news') && subsection.name.toLowerCase().includes('navigation'))
+      (subsection.name && subsection.name.toLowerCase().includes('services') && subsection.name.toLowerCase().includes('navigation'))
     );
     
     // Set that we have a navigation subsection now
@@ -168,9 +201,9 @@ export default function ServicesPage() {
     let foundNavigationSubSection = false;
     let mainSubSection = null;
     
-    // 🔧 FIXED: Use NEWS configurations instead of team configurations
-    const expectedNewsSlug = serviceSectionConfig.name; // This is correct for NEWS
-    const expectedNavigationSlug = NavigationConfig.name; // This is correct for NEWS navigation
+    // 🔧 FIXED: Use SERVICES configurations instead of news configurations
+    const expectedServicesSlug = serviceSectionConfig.name; // This is correct for SERVICES
+    const expectedNavigationSlug = NavigationConfig.name; // This is correct for SERVICES navigation
     
    
     
@@ -179,9 +212,9 @@ export default function ServicesPage() {
       const sectionData = sectionSubsections.data;
       
       if (Array.isArray(sectionData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
+        // 🔧 FIXED: Find the main SERVICES subsection
         mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedNewsSlug
+          sub.isMain === true && sub.name === expectedServicesSlug
         );
         foundMainSubSection = !!mainSubSection;
 
@@ -192,22 +225,22 @@ export default function ServicesPage() {
           // Match by name
           if (sub.name === expectedNavigationSlug) return true;
           // Match by partial name (in case of slug differences)
-          if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
+          if (sub.name && sub.name.toLowerCase().includes('services') && sub.name.toLowerCase().includes('navigation')) return true;
           return false;
         });
         foundNavigationSubSection = !!navigationSubSection;
 
       } else {
-        // Single object response - check if it's news main or navigation
-        if (sectionData.isMain === true && sectionData.name === expectedNewsSlug) {
+        // Single object response - check if it's services main or navigation
+        if (sectionData.isMain === true && sectionData.name === expectedServicesSlug) {
           foundMainSubSection = true;
           mainSubSection = sectionData;
         }
         
-        // Check if it's a news navigation subsection
+        // Check if it's a services navigation subsection
         if (sectionData.type === NavigationConfig.type || 
             sectionData.name === expectedNavigationSlug ||
-            (sectionData.name && sectionData.name.toLowerCase().includes('news') && sectionData.name.toLowerCase().includes('navigation'))) {
+            (sectionData.name && sectionData.name.toLowerCase().includes('services') && sectionData.name.toLowerCase().includes('navigation'))) {
           foundNavigationSubSection = true;
         }
       }
@@ -218,10 +251,10 @@ export default function ServicesPage() {
       const websiteData = mainSubSectionData.data;
       
       if (Array.isArray(websiteData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
+        // 🔧 FIXED: Find the main SERVICES subsection
         if (!foundMainSubSection) {
           mainSubSection = websiteData.find(sub => 
-            sub.isMain === true && sub.name === expectedNewsSlug
+            sub.isMain === true && sub.name === expectedServicesSlug
           );
           foundMainSubSection = !!mainSubSection;
         }
@@ -234,7 +267,7 @@ export default function ServicesPage() {
             // Match by name
             if (sub.name === expectedNavigationSlug) return true;
             // Match by partial name (in case of slug differences)
-            if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
+            if (sub.name && sub.name.toLowerCase().includes('services') && sub.name.toLowerCase().includes('navigation')) return true;
             return false;
           });
           foundNavigationSubSection = !!navigationSubSection;
@@ -243,7 +276,7 @@ export default function ServicesPage() {
 
       } else {
         // Single object response - check what type it is
-        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedNewsSlug) {
+        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedServicesSlug) {
           foundMainSubSection = true;
           mainSubSection = websiteData;
         }
@@ -252,7 +285,7 @@ export default function ServicesPage() {
         if (!foundNavigationSubSection && (
           websiteData.type === NavigationConfig.type || 
           websiteData.name === expectedNavigationSlug ||
-          (websiteData.name && websiteData.name.toLowerCase().includes('news') && websiteData.name.toLowerCase().includes('navigation'))
+          (websiteData.name && websiteData.name.toLowerCase().includes('services') && websiteData.name.toLowerCase().includes('navigation'))
         )) {
           foundNavigationSubSection = true;
         }
@@ -274,7 +307,7 @@ export default function ServicesPage() {
       // Set local section data
       setSectionData(sectionInfo);
       
-      // Update the newsSection in useGenericList hook if not already set
+      // Update the serviceSection in useGenericList hook if not already set
       if (serviceSection === null) {
         setSection(sectionInfo);
       }
@@ -369,14 +402,14 @@ export default function ServicesPage() {
     <div className="space-y-6">
        <ClickableImage
               imageSrc="/assets/sections/services.png"
-              imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+              imageAlt={t('servicesPage.title', 'Services Section')}
               size="large"
-              title={t('HeroManagement.tabLabel', 'Hero Section')}
-              subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+              title={t('servicesPage.title', 'Services Section')}
+              subtitle={t('servicesPage.description', 'Click to view full size')}
               t={t}
               priority
               className="w-full"
-              previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+              previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
             />
       
 
@@ -396,8 +429,7 @@ export default function ServicesPage() {
         customEmptyMessage={emptyStateMessage}
       />
       
-      {/* Main subsection management (only shown when section exists) */}
-       {/* Section Configuration Tabs (only shown when section exists) */}
+      {/* Section Configuration Tabs (only shown when section exists) */}
       {sectionId && (
         <Tabs defaultValue="content" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -407,23 +439,27 @@ export default function ServicesPage() {
             </TabsTrigger>
             <TabsTrigger value="navigation" className="flex items-center gap-2">
               <Navigation size={16} />
-              {t('Navigation.NavigationConfiguration')}
+              {t('HeroManagement.formSections.navigation')}
             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="content" className="mt-6">
+            {/* 🎯 NEW: Pass section info to main subsection component */}
             <CreateMainSubSection 
               sectionId={sectionId}
               sectionConfig={serviceSectionConfig}
+              sectionInfo={sectionInfoForNavigation} 
               onSubSectionCreated={handleMainSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
             />
           </TabsContent>
           
           <TabsContent value="navigation" className="mt-6">
+            {/* 🎯 NEW: Pass section info to navigation component */}
             <CreateNavigationSubSection 
               sectionId={sectionId}
               sectionConfig={NavigationConfig}
+              sectionInfo={sectionInfoForNavigation} 
               onSubSectionCreated={handleNavigationSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
             />

@@ -22,11 +22,38 @@ import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
 import { ActionButton, CancelButton, ErrorCard, LoadingCard, MainFormCard, SuccessCard, WarningCard } from "./MainSectionComponents"
 import { ChevronDown, ChevronUp, Globe } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import { CreateMainSubSectionProps } from "../api/types/utils/CreateMainSubSection.types"
 import { useWebsiteContext } from "../providers/WebsiteContext"
 import { useContentTranslations } from "../hooks/webConfiguration/use-content-translations"
 import { useTranslation } from "react-i18next"
 import { useLanguage } from "../context/LanguageContext"
+
+// 🎯 NEW: Extended interface to include section info for main subsection
+interface CreateMainSubSectionProps {
+  sectionId: string;
+  sectionConfig: any;
+  sectionInfo?: {
+    id: string;
+    name: {
+      en: string;
+      ar: string;
+      tr: string;
+    };
+    subName: string;
+    navigationData: {
+      availableLanguages: string[];
+      fallbackValues: {
+        navigationLabel: {
+          en: string;
+          ar: string;
+          tr: string;
+        };
+        navigationUrl: string;
+      };
+    };
+  } | null;
+  onSubSectionCreated?: (subsection: any) => void;
+  onFormValidityChange?: (isValid: boolean, message?: string) => void;
+}
 
 // Debounce utility
 function debounce(func: (...args: any[]) => void, wait: number) {
@@ -86,6 +113,30 @@ const findElementByFieldAcrossLanguages = (contentElements: any[], fieldId: stri
   return null
 }
 
+// 🎯 NEW: Helper function to get section badge value for language
+const getSectionBadgeValue = (
+  languageCode: string,
+  sectionInfo: any
+) => {
+  if (!sectionInfo?.name) return '';
+  
+  // Check if this language exists in section data
+  if (sectionInfo.name.hasOwnProperty(languageCode)) {
+    return sectionInfo.name[languageCode];
+  }
+  
+  // Fallback to first available language
+  const availableLanguages = ['en', 'ar', 'tr'];
+  for (const lang of availableLanguages) {
+    if (sectionInfo.name[lang]) {
+      return sectionInfo.name[lang];
+    }
+  }
+  
+  // Final fallback to subName
+  return sectionInfo.subName || '';
+};
+
 // Language Card Component
 const LanguageCard = ({ 
   language, 
@@ -93,7 +144,8 @@ const LanguageCard = ({
   sectionConfig, 
   isRtl, 
   t, 
-  isDefault = false 
+  isDefault = false,
+  sectionInfo = null 
 }: {
   language: any;
   form: any;
@@ -101,7 +153,13 @@ const LanguageCard = ({
   isRtl: boolean;
   t: any;
   isDefault?: boolean;
+  sectionInfo?: any;
 }) => {
+  // Check if this language exists in section data for sectionBadge
+  const langCode = String(language.languageID);
+  const hasMatchingLanguage = sectionInfo?.name?.hasOwnProperty(langCode);
+  const sectionBadgeValue = hasMatchingLanguage ? sectionInfo.name[langCode] : getSectionBadgeValue(langCode, sectionInfo);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -129,19 +187,23 @@ const LanguageCard = ({
               <Globe size={18} />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mr-2 ml-2">
-                {language.name || language.language}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mr-2 ml-2">
-                {language.languageID} {isDefault && '(Default)'}
-              </p>
+            
+              <div className="flex items-center space-x-2">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mr-2 ml-2">
+                  {language.languageID} {isDefault && '(Default)'}
+                </p>
+               
+              </div>
             </div>
           </div>
-          {isDefault && (
-            <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
-              {t('mainSubsection.defaultLanguage')}
-            </span>
-          )}
+          <div className="flex flex-col items-end space-y-1">
+            {isDefault && (
+              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
+                {t('mainSubsection.defaultLanguage')}
+              </span>
+            )}
+          
+          </div>
         </div>
       </div>
 
@@ -149,42 +211,85 @@ const LanguageCard = ({
       <div className="p-6">
         <Form {...form}>
           <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
-            {sectionConfig.fields.map((field: any) => (
-              <FormField
-                key={`${language.languageID}-${field.id}`}
-                control={form.control}
-                name={field.id}
-                render={({ field: formField }) => (
-                  <FormItem className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-100 dark:border-gray-800 shadow-sm">
-                    <FormLabel className="text-gray-800 dark:text-gray-200 font-medium flex items-center">
-                      {field.label}
-                      {field.required && <span className="text-red-500 ml-1">*</span>}
-                    </FormLabel>
-                    <FormControl>
-                      {field.type === 'textarea' ? (
-                        <Textarea
-                          placeholder={field.placeholder || `${t('mainSubsection.placeholderEnter')} ${field.label.toLowerCase()} ${t('mainSubsection.forLanguage')} ${language.name || language.language}`}
-                          {...formField}
-                          className="min-h-[120px] border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      ) : (
-                        <Input
-                          placeholder={field.placeholder || `${t('mainSubsection.placeholderEnter')} ${field.label.toLowerCase()} ${t('mainSubsection.forLanguage')} ${language.name || language.language}`}
-                          {...formField}
-                          className="border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        />
+            {sectionConfig.fields.map((field: any) => {
+              // Check if this is sectionBadge field and has section data
+              const isSectionBadgeField = field.id === 'sectionBadge';
+              const isFromSectionData = isSectionBadgeField && 
+                sectionInfo && 
+                form.getValues()[field.id] === sectionBadgeValue;
+
+              return (
+                <FormField
+                  key={`${language.languageID}-${field.id}`}
+                  control={form.control}
+                  name={field.id}
+                  render={({ field: formField }) => (
+                    <FormItem className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-100 dark:border-gray-800 shadow-sm">
+                      <FormLabel className="text-gray-800 dark:text-gray-200 font-medium flex items-center">
+                        {field.label}
+                        {field.required && <span className="text-red-500 ml-1">*</span>}
+                        
+                       
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          {field.type === 'textarea' ? (
+                            <Textarea
+                              placeholder={field.placeholder || `${t('mainSubsection.placeholderEnter')} ${field.label.toLowerCase()} ${t('mainSubsection.forLanguage')} ${language.name || language.language}`}
+                              {...formField}
+                              className={`min-h-[120px] border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                isFromSectionData 
+                                  ? 'bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800' 
+                                  : ''
+                              }`}
+                            />
+                          ) : (
+                            <Input
+                              placeholder={field.placeholder || `${t('mainSubsection.placeholderEnter')} ${field.label.toLowerCase()} ${t('mainSubsection.forLanguage')} ${language.name || language.language}`}
+                              {...formField}
+                              className={`border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                isFromSectionData 
+                                  ? 'bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800' 
+                                  : ''
+                              }`}
+                            />
+                          )}
+                          
+                          {/* Show section data preview for sectionBadge if available but not used */}
+                          {isSectionBadgeField && sectionInfo && !isFromSectionData && !formField.value && (
+                            <div className="absolute right-2 top-2 flex items-center space-x-2">
+                              <span className="text-xs text-gray-400 dark:text-gray-500">
+                                Available: "{sectionBadgeValue}"
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  console.log(`🎯 Manual setting sectionBadge = "${sectionBadgeValue}" for ${langCode}`);
+                                  formField.onChange(sectionBadgeValue);
+                                }}
+                                className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+                              >
+                                Use
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
+                      
+                      {/* Show section data info for sectionBadge */}
+                  
+                      
+                      {field.description && (
+                        <FormDescription className="text-gray-500 dark:text-gray-400 text-sm italic mt-1">
+                          {field.description}
+                        </FormDescription>
                       )}
-                    </FormControl>
-                    {field.description && (
-                      <FormDescription className="text-gray-500 dark:text-gray-400 text-sm italic mt-1">
-                        {field.description}
-                      </FormDescription>
-                    )}
-                    <FormMessage className="text-red-500 dark:text-red-400 font-medium text-sm mt-1" />
-                  </FormItem>
-                )}
-              />
-            ))}
+                      <FormMessage className="text-red-500 dark:text-red-400 font-medium text-sm mt-1" />
+                    </FormItem>
+                  )}
+                />
+              );
+            })}
           </div>
         </Form>
       </div>
@@ -195,6 +300,7 @@ const LanguageCard = ({
 export default function CreateMainSubSection({
   sectionId,
   sectionConfig,
+  sectionInfo, // 🎯 NEW: Accept section info prop
   onSubSectionCreated,
   onFormValidityChange
 }: CreateMainSubSectionProps) {
@@ -223,8 +329,19 @@ export default function CreateMainSubSection({
   // 🔧 FIXED: Add state to track if this component is processing
   const [isProcessing, setIsProcessing] = useState(false)
   const lastProcessedDataRef = useRef<string>('')
+  
+  // 🔧 FIXED: Add state to track if user is actively editing
+  const [userIsEditing, setUserIsEditing] = useState(false)
+  const editingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const { websiteId } = useWebsiteContext();
+
+  // 🎯 NEW: Debug section info
+  useEffect(() => {
+    if (sectionInfo) {
+      console.log("📝 Main subsection received section info:", sectionInfo);
+    }
+  }, [sectionInfo]);
 
   // API Hooks
   const {
@@ -266,21 +383,21 @@ export default function CreateMainSubSection({
 
   // 🔧 FIXED: More controlled form reinitialization
   useEffect(() => {
-    if (completeSubsectionsData?.data && !isProcessing) {
+    if (completeSubsectionsData?.data && !isProcessing && !userIsEditing) {
       const dataKey = JSON.stringify(completeSubsectionsData.data)
       if (lastProcessedDataRef.current !== dataKey) {
         setFormsInitialized(false);
         lastProcessedDataRef.current = dataKey
       }
     }
-  }, [completeSubsectionsData, isProcessing]);
+  }, [completeSubsectionsData, isProcessing, userIsEditing]);
   
-  // Force form reinitialization when language changes
+  // 🔧 FIXED: Only reset forms when explicitly needed, not when language changes during editing
   useEffect(() => {
-    if (formsInitialized && language) {
+    if (formsInitialized && language && !userIsEditing && !isEditMode) {
       setFormsInitialized(false)
     }
-  }, [language])
+  }, [language, userIsEditing, isEditMode])
   
   const { 
     data: languagesData, 
@@ -312,13 +429,25 @@ export default function CreateMainSubSection({
   
   const formSchema = useMemo(() => buildFormSchema(), [buildFormSchema])
   
-  // Get default values
-  const getFormDefaultValues = useCallback(() => {
-    return sectionConfig.fields.reduce((acc: any, field: any) => {
-      acc[field.id] = ''
-      return acc
-    }, {} as Record<string, string>)
-  }, [sectionConfig.fields])
+  // 🎯 NEW: Get default values with section info for sectionBadge
+  const getFormDefaultValues = useCallback((languageCode?: string) => {
+    const defaults: Record<string, string> = {}
+    
+    sectionConfig.fields.forEach((field: any) => {
+      let defaultValue = '';
+      
+      // If we have section info and no existing data, use section data for sectionBadge
+      if (sectionInfo && !subsectionExists && field.id === 'sectionBadge') {
+        if (languageCode) {
+          defaultValue = getSectionBadgeValue(languageCode, sectionInfo);
+        }
+      }
+      
+      defaults[field.id] = defaultValue;
+    });
+    
+    return defaults;
+  }, [sectionConfig.fields, sectionInfo, subsectionExists]);
   
   // Memoize fields
   const fields = useMemo(() => sectionConfig.fields, [sectionConfig.fields])
@@ -356,6 +485,17 @@ export default function CreateMainSubSection({
   
   const formInstances = useMemo(() => [form1, form2, form3, form4, form5], [form1, form2, form3, form4, form5])
   
+  // 🔧 FIXED: Track user editing activity
+  const markUserAsEditing = useCallback(() => {
+    setUserIsEditing(true)
+    if (editingTimeoutRef.current) {
+      clearTimeout(editingTimeoutRef.current)
+    }
+    editingTimeoutRef.current = setTimeout(() => {
+      setUserIsEditing(false)
+    }, 2000) // 2 seconds after last input
+  }, [])
+  
   // Map form instances to languages
   useEffect(() => {
     if (languages.length > 0) {
@@ -374,6 +514,27 @@ export default function CreateMainSubSection({
     }
   }, [languages, formInstances])
   
+  // 🔧 FIXED: Set up form change listeners to track user editing
+  useEffect(() => {
+    const subscriptions: any[] = []
+    
+    Object.values(languageForms).forEach((form: any) => {
+      if (form) {
+        const subscription = form.watch(() => {
+          markUserAsEditing()
+        })
+        subscriptions.push(subscription)
+      }
+    })
+    
+    return () => {
+      subscriptions.forEach(sub => sub.unsubscribe())
+      if (editingTimeoutRef.current) {
+        clearTimeout(editingTimeoutRef.current)
+      }
+    }
+  }, [languageForms, markUserAsEditing])
+  
   // Initialize selected languages
   useEffect(() => {
     if (languages.length > 0 && !languagesInitialized.current) {
@@ -382,17 +543,85 @@ export default function CreateMainSubSection({
     }
   }, [languages])
   
+  // 🎯 NEW: Initialize forms with section data for sectionBadge when no existing data
+  useEffect(() => {
+    if (
+      sectionInfo &&
+      !subsectionExists &&
+      languages.length > 0 &&
+      Object.keys(languageForms).length > 0 &&
+      !isProcessing &&
+      !userIsEditing &&
+      !formsInitialized
+    ) {
+      console.log("📝 Initializing main subsection forms with section data");
+      console.log("📝 Section info available:", sectionInfo);
+      
+      languages.forEach((lang: { languageID: string | number; _id: any }) => {
+        const langCode = String(lang.languageID);
+        const form = languageForms[langCode];
+        if (!form) return;
+        
+        const fieldValues: Record<string, string> = {};
+        
+        fields.forEach((field: any) => {
+          let value = '';
+          
+          // Only pre-populate sectionBadge field
+          if (field.id === 'sectionBadge') {
+            value = getSectionBadgeValue(langCode, sectionInfo);
+            console.log(`📝 Setting sectionBadge for ${langCode}: "${value}"`);
+          }
+          
+          fieldValues[field.id] = value;
+        });
+        
+        console.log(`📝 Final values for ${langCode}:`, fieldValues);
+        
+        // Only reset if values are different from current form values
+        const currentValues = form.getValues();
+        const hasChanges = Object.keys(fieldValues).some(key => 
+          currentValues[key] !== fieldValues[key] && fieldValues[key] !== ''
+        );
+        
+        if (hasChanges) {
+          console.log(`📝 Updating form for ${langCode} with new values`);
+          // Force set each field individually to ensure it sticks
+          Object.entries(fieldValues).forEach(([fieldId, fieldValue]) => {
+            if (fieldValue) {
+              form.setValue(fieldId, fieldValue, { 
+                shouldValidate: true, 
+                shouldDirty: true, 
+                shouldTouch: true 
+              });
+            }
+          });
+          form.reset(fieldValues);
+        }
+      });
+      
+      setFormsInitialized(true);
+      console.log("📝 Main subsection forms initialized with section data");
+    }
+  }, [
+    sectionInfo, 
+    subsectionExists, 
+    languages, 
+    fields, 
+    languageForms, 
+    formsInitialized, 
+    isProcessing, 
+    userIsEditing
+  ]);
+  
   // 🔧 FIXED: More specific filtering for MAIN subsections only
   useEffect(() => {    
-    if (completeSubsectionsData?.data && completeSubsectionsData.data.length > 0 && !isProcessing) {
+    if (completeSubsectionsData?.data && completeSubsectionsData.data.length > 0 && !isProcessing && !userIsEditing) {
       // 🔧 FIXED: ONLY look for MAIN subsections that match this config
       const mainSubsection = completeSubsectionsData.data.find((sub: { isMain: boolean; name: string; type: string }) => {
-      
-        
         // Must be main and have the correct name/type - be very specific
         return sub.isMain === true && (sub.name === sectionConfig.name || sub.type === sectionConfig.type);
       });
-      
       
       if (mainSubsection && JSON.stringify(mainSubsection) !== JSON.stringify(subsection)) {
         setSubsection(mainSubsection)
@@ -431,9 +660,9 @@ export default function CreateMainSubSection({
         onFormValidityChange(false, t('mainSubsection.enterMainSectionData'))
       }
     }
-  }, [completeSubsectionsData, onFormValidityChange, subsection, t, sectionConfig.name, sectionConfig.type, isProcessing])
+  }, [completeSubsectionsData, onFormValidityChange, subsection, t, sectionConfig.name, sectionConfig.type, isProcessing, userIsEditing])
   
-  // Initialize forms with data
+  // Initialize forms with existing data
   useEffect(() => {
     if (
       contentElements.length > 0 &&
@@ -441,8 +670,10 @@ export default function CreateMainSubSection({
       !formsInitialized &&
       languages.length > 0 &&
       Object.keys(languageForms).length > 0 &&
-      !isProcessing
+      !isProcessing &&
+      !userIsEditing
     ) {
+      console.log("📝 Initializing forms with existing data");
       
       languages.forEach((lang: { languageID: string | number; _id: any }) => {
         const form = lang.languageID ? languageForms[String(lang.languageID)] : undefined
@@ -474,7 +705,7 @@ export default function CreateMainSubSection({
       
       setFormsInitialized(true)
     }
-  }, [contentElements, contentTranslations, languages, fields, languageForms, formsInitialized, language, sectionConfig, isProcessing])
+  }, [contentElements, contentTranslations, languages, fields, languageForms, formsInitialized, language, sectionConfig, isProcessing, userIsEditing])
   
   // Check if any required fields are empty in the default language form
   const checkFormsEmpty = useCallback(() => {
@@ -522,7 +753,7 @@ export default function CreateMainSubSection({
   
   // Watch for form changes to validate in real-time
   useEffect(() => {
-    if (defaultLanguage && languageForms[defaultLanguage.languageID] && formsInitialized && !isProcessing) {
+    if (defaultLanguage && languageForms[defaultLanguage.languageID] && formsInitialized && !isProcessing && !userIsEditing) {
       const form = languageForms[defaultLanguage.languageID]
       const subscription = form.watch(() => {
         debouncedCheckFormsEmpty()
@@ -532,7 +763,7 @@ export default function CreateMainSubSection({
         debouncedCheckFormsEmpty.cancel()
       }
     }
-  }, [defaultLanguage, languageForms, formsInitialized, debouncedCheckFormsEmpty, isProcessing])
+  }, [defaultLanguage, languageForms, formsInitialized, debouncedCheckFormsEmpty, isProcessing, userIsEditing])
   
   // Validate all forms
   const validateAllForms = async () => {
@@ -574,10 +805,10 @@ export default function CreateMainSubSection({
         metadata: {
           fields: sectionConfig.fields,
           elementsMapping: sectionConfig.elementsMapping,
-          componentType: 'main' // Add identifier
+          componentType: 'main', // Add identifier
+          sectionInfo: sectionInfo // Store section info for reference
         }
       }
-
 
       const response = await createMutation.mutateAsync(subSectionData)
       if (response?.data) {
@@ -601,7 +832,8 @@ export default function CreateMainSubSection({
                 fieldId: field.id,
                 fieldType: field.type,
                 originalLabel: field.label,
-                componentType: 'main' // Add identifier
+                componentType: 'main', // Add identifier
+                sectionInfo: sectionInfo // Store section info for reference
               }
             }
             
@@ -732,7 +964,8 @@ export default function CreateMainSubSection({
                   fieldType: field.type,
                   originalLabel: field.label,
                   migrated: true,
-                  componentType: 'main' // Add identifier
+                  componentType: 'main', // Add identifier
+                  sectionInfo: sectionInfo // Store section info for reference
                 }
               }
             })
@@ -836,6 +1069,7 @@ export default function CreateMainSubSection({
               isRtl={isRtl}
               t={t}
               isDefault={isDefault}
+              sectionInfo={sectionInfo} // 🎯 Pass section info to each card
             />
           );
         })}
@@ -871,11 +1105,12 @@ export default function CreateMainSubSection({
   if (subsectionExists && subsection && !isEditMode) {
     return (
       <SuccessCard
-        title={t('mainSubsection.mainSubsectionAvailableTitle')}
+        title="📝 Main Content Configuration Available"
         description={t('mainSubsection.mainSubsectionAvailableDescription')}
         onEdit={() => {
           setIsEditMode(true)
           setIsExpanded(true)
+          setUserIsEditing(false) // Reset user editing state
         }}
       />
     )
@@ -888,7 +1123,10 @@ export default function CreateMainSubSection({
           className="flex items-center justify-between w-full cursor-pointer"
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          <span>{subsectionExists ? t('mainSubsection.editMainSubsection') : t('mainSubsection.createMainSubsection')}</span>
+          <div className="flex items-center">
+            <span>{subsectionExists ? t('mainSubsection.editMainSubsection') : t('mainSubsection.createMainSubsection')}</span>
+           
+          </div>
           <motion.div
             animate={{ rotate: isExpanded ? 0 : 180 }}
             transition={{ duration: 0.3 }}
@@ -901,9 +1139,7 @@ export default function CreateMainSubSection({
         </div>
       }
       description={
-        subsectionExists
-          ? t('mainSubsection.updateContentDescription')
-          : t('mainSubsection.completeRequiredFields')
+       ""
       }
     >
       <AnimatePresence initial={false}>
@@ -916,6 +1152,8 @@ export default function CreateMainSubSection({
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
+         
+            
             {/* Processing indicator */}
             {isProcessing && (
               <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
@@ -930,7 +1168,7 @@ export default function CreateMainSubSection({
               <div className="flex items-center mb-4">
                 <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2 ml-2" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  {t('mainSubsection.languages')}
+                  📝 Content Languages
                 </h3>
                 <span className="ml-2 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
                   {languages.length} {t('mainSubsection.languages')}
@@ -960,6 +1198,7 @@ export default function CreateMainSubSection({
                 onClick={() => {
                   setIsEditMode(false)
                   setIsExpanded(false)
+                  setUserIsEditing(false) // Reset user editing state
                 }}
                 className="md:w-48"
               />

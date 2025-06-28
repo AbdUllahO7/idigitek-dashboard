@@ -40,7 +40,7 @@ export const getHeaderSectionConfig = (language: string = 'en') => {
         id: "sectionBadge", 
         label: translations.sectionBadgeLabel, 
         type: "text", 
-        required: true 
+        required: false 
       },
     ] as FieldConfig[],
     // Define element mapping

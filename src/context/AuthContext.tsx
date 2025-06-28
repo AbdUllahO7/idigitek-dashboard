@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useLogin, useLogout, useRegister, useCurrentUser } from '../api/auth';
 import apiClient from '../lib/api-client';
 import { useQueryClient } from '@tanstack/react-query'; // Add this import
+import { useSections } from '../hooks/webConfiguration/use-section';
 
 // Define user type
 interface User {
@@ -44,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  
+
   // Get query client for cache management
   const queryClient = useQueryClient();
   

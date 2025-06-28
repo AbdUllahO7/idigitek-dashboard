@@ -22,10 +22,37 @@ import { ChevronDown, ChevronUp, Globe, Link } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTranslation } from "react-i18next"
 import { useLanguage } from "@/src/context/LanguageContext"
-import { CreateMainSubSectionProps } from "@/src/api/types/utils/CreateMainSubSection.types"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations"
 import { ActionButton, CancelButton, ErrorCard, LoadingCard, MainFormCard, SuccessCard, WarningCard } from "@/src/utils/MainSectionComponents"
+
+// 🎯 NEW: Extended interface to include section info
+interface CreateNavigationSubSectionProps {
+  sectionId: string;
+  sectionConfig: any;
+  sectionInfo?: {
+    id: string;
+    name: {
+      en: string;
+      ar: string;
+      tr: string;
+    };
+    subName: string;
+    navigationData: {
+      availableLanguages: string[];
+      fallbackValues: {
+        navigationLabel: {
+          en: string;
+          ar: string;
+          tr: string;
+        };
+        navigationUrl: string;
+      };
+    };
+  } | null;
+  onSubSectionCreated?: (subsection: any) => void;
+  onFormValidityChange?: (isValid: boolean, message?: string) => void;
+}
 
 // Debounce utility
 function debounce(func: (...args: any[]) => void, wait: number) {
@@ -67,6 +94,43 @@ const findElementByFieldAcrossLanguages = (contentElements: any[], fieldId: stri
   return null
 }
 
+// 🎯 NEW: Helper function to get fallback value for additional languages
+const getFallbackValueForLanguage = (
+  fieldId: string, 
+  sectionInfo: any, 
+  availableLanguages: string[] = ['en', 'ar', 'tr']
+) => {
+  if (!sectionInfo?.navigationData?.fallbackValues) return '';
+  
+  const fallbackValues = sectionInfo.navigationData.fallbackValues;
+  
+  // For navigation label field, use section name
+  if (fieldId === 'navigationLabel' || fieldId === 'label' || fieldId === 'title' || fieldId === 'name') {
+    // Try to get value from available languages in order of preference
+    for (const lang of availableLanguages) {
+      if (fallbackValues.navigationLabel[lang]) {
+        return fallbackValues.navigationLabel[lang];
+      }
+    }
+    // If no language-specific value, use subName as final fallback
+    return sectionInfo.subName || '';
+  }
+  
+  // For URL field, use generated URL
+  if (fieldId === 'url' || fieldId === 'navigationUrl' || fieldId === 'link') {
+    return fallbackValues.navigationUrl || `/${sectionInfo.subName.toLowerCase()}`;
+  }
+  
+  // For other fields, try to get first available language value
+  for (const lang of availableLanguages) {
+    if (fallbackValues.navigationLabel[lang]) {
+      return fallbackValues.navigationLabel[lang];
+    }
+  }
+  
+  return sectionInfo.subName || '';
+};
+
 // Language Card Component for Navigation
 const NavigationLanguageCard = ({ 
   language, 
@@ -74,7 +138,8 @@ const NavigationLanguageCard = ({
   sectionConfig, 
   isRtl, 
   t, 
-  isDefault = false 
+  isDefault = false,
+  sectionInfo = null 
 }: {
   language: any;
   form: any;
@@ -82,7 +147,12 @@ const NavigationLanguageCard = ({
   isRtl: boolean;
   t: any;
   isDefault?: boolean;
+  sectionInfo?: any;
 }) => {
+  // Check if this language exists in section data
+  const langCode = String(language.languageID);
+  const hasMatchingLanguage = sectionInfo?.name?.hasOwnProperty(langCode);
+  const sectionValue = hasMatchingLanguage ? sectionInfo.name[langCode] : null;
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -110,19 +180,21 @@ const NavigationLanguageCard = ({
               <Globe size={18} />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mr-2 ml-2">
-                {language.name || language.language}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mr-2 ml-2">
-                {language.languageID} {isDefault && '(Default)'}
-              </p>
+              <div className="flex items-center">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mr-2 ml-2">
+                  {language.name || language.language}
+                </h3>
+            
+              </div>
+              <div className="flex items-center space-x-2">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mr-2 ml-2">
+                  {language.languageID} {isDefault && '(Default)'}
+                </p>
+              
+              </div>
             </div>
           </div>
-          {isDefault && (
-            <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
-              {t('mainSubsection.defaultLanguage')}
-            </span>
-          )}
+       
         </div>
       </div>
 
@@ -141,28 +213,73 @@ const NavigationLanguageCard = ({
                   key={`${language.languageID}-${field.id}`}
                   control={form.control}
                   name={field.id}
-                  render={({ field: formField }) => (
-                    <FormItem className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-100 dark:border-gray-800 shadow-sm">
-                      <FormLabel className="text-gray-800 dark:text-gray-200 font-medium flex items-center">
-                        {field.id === 'url' && <Link size={16} className="mr-2" />}
-                        {field.label}
-                        {field.required && <span className="text-red-500 ml-1">*</span>}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={field.placeholder || `${t('mainSubsection.placeholderEnter')} ${field.label.toLowerCase()} ${t('mainSubsection.forLanguage')} ${language.name || language.language}`}
-                          {...formField}
-                          className="border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        />
-                      </FormControl>
-                      {field.description && (
-                        <FormDescription className="text-gray-500 dark:text-gray-400 text-sm italic mt-1">
-                          {field.description}
-                        </FormDescription>
-                      )}
-                      <FormMessage className="text-red-500 dark:text-red-400 font-medium text-sm mt-1" />
-                    </FormItem>
-                  )}
+                  render={({ field: formField }) => {
+                    // Check if this field value comes from section data
+                    const isFromSectionData = hasMatchingLanguage && 
+                      (field.id === 'navigationLabel' || field.id === 'label' || field.id === 'title' || field.id === 'name') &&
+                      formField.value === sectionValue;
+                    
+                    const isURLFromSection = isDefault && 
+                      (field.id === 'url' || field.id === 'navigationUrl' || field.id === 'link') &&
+                      formField.value === sectionInfo?.navigationData?.fallbackValues?.navigationUrl;
+
+                    return (
+                      <FormItem className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-100 dark:border-gray-800 shadow-sm">
+                        <FormLabel className="text-gray-800 dark:text-gray-200 font-medium flex items-center">
+                          {field.id === 'url' && <Link size={16} className="mr-2" />}
+                          {field.label}
+                          {field.required && <span className="text-red-500 ml-1">*</span>}
+                          
+                        
+                        </FormLabel>
+                        
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              placeholder={field.placeholder || `${t('mainSubsection.placeholderEnter')} ${field.label.toLowerCase()} ${t('mainSubsection.forLanguage')} ${language.name || language.language}`}
+                              {...formField}
+                              className={`border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                (isFromSectionData || isURLFromSection) 
+                                  ? 'bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800' 
+                                  : ''
+                              }`}
+                            />
+                            
+                            {/* Show section data preview if available but not used */}
+                            {hasMatchingLanguage && !isFromSectionData && 
+                             (field.id === 'navigationLabel' || field.id === 'label' || field.id === 'title' || field.id === 'name') && 
+                             !formField.value && (
+                              <div className="absolute right-2 top-2 flex items-center space-x-2">
+                                <span className="text-xs text-gray-400 dark:text-gray-500">
+                                  Available: "{sectionValue}"
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    console.log(`🎯 Manual setting ${field.id} = "${sectionValue}" for ${langCode}`);
+                                    formField.onChange(sectionValue);
+                                  }}
+                                  className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+                                >
+                                  Use
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </FormControl>
+                        
+                        {/* Show section data info */}
+                      
+                        
+                        {field.description && (
+                          <FormDescription className="text-gray-500 dark:text-gray-400 text-sm italic mt-1">
+                            {field.description}
+                          </FormDescription>
+                        )}
+                        <FormMessage className="text-red-500 dark:text-red-400 font-medium text-sm mt-1" />
+                      </FormItem>
+                    );
+                  }}
                 />
               );
             })}
@@ -176,9 +293,10 @@ const NavigationLanguageCard = ({
 export default function CreateNavigationSubSection({
   sectionId,
   sectionConfig,
+  sectionInfo, // 🎯 NEW: Accept section info prop
   onSubSectionCreated,
   onFormValidityChange
-}: CreateMainSubSectionProps) {
+}: CreateNavigationSubSectionProps) {
   // Hooks
   const { toast } = useToast()
   const { t } = useTranslation()
@@ -210,6 +328,13 @@ export default function CreateNavigationSubSection({
   const editingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const { websiteId } = useWebsiteContext();
+
+  // 🎯 NEW: Debug section info
+  useEffect(() => {
+    if (sectionInfo) {
+      console.log("🧭 Navigation received section info:", sectionInfo);
+    }
+  }, [sectionInfo]);
 
   // API Hooks
   const {
@@ -297,13 +422,35 @@ export default function CreateNavigationSubSection({
   
   const formSchema = useMemo(() => buildFormSchema(), [buildFormSchema])
   
-  // Get default values
-  const getFormDefaultValues = useCallback(() => {
-    return sectionConfig.fields.reduce((acc: any, field: any) => {
-      acc[field.id] = ''
-      return acc
-    }, {} as Record<string, string>)
-  }, [sectionConfig.fields])
+  // 🎯 NEW: Get default values with section info fallback
+  const getFormDefaultValues = useCallback((languageCode?: string) => {
+    const defaults: Record<string, string> = {}
+    
+    sectionConfig.fields.forEach((field: any) => {
+      let defaultValue = '';
+      
+      // If we have section info and no existing navigation data, use section data as defaults
+      if (sectionInfo && !subsectionExists) {
+        // For supported languages (en, ar, tr), use section name if available
+        if (languageCode && ['en', 'ar', 'tr'].includes(languageCode)) {
+          if (field.id === 'navigationLabel' || field.id === 'label' || field.id === 'title') {
+            defaultValue = sectionInfo.name[languageCode as keyof typeof sectionInfo.name] || '';
+          } else if (field.id === 'url' || field.id === 'navigationUrl' || field.id === 'link') {
+            // Only set URL for default language
+            const isDefaultLang = defaultLanguage && defaultLanguage.languageID === languageCode;
+            defaultValue = isDefaultLang ? sectionInfo.navigationData.fallbackValues.navigationUrl : '';
+          }
+        } else if (languageCode) {
+          // For additional languages (like fr), use fallback from first available language
+          defaultValue = getFallbackValueForLanguage(field.id, sectionInfo, ['en', 'ar', 'tr']);
+        }
+      }
+      
+      defaults[field.id] = defaultValue;
+    });
+    
+    return defaults;
+  }, [sectionConfig.fields, sectionInfo, subsectionExists, defaultLanguage]);
   
   // Memoize fields
   const fields = useMemo(() => sectionConfig.fields, [sectionConfig.fields])
@@ -401,16 +548,12 @@ export default function CreateNavigationSubSection({
   
   // 🔧 FIXED: More specific filtering for NAVIGATION subsections only
   useEffect(() => {
-  
     if (completeSubsectionsData?.data && completeSubsectionsData.data.length > 0 && !isProcessing && !userIsEditing) {
       // 🔧 FIXED: ONLY look for NAVIGATION subsections (NOT main) that match this config
       const navigationSubsection = completeSubsectionsData.data.find((sub: { name: string; type: string; isMain: boolean }) => {
-       
-        
         // Must NOT be main and have the correct type/name for navigation
         return sub.isMain !== true && (sub.type === sectionConfig.type || sub.name === sectionConfig.name);
       });
-      
       
       if (navigationSubsection && JSON.stringify(navigationSubsection) !== JSON.stringify(subsection)) {
         setSubsection(navigationSubsection)
@@ -451,7 +594,106 @@ export default function CreateNavigationSubSection({
     }
   }, [completeSubsectionsData, onFormValidityChange, subsection, sectionConfig.name, sectionConfig.type, isProcessing, userIsEditing])
   
-  // 🔧 FIXED: Initialize forms with data - only when NOT user editing
+  // 🎯 NEW: Initialize forms with section data when no existing navigation data
+  useEffect(() => {
+    if (
+      sectionInfo &&
+      !subsectionExists &&
+      languages.length > 0 &&
+      Object.keys(languageForms).length > 0 &&
+      !isProcessing &&
+      !userIsEditing &&
+      !formsInitialized
+    ) {
+      console.log("🧭 Initializing navigation forms with section data");
+      console.log("🧭 Section info available:", sectionInfo);
+      console.log("🧭 Available language forms:", Object.keys(languageForms));
+      
+      // Add a small delay to ensure forms are fully ready
+      setTimeout(() => {
+        languages.forEach((lang: { languageID: string | number; _id: any }) => {
+          const langCode = String(lang.languageID);
+          const form = languageForms[langCode];
+          
+          if (!form) {
+            console.log(`❌ No form found for language: ${langCode}`);
+            return;
+          }
+          
+          console.log(`🧭 Processing language: ${langCode}`);
+          
+          const fieldValues: Record<string, string> = {};
+          
+          fields.forEach((field: any) => {
+            let value = '';
+            
+            // Check if this language exists in section data
+            const sectionHasThisLanguage = sectionInfo.name.hasOwnProperty(langCode);
+            
+            if (sectionHasThisLanguage) {
+              console.log(`✅ Found matching language ${langCode} in section data`);
+              
+              if (field.id === 'navigationLabel' || field.id === 'label' || field.id === 'title' || field.id === 'name') {
+                value = sectionInfo.name[langCode as keyof typeof sectionInfo.name] || '';
+                console.log(`🎯 Setting ${field.id} for ${langCode}: "${value}"`);
+              } else if (field.id === 'url' || field.id === 'navigationUrl' || field.id === 'link') {
+                // Only set URL for default language
+                const isDefaultLang = defaultLanguage && defaultLanguage.languageID === lang.languageID;
+                if (isDefaultLang) {
+                  value = sectionInfo.navigationData.fallbackValues.navigationUrl;
+                  console.log(`🔗 Setting URL for default language ${langCode}: "${value}"`);
+                }
+              }
+            } else {
+              console.log(`⚠️  Language ${langCode} not found in section data, using fallback`);
+              // For languages not in section data, use fallback from first available language
+              value = getFallbackValueForLanguage(field.id, sectionInfo, ['en', 'ar', 'tr']);
+              if (value) {
+                console.log(`🔄 Fallback value for ${langCode} ${field.id}: "${value}"`);
+              }
+            }
+            
+            fieldValues[field.id] = value;
+          });
+          
+          console.log(`🧭 Final values for ${langCode}:`, fieldValues);
+          
+          // Force set each field individually to ensure it sticks
+          Object.entries(fieldValues).forEach(([fieldId, fieldValue]) => {
+            if (fieldValue) {
+              console.log(`📝 Setting ${fieldId} = "${fieldValue}" for ${langCode}`);
+              form.setValue(fieldId, fieldValue, { 
+                shouldValidate: true, 
+                shouldDirty: true, 
+                shouldTouch: true 
+              });
+            }
+          });
+          
+          // Also try reset as backup
+          form.reset(fieldValues);
+          
+          // Trigger a re-render
+          form.trigger();
+        });
+        
+        setFormsInitialized(true);
+        console.log("🎉 Navigation forms initialized with section data");
+      }, 100); // Small delay to ensure forms are ready
+    }
+  }, [
+    sectionInfo, 
+    subsectionExists, 
+    languages, 
+    fields, 
+    languageForms, 
+    formsInitialized, 
+    isProcessing, 
+    userIsEditing, 
+    defaultLanguage
+  ]);
+  
+  // 🔧 FIXED: Initialize forms with existing data - only when NOT user editing
   useEffect(() => {
     if (
       contentElements.length > 0 &&
@@ -461,7 +703,7 @@ export default function CreateNavigationSubSection({
       !userIsEditing && // 🔧 FIXED: Don't reset while user is editing
       (!formsInitialized || (isEditMode && !formsInitialized)) // Only initialize once when entering edit mode
     ) {
-     
+      console.log("🧭 Initializing navigation forms with existing data");
       
       languages.forEach((lang: { languageID: string | number; _id: any }) => {
         const form = lang.languageID ? languageForms[String(lang.languageID)] : undefined
@@ -593,10 +835,10 @@ export default function CreateNavigationSubSection({
         metadata: {
           fields: sectionConfig.fields,
           elementsMapping: sectionConfig.elementsMapping,
-          componentType: 'navigation' // Add identifier
+          componentType: 'navigation', // Add identifier
+          sectionInfo: sectionInfo // Store section info for reference
         }
       }
-
 
       const response = await createMutation.mutateAsync(subSectionData)
       if (response?.data) {
@@ -620,7 +862,8 @@ export default function CreateNavigationSubSection({
                 fieldId: field.id,
                 fieldType: field.type,
                 originalLabel: field.label,
-                componentType: 'navigation' // Add identifier
+                componentType: 'navigation', // Add identifier
+                sectionInfo: sectionInfo // Store section info for reference
               }
             }
             
@@ -689,7 +932,6 @@ export default function CreateNavigationSubSection({
       }
     } catch (error: any) {
       console.error(`[NAV-${sectionConfig.name}] Error in handleCreateSubsection:`, error)
-    
       setIsProcessing(false) // Reset on error
     } finally {
       setIsCreating(false)
@@ -743,7 +985,8 @@ export default function CreateNavigationSubSection({
                   fieldType: field.type,
                   originalLabel: field.label,
                   migrated: true,
-                  componentType: 'navigation' // Add identifier
+                  componentType: 'navigation', // Add identifier
+                  sectionInfo: sectionInfo // Store section info for reference
                 }
               }
             })
@@ -815,7 +1058,6 @@ export default function CreateNavigationSubSection({
       }, 1000)
     } catch (error: any) {
       console.error(`[NAV-${sectionConfig.name}] Error in handleUpdateSubsection:`, error)
-   
       setIsProcessing(false) // Reset on error
     } finally {
       setIsUpdating(false)
@@ -843,6 +1085,7 @@ export default function CreateNavigationSubSection({
               isRtl={isRtl}
               t={t}
               isDefault={isDefault}
+              sectionInfo={sectionInfo} // 🎯 Pass section info to each card
             />
           );
         })}
@@ -878,10 +1121,9 @@ export default function CreateNavigationSubSection({
   if (subsectionExists && subsection && !isEditMode) {
     return (
       <SuccessCard
-        title="{t('Navigation.NavigationConfiguration')} Available"
+        title="🧭 Navigation Configuration Available"
         description="Navigation has been configured and is ready to use."
         onEdit={() => {
-          
           // 🔧 FIXED: Force form reinitialization when entering edit mode
           setFormsInitialized(false);
           setIsEditMode(true);
@@ -906,7 +1148,12 @@ export default function CreateNavigationSubSection({
         >
           <div className="flex items-center">
             <Link size={20} className="mr-3 text-blue-600 dark:text-blue-400" />
-            <span>{subsectionExists ? t('Navigation.EditNavigation') : t('Navigation.EditNavigation')}</span>
+            <span>{subsectionExists ? t('Navigation.EditNavigation') : t('Navigation.CreateNavigation')}</span>
+            {sectionInfo && !subsectionExists && (
+              <span className="ml-2 px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full">
+                🧭 Using section data
+              </span>
+            )}
           </div>
           <motion.div
             animate={{ rotate: isExpanded ? 0 : 180 }}
@@ -922,7 +1169,9 @@ export default function CreateNavigationSubSection({
       description={
         subsectionExists
           ? t('Navigation.description')
-          : t('Navigation.description1')
+          : sectionInfo 
+            ? `Creating navigation using section "${sectionInfo.subName}" data. Fields will be pre-populated with section names.`
+            : t('Navigation.description1')
       }
     >
       <AnimatePresence initial={false}>
@@ -935,6 +1184,8 @@ export default function CreateNavigationSubSection({
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
+          
+            
             {/* Processing indicator */}
             {isProcessing && (
               <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
@@ -944,21 +1195,14 @@ export default function CreateNavigationSubSection({
               </div>
             )}
             
-            {/* User editing indicator */}
-            {userIsEditing && (
-              <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <p className="text-blue-800 dark:text-blue-200 text-sm font-medium">
-                  ✏️ You are currently editing...
-                </p>
-              </div>
-            )}
+           
             
             {/* Language cards container */}
             <div className="mb-6">
               <div className="flex items-center mb-4">
                 <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2 ml-2" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  {t('Navigation.NavigationLanguages')}
+                  🧭 Navigation Languages
                 </h3>
                 <span className="ml-2 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
                   {languages.length} {t('mainSubsection.languages')}

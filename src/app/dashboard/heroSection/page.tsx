@@ -18,6 +18,7 @@ import { Navigation, Users } from "lucide-react"
 import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSection"
 import { getTeamNavigationSectionConfig } from "../team/navigation/team-navigation-config"
 import { ClickableImage } from "@/src/components/ClickableImage"
+import { useSections } from "@/src/hooks/webConfiguration/use-section"
 
 export default function HeroPage() {
   const searchParams = useSearchParams()
@@ -29,6 +30,36 @@ export default function HeroPage() {
   const { t, i18n } = useTranslation()
   const [hasNavigationSubSection, setHasNavigationSubSection] = useState<boolean>(false)
   const NavigationConfig = getTeamNavigationSectionConfig(i18n.language)
+  
+  const {useGetBasicInfoByWebsiteId} = useSections()
+  const { data: basicInfo } = useGetBasicInfoByWebsiteId(websiteId)
+  
+  const sectionInfoForNavigation = useMemo(() => {
+    if (!basicInfo?.data?.length) return null;
+    
+    // Find the current section in the basic info
+    const currentSection = sectionId ? 
+      basicInfo.data.find(section => section.id === sectionId) : 
+      basicInfo.data[0]; // Use first section if no specific sectionId
+    
+    if (!currentSection) return null;
+    
+    return {
+      id: currentSection.id,
+      name: currentSection.name,
+      subName: currentSection.subName,
+      // Create navigation-friendly data structure
+      navigationData: {
+        availableLanguages: ['en', 'ar', 'tr'], // Languages available in section data
+        fallbackValues: {
+          // Use section name as navigation label, subName as URL
+          navigationLabel: currentSection.name,
+          navigationUrl: `/${currentSection.subName.toLowerCase()}`
+        }
+      }
+    };
+  }, [basicInfo, sectionId]);
+
 
   const Hero_CONFIG = useMemo(() => ({
     title: t('HeroManagement.tabLabel'),
@@ -419,9 +450,11 @@ export default function HeroPage() {
           </TabsContent>
 
           <TabsContent value="navigation" className="mt-6">
+            {/* 🎯 NEW: Pass section info to navigation component */}
             <CreateNavigationSubSection
               sectionId={sectionId}
               sectionConfig={NavigationConfig}
+              sectionInfo={sectionInfoForNavigation} // Pass the processed section data
               onSubSectionCreated={handleNavigationSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
             />

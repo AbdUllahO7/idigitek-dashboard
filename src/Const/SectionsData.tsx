@@ -57,7 +57,7 @@ export const PREDEFINED_SECTIONS: PredefinedSection[] = [
     nameKey: "Dashboard_sideBar.nav.products",
     subName: "Products",
     descriptionKey: "sectionManagement.sections.products.description",
-    image: "/assets/sections/product.png",
+    image: "/assets/sections/products.png",
     icon: <MessageSquare className="h-8 w-8" />,
     category: "content",
     color: "from-orange-500 to-red-500",
