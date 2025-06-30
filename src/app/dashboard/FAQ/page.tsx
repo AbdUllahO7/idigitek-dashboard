@@ -19,6 +19,7 @@ import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSe
 import { getTeamNavigationSectionConfig } from "../team/navigation/team-navigation-config"
 import { ClickableImage } from "@/src/components/ClickableImage"
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
+import { add } from "date-fns"
 
 // Column definitions
 const getFaqColumns = (t: (key: string) => string) => [
@@ -101,41 +102,6 @@ export default function FaqPage() {
       }
     };
   }, [basicInfo, sectionId]);
-  const FAQ_CONFIG = useMemo(() => ({
-    title: t('faqFormSection.section.title'),
-    description: t('faqFormSection.section.description', { language: t('language') }),
-    addButtonLabel: t('faqFormSection.actions.addFaq'),
-    emptyStateMessage: t('faqFormSection.toast.faqRemovedDesc', { defaultValue: 'No FAQs found. Create your first FAQ.' }),
-    noSectionMessage: t('faqFormSection.toast.noSectionMessage', { defaultValue: 'Please create a FAQ section.' }),
-    mainSectionRequiredMessage: t('faqFormSection.toast.mainSectionRequiredMessage', { defaultValue: 'Please enter main section data.' }),
-    emptyFieldsMessage: t('faqFormSection.validation.fillRequiredFields'),
-    sectionIntegrationTitle: t('faqFormSection.section.title'),
-    sectionIntegrationDescription: t('faqFormSection.section.description', { language: t('language') }),
-    addSectionButtonLabel: t('faqFormSection.actions.addFaq'),
-    editSectionButtonLabel: t('faqFormSection.actions.update'),
-    saveSectionButtonLabel: t('faqFormSection.actions.save'),
-    listTitle: t('faqFormSection.section.title'),
-    editPath: "FAQ/addFAQ"
-  }), [t]);
-
-  // Refs to track previous values for debugging
-  const prevHasMainSubSection = useRef(hasMainSubSection);
-  const isFirstRender = useRef(true);
-
-  // Check if main subsection exists
-  const { useGetMainByWebSiteId, useGetBySectionId } = useSubSections()
-  
-  const {
-    data: mainSubSectionData,
-    isLoading: isLoadingCompleteSubsections,
-    refetch: refetchMainSubSection
-  } = useGetMainByWebSiteId(websiteId)
-
-  // If we have a specific section ID, also fetch subsections for that section
-  const {
-    data: sectionSubsections,
-    isLoading: isLoadingSectionSubsections
-  } = useGetBySectionId(sectionId || "")
 
   // Use the generic list hook for FAQ management
   const {
@@ -158,12 +124,60 @@ export default function FaqPage() {
   } = useGenericList({
     sectionId,
     apiHooks: useSectionItems(),
-    editPath: FAQ_CONFIG.editPath
+    editPath: "FAQ/addFAQ"
   })
+
+  // Determine if we should show the add button (hide it when items exist)
+  const shouldShowAddButton = navItems.length === 0;
+
+  // Configuration for FAQ page with dynamic addButtonLabel
+  const FAQ_CONFIG = useMemo(() => {
+    const baseConfig = {
+      title: t('faqFormSection.section.title', 'FAQ Management'),
+      description: t('faqFormSection.section.description', { language: t('language'), defaultValue: 'Manage your FAQ inventory and multilingual content' }),
+      emptyStateMessage: t('faqFormSection.toast.faqRemovedDesc', { defaultValue: 'No FAQs found. Create your first FAQ.' }),
+      noSectionMessage: t('faqFormSection.toast.noSectionMessage', { defaultValue: 'Please create a FAQ section.' }),
+      mainSectionRequiredMessage: t('faqFormSection.toast.mainSectionRequiredMessage', { defaultValue: 'Please enter main section data.' }),
+      emptyFieldsMessage: t('faqFormSection.validation.fillRequiredFields', 'Please complete all required fields in the main section before adding FAQ.'),
+      sectionIntegrationTitle: t('faqFormSection.section.title', 'FAQ Section Content'),
+      sectionIntegrationDescription: t('faqFormSection.section.description', { language: t('language'), defaultValue: 'Manage your FAQ section content in multiple languages.' }),
+      addSectionButtonLabel: t('faqFormSection.actions.addFaq', 'Add FAQ Section'),
+      editSectionButtonLabel: t('faqFormSection.actions.update', 'Edit FAQ Section'),
+      saveSectionButtonLabel: t('faqFormSection.actions.save', 'Save FAQ Section'),
+      listTitle: t('faqFormSection.section.title', 'FAQ List'),
+      editPath: "FAQ/addFAQ",
+      addButtonLabel: '', 
+    };
+
+    // Only add addButtonLabel if no items exist (this helps hide the button)
+    if (shouldShowAddButton) {
+      baseConfig.addButtonLabel = t('faqFormSection.actions.addFaq', 'Add New FAQ');
+    }
+
+    return baseConfig;
+  }, [t, shouldShowAddButton]);
+
+  // Refs to track previous values for debugging
+  const prevHasMainSubSection = useRef(hasMainSubSection);
+  const isFirstRender = useRef(true);
+
+  // Check if main subsection exists
+  const { useGetMainByWebSiteId, useGetBySectionId } = useSubSections()
+  
+  const {
+    data: mainSubSectionData,
+    isLoading: isLoadingCompleteSubsections,
+    refetch: refetchMainSubSection
+  } = useGetMainByWebSiteId(websiteId)
+
+  // If we have a specific section ID, also fetch subsections for that section
+  const {
+    data: sectionSubsections,
+    isLoading: isLoadingSectionSubsections
+  } = useGetBySectionId(sectionId || "")
 
   // Debug changes in hasMainSubSection
   useEffect(() => {
-
     prevHasMainSubSection.current = hasMainSubSection;
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -177,26 +191,23 @@ export default function FaqPage() {
       return;
     }
     
-    
     // We're done loading, now check the data
     let foundMainSubSection = false;
     let foundNavigationSubSection = false;
     let mainSubSection = null;
     
-    // 🔧 FIXED: Use NEWS configurations instead of team configurations
-    const expectedNewsSlug = faqSectionConfig.name; // This is correct for NEWS
-    const expectedNavigationSlug = NavigationConfig.name; // This is correct for NEWS navigation
-    
-
+    // Use FAQ configurations
+    const expectedFaqSlug = faqSectionConfig.name;
+    const expectedNavigationSlug = NavigationConfig.name;
     
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
       const sectionData = sectionSubsections.data;
       
       if (Array.isArray(sectionData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
+        // Find the main FAQ subsection
         mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedNewsSlug
+          sub.isMain === true && sub.name === expectedFaqSlug
         );
         foundMainSubSection = !!mainSubSection;
 
@@ -207,22 +218,22 @@ export default function FaqPage() {
           // Match by name
           if (sub.name === expectedNavigationSlug) return true;
           // Match by partial name (in case of slug differences)
-          if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
+          if (sub.name && sub.name.toLowerCase().includes('faq') && sub.name.toLowerCase().includes('navigation')) return true;
           return false;
         });
         foundNavigationSubSection = !!navigationSubSection;
 
       } else {
-        // Single object response - check if it's news main or navigation
-        if (sectionData.isMain === true && sectionData.name === expectedNewsSlug) {
+        // Single object response - check if it's faq main or navigation
+        if (sectionData.isMain === true && sectionData.name === expectedFaqSlug) {
           foundMainSubSection = true;
           mainSubSection = sectionData;
         }
         
-        // Check if it's a news navigation subsection
+        // Check if it's a faq navigation subsection
         if (sectionData.type === NavigationConfig.type || 
             sectionData.name === expectedNavigationSlug ||
-            (sectionData.name && sectionData.name.toLowerCase().includes('news') && sectionData.name.toLowerCase().includes('navigation'))) {
+            (sectionData.name && sectionData.name.toLowerCase().includes('faq') && sectionData.name.toLowerCase().includes('navigation'))) {
           foundNavigationSubSection = true;
         }
       }
@@ -233,10 +244,10 @@ export default function FaqPage() {
       const websiteData = mainSubSectionData.data;
       
       if (Array.isArray(websiteData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
+        // Find the main FAQ subsection
         if (!foundMainSubSection) {
           mainSubSection = websiteData.find(sub => 
-            sub.isMain === true && sub.name === expectedNewsSlug
+            sub.isMain === true && sub.name === expectedFaqSlug
           );
           foundMainSubSection = !!mainSubSection;
         }
@@ -249,16 +260,15 @@ export default function FaqPage() {
             // Match by name
             if (sub.name === expectedNavigationSlug) return true;
             // Match by partial name (in case of slug differences)
-            if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
+            if (sub.name && sub.name.toLowerCase().includes('faq') && sub.name.toLowerCase().includes('navigation')) return true;
             return false;
           });
           foundNavigationSubSection = !!navigationSubSection;
         }
-        
 
       } else {
         // Single object response - check what type it is
-        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedNewsSlug) {
+        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedFaqSlug) {
           foundMainSubSection = true;
           mainSubSection = websiteData;
         }
@@ -267,14 +277,12 @@ export default function FaqPage() {
         if (!foundNavigationSubSection && (
           websiteData.type === NavigationConfig.type || 
           websiteData.name === expectedNavigationSlug ||
-          (websiteData.name && websiteData.name.toLowerCase().includes('news') && websiteData.name.toLowerCase().includes('navigation'))
+          (websiteData.name && websiteData.name.toLowerCase().includes('faq') && websiteData.name.toLowerCase().includes('navigation'))
         )) {
           foundNavigationSubSection = true;
         }
       }
     }
-    
-  
     
     setHasMainSubSection(foundMainSubSection);
     setHasNavigationSubSection(foundNavigationSubSection);
@@ -289,11 +297,10 @@ export default function FaqPage() {
       // Set local section data
       setSectionData(sectionInfo);
       
-      // Update the newsSection in useGenericList hook if not already set
+      // Update the faqSection in useGenericList hook if not already set
       if (faqSection === null) {
         setSection(sectionInfo);
       }
-      
     }
     
   }, [
@@ -304,26 +311,24 @@ export default function FaqPage() {
     sectionId, 
     faqSection, 
     setSection,
-    faqSectionConfig.name,        // 🔧 FIXED: Use news config
-    NavigationConfig.name,     // 🔧 FIXED: Use news navigation config
-    NavigationConfig.type      // 🔧 FIXED: Use news navigation config
+    faqSectionConfig.name,
+    NavigationConfig.name,
+    NavigationConfig.type
   ]);
 
   // Handle navigation subsection creation
   const handleNavigationSubSectionCreated = (subsection: any) => {    
-    // 🔧 FIXED: Check if subsection has the correct name or type for NEWS
+    // Check if subsection has the correct name or type for FAQ
     const expectedSlug = NavigationConfig.name;
     const expectedType = NavigationConfig.type;
     const hasCorrectIdentifier = (
       subsection.name === expectedSlug || 
       subsection.type === expectedType ||
-      (subsection.name && subsection.name.toLowerCase().includes('news') && subsection.name.toLowerCase().includes('navigation'))
+      (subsection.name && subsection.name.toLowerCase().includes('faq') && subsection.name.toLowerCase().includes('navigation'))
     );
     
     // Set that we have a navigation subsection now
     setHasNavigationSubSection(hasCorrectIdentifier);
-    
-
     
     // Force refetch of all subsection data
     if (refetchMainSubSection) {
@@ -335,15 +340,12 @@ export default function FaqPage() {
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
-    
     // Check if subsection has the correct name
     const expectedName = faqSectionConfig.subSectionName;
     const hasCorrectName = subsection.name === expectedName;
     
     // Set that we have a main subsection now (only if it also has the correct name)
     setHasMainSubSection(subsection.isMain === true && hasCorrectName);
-    
-
     
     // If we have section data from the subsection, update it
     if (subsection.section) {
@@ -361,13 +363,11 @@ export default function FaqPage() {
     }
   };
 
-  // IMPORTANT: Here's the crux of the button enabling/disabling logic
-  // Added check for navItems.length > 0 to disable when there's already a navItem
+  // Updated button disabling logic - removed the navItems.length check since we're now hiding instead
   const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
-    (Boolean(sectionId) && !hasMainSubSection) ||
-    (navItems.length > 0);
+    (Boolean(sectionId) && !hasMainSubSection);
 
   // Custom message for empty state 
   const emptyStateMessage = !faqSection && !sectionData 
@@ -422,20 +422,20 @@ export default function FaqPage() {
               previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
             />
       
-
       {/* Main list page with table and section integration */}
       <GenericListPage
         config={FAQ_CONFIG}
         sectionId={sectionId}
         sectionConfig={faqSectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
+        isAddButtonDisabled={false}
         tableComponent={NavItemsTable}
         createDialogComponent={CreateDialog}
+        showAddButton={shouldShowAddButton} // Only show button when we should
+        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
         deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
         isLoading={isLoadingNavItems || isLoadingMainSubSection}
         emptyCondition={navItems.length === 0}
-        noSectionCondition={!faqSection && !sectionData}
+        noSectionCondition={false}
         customEmptyMessage={emptyStateMessage}
       />
       

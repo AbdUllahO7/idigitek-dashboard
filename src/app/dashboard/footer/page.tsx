@@ -70,23 +70,60 @@ export default function FooterPage() {
     return getFooterSectionConfig(language)
   }, [language])
 
-  // Memoized configuration for the Footer page with translations
-  const Footer_CONFIG = useMemo(() => ({
-    title: t('footerPage.config.title', 'Footer Management'),
-    description: t('footerPage.config.description', 'Manage your footer inventory and multilingual footer content'),
-    addButtonLabel: t('footerPage.config.addButtonLabel', 'Add New Footer'),
-    emptyStateMessage: t('footerPage.config.emptyStateMessage', 'No footer found. Create your first footer by clicking the "Add New Footer" button.'),
-    noSectionMessage: t('footerPage.config.noSectionMessage', 'Please create a footer section first before adding footer.'),
-    mainSectionRequiredMessage: t('footerPage.config.mainSectionRequiredMessage', 'Please enter your main section data before adding footer.'),
-    emptyFieldsMessage: t('footerPage.config.emptyFieldsMessage', 'Please complete all required fields in the main section before adding footer.'),
-    sectionIntegrationTitle: t('footerPage.config.sectionIntegrationTitle', 'Footer Section Management'),
-    sectionIntegrationDescription: t('footerPage.config.sectionIntegrationDescription', 'Manage your footer section content in multiple languages.'),
-    addSectionButtonLabel: t('footerPage.config.addSectionButtonLabel', 'Add Footer Section'),
-    editSectionButtonLabel: t('footerPage.config.editSectionButtonLabel', 'Edit Footer Section'),
-    saveSectionButtonLabel: t('footerPage.config.saveSectionButtonLabel', 'Save Footer Section'),
-    listTitle: t('footerPage.config.listTitle', 'Footer List'),
+  // Use the generic list hook for Footer management
+  const {
+    section: footerSection,
+    items: navItems,
+    isLoadingItems: isLoadingNavItems,
+    isCreateDialogOpen,
+    isDeleteDialogOpen,
+    itemToDelete,
+    isDeleting,
+    isAddButtonDisabled: defaultAddButtonDisabled,
+    handleEdit,
+    handleDelete,
+    handleAddNew,
+    handleItemCreated,
+    showDeleteDialog,
+    setIsCreateDialogOpen,
+    setIsDeleteDialogOpen,
+    setSection
+  } = useGenericList({
+    sectionId,
+    apiHooks: useSectionItems(),
     editPath: "footer/addFooter"
-  }), [t]);
+  })
+
+  // Determine if we should show the add button (hide it when items exist)
+  const shouldShowAddButton = navItems.length === 0;
+
+  // Memoized configuration for the Footer page with translations
+  // Only include addButtonLabel when we should show the add button
+  const Footer_CONFIG = useMemo(() => {
+    const baseConfig = {
+      title: t('footerPage.config.title', 'Footer Management'),
+      description: t('footerPage.config.description', 'Manage your footer inventory and multilingual footer content'),
+      emptyStateMessage: t('footerPage.config.emptyStateMessage', 'No footer found. Create your first footer by clicking the "Add New Footer" button.'),
+      noSectionMessage: t('footerPage.config.noSectionMessage', 'Please create a footer section first before adding footer.'),
+      mainSectionRequiredMessage: t('footerPage.config.mainSectionRequiredMessage', 'Please enter your main section data before adding footer.'),
+      emptyFieldsMessage: t('footerPage.config.emptyFieldsMessage', 'Please complete all required fields in the main section before adding footer.'),
+      sectionIntegrationTitle: t('footerPage.config.sectionIntegrationTitle', 'Footer Section Management'),
+      sectionIntegrationDescription: t('footerPage.config.sectionIntegrationDescription', 'Manage your footer section content in multiple languages.'),
+      addSectionButtonLabel: t('footerPage.config.addSectionButtonLabel', 'Add Footer Section'),
+      editSectionButtonLabel: t('footerPage.config.editSectionButtonLabel', 'Edit Footer Section'),
+      saveSectionButtonLabel: t('footerPage.config.saveSectionButtonLabel', 'Save Footer Section'),
+      listTitle: t('footerPage.config.listTitle', 'Footer List'),
+      editPath: "footer/addFooter",
+      addButtonLabel : '',
+    };
+
+    // Only add addButtonLabel if no items exist (this helps hide the button)
+    if (shouldShowAddButton) {
+      baseConfig.addButtonLabel = t('footerPage.config.addButtonLabel', 'Add New Footer');
+    }
+
+    return baseConfig;
+  }, [t, shouldShowAddButton]);
 
   // Get translated column definitions (MEMOIZED like HeaderPage)
   const Footer_COLUMNS = useMemo(() => getFooterColumns(t), [t])
@@ -110,31 +147,6 @@ export default function FooterPage() {
     isLoading: isLoadingSectionSubsections
   } = useGetBySectionId(sectionId || "")
 
-  // Use the generic list hook for Footer management
-  const {
-    section: footerSection,
-    items: navItems,
-    isLoadingItems: isLoadingNavItems,
-    isCreateDialogOpen,
-    isDeleteDialogOpen,
-    itemToDelete,
-    isDeleting,
-    isAddButtonDisabled: defaultAddButtonDisabled,
-    handleEdit,
-    handleDelete,
-    handleAddNew,
-    handleItemCreated,
-    showDeleteDialog,
-    setIsCreateDialogOpen,
-    setIsDeleteDialogOpen,
-    setSection
-  } = useGenericList({
-    sectionId,
-    apiHooks: useSectionItems(),
-    editPath: Footer_CONFIG.editPath
-  })
-
-
   // Debug changes in hasMainSubSection
   useEffect(() => {
     prevHasMainSubSection.current = hasMainSubSection;
@@ -145,8 +157,6 @@ export default function FooterPage() {
 
   // Determine if main subsection exists when data loads & set section data if needed
   useEffect(() => {
-
-    
     // First check if we are still loading
     if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
       setIsLoadingMainSubSection(true);
@@ -159,8 +169,6 @@ export default function FooterPage() {
     
     // Get expected name from configuration (now translated)
     const expectedName = footerSectionConfig.subSectionName;
-    
-
     
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
@@ -187,12 +195,10 @@ export default function FooterPage() {
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-
         foundMainSubSection = sectionData.isMain === true && sectionData.name === expectedName;
         mainSubSection = foundMainSubSection ? sectionData : null;
       }
     }
-    
     
     // If we didn't find anything in the section-specific data, check the website-wide data
     if (!foundMainSubSection && mainSubSectionData?.data) {
@@ -219,13 +225,10 @@ export default function FooterPage() {
         foundMainSubSection = !!mainSubSection;
       } else {
         // Single object response
-       
         foundMainSubSection = websiteData.isMain === true && websiteData.name === expectedName;
         mainSubSection = foundMainSubSection ? websiteData : null;
       }
     }
-    
-   
     
     // Update state based on what we found
     setHasMainSubSection(foundMainSubSection);
@@ -257,41 +260,36 @@ export default function FooterPage() {
     footerSectionConfig.subSectionName // Add this dependency to re-run when language changes
   ]);
 
-  // Handle main subsection creation
-  const handleMainSubSectionCreated = (subsection: any) => {
-    
-    // Check if subsection has the correct name (now using properly memoized translated name)
-    const expectedName = footerSectionConfig.subSectionName;
-    const hasCorrectName = subsection.name === expectedName;
-    
-    // Set that we have a main subsection now (only if it also has the correct name)
-    setHasMainSubSection(subsection.isMain === true && hasCorrectName);
-    
+    // Handle main subsection creation
+    const handleMainSubSectionCreated = (subsection: any) => {
+      // Check if subsection has the correct name (now using properly memoized translated name)
+      const expectedName = footerSectionConfig.subSectionName;
+      const hasCorrectName = subsection.name === expectedName;
+      
+      // Set that we have a main subsection now (only if it also has the correct name)
+      setHasMainSubSection(subsection.isMain === true && hasCorrectName);
+      
+      // If we have section data from the subsection, update it
+      if (subsection.section) {
+        const sectionInfo = typeof subsection.section === 'string' 
+          ? { _id: subsection.section } 
+          : subsection.section;
+          
+        setSectionData(sectionInfo);
+        setSection(sectionInfo);
+      }
+      
+      // Refetch the main subsection data to ensure we have the latest
+      if (refetchMainSubSection) {
+        refetchMainSubSection();
+      }
+    };
 
-    
-    // If we have section data from the subsection, update it
-    if (subsection.section) {
-      const sectionInfo = typeof subsection.section === 'string' 
-        ? { _id: subsection.section } 
-        : subsection.section;
-        
-      setSectionData(sectionInfo);
-      setSection(sectionInfo);
-    }
-    
-    // Refetch the main subsection data to ensure we have the latest
-    if (refetchMainSubSection) {
-      refetchMainSubSection();
-    }
-  };
-
-  // IMPORTANT: Here's the crux of the button enabling/disabling logic
-  // Added check for navItems.length > 0 to disable when there's already a footer item
+  // Updated button disabling logic - removed the navItems.length check since we're now hiding instead
   const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
-    (Boolean(sectionId) && !hasMainSubSection) ||
-    (navItems.length > 0); // This disables the button if there's already at least one Footer Item
+    (Boolean(sectionId) && !hasMainSubSection);
 
   // Custom message for empty state with translations
   const emptyStateMessage = !footerSection && !sectionData 
@@ -344,32 +342,23 @@ export default function FooterPage() {
               previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
             />
       
-
       {/* Main list page with table and section integration */}
       <GenericListPage
-        config={Footer_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={footerSectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={NavItemsTable}
-        createDialogComponent={CreateDialog}
-        deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
-        isLoading={isLoadingNavItems || isLoadingMainSubSection}
-        emptyCondition={navItems.length === 0}
-        noSectionCondition={!footerSection && !sectionData}
-        customEmptyMessage={emptyStateMessage}
-      />
-      
-      {/* Main subsection management (only shown when section exists) */}
-      {sectionId && (
-        <CreateMainSubSection 
+          config={Footer_CONFIG}
           sectionId={sectionId}
           sectionConfig={footerSectionConfig}
-          onSubSectionCreated={handleMainSubSectionCreated}
-          onFormValidityChange={() => {/* We don't need to track form validity */}}
-        />
-      )}
+          isAddButtonDisabled={false}
+          tableComponent={NavItemsTable}
+          createDialogComponent={CreateDialog}
+          showAddButton={shouldShowAddButton} // Only show button when we should
+          onAddNew={shouldShowAddButton ? handleAddNew : ()=> {}} // Only pass handler when we should show button
+          deleteDialogComponent={DeleteDialog}
+          isLoading={isLoadingNavItems || isLoadingMainSubSection}
+          emptyCondition={navItems.length === 0}
+          noSectionCondition={false}
+          customEmptyMessage={emptyStateMessage}
+      />
+      {/* Main subsection management (only shown when section exists) */}
     </div>
   );
 }

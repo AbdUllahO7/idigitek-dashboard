@@ -151,14 +151,7 @@ export function useGenericList({
       return
     }
     
-    if (!section) {
-      toast({
-        title: "Error",
-        description: "Please create a section first before adding items.",
-        variant: "destructive",
-      })
-      return
-    }
+ 
     
     // Open the create dialog
     setIsCreateDialogOpen(true)

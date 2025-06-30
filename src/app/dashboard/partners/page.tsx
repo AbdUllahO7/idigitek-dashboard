@@ -19,8 +19,7 @@ import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSe
 import { getTeamNavigationSectionConfig } from "../team/navigation/team-navigation-config"
 import { ClickableImage } from "@/src/components/ClickableImage"
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
-
-
+import { add } from "date-fns"
 
 export default function PartnersPage() {
   const searchParams = useSearchParams()
@@ -32,6 +31,7 @@ export default function PartnersPage() {
   const {t , i18n} = useTranslation()
   const [hasNavigationSubSection, setHasNavigationSubSection] = useState<boolean>(false)
   const NavigationConfig = getTeamNavigationSectionConfig(i18n.language);
+  
   // Get basic section info for both navigation and main content pre-population
   const {useGetBasicInfoByWebsiteId} = useSections()
   const { data: basicInfo } = useGetBasicInfoByWebsiteId(websiteId)
@@ -63,22 +63,62 @@ export default function PartnersPage() {
     };
   }, [basicInfo, sectionId]);
 
-  const HEADER_CONFIG = useMemo(() => ({
-    title: t('partners.management.title'),
-    description: t('partners.management.description'),
-    addButtonLabel: t('partners.management.addButtonLabel'),
-    emptyStateMessage: t('partners.management.emptyStateMessage'),
-    noSectionMessage: t('partners.management.noSectionMessage'),
-    mainSectionRequiredMessage: t('partners.management.mainSectionRequiredMessage'),
-    emptyFieldsMessage: t('partners.management.emptyFieldsMessage'),
-    sectionIntegrationTitle: t('partners.management.sectionIntegrationTitle'),
-    sectionIntegrationDescription: t('partners.management.sectionIntegrationDescription'),
-    addSectionButtonLabel: t('partners.management.addSectionButtonLabel'),
-    editSectionButtonLabel: t('partners.management.editSectionButtonLabel'),
-    saveSectionButtonLabel: t('partners.management.saveSectionButtonLabel'),
-    listTitle: t('partners.management.listTitle'),
+  const currentLanguage = i18n.language; // 'en', 'ar', 'tr'
+  const partnersSectionConfig = getPartnersSectionConfig(currentLanguage);
+
+  // Use the generic list hook for Partners management
+  const {
+    section: partnersSection,
+    items: navItems,
+    isLoadingItems: isLoadingNavItems,
+    isCreateDialogOpen,
+    isDeleteDialogOpen,
+    itemToDelete,
+    isDeleting,
+    isAddButtonDisabled: defaultAddButtonDisabled,
+    handleEdit,
+    handleDelete,
+    handleAddNew,
+    handleItemCreated,
+    showDeleteDialog,
+    setIsCreateDialogOpen,
+    setIsDeleteDialogOpen,
+    setSection
+  } = useGenericList({
+    sectionId,
+    apiHooks: useSectionItems(),
     editPath: "partners/addPartners"
-  }), [t]);
+  })
+
+  // Determine if we should show the add button (hide it when items exist)
+  const shouldShowAddButton = navItems.length === 0;
+
+  // Configuration for Partners page with dynamic addButtonLabel
+  const HEADER_CONFIG = useMemo(() => {
+    const baseConfig = {
+      title: t('partners.management.title', 'Partners Management'),
+      description: t('partners.management.description', 'Manage your partners inventory and multilingual content'),
+      emptyStateMessage: t('partners.management.emptyStateMessage', 'No partners found. Create your first partner by clicking the "Add New Partner" button.'),
+      noSectionMessage: t('partners.management.noSectionMessage', 'Please create a partners section first before adding partners.'),
+      mainSectionRequiredMessage: t('partners.management.mainSectionRequiredMessage', 'Please enter your main section data before adding partners.'),
+      emptyFieldsMessage: t('partners.management.emptyFieldsMessage', 'Please complete all required fields in the main section before adding partners.'),
+      sectionIntegrationTitle: t('partners.management.sectionIntegrationTitle', 'Partners Section Content'),
+      sectionIntegrationDescription: t('partners.management.sectionIntegrationDescription', 'Manage your partners section content in multiple languages.'),
+      addSectionButtonLabel: t('partners.management.addSectionButtonLabel', 'Add Partners Section'),
+      editSectionButtonLabel: t('partners.management.editSectionButtonLabel', 'Edit Partners Section'),
+      saveSectionButtonLabel: t('partners.management.saveSectionButtonLabel', 'Save Partners Section'),
+      listTitle: t('partners.management.listTitle', 'Partners List'),
+      editPath: "partners/addPartners",
+      addButtonLabel: '', 
+    };
+
+    // Only add addButtonLabel if no items exist (this helps hide the button)
+    if (shouldShowAddButton) {
+      baseConfig.addButtonLabel = t('partners.management.addButtonLabel', 'Add New Partner');
+    }
+
+    return baseConfig;
+  }, [t, shouldShowAddButton]);
 
   const PARTNERS_COLUMNS = [
     {
@@ -117,8 +157,7 @@ export default function PartnersPage() {
       cell: CountBadgeCell
     }
   ]
-    const currentLanguage = i18n.language; // 'en', 'ar', 'tr'
-    const partnersSectionConfig = getPartnersSectionConfig(currentLanguage);
+
   // Refs to track previous values for debugging
   const prevHasMainSubSection = useRef(hasMainSubSection);
   const isFirstRender = useRef(true);
@@ -138,31 +177,6 @@ export default function PartnersPage() {
     isLoading: isLoadingSectionSubsections
   } = useGetBySectionId(sectionId || "")
 
-  // Use the generic list hook for Partners management
-  const {
-    section: partnersSection,
-    items: navItems,
-    isLoadingItems: isLoadingNavItems,
-    isCreateDialogOpen,
-    isDeleteDialogOpen,
-    itemToDelete,
-    isDeleting,
-    isAddButtonDisabled: defaultAddButtonDisabled,
-    handleEdit,
-    handleDelete,
-    handleAddNew,
-    handleItemCreated,
-    showDeleteDialog,
-    setIsCreateDialogOpen,
-    setIsDeleteDialogOpen,
-    setSection
-  } = useGenericList({
-    sectionId,
-    apiHooks: useSectionItems(),
-    editPath: HEADER_CONFIG.editPath
-  })
-
-
   // Debug changes in hasMainSubSection
   useEffect(() => {
     prevHasMainSubSection.current = hasMainSubSection;
@@ -178,27 +192,23 @@ export default function PartnersPage() {
       return;
     }
     
-
-    
     // We're done loading, now check the data
     let foundMainSubSection = false;
     let foundNavigationSubSection = false;
     let mainSubSection = null;
     
-    // 🔧 FIXED: Use NEWS configurations instead of team configurations
-    const expectedNewsSlug = partnersSectionConfig.name; // This is correct for NEWS
-    const expectedNavigationSlug = NavigationConfig.name; // This is correct for NEWS navigation
-    
-   
+    // Use Partners configurations
+    const expectedPartnersSlug = partnersSectionConfig.name;
+    const expectedNavigationSlug = NavigationConfig.name;
     
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
       const sectionData = sectionSubsections.data;
       
       if (Array.isArray(sectionData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
+        // Find the main Partners subsection
         mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedNewsSlug
+          sub.isMain === true && sub.name === expectedPartnersSlug
         );
         foundMainSubSection = !!mainSubSection;
 
@@ -209,23 +219,22 @@ export default function PartnersPage() {
           // Match by name
           if (sub.name === expectedNavigationSlug) return true;
           // Match by partial name (in case of slug differences)
-          if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
+          if (sub.name && sub.name.toLowerCase().includes('partners') && sub.name.toLowerCase().includes('navigation')) return true;
           return false;
         });
         foundNavigationSubSection = !!navigationSubSection;
-        
     
       } else {
-        // Single object response - check if it's news main or navigation
-        if (sectionData.isMain === true && sectionData.name === expectedNewsSlug) {
+        // Single object response - check if it's partners main or navigation
+        if (sectionData.isMain === true && sectionData.name === expectedPartnersSlug) {
           foundMainSubSection = true;
           mainSubSection = sectionData;
         }
         
-        // Check if it's a news navigation subsection
+        // Check if it's a partners navigation subsection
         if (sectionData.type === NavigationConfig.type || 
             sectionData.name === expectedNavigationSlug ||
-            (sectionData.name && sectionData.name.toLowerCase().includes('news') && sectionData.name.toLowerCase().includes('navigation'))) {
+            (sectionData.name && sectionData.name.toLowerCase().includes('partners') && sectionData.name.toLowerCase().includes('navigation'))) {
           foundNavigationSubSection = true;
         }
       }
@@ -236,10 +245,10 @@ export default function PartnersPage() {
       const websiteData = mainSubSectionData.data;
       
       if (Array.isArray(websiteData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
+        // Find the main Partners subsection
         if (!foundMainSubSection) {
           mainSubSection = websiteData.find(sub => 
-            sub.isMain === true && sub.name === expectedNewsSlug
+            sub.isMain === true && sub.name === expectedPartnersSlug
           );
           foundMainSubSection = !!mainSubSection;
         }
@@ -252,16 +261,15 @@ export default function PartnersPage() {
             // Match by name
             if (sub.name === expectedNavigationSlug) return true;
             // Match by partial name (in case of slug differences)
-            if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
+            if (sub.name && sub.name.toLowerCase().includes('partners') && sub.name.toLowerCase().includes('navigation')) return true;
             return false;
           });
           foundNavigationSubSection = !!navigationSubSection;
         }
-        
       
       } else {
         // Single object response - check what type it is
-        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedNewsSlug) {
+        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedPartnersSlug) {
           foundMainSubSection = true;
           mainSubSection = websiteData;
         }
@@ -270,14 +278,12 @@ export default function PartnersPage() {
         if (!foundNavigationSubSection && (
           websiteData.type === NavigationConfig.type || 
           websiteData.name === expectedNavigationSlug ||
-          (websiteData.name && websiteData.name.toLowerCase().includes('news') && websiteData.name.toLowerCase().includes('navigation'))
+          (websiteData.name && websiteData.name.toLowerCase().includes('partners') && websiteData.name.toLowerCase().includes('navigation'))
         )) {
           foundNavigationSubSection = true;
         }
       }
     }
-    
-  
     
     setHasMainSubSection(foundMainSubSection);
     setHasNavigationSubSection(foundNavigationSubSection);
@@ -292,11 +298,10 @@ export default function PartnersPage() {
       // Set local section data
       setSectionData(sectionInfo);
       
-      // Update the newsSection in useGenericList hook if not already set
+      // Update the partnersSection in useGenericList hook if not already set
       if (partnersSection === null) {
         setSection(sectionInfo);
       }
-      
     }
     
   }, [
@@ -307,26 +312,24 @@ export default function PartnersPage() {
     sectionId, 
     partnersSection, 
     setSection,
-    partnersSectionConfig.name,        // 🔧 FIXED: Use news config
-    NavigationConfig.name,     // 🔧 FIXED: Use news navigation config
-    NavigationConfig.type      // 🔧 FIXED: Use news navigation config
+    partnersSectionConfig.name,
+    NavigationConfig.name,
+    NavigationConfig.type
   ]);
 
   // Handle navigation subsection creation
   const handleNavigationSubSectionCreated = (subsection: any) => {    
-    // 🔧 FIXED: Check if subsection has the correct name or type for NEWS
+    // Check if subsection has the correct name or type for Partners
     const expectedSlug = NavigationConfig.name;
     const expectedType = NavigationConfig.type;
     const hasCorrectIdentifier = (
       subsection.name === expectedSlug || 
       subsection.type === expectedType ||
-      (subsection.name && subsection.name.toLowerCase().includes('news') && subsection.name.toLowerCase().includes('navigation'))
+      (subsection.name && subsection.name.toLowerCase().includes('partners') && subsection.name.toLowerCase().includes('navigation'))
     );
     
     // Set that we have a navigation subsection now
     setHasNavigationSubSection(hasCorrectIdentifier);
-    
-
     
     // Force refetch of all subsection data
     if (refetchMainSubSection) {
@@ -338,15 +341,12 @@ export default function PartnersPage() {
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
-    
     // Check if subsection has the correct name
     const expectedName = partnersSectionConfig.subSectionName;
     const hasCorrectName = subsection.name === expectedName;
     
     // Set that we have a main subsection now (only if it also has the correct name)
     setHasMainSubSection(subsection.isMain === true && hasCorrectName);
-    
-
     
     // If we have section data from the subsection, update it
     if (subsection.section) {
@@ -364,15 +364,11 @@ export default function PartnersPage() {
     }
   };
 
-  // Added check for navItems.length > 0 to disable when there's already a navItem
+  // Updated button disabling logic - removed the navItems.length check since we're now hiding instead
   const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
-    (Boolean(sectionId) && !hasMainSubSection) ||
-    (navItems.length > 0); // This disables the button if there's already at least one NavItem
-
-
-
+    (Boolean(sectionId) && !hasMainSubSection);
 
   // Custom message for empty state 
   const emptyStateMessage = !partnersSection && !sectionData 
@@ -425,20 +421,20 @@ export default function PartnersPage() {
               previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
             />
       
-
       {/* Main list page with table and section integration */}
       <GenericListPage
         config={HEADER_CONFIG}
         sectionId={sectionId}
         sectionConfig={partnersSectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
+        isAddButtonDisabled={false}
         tableComponent={NavItemsTable}
         createDialogComponent={CreateDialog}
+        showAddButton={shouldShowAddButton} // Only show button when we should
+        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
         deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
         isLoading={isLoadingNavItems || isLoadingMainSubSection}
         emptyCondition={navItems.length === 0}
-        noSectionCondition={!partnersSection && !sectionData}
+        noSectionCondition={false}
         customEmptyMessage={emptyStateMessage}
       />
       

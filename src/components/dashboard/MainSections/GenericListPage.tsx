@@ -54,7 +54,7 @@ interface GenericListPageProps {
   tableComponent: ReactNode
   createDialogComponent: ReactNode
   deleteDialogComponent: ReactNode
-  onAddNew: () => void
+  onAddNew: () => void 
   handleRefresh?: () => void
   isLoading?: boolean
   isLoadingSection?: boolean

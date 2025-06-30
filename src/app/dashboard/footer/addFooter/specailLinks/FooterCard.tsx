@@ -46,8 +46,8 @@ export const FooterCard = memo(
 
     const {t} = useTranslation()
 
-    const [isCollapsed, setIsCollapsed] = useState(true)
-    const [isSocialLinksExpanded, setIsSocialLinksExpanded] = useState(false)
+    const [isCollapsed, setIsCollapsed] = useState(false)
+    const [isSocialLinksExpanded, setIsSocialLinksExpanded] = useState(true)
 
     const handleDelete = () => onDelete(langCode, index)
 

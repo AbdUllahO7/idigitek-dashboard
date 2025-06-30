@@ -20,6 +20,7 @@ import { contactSectionConfig } from "../contact/ContactSectionConfig"
 import { getTeamNavigationSectionConfig } from "../team/navigation/team-navigation-config"
 import { ClickableImage } from "@/src/components/ClickableImage"
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
+import { add } from "date-fns"
 
 export default function ClientComments() {
   const { t, i18n } = useTranslation()
@@ -71,63 +72,6 @@ export default function ClientComments() {
     };
   }, [basicInfo, sectionId]);
 
-  // Configuration for the Client Comments page - Memoized and reactive to language changes
-  const ClientComments_CONFIG = useMemo(() => ({
-    title: t('clientComments.title', 'Client Comments Management'),
-    description: t('clientComments.description', 'Manage your Client Comments inventory and multilingual content'),
-    addButtonLabel: t('clientComments.addButtonLabel', 'Add New Client Comments item'),
-    emptyStateMessage: t('clientComments.emptyStateMessage', 'No Client Comments found. Create your first Client Comments by clicking the "Add New Client Comments" button.'),
-    noSectionMessage: t('clientComments.noSectionMessage', 'Please create a Client Comments section first before adding Client Comments.'),
-    mainSectionRequiredMessage: t('clientComments.mainSectionRequiredMessage', 'Please enter your main section data before adding Client Comments.'),
-    emptyFieldsMessage: t('clientComments.emptyFieldsMessage', 'Please complete all required fields in the main section before adding Client Comments.'),
-    sectionIntegrationTitle: t('clientComments.sectionIntegrationTitle', 'Client Comments Section Content'),
-    sectionIntegrationDescription: t('clientComments.sectionIntegrationDescription', 'Manage your Client Comments section content in multiple languages.'),
-    addSectionButtonLabel: t('clientComments.addSectionButtonLabel', 'Add Client Comments Section'),
-    editSectionButtonLabel: t('clientComments.editSectionButtonLabel', 'Edit Client Comments Section'),
-    saveSectionButtonLabel: t('clientComments.saveSectionButtonLabel', 'Save Client Comments Section'),
-    listTitle: t('clientComments.listTitle', 'Client Comments List'),
-    editPath: "clientComments/addClientComments"
-  }), [t])
-
-  // Column definitions - Memoized and reactive to language changes
-  const ClientComments_COLUMNS = useMemo(() => [
-    {
-      header: t('clientComments.columnName', 'Name'),
-      accessor: "name",
-      className: "font-medium"
-    },
-    {
-      header: t('clientComments.columnDescription', 'Description'),
-      accessor: "description",
-      cell: TruncatedCell
-    },
-    {
-      header: t('clientComments.columnStatus', 'Status'),
-      accessor: "isActive",
-      cell: (item: any, value: boolean) => (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center">
-            {StatusCell(item, value)}
-            {item.isMain && (
-              <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                {t('clientComments.main', 'Main')}
-              </span>
-            )}
-          </div>
-        </div>
-      )
-    },
-    {
-      header: t('clientComments.columnOrder', 'Order'),
-      accessor: "order"
-    },
-    {
-      header: t('clientComments.columnSubsections', 'Subsections'),
-      accessor: "subsections.length",
-      cell: CountBadgeCell
-    }
-  ], [t])
-
   // State management - simplified to reduce circular dependencies
   const [pageState, setPageState] = useState({
     hasMainSubSection: false,
@@ -174,8 +118,78 @@ export default function ClientComments() {
   } = useGenericList({
     sectionId,
     apiHooks: useSectionItems(),
-    editPath: ClientComments_CONFIG.editPath
+    editPath: "clientComments/addClientComments"
   })
+
+  // Determine if we should show the add button (hide it when items exist)
+  const shouldShowAddButton = clientCommentsItems.length === 0;
+
+  // Configuration for the Client Comments page - Memoized and reactive to language changes
+  // Only include addButtonLabel when we should show the add button
+  const ClientComments_CONFIG = useMemo(() => {
+    const baseConfig = {
+      title: t('clientComments.title', 'Client Comments Management'),
+      description: t('clientComments.description', 'Manage your Client Comments inventory and multilingual content'),
+      emptyStateMessage: t('clientComments.emptyStateMessage', 'No Client Comments found. Create your first Client Comments by clicking the "Add New Client Comments" button.'),
+      noSectionMessage: t('clientComments.noSectionMessage', 'Please create a Client Comments section first before adding Client Comments.'),
+      mainSectionRequiredMessage: t('clientComments.mainSectionRequiredMessage', 'Please enter your main section data before adding Client Comments.'),
+      emptyFieldsMessage: t('clientComments.emptyFieldsMessage', 'Please complete all required fields in the main section before adding Client Comments.'),
+      sectionIntegrationTitle: t('clientComments.sectionIntegrationTitle', 'Client Comments Section Content'),
+      sectionIntegrationDescription: t('clientComments.sectionIntegrationDescription', 'Manage your Client Comments section content in multiple languages.'),
+      addSectionButtonLabel: t('clientComments.addSectionButtonLabel', 'Add Client Comments Section'),
+      editSectionButtonLabel: t('clientComments.editSectionButtonLabel', 'Edit Client Comments Section'),
+      saveSectionButtonLabel: t('clientComments.saveSectionButtonLabel', 'Save Client Comments Section'),
+      listTitle: t('clientComments.listTitle', 'Client Comments List'),
+      editPath: "clientComments/addClientComments",
+      addButtonLabel: '',
+    };
+
+    // Only add addButtonLabel if no items exist (this helps hide the button)
+    if (shouldShowAddButton) {
+      baseConfig.addButtonLabel = t('clientComments.addButtonLabel', 'Add New Client Comments item');
+    }
+
+    return baseConfig;
+  }, [t, shouldShowAddButton])
+
+  // Column definitions - Memoized and reactive to language changes
+  const ClientComments_COLUMNS = useMemo(() => [
+    {
+      header: t('clientComments.columnName', 'Name'),
+      accessor: "name",
+      className: "font-medium"
+    },
+    {
+      header: t('clientComments.columnDescription', 'Description'),
+      accessor: "description",
+      cell: TruncatedCell
+    },
+    {
+      header: t('clientComments.columnStatus', 'Status'),
+      accessor: "isActive",
+      cell: (item: any, value: boolean) => (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center">
+            {StatusCell(item, value)}
+            {item.isMain && (
+              <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                {t('clientComments.main', 'Main')}
+              </span>
+            )}
+          </div>
+        </div>
+      )
+    },
+    {
+      header: t('clientComments.columnOrder', 'Order'),
+      accessor: "order"
+    },
+    {
+      header: t('clientComments.columnSubsections', 'Subsections'),
+      accessor: "subsections.length",
+      cell: CountBadgeCell
+    }
+  ], [t])
 
   // Process subsection data - Moved to a stable, memoized function to reduce rerenders
   const processSubsectionData = useCallback(() => {
@@ -430,12 +444,11 @@ export default function ClientComments() {
     }
   }, [refetchMainSubSection, setSection, clientCommentsSectionConfig.name])
 
-  // Compute derived values ONCE per render - not during render
+  // Updated button disabling logic - removed the clientCommentsItems.length check since we're now hiding instead
   const isAddButtonDisabled = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
-    (Boolean(sectionId) && !hasMainSubSection) ||
-    (clientCommentsItems.length > 0) // Added to disable button if there's at least one Client Comments item
+    (Boolean(sectionId) && !hasMainSubSection);
 
   const emptyStateMessage = !clientCommentsSection && !sectionData 
     ? ClientComments_CONFIG.noSectionMessage 
@@ -494,14 +507,15 @@ export default function ClientComments() {
         config={ClientComments_CONFIG}
         sectionId={sectionId}
         sectionConfig={clientCommentsSectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
+        isAddButtonDisabled={false}
         tableComponent={ClientCommentsItemsTable}
         createDialogComponent={CreateDialog}
+        showAddButton={shouldShowAddButton} // Only show button when we should
+        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
         deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
         isLoading={isLoadingClientComments || isLoadingMainSubSection}
         emptyCondition={clientCommentsItems.length === 0}
-        noSectionCondition={!clientCommentsSection && !sectionData}
+        noSectionCondition={false}
         customEmptyMessage={emptyStateMessage}
       />
       

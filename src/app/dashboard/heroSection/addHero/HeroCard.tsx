@@ -53,7 +53,7 @@ export const HeroCard = memo(({
   isFirstLanguage,
   HeroImageUploader,
 }: HeroCardProps) => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { t } = useTranslation();
   const {language} = useLanguage()
   const { imageFile, imagePreview, handleImageUpload, handleImageRemove } = useImageUpload({

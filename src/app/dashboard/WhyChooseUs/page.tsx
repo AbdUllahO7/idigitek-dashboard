@@ -20,6 +20,7 @@ import { Navigation, Users } from "lucide-react"
 import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSection"
 import { ClickableImage } from "@/src/components/ClickableImage"
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
+import { add } from "date-fns"
 
 // Column definitions with translation support
 const getWhyChooseUsColumns = (t: any) => [
@@ -105,27 +106,6 @@ export default function ChoseUsPage() {
     [i18n.language]
   );
 
-  // Get translated configuration for the Why Choose Us page
-  const CHOSE_US_CONFIG = useMemo(() => ({
-    title: t('WhyChooseUsConfig.title', 'Why Choose Us Management'),
-    description: t('WhyChooseUsConfig.description', 'Manage your Why Choose Us inventory and multilingual content'),
-    addButtonLabel: t('WhyChooseUsConfig.addButtonLabel', 'Add New Why Choose Us item'),
-    emptyStateMessage: t('WhyChooseUsConfig.emptyStateMessage', 'No Why Choose Us found. Create your first Why Choose Us by clicking the "Add New Why Choose Us" button.'),
-    noSectionMessage: t('WhyChooseUsConfig.noSectionMessage', 'Please create a Why Choose Us section first before adding Why Choose Us.'),
-    mainSectionRequiredMessage: t('WhyChooseUsConfig.mainSectionRequiredMessage', 'Please enter your main section data before adding Why Choose Us.'),
-    emptyFieldsMessage: t('WhyChooseUsConfig.emptyFieldsMessage', 'Please complete all required fields in the main section before adding Why Choose Us.'),
-    sectionIntegrationTitle: t('WhyChooseUsConfig.sectionIntegrationTitle', 'Why Choose Us Section Content'),
-    sectionIntegrationDescription: t('WhyChooseUsConfig.sectionIntegrationDescription', 'Manage your Why Choose Us section content in multiple languages.'),
-    addSectionButtonLabel: t('WhyChooseUsConfig.addSectionButtonLabel', 'Add Why Choose Us Section'),
-    editSectionButtonLabel: t('WhyChooseUsConfig.editSectionButtonLabel', 'Edit Why Choose Us Section'),
-    saveSectionButtonLabel: t('WhyChooseUsConfig.saveSectionButtonLabel', 'Save Why Choose Us Section'),
-    listTitle: t('WhyChooseUsConfig.listTitle', 'Why Choose Us List'),
-    editPath: "WhyChooseUs/addChoseUs"
-  }), [t]);
-
-  // Get translated column definitions
-  const CHOSE_US_COLUMNS = useMemo(() => getWhyChooseUsColumns(t), [t])
-  
   // State management - simplified to reduce circular dependencies
   const [pageState, setPageState] = useState({
     hasMainSubSection: false,
@@ -172,8 +152,42 @@ export default function ChoseUsPage() {
   } = useGenericList({
     sectionId,
     apiHooks: useSectionItems(),
-    editPath: CHOSE_US_CONFIG.editPath
+    editPath: "WhyChooseUs/addChoseUs"
   })
+
+  // Determine if we should show the add button (hide it when items exist)
+  const shouldShowAddButton = navItems.length === 0;
+
+  // Get translated configuration for the Why Choose Us page
+  // Only include addButtonLabel when we should show the add button
+  const CHOSE_US_CONFIG = useMemo(() => {
+    const baseConfig = {
+      title: t('WhyChooseUsConfig.title', 'Why Choose Us Management'),
+      description: t('WhyChooseUsConfig.description', 'Manage your Why Choose Us inventory and multilingual content'),
+      emptyStateMessage: t('WhyChooseUsConfig.emptyStateMessage', 'No Why Choose Us found. Create your first Why Choose Us by clicking the "Add New Why Choose Us" button.'),
+      noSectionMessage: t('WhyChooseUsConfig.noSectionMessage', 'Please create a Why Choose Us section first before adding Why Choose Us.'),
+      mainSectionRequiredMessage: t('WhyChooseUsConfig.mainSectionRequiredMessage', 'Please enter your main section data before adding Why Choose Us.'),
+      emptyFieldsMessage: t('WhyChooseUsConfig.emptyFieldsMessage', 'Please complete all required fields in the main section before adding Why Choose Us.'),
+      sectionIntegrationTitle: t('WhyChooseUsConfig.sectionIntegrationTitle', 'Why Choose Us Section Content'),
+      sectionIntegrationDescription: t('WhyChooseUsConfig.sectionIntegrationDescription', 'Manage your Why Choose Us section content in multiple languages.'),
+      addSectionButtonLabel: t('WhyChooseUsConfig.addSectionButtonLabel', 'Add Why Choose Us Section'),
+      editSectionButtonLabel: t('WhyChooseUsConfig.editSectionButtonLabel', 'Edit Why Choose Us Section'),
+      saveSectionButtonLabel: t('WhyChooseUsConfig.saveSectionButtonLabel', 'Save Why Choose Us Section'),
+      listTitle: t('WhyChooseUsConfig.listTitle', 'Why Choose Us List'),
+      editPath: "WhyChooseUs/addChoseUs",
+      addButtonLabel: '',
+    };
+
+    // Only add addButtonLabel if no items exist (this helps hide the button)
+    if (shouldShowAddButton) {
+      baseConfig.addButtonLabel = t('WhyChooseUsConfig.addButtonLabel', 'Add New Why Choose Us item');
+    }
+
+    return baseConfig;
+  }, [t, shouldShowAddButton]);
+
+  // Get translated column definitions
+  const CHOSE_US_COLUMNS = useMemo(() => getWhyChooseUsColumns(t), [t])
 
   // Process subsection data - Moved to a stable, memoized function to reduce rerenders
   const processSubsectionData = useCallback(() => {
@@ -261,9 +275,9 @@ export default function ChoseUsPage() {
     let foundNavigationSubSection = false;
     let mainSubSection = null;
     
-    // 🔧 FIXED: Use NEWS configurations instead of team configurations
-    const expectedNewsSlug = whyChooseUsSectionConfig.name; // This is correct for NEWS
-    const expectedNavigationSlug = NavigationConfig.name; // This is correct for NEWS navigation
+    // Use WhyChooseUs configurations instead of news configurations
+    const expectedWhyChooseUsSlug = whyChooseUsSectionConfig.name;
+    const expectedNavigationSlug = NavigationConfig.name;
     
 
     // If we have a sectionId, prioritize checking the section-specific subsections
@@ -271,9 +285,9 @@ export default function ChoseUsPage() {
       const sectionData = sectionSubsections.data;
       
       if (Array.isArray(sectionData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
+        // Find the main WhyChooseUs subsection
         mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedNewsSlug
+          sub.isMain === true && sub.name === expectedWhyChooseUsSlug
         );
         foundMainSubSection = !!mainSubSection;
 
@@ -284,23 +298,23 @@ export default function ChoseUsPage() {
           // Match by name
           if (sub.name === expectedNavigationSlug) return true;
           // Match by partial name (in case of slug differences)
-          if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
+          if (sub.name && sub.name.toLowerCase().includes('why') && sub.name.toLowerCase().includes('navigation')) return true;
           return false;
         });
         foundNavigationSubSection = !!navigationSubSection;
         
 
       } else {
-        // Single object response - check if it's news main or navigation
-        if (sectionData.isMain === true && sectionData.name === expectedNewsSlug) {
+        // Single object response - check if it's why choose us main or navigation
+        if (sectionData.isMain === true && sectionData.name === expectedWhyChooseUsSlug) {
           foundMainSubSection = true;
           mainSubSection = sectionData;
         }
         
-        // Check if it's a news navigation subsection
+        // Check if it's a why choose us navigation subsection
         if (sectionData.type === NavigationConfig.type || 
             sectionData.name === expectedNavigationSlug ||
-            (sectionData.name && sectionData.name.toLowerCase().includes('news') && sectionData.name.toLowerCase().includes('navigation'))) {
+            (sectionData.name && sectionData.name.toLowerCase().includes('why') && sectionData.name.toLowerCase().includes('navigation'))) {
           foundNavigationSubSection = true;
         }
       }
@@ -311,10 +325,10 @@ export default function ChoseUsPage() {
       const websiteData = mainSubSectionData.data;
       
       if (Array.isArray(websiteData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
+        // Find the main WhyChooseUs subsection
         if (!foundMainSubSection) {
           mainSubSection = websiteData.find(sub => 
-            sub.isMain === true && sub.name === expectedNewsSlug
+            sub.isMain === true && sub.name === expectedWhyChooseUsSlug
           );
           foundMainSubSection = !!mainSubSection;
         }
@@ -327,7 +341,7 @@ export default function ChoseUsPage() {
             // Match by name
             if (sub.name === expectedNavigationSlug) return true;
             // Match by partial name (in case of slug differences)
-            if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
+            if (sub.name && sub.name.toLowerCase().includes('why') && sub.name.toLowerCase().includes('navigation')) return true;
             return false;
           });
           foundNavigationSubSection = !!navigationSubSection;
@@ -335,7 +349,7 @@ export default function ChoseUsPage() {
        
       } else {
         // Single object response - check what type it is
-        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedNewsSlug) {
+        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedWhyChooseUsSlug) {
           foundMainSubSection = true;
           mainSubSection = websiteData;
         }
@@ -344,14 +358,12 @@ export default function ChoseUsPage() {
         if (!foundNavigationSubSection && (
           websiteData.type === NavigationConfig.type || 
           websiteData.name === expectedNavigationSlug ||
-          (websiteData.name && websiteData.name.toLowerCase().includes('news') && websiteData.name.toLowerCase().includes('navigation'))
+          (websiteData.name && websiteData.name.toLowerCase().includes('why') && websiteData.name.toLowerCase().includes('navigation'))
         )) {
           foundNavigationSubSection = true;
         }
       }
     }
-    
-  
     
     setHasNavigationSubSection(foundNavigationSubSection);
     
@@ -361,9 +373,7 @@ export default function ChoseUsPage() {
         ? { _id: mainSubSection.section } 
         : mainSubSection.section;
       
-      // Set local section data
-      
-      // Update the newsSection in useGenericList hook if not already set
+      // Update the industrySection in useGenericList hook if not already set
       if (industrySection === null) {
         setSection(sectionInfo);
       }
@@ -378,27 +388,25 @@ export default function ChoseUsPage() {
     sectionId, 
     industrySection, 
     setSection,
-    whyChooseUsSectionConfig.name,        // 🔧 FIXED: Use news config
-    NavigationConfig.name,     // 🔧 FIXED: Use news navigation config
-    NavigationConfig.type      // 🔧 FIXED: Use news navigation config
+    whyChooseUsSectionConfig.name,
+    NavigationConfig.name,
+    NavigationConfig.type
   ]);
 
   // Handle navigation subsection creation
   const handleNavigationSubSectionCreated = (subsection: any) => {
     
-    // 🔧 FIXED: Check if subsection has the correct name or type for NEWS
+    // Check if subsection has the correct name or type for WhyChooseUs
     const expectedSlug = NavigationConfig.name;
     const expectedType = NavigationConfig.type;
     const hasCorrectIdentifier = (
       subsection.name === expectedSlug || 
       subsection.type === expectedType ||
-      (subsection.name && subsection.name.toLowerCase().includes('news') && subsection.name.toLowerCase().includes('navigation'))
+      (subsection.name && subsection.name.toLowerCase().includes('why') && subsection.name.toLowerCase().includes('navigation'))
     );
     
     // Set that we have a navigation subsection now
     setHasNavigationSubSection(hasCorrectIdentifier);
-    
-   
     
     // Force refetch of all subsection data
     if (refetchMainSubSection) {
@@ -441,13 +449,11 @@ export default function ChoseUsPage() {
     }
   }, [refetchMainSubSection, setSection, whyChooseUsSectionConfig.name]);
 
-  // IMPORTANT: Here's the crux of the button enabling/disabling logic
-  // Added check for navItems.length > 0 to disable when there's already a section item
+  // Updated button disabling logic - removed the navItems.length check since we're now hiding instead
   const isAddButtonDisabled: boolean = 
     Boolean(defaultAddButtonDisabled) || 
     isLoadingMainSubSection ||
-    (Boolean(sectionId) && !hasMainSubSection) ||
-    (navItems.length > 0); // This disables the button if there's already at least one section item
+    (Boolean(sectionId) && !hasMainSubSection);
 
   const emptyStateMessage = !industrySection && !sectionData 
     ? CHOSE_US_CONFIG.noSectionMessage 
@@ -507,14 +513,15 @@ export default function ChoseUsPage() {
         config={CHOSE_US_CONFIG}
         sectionId={sectionId}
         sectionConfig={whyChooseUsSectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
+        isAddButtonDisabled={false}
         tableComponent={ChoseUsItemsTable}
         createDialogComponent={CreateDialog}
+        showAddButton={shouldShowAddButton} // Only show button when we should
+        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
         deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
         isLoading={isLoadingChoseUs || isLoadingMainSubSection}
         emptyCondition={navItems.length === 0}
-        noSectionCondition={!industrySection && !sectionData}
+        noSectionCondition={false}
         customEmptyMessage={emptyStateMessage}
       />
       

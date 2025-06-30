@@ -47,7 +47,7 @@ export const FooterCard = memo(
     })
 
     const [isCollapsed, setIsCollapsed] = useState(false)
-    const [isSocialLinksExpanded, setIsSocialLinksExpanded] = useState(false)
+    const [isSocialLinksExpanded, setIsSocialLinksExpanded] = useState(true)
 
     const handleDelete = () => onDelete(langCode, index)
 
@@ -272,7 +272,7 @@ export const FooterCard = memo(
                                         reader.result as string,
                                         {
                                           shouldDirty: true,
-                                          shouldValidate: true,
+                                          shouldValidate: false,
                                         },
                                       )
                                     }

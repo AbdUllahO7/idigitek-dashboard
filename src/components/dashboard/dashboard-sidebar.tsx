@@ -112,7 +112,7 @@ const allNavItems: NavItem[] = [
   },
   {
     titleKey: "Dashboard_sideBar.nav.header",
-    href: "/dashboard/header",
+    href: "#",
     icon: Package,
     sectionId: "header",
   },
