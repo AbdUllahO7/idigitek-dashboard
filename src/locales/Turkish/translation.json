@@ -3990,6 +3990,23 @@
         "removeErrorDesc": "Alt bilgi kaldırılırken bir hata oluştu.",
         "reloadWarning": "Uyarı",
         "reloadWarningDesc": "Kaydetme sonrası veri yeniden yüklenemedi."
+      },
+      "socialLinks": {
+        "title": "Altbilgi {{index}} için Sosyal Bağlantılar",
+        "appliesToAll": "Tüm diller için geçerlidir",
+        "collapse": "Daralt",
+        "expand": "Genişlet",
+        "linkTitle": "Sosyal Bağlantı {{index}}",
+        "urlLabel": "Sosyal Bağlantı URL'si",
+        "urlPlaceholder": "https://example.com",
+        "imageLabel": "Sosyal Bağlantı Görseli",
+        "imageHelper": "Bu görsel tüm dillerde kullanılacak",
+        "linkTitleImage": "Sosyal Bağlantı {{index}} Görseli",
+        "emptyState": {
+          "title": "Henüz sosyal bağlantı eklenmedi",
+          "description": "\"Sosyal Bağlantı Ekle\"ye tıklayarak başlayın"
+        },
+        "addButton": "Sosyal Bağlantı Ekle"
       }
   },
   "specialLinks": {
@@ -4354,7 +4371,12 @@
     "NavigationLanguages" : "Navigasyon Dilleri",
     "NavigationSettings" : "Navigasyon Ayarları",
     "AddSubNavigation" : "Alt Navigasyon Ekle",
-    "enable": "Bu Bölüm için alt navigasyonu etkinleştir"
+    "enable": "Bu Bölüm için alt navigasyonu etkinleştir",
+    "ShowNavigationn" : "Navigasyonu göster",
+    "NavigationCurrentlyVisible" : "Navigasyon şu anda kullanıcılar tarafından görülebilir",
+    "NavigationCurrentlyHidden" : "Navigasyon şu anda gizli",
+    "StatusVisible" : "Durum: Görünür",
+    "StatusHidden" :  "Durum: Gizli"
     },
     "HeroManagement": {
     "createTitle": "Yeni Bölüm Öğesi Oluştur",

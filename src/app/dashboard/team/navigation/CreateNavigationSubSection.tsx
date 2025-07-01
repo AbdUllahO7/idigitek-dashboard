@@ -15,10 +15,12 @@ import {
   FormMessage,
 } from "@/src/components/ui/form"
 import { Input } from "@/src/components/ui/input"
+import { Switch } from "@/src/components/ui/switch"
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements"
 import { useLanguages } from "@/src/hooks/webConfiguration/use-language"
-import { ChevronDown, ChevronUp, Globe, Link } from "lucide-react"
+import { ChevronDown, ChevronUp, Globe, Link, Navigation, Eye, EyeOff } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTranslation } from "react-i18next"
 import { useLanguage } from "@/src/context/LanguageContext"
@@ -229,8 +231,6 @@ const NavigationLanguageCard = ({
                           {field.id === 'url' && <Link size={16} className="mr-2" />}
                           {field.label}
                           {field.required && <span className="text-red-500 ml-1">*</span>}
-                          
-                        
                         </FormLabel>
                         
                         <FormControl>
@@ -267,9 +267,6 @@ const NavigationLanguageCard = ({
                             )}
                           </div>
                         </FormControl>
-                        
-                        {/* Show section data info */}
-                      
                         
                         {field.description && (
                           <FormDescription className="text-gray-500 dark:text-gray-400 text-sm italic mt-1">
@@ -318,6 +315,10 @@ export default function CreateNavigationSubSection({
   const [isExpanded, setIsExpanded] = useState(true)
   const [languageForms, setLanguageForms] = useState<Record<string, any>>({})
   const languagesInitialized = useRef(false)
+  
+  // 🆕 NEW: Navigation visibility state
+  const [isNavigationVisible, setIsNavigationVisible] = useState(true)
+  const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false)
   
   // 🔧 FIXED: Add state to track if this component is processing
   const [isProcessing, setIsProcessing] = useState(false)
@@ -373,6 +374,20 @@ export default function CreateNavigationSubSection({
   const updateElementMutation = useUpdateElement();
   const createTranslationMutation = useCreateTranslation();
   const updateTranslationMutation = useUpdateTranslation();
+
+  // 🆕 NEW: Load navigation visibility state from existing data
+  useEffect(() => {
+    if (contentElements.length > 0) {
+      const visibilityElement = contentElements.find(el => 
+        el.name === "Navigation Visibility" && el.type === "boolean"
+      );
+      
+      if (visibilityElement) {
+        const isVisible = visibilityElement.defaultContent === "true" || visibilityElement.defaultContent === true;
+        setIsNavigationVisible(isVisible);
+      }
+    }
+  }, [contentElements]);
 
   // 🔧 FIXED: More controlled form reinitialization
   useEffect(() => {
@@ -812,6 +827,65 @@ export default function CreateNavigationSubSection({
     }
     return true
   }
+
+  // 🆕 NEW: Handle navigation visibility change
+  const handleNavigationVisibilityChange = async (isVisible: boolean) => {
+    if (!subsection?._id) return;
+
+    try {
+      setIsUpdatingVisibility(true);
+      
+      // Find the visibility element
+      const visibilityElement = contentElements.find(el => 
+        el.name === "Navigation Visibility" && el.type === "boolean"
+      );
+
+      if (visibilityElement) {
+        // Update existing visibility element
+        await updateElementMutation.mutateAsync({
+          id: visibilityElement._id,
+          data: { 
+            defaultContent: String(isVisible)
+          }
+        });
+      } else {
+        // Create new visibility element
+        const elementData = {
+          name: "Navigation Visibility",
+          type: "boolean",
+          parent: subsection._id,
+          isActive: true,
+          order: contentElements.length,
+          defaultContent: String(isVisible),
+          metadata: {
+            fieldId: "navigationVisibility",
+            fieldType: "boolean",
+            componentType: 'navigation'
+          }
+        };
+        
+        const newElement = await createElementMutation.mutateAsync(elementData);
+        setContentElements(prev => [...prev, newElement.data]);
+      }
+
+      setIsNavigationVisible(isVisible);
+      
+      toast({
+        title: "Success",
+        description: `Navigation is now ${isVisible ? 'visible' : 'hidden'}`,
+      });
+
+    } catch (error) {
+      console.error("Failed to update navigation visibility:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update navigation visibility",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUpdatingVisibility(false);
+    }
+  };
   
   // 🔧 FIXED: Create new navigation subsection with better state management
   const handleCreateSubsection = async () => {
@@ -846,62 +920,92 @@ export default function CreateNavigationSubSection({
         setSubsection(createdSubsection)
         setIsCreatingElements(true)
         
+        // 🆕 NEW: Create elements including visibility element
+        const elementsToCreate = [
+          // Navigation visibility element (boolean)
+          {
+            name: "Navigation Visibility",
+            type: "boolean",
+            defaultContent: String(true), // Default to visible
+            metadata: {
+              fieldId: "navigationVisibility",
+              fieldType: "boolean",
+              componentType: 'navigation'
+            }
+          },
+          // Regular navigation fields
+          ...sectionConfig.fields.map((field: any) => ({
+            name: field.id,
+            displayName: field.label,
+            defaultContent: languageForms[defaultLanguage.languageID].getValues()[field.id],
+            type: 'text',
+            metadata: {
+              fieldId: field.id,
+              fieldType: field.type,
+              originalLabel: field.label,
+              componentType: 'navigation',
+              sectionInfo: sectionInfo
+            }
+          }))
+        ];
+
         // Create elements and translations
-        const elementPromises = sectionConfig.fields.map(async (field: any, index: number) => {
+        const elementPromises = elementsToCreate.map(async (elementConfig: any, index: number) => {
           try {
             const elementData = {
-              name: field.id,
-              displayName: field.label,
-              defaultContent: languageForms[defaultLanguage.languageID].getValues()[field.id],
-              type: 'text',
+              name: elementConfig.name,
+              displayName: elementConfig.displayName || elementConfig.name,
+              defaultContent: elementConfig.defaultContent,
+              type: elementConfig.type,
               order: index,
               parent: createdSubsection._id,
               WebSiteId: websiteId,
               isActive: true,
-              metadata: {
-                fieldId: field.id,
-                fieldType: field.type,
-                originalLabel: field.label,
-                componentType: 'navigation', // Add identifier
-                sectionInfo: sectionInfo // Store section info for reference
-              }
+              metadata: elementConfig.metadata
             }
             
             const elementResponse = await createElementMutation.mutateAsync(elementData)
             const createdElement = elementResponse.data
             
             if (!createdElement || !createdElement._id) {
-              throw new Error(`${t('mainSubsection.errorCreatingElement')} ${field.label}`)
+              throw new Error(`${t('mainSubsection.errorCreatingElement')} ${elementConfig.name}`)
             }
             
-            // Create translations for this element
-            const translationPromises = languages.map(async (lang: { languageID: string | number; _id: any }) => {
-              try {
-                const form = lang.languageID ? languageForms[String(lang.languageID)] : undefined
-                if (!form) return null
-                const formValues = form.getValues()
-                const translationData = {
-                  content: formValues[field.id],
-                  language: lang._id,
-                  contentElement: createdElement._id,
-                  isActive: true
+            // Only create translations for text elements (not boolean)
+            if (elementConfig.type === 'text') {
+              const translationPromises = languages.map(async (lang: { languageID: string | number; _id: any }) => {
+                try {
+                  const form = lang.languageID ? languageForms[String(lang.languageID)] : undefined
+                  if (!form) return null
+                  const formValues = form.getValues()
+                  const fieldConfig = sectionConfig.fields.find((f: any) => f.id === elementConfig.name)
+                  const content = fieldConfig ? formValues[fieldConfig.id] : ''
+                  
+                  const translationData = {
+                    content: content,
+                    language: lang._id,
+                    contentElement: createdElement._id,
+                    isActive: true
+                  }
+                  return await createTranslationMutation.mutateAsync(translationData)
+                } catch (translationError) {
+                  console.error(`${t('mainSubsection.errorCreatingTranslation')} ${elementConfig.name} ${t('mainSubsection.inLanguage')} ${lang.languageID}:`, translationError)
+                  throw translationError
                 }
-                return await createTranslationMutation.mutateAsync(translationData)
-              } catch (translationError) {
-                console.error(`${t('mainSubsection.errorCreatingTranslation')} ${field.label} ${t('mainSubsection.inLanguage')} ${lang.languageID}:`, translationError)
-                throw translationError
-              }
-            })
+              })
+              
+              await Promise.all(translationPromises)
+            }
             
-            await Promise.all(translationPromises)
             return createdElement
           } catch (elementError) {
-            console.error(`${t('mainSubsection.errorCreatingElement')} ${field.label}:`, elementError)
+            console.error(`${t('mainSubsection.errorCreatingElement')} ${elementConfig.name}:`, elementError)
             throw elementError
           }
         })
         
-        await Promise.all(elementPromises)
+        const createdElements = await Promise.all(elementPromises)
+        setContentElements(createdElements)
         
         setSubsectionExists(true)
         setHasEmptyRequiredFields(false)
@@ -958,6 +1062,11 @@ export default function CreateNavigationSubSection({
       // Update elements and translations
       const updatePromises = contentElements.map(async (element) => {
         try {
+          // Skip boolean elements (like visibility)
+          if (element.type === 'boolean') {
+            return;
+          }
+
           let field = null
           for (const f of sectionConfig.fields) {
             const foundElement = findElementByFieldAcrossLanguages([element], f.id, sectionConfig)
@@ -1097,7 +1206,7 @@ export default function CreateNavigationSubSection({
   if (isLoadingCompleteSubsections || isLoadingLanguages) {
     return <LoadingCard />
   }
-  
+
   if (completeSubsectionsError) {
     return (
       <ErrorCard
@@ -1108,7 +1217,7 @@ export default function CreateNavigationSubSection({
       />
     )
   }
-  
+
   if (languages.length === 0) {
     return (
       <WarningCard
@@ -1118,131 +1227,296 @@ export default function CreateNavigationSubSection({
     )
   }
   
-  if (subsectionExists && subsection && !isEditMode) {
+  if (!isEditMode) {
     return (
+      <div className="space-y-4">
+        <SuccessCard
+          title="🧭 Navigation Configuration Available"
+          description="Navigation has been configured and is ready to use."
+          onEdit={() => {
+            // 🔧 FIXED: Force form reinitialization when entering edit mode
+            setFormsInitialized(false);
+            setIsEditMode(true);
+            setIsExpanded(true);
+            setUserIsEditing(false); // Reset user editing state
+            
+            // 🔧 FIXED: If we don't have content elements, refetch data
+            if (contentElements.length === 0 || Object.keys(contentTranslations).length === 0) {
+              refetchCompleteSubsections();
+            }
+          }}
+        />
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center text-lg">
+              <Navigation className="h-5 w-5 mr-3 text-blue-600 dark:text-blue-400" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-row items-center justify-between rounded-lg border p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
+              <div className="space-y-0.5">
+                <div className="flex items-center">
+                  {isNavigationVisible ? (
+                    <Eye className="h-4 w-4 mr-2 text-green-600 dark:text-green-400" />
+                  ) : (
+                    <EyeOff className="h-4 w-4 mr-2 text-red-600 dark:text-red-400" />
+                  )}
+                  <span className="text-base font-medium text-gray-900 dark:text-gray-100">
+                    {t('Navigation.ShowNavigation', 'Show Navigation')}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {isNavigationVisible 
+                    ? t('Navigation.NavigationCurrentlyVisible', 'Navigation is currently visible to users')
+                    : t('Navigation.NavigationCurrentlyHidden', 'Navigation is currently hidden from users')
+                  }
+                </p>
+              </div>
+              <Switch
+                checked={isNavigationVisible}
+                onCheckedChange={handleNavigationVisibilityChange}
+                disabled={isUpdatingVisibility}
+                className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-400"
+              />
+            </div>
+            
+            {/* Status indicator */}
+            <div className="mt-3 flex items-center text-sm">
+              <div className={`w-2 h-2 rounded-full mr-2 ${
+                isNavigationVisible 
+                  ? 'bg-green-500 animate-pulse' 
+                  : 'bg-red-500'
+              }`} />
+              <span className={isNavigationVisible 
+                ? 'text-green-700 dark:text-green-300' 
+                : 'text-red-700 dark:text-red-300'
+              }>
+                {isNavigationVisible 
+                  ? t('Navigation.StatusVisible', 'Status: Visible')
+                  : t('Navigation.StatusHidden', 'Status: Hidden')
+                }
+              </span>
+              {isUpdatingVisibility && (
+                <span className="ml-2 text-blue-600 dark:text-blue-400 text-xs">
+                  {t('Navigation.Updating', 'Updating...')}
+                </span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+  
+// Display states
+if (isLoadingCompleteSubsections || isLoadingLanguages) {
+  return <LoadingCard />
+}
+
+if (completeSubsectionsError) {
+  return (
+    <ErrorCard
+      errorMessage={t('mainSubsection.couldNotCheckSubsection')}
+      onRetry={() => {
+        refetchCompleteSubsections();
+      }}
+    />
+  )
+}
+
+if (languages.length === 0) {
+  return (
+    <WarningCard
+      title={t('mainSubsection.noActiveLanguagesTitle')}
+      message={t('mainSubsection.noActiveLanguagesMessage')}
+    />
+  )
+}
+
+// 🆕 NEW: Always render the Navigation Visibility switch at the top
+const renderNavigationVisibilitySwitch = () => (
+  <Card className="mb-6">
+    <CardHeader>
+      <CardTitle className="flex items-center text-lg">
+        <Navigation className="h-5 w-5 mr-3 text-blue-600 dark:text-blue-400" />
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+
+      <div className="flex flex-row items-center justify-between rounded-lg border p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
+        <div className="space-y-0.5">
+          <div className="flex items-center">
+            {isNavigationVisible ? (
+              <Eye className="h-4 w-4 mr-2 text-green-600 dark:text-green-400" />
+            ) : (
+              <EyeOff className="h-4 w-4 mr-2 text-red-600 dark:text-red-400" />
+            )}
+            <span className="text-base font-medium text-gray-900 dark:text-gray-100">
+              {t('Navigation.ShowNavigation', 'Show Navigation')}
+            </span>
+          </div>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {isNavigationVisible
+              ? t('Navigation.NavigationCurrentlyVisible', 'Navigation is currently visible to users')
+              : t('Navigation.NavigationCurrentlyHidden', 'Navigation is currently hidden from users')
+            }
+          </p>
+        </div>
+        <Switch
+          checked={isNavigationVisible}
+          onCheckedChange={handleNavigationVisibilityChange}
+          disabled={isUpdatingVisibility || !subsection?._id} // Disable if no subsection exists
+          className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-400"
+        />
+      </div>
+      
+      {/* Status indicator */}
+      <div className="mt-3 flex items-center text-sm">
+        <div className={`w-2 h-2 rounded-full mr-2 ${
+          isNavigationVisible 
+            ? 'bg-green-500 animate-pulse' 
+            : 'bg-red-500'
+        }`} />
+        <span className={isNavigationVisible 
+          ? 'text-green-700 dark:text-green-300' 
+          : 'text-red-700 dark:text-red-300'
+        }>
+          {isNavigationVisible 
+            ? t('Navigation.StatusVisible', 'Status: Visible')
+            : t('Navigation.StatusHidden', 'Status: Hidden')
+          }
+        </span>
+        {isUpdatingVisibility && (
+          <span className="ml-2 text-blue-600 dark:text-blue-400 text-xs">
+            {t('Navigation.Updating', 'Updating...')}
+          </span>
+        )}
+      </div>
+    </CardContent>
+  </Card>
+);
+
+return (
+  <div className="space-y-4">
+    {/* Always show the visibility switch at the top */}
+    {renderNavigationVisibilitySwitch()}
+
+    {/* Show SuccessCard when not in edit mode and subsection exists */}
+    {!isEditMode && subsectionExists ? (
       <SuccessCard
         title="🧭 Navigation Configuration Available"
         description="Navigation has been configured and is ready to use."
         onEdit={() => {
-          // 🔧 FIXED: Force form reinitialization when entering edit mode
           setFormsInitialized(false);
           setIsEditMode(true);
           setIsExpanded(true);
-          setUserIsEditing(false); // Reset user editing state
-          
-          // 🔧 FIXED: If we don't have content elements, refetch data
+          setUserIsEditing(false);
           if (contentElements.length === 0 || Object.keys(contentTranslations).length === 0) {
             refetchCompleteSubsections();
           }
         }}
       />
-    )
-  }
-  
-  return (
-    <MainFormCard
-      title={
-        <div
-          className="flex items-center justify-between w-full cursor-pointer"
-          onClick={() => setIsExpanded(!isExpanded)}
-        >
-          <div className="flex items-center">
-            <Link size={20} className="mr-3 text-blue-600 dark:text-blue-400" />
-            <span>{subsectionExists ? t('Navigation.EditNavigation') : t('Navigation.CreateNavigation')}</span>
-           
+    ) : (
+      <MainFormCard
+        title={
+          <div
+            className="flex items-center justify-between w-full cursor-pointer"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            <div className="flex items-center">
+              <Link size={20} className="mr-3 text-blue-600 dark:text-blue-400" />
+              <span>{subsectionExists ? t('Navigation.EditNavigation') : t('Navigation.CreateNavigation')}</span>
+            </div>
+            <motion.div
+              animate={{ rotate: isExpanded ? 0 : 180 }}
+              transition={{ duration: 0.3 }}
+              className="p-1 bg-gray-100 dark:bg-gray-800 rounded-full"
+            >
+              {isExpanded ? (
+                <ChevronUp size={18} className="text-gray-600 dark:text-gray-300" />
+              ) : (
+                <ChevronDown size={18} className="text-gray-600 dark:text-gray-300" />
+              )}
+            </motion.div>
           </div>
-          <motion.div
-            animate={{ rotate: isExpanded ? 0 : 180 }}
-            transition={{ duration: 0.3 }}
-            className="p-1 bg-gray-100 dark:bg-gray-800 rounded-full"
-          >
-            {isExpanded ?
-              <ChevronUp size={18} className="text-gray-600 dark:text-gray-300" /> :
-              <ChevronDown size={18} className="text-gray-600 dark:text-gray-300" />}
-          </motion.div>
-        </div>
-      }
-      description={
-      ""
-      }
-    >
-      <AnimatePresence initial={false}>
-        {isExpanded && (
-          <motion.div
-            key="content"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden"
-          >
-          
-            
-            {/* Processing indicator */}
-            {isProcessing && (
-              <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                <p className="text-green-800 dark:text-green-200 text-sm font-medium">
-                  🧭 Processing navigation changes...
-                </p>
+        }
+        description=""
+      >
+        <AnimatePresence initial={false}>
+          {isExpanded && (
+            <motion.div
+              key="content"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              {/* Processing indicator */}
+              {isProcessing && (
+                <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                  <p className="text-green-800 dark:text-green-200 text-sm font-medium">
+                    🧭 Processing navigation changes...
+                  </p>
+                </div>
+              )}
+              
+              {/* Language cards container */}
+              <div className="mb-6">
+                <div className="flex items-center mb-4">
+                  <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2 ml-2" />
+                  <span className="ml-2 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
+                    {languages.length} {t('mainSubsection.languages')}
+                  </span>
+                </div>
+                {renderLanguageCards()}
               </div>
-            )}
-            
-           
-            
-            {/* Language cards container */}
-            <div className="mb-6">
-              <div className="flex items-center mb-4">
-                <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2 ml-2" />
-               
-                <span className="ml-2 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
-                  {languages.length} {t('mainSubsection.languages')}
-                </span>
-              </div>
-              {renderLanguageCards()}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      
-      <div className="mt-8 flex flex-col md:flex-row gap-3">
-        {isExpanded ? (
-          <>
-            <ActionButton
-              isLoading={isProcessing}
-              isCreating={isCreating}
-              isCreatingElements={isCreatingElements}
-              isUpdating={isUpdating}
-              exists={subsectionExists}
-              onClick={subsectionExists ? handleUpdateSubsection : handleCreateSubsection}
-              className="flex-1"
-              disabled={isProcessing}
-            />
-            {subsectionExists && (
-              <CancelButton
-                onClick={() => {
-                  setIsEditMode(false)
-                  setIsExpanded(false)
-                  setUserIsEditing(false) // Reset user editing state
-                }}
-                className="md:w-48"
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        <div className="mt-8 flex flex-col md:flex-row gap-3">
+          {isExpanded ? (
+            <>
+              <ActionButton
+                isLoading={isProcessing}
+                isCreating={isCreating}
+                isCreatingElements={isCreatingElements}
+                isUpdating={isUpdating}
+                exists={subsectionExists}
+                onClick={subsectionExists ? handleUpdateSubsection : handleCreateSubsection}
+                className="flex-1"
+                disabled={isProcessing}
               />
-            )}
-          </>
-        ) : (
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setIsExpanded(true)}
-            disabled={isProcessing}
-            className="w-full py-2.5 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 text-gray-700 dark:text-gray-200 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-50"
-          >
-            <div className="flex items-center justify-center">
-              <ChevronDown size={18} className="mr-2" />
-              <span>Show Navigation Form</span>
-            </div>
-          </motion.button>
-        )}
-      </div>
-    </MainFormCard>
-  )
-}
+              {subsectionExists && (
+                <CancelButton
+                  onClick={() => {
+                    setIsEditMode(false)
+                    setIsExpanded(false)
+                    setUserIsEditing(false)
+                  }}
+                  className="md:w-48"
+                />
+              )}
+            </>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setIsExpanded(true)}
+              disabled={isProcessing}
+              className="w-full py-2.5 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 text-gray-700 dark:text-gray-200 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+            >
+              <div className="flex items-center justify-center">
+                <ChevronDown size={18} className="mr-2" />
+                <span>Show Navigation Form</span>
+              </div>
+            </motion.button>
+          )}
+        </div>
+      </MainFormCard>
+    )}
+  </div>
+)
+} 

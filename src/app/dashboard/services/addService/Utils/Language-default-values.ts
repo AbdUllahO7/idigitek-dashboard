@@ -263,9 +263,27 @@ export const createTeamSectionDefaultValues = (languageIds: string[], activeLang
 export const createFooterSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
     return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.footerSection);
 };
-
 export const createFooterSpecialLinkSectionDefaultValues = (languageIds: string[], activeLanguages: Language[]) => {
-  return createLanguageDefaultValues(languageIds, activeLanguages, defaultValueDefinitions.specialLink);
+    const defaultValues: Record<string, any> = {};
+    const languageCodeMap = activeLanguages.reduce<Record<string, string>>((acc, lang) => {
+        acc[lang._id] = lang.languageID;
+        return acc;
+    }, {});
+
+    languageIds.forEach((langId, index) => {
+        const langCode = languageCodeMap[langId] || langId;
+        const isFirstLanguage = index === 0;
+        
+        defaultValues[langCode] = [
+            {
+                id: "footer-1",
+                title: "",
+                socialLinks: [],
+            },
+        ];
+    });
+
+    return defaultValues;
 };
 
 

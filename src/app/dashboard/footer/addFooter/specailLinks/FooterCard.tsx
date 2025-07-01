@@ -3,15 +3,19 @@
 import type React from "react"
 
 import { memo, useState } from "react"
-import { Trash2, Plus, Minus, ChevronDown, ChevronUp, GripVertical, ExternalLink, Lock, Globe, Trash } from "lucide-react"
+import { Trash2, Plus, ChevronDown, ChevronUp, GripVertical, ExternalLink, Lock, Globe, Link } from "lucide-react"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/src/components/ui/form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Input } from "@/src/components/ui/input"
 import { Textarea } from "@/src/components/ui/textarea"
 import { Button } from "@/src/components/ui/button"
+import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { LabeledImageUploader, useImageUpload } from "../../../services/addService/Utils/Image-uploader"
 import { cn } from "@/src/lib/utils"
 import { useTranslation } from "react-i18next"
+import { useSections } from "@/src/hooks/webConfiguration/use-section"
+import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 
 interface FooterCardProps {
   langCode: string
@@ -44,7 +48,39 @@ export const FooterCard = memo(
       },
     })
 
-    const {t} = useTranslation()
+    const { t } = useTranslation()
+    const { websiteId } = useWebsiteContext()
+    
+    // Get sections for the website
+    const { useGetByWebsiteId } = useSections()
+    const { data: sectionsData } = useGetByWebsiteId(websiteId, false, true)
+    const sections = sectionsData?.data || []
+
+    // Safe function to get section name
+    const getSafeSectionName = (section: any): string => {
+      // Priority order: displayName -> subName -> name[en] -> _id
+      if (section.displayName && typeof section.displayName === 'string') {
+        return section.displayName;
+      }
+      
+      if (section.subName && typeof section.subName === 'string') {
+        return section.subName;
+      }
+      
+      // If name is an object, try to get current language
+      if (section.name && typeof section.name === 'object') {
+        // Try common language codes
+        const langCodes = [langCode, 'en', 'ar', 'tr'];
+        for (const code of langCodes) {
+          if (section.name[code] && typeof section.name[code] === 'string') {
+            return section.name[code];
+          }
+        }
+      }
+      
+      // Last fallback
+      return section._id || 'Unknown Section';
+    };
 
     const [isCollapsed, setIsCollapsed] = useState(false)
     const [isSocialLinksExpanded, setIsSocialLinksExpanded] = useState(true)
@@ -56,7 +92,14 @@ export const FooterCard = memo(
 
     const addSocialLink = () => {
       const currentSocialLinks = form.getValues(`${langCode}.${index}.socialLinks`) || []
-      const newSocialLink = { image: "", url: "", linkName: "" }
+      const newSocialLink = { 
+        id: `social-${Date.now()}`,
+        image: "", 
+        linkType: "custom" as const, 
+        url: "", 
+        sectionId: "", 
+        linkName: "" 
+      }
 
       // Add to current language
       form.setValue(`${langCode}.${index}.socialLinks`, [...currentSocialLinks, newSocialLink], {
@@ -75,8 +118,11 @@ export const FooterCard = memo(
               [
                 ...otherSocialLinks,
                 {
+                  id: `social-${Date.now()}`,
                   image: "", // Will be synced when user uploads in first language
+                  linkType: "custom" as const, // Will be synced when user selects type in first language
                   url: "", // Will be synced when user enters URL in first language
+                  sectionId: "", // Will be synced when user selects section in first language
                   linkName: "", // Each language will have its own linkName
                 },
               ],
@@ -113,10 +159,35 @@ export const FooterCard = memo(
       }
     }
 
+    // Handle link type change - sync across all languages
+    const handleLinkTypeChange = (socialLinkIndex: number, newType: string) => {
+      if (isFirstLanguage) {
+        const allValues = form.getValues()
+        Object.keys(allValues).forEach((langCode) => {
+          if (allValues[langCode] && allValues[langCode][index] && allValues[langCode][index].socialLinks[socialLinkIndex]) {
+            form.setValue(`${langCode}.${index}.socialLinks.${socialLinkIndex}.linkType`, newType, {
+              shouldDirty: true,
+              shouldValidate: true,
+            })
+            // Clear the other field when switching types
+            if (newType === "custom") {
+              form.setValue(`${langCode}.${index}.socialLinks.${socialLinkIndex}.sectionId`, "", {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            } else {
+              form.setValue(`${langCode}.${index}.socialLinks.${socialLinkIndex}.url`, "", {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+          }
+        })
+      }
+    }
+
     return (
-      <Card
-        className = ""
-      >
+      <Card className="">
         <CardHeader className="p-4 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -166,7 +237,7 @@ export const FooterCard = memo(
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="h-8 w-8 p-0 "
+                className="h-8 w-8 p-0"
               >
                 {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
               </Button>
@@ -241,7 +312,7 @@ export const FooterCard = memo(
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsSocialLinksExpanded(!isSocialLinksExpanded)}
-                    className="h-8 px-3 "
+                    className="h-8 px-3"
                   >
                     <span className="text-xs mr-1">
                       {isSocialLinksExpanded 
@@ -260,156 +331,312 @@ export const FooterCard = memo(
                   )}
                 >
                   <div className="space-y-4">
-                    {currentSocialLinks.map((_: any, socialLinkIndex: number) => (
-                      <Card
-                        key={`${langCode}-${index}-social-${socialLinkIndex}`}
-                        className=""
-                      >
-                        <CardContent className="p-4 space-y-4">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div
-                                className={cn(
-                                  "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
-                                  isFirstLanguage ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700",
-                                )}
-                              >
-                                {socialLinkIndex + 1}
+                    {currentSocialLinks.map((_: any, socialLinkIndex: number) => {
+                      const currentLinkType = form.watch(`${langCode}.${index}.socialLinks.${socialLinkIndex}.linkType`) || "custom"
+                      
+                      return (
+                        <Card
+                          key={`${langCode}-${index}-social-${socialLinkIndex}`}
+                          className=""
+                        >
+                          <CardContent className="p-4 space-y-4">
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className={cn(
+                                    "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
+                                    isFirstLanguage ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700",
+                                  )}
+                                >
+                                  {socialLinkIndex + 1}
+                                </div>
+                                <h5 className="text-sm font-medium">
+                                  {t("specialLinks.card.socialLinks.titleWithNumber", { number: socialLinkIndex + 1 })}
+                                </h5>
+                                {!isFirstLanguage && <Lock className="h-3 w-3 text-amber-600" />}
                               </div>
-                              <h5 className="text-sm font-medium">
-                                {t("specialLinks.card.socialLinks.titleWithNumber", { number: socialLinkIndex + 1 })}
-                              </h5>
-                              {!isFirstLanguage && <Lock className="h-3 w-3 text-amber-600" />}
+                              {isFirstLanguage && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeSocialLink(socialLinkIndex)}
+                                  className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600 transition-colors"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              )}
                             </div>
+
+                           
+
+                            {/* Link Type Selection - Only for first language */}
                             {isFirstLanguage && (
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeSocialLink(socialLinkIndex)}
-                                className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600 transition-colors"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                              <FormField
+                                control={form.control}
+                                name={`${langCode}.${index}.socialLinks.${socialLinkIndex}.linkType`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-sm font-medium">Link Type</FormLabel>
+                                    <FormControl>
+                                      <RadioGroup
+                                        onValueChange={(value) => {
+                                          field.onChange(value)
+                                          handleLinkTypeChange(socialLinkIndex, value)
+                                        }}
+                                        value={field.value}
+                                        className="flex flex-row space-x-6"
+                                      >
+                                        <div className="flex items-center space-x-2">
+                                          <RadioGroupItem value="custom" id={`custom-${socialLinkIndex}`} />
+                                          <label htmlFor={`custom-${socialLinkIndex}`} className="text-sm cursor-pointer">
+                                            Custom URL
+                                          </label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                          <RadioGroupItem value="section" id={`section-${socialLinkIndex}`} />
+                                          <label htmlFor={`section-${socialLinkIndex}`} className="text-sm cursor-pointer">
+                                            Website Section
+                                          </label>
+                                        </div>
+                                      </RadioGroup>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
                             )}
-                          </div>
 
-                          <div className="grid gap-4 md:grid-cols-2">
-                            {/* LinkName field - EDITABLE for ALL languages */}
-                            <FormField
-                              control={form.control}
-                              name={`${langCode}.${index}.socialLinks.${socialLinkIndex}.linkName`}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel className="text-sm font-medium">
-                                    {t("specialLinks.card.socialLinks.linkName.label")}
-                                    {!isFirstLanguage && (
-                                      <span className="text-amber-600 ml-1">
-                                        {t("specialLinks.card.socialLinks.linkName.translate")}
-                                      </span>
-                                    )}
-                                  </FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      placeholder={t("specialLinks.card.socialLinks.linkName.placeholder")}
-                                      className="h-10 hover:border-primary transition-colors"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-
-                            {/* URL field - Different behavior for first language vs others */}
-                            <FormField
-                              control={form.control}
-                              name={`${langCode}.${index}.socialLinks.${socialLinkIndex}.url`}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel className="text-sm font-medium flex items-center gap-1">
-                                    {t("specialLinks.card.socialLinks.url.label")}
-                                    {!isFirstLanguage && (
-                                      <Lock className="h-3 w-3 text-amber-600" />
-                                    )}
-                                  </FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      placeholder={t("specialLinks.card.socialLinks.url.placeholder")}
-                                      className={cn(
-                                        "h-10 transition-colors",
-                                        isFirstLanguage ? "hover:border-primary" : "bg-gray-100 cursor-not-allowed",
+                            <div className="grid gap-4 md:grid-cols-2">
+                              {/* LinkName field - EDITABLE for ALL languages */}
+                              <FormField
+                                control={form.control}
+                                name={`${langCode}.${index}.socialLinks.${socialLinkIndex}.linkName`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-sm font-medium">
+                                      {t("specialLinks.card.socialLinks.linkName.label")}
+                                      {!isFirstLanguage && (
+                                        <span className="text-amber-600 ml-1">
+                                          {t("specialLinks.card.socialLinks.linkName.translate")}
+                                        </span>
                                       )}
-                                      {...field}
-                                      disabled={!isFirstLanguage}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder={t("specialLinks.card.socialLinks.linkName.placeholder")}
+                                        className="h-10 hover:border-primary transition-colors"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
 
-                          {/* Image upload - Only for first language */}
-                          {isFirstLanguage ? (
-                            <div className="space-y-2">
-                              <FormLabel className="text-sm font-medium">
-                                {t("specialLinks.card.socialLinks.title")}
-                              </FormLabel>
-                              {SocialLinkImageUploader ? (
-                                <SocialLinkImageUploader
-                                  heroIndex={index}
-                                  socialLinkIndex={socialLinkIndex}
-                                  langCode={langCode}
+                              {/* Conditional URL or Section field */}
+                              {currentLinkType === "custom" ? (
+                                <FormField
+                                  control={form.control}
+                                  name={`${langCode}.${index}.socialLinks.${socialLinkIndex}.url`}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="text-sm font-medium flex items-center gap-1">
+                                        Custom URL
+                                        {!isFirstLanguage && (
+                                          <Lock className="h-3 w-3 text-amber-600" />
+                                        )}
+                                      </FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="https://example.com"
+                                          className={cn(
+                                            "h-10 transition-colors",
+                                            isFirstLanguage ? "hover:border-primary" : "bg-gray-100 cursor-not-allowed",
+                                          )}
+                                          value={field.value || ""}
+                                          disabled={!isFirstLanguage}
+                                          onChange={(e) => {
+                                            // Always update the current field first
+                                            field.onChange(e.target.value)
+                                            
+                                            // Then sync to other languages if this is the first language
+                                            if (isFirstLanguage) {
+                                              const allValues = form.getValues()
+                                              Object.keys(allValues).forEach((otherLangCode) => {
+                                                if (otherLangCode !== langCode && allValues[otherLangCode] && allValues[otherLangCode][index] && allValues[otherLangCode][index].socialLinks[socialLinkIndex]) {
+                                                  form.setValue(`${otherLangCode}.${index}.socialLinks.${socialLinkIndex}.url`, e.target.value, {
+                                                    shouldDirty: true,
+                                                    shouldValidate: true,
+                                                  })
+                                                }
+                                              })
+                                            }
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
                                 />
                               ) : (
-                                <LabeledImageUploader
-                                  label=""
-                                  helperText={t("specialLinks.card.imageManagement.description")}
-                                  imageValue={
-                                    form.watch(`${langCode}.${index}.socialLinks.${socialLinkIndex}.image`) || ""
-                                  }
-                                  inputId={`social-link-image-${langCode}-${index}-${socialLinkIndex}`}
-                                  onUpload={(file) => {
-                                    const reader = new FileReader()
-                                    reader.onload = () => {
-                                      form.setValue(
-                                        `${langCode}.${index}.socialLinks.${socialLinkIndex}.image`,
-                                        reader.result as string,
-                                        {
-                                          shouldDirty: true,
-                                          shouldValidate: true,
-                                        },
-                                      )
-                                    }
-                                    reader.readAsDataURL(file)
+                                <FormField
+                                  control={form.control}
+                                  name={`${langCode}.${index}.socialLinks.${socialLinkIndex}.sectionId`}
+                                  render={({ field }) => {
+                                    // Use form.watch to make this reactive to changes
+                                    const currentValue = form.watch(`${langCode}.${index}.socialLinks.${socialLinkIndex}.sectionId`) || "";
+                                    const selectedSection = sections.find(s => s._id === currentValue);
+                                    
+                                    // Debug logging
+                                    console.log('Rendering sectionId field:', {
+                                      fieldPath: `${langCode}.${index}.socialLinks.${socialLinkIndex}.sectionId`,
+                                      currentValue,
+                                      selectedSection: selectedSection ? getSafeSectionName(selectedSection) : 'None',
+                                      fieldValue: field.value
+                                    });
+                                    
+                                    return (
+                                      <FormItem>
+                                        <FormLabel className="text-sm font-medium flex items-center gap-1">
+                                          Website Section
+                                          {!isFirstLanguage && (
+                                            <Lock className="h-3 w-3 text-amber-600" />
+                                          )}
+                                        </FormLabel>
+                                        <FormControl>
+                                          <Select
+                                            onValueChange={(value) => {
+                                              console.log('Select onValueChange - value:', value);
+                                              
+                                              // Always update the current field first
+                                              field.onChange(value);
+                                              
+                                              // Force form to recognize the change
+                                              form.setValue(`${langCode}.${index}.socialLinks.${socialLinkIndex}.sectionId`, value, {
+                                                shouldDirty: true,
+                                                shouldValidate: true,
+                                                shouldTouch: true,
+                                              });
+                                              
+                                              // Then sync to other languages if this is the first language
+                                              if (isFirstLanguage) {
+                                                const allValues = form.getValues();
+                                                Object.keys(allValues).forEach((otherLangCode) => {
+                                                  if (otherLangCode !== langCode && allValues[otherLangCode] && allValues[otherLangCode][index] && allValues[otherLangCode][index].socialLinks[socialLinkIndex]) {
+                                                    form.setValue(`${otherLangCode}.${index}.socialLinks.${socialLinkIndex}.sectionId`, value, {
+                                                      shouldDirty: true,
+                                                      shouldValidate: true,
+                                                    });
+                                                  }
+                                                });
+                                              }
+                                            }}
+                                            value={currentValue}
+                                            disabled={!isFirstLanguage}
+                                            key={`select-${currentValue}`} // Force re-render when value changes
+                                          >
+                                            <SelectTrigger 
+                                              className={cn(
+                                                "h-10 transition-colors",
+                                                isFirstLanguage ? "hover:border-primary" : "bg-gray-100 cursor-not-allowed",
+                                              )}
+                                            >
+                                              <SelectValue 
+                                                placeholder="Select a section"
+                                              >
+                                                {selectedSection ? getSafeSectionName(selectedSection) : "Select a section"}
+                                              </SelectValue>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              {sections.map((section) => {
+                                                if (!section || !section._id) return null;
+                                                
+                                                const sectionName = getSafeSectionName(section);
+                                                
+                                                return (
+                                                  <SelectItem key={section._id} value={section._id}>
+                                                    <div className="flex items-center gap-2">
+                                                      <Link className="h-4 w-4" />
+                                                      <span>{sectionName}</span>
+                                                    </div>
+                                                  </SelectItem>
+                                                );
+                                              })}
+                                            </SelectContent>
+                                          </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                        
+                                       
+                                      </FormItem>
+                                    );
                                   }}
-                                  onRemove={() => {
-                                    form.setValue(`${langCode}.${index}.socialLinks.${socialLinkIndex}.image`, "", {
-                                      shouldDirty: true,
-                                      shouldValidate: true,
-                                    })
-                                  }}
-                                  altText={t("specialLinks.card.socialLinks.titleWithNumber", { number: socialLinkIndex + 1 })}
                                 />
                               )}
                             </div>
-                          ) : (
-                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                              <div className="flex items-center gap-2 text-amber-700">
-                                <Lock className="h-4 w-4" />
-                                <span className="text-sm font-medium">
-                                  {t("specialLinks.card.imageManagement.title")}
-                                </span>
+
+                            {/* Image upload - Only for first language */}
+                            {isFirstLanguage ? (
+                              <div className="space-y-2">
+                                <FormLabel className="text-sm font-medium">
+                                  {t("specialLinks.card.socialLinks.title")}
+                                </FormLabel>
+                                {SocialLinkImageUploader ? (
+                                  <SocialLinkImageUploader
+                                    heroIndex={index}
+                                    socialLinkIndex={socialLinkIndex}
+                                    langCode={langCode}
+                                  />
+                                ) : (
+                                  <LabeledImageUploader
+                                    label=""
+                                    helperText={t("specialLinks.card.imageManagement.description")}
+                                    imageValue={
+                                      form.watch(`${langCode}.${index}.socialLinks.${socialLinkIndex}.image`) || ""
+                                    }
+                                    inputId={`social-link-image-${langCode}-${index}-${socialLinkIndex}`}
+                                    onUpload={(file) => {
+                                      const reader = new FileReader()
+                                      reader.onload = () => {
+                                        form.setValue(
+                                          `${langCode}.${index}.socialLinks.${socialLinkIndex}.image`,
+                                          reader.result as string,
+                                          {
+                                            shouldDirty: true,
+                                            shouldValidate: true,
+                                          },
+                                        )
+                                      }
+                                      reader.readAsDataURL(file)
+                                    }}
+                                    onRemove={() => {
+                                      form.setValue(`${langCode}.${index}.socialLinks.${socialLinkIndex}.image`, "", {
+                                        shouldDirty: true,
+                                        shouldValidate: true,
+                                      })
+                                    }}
+                                    altText={t("specialLinks.card.socialLinks.titleWithNumber", { number: socialLinkIndex + 1 })}
+                                  />
+                                )}
                               </div>
-                              <p className="text-xs text-amber-600 mt-1">
-                                {t("specialLinks.card.imageManagement.description")}
-                              </p>
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
-                    ))}
+                            ) : (
+                              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                                <div className="flex items-center gap-2 text-amber-700">
+                                  <Lock className="h-4 w-4" />
+                                  <span className="text-sm font-medium">
+                                    {t("specialLinks.card.imageManagement.title")}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-amber-600 mt-1">
+                                  {t("specialLinks.card.imageManagement.description")}
+                                </p>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
 
                     {/* Add Social Link button - Only for first language */}
                     {isFirstLanguage && (

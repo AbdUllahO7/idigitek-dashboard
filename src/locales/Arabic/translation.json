@@ -4052,115 +4052,132 @@
         "removeErrorDesc": "حدث خطأ أثناء إزالة التذييل.",
         "reloadWarning": "تحذير",
         "reloadWarningDesc": "فشل في إعادة تحميل البيانات بعد الحفظ."
-      }
-  },
- "specialLinks": {
-    "languageCard": {
-      "title": "قسم التذييل",
-      "description": "إدارة محتوى التذييل لـ {{langCode}}",
-      "buttons": {
-        "addFooter": "إضافة تذييل"
-      }
-    },
-    "card": {
-      "title": "قسم التذييل {{number}}",
-      "translationMode": "وضع الترجمة",
-      "socialLinksCount": "{{count}} رابط (روابط) اجتماعية",
-      "footerTitle": {
-        "label": "عنوان التذييل",
-        "translate": "(ترجم)",
-        "placeholder": "أدخل عنوان التذييل"
       },
       "socialLinks": {
-        "title": "الروابط الاجتماعية",
-        "translateNames": "ترجمة الأسماء",
-        "primaryControl": "التحكم الأساسي",
-        "titleWithNumber": "رابط اجتماعي {{number}}",
-        "buttons": {
-          "collapse": "طي",
-          "expand": "توسيع",
-          "add": "إضافة رابط اجتماعي"
+        "title": "روابط اجتماعية للتذييل {{index}}",
+        "appliesToAll": "يُطبق على جميع اللغات",
+        "collapse": "طي",
+        "expand": "توسيع",
+        "linkTitle": "رابط اجتماعي {{index}}",
+        "urlLabel": "رابط الرابط الاجتماعي",
+        "urlPlaceholder": "https://example.com",
+        "imageLabel": "صورة الرابط الاجتماعي",
+        "imageHelper": "سيتم استخدام هذه الصورة عبر جميع اللغات",
+        "linkTitleImage": "صورة الرابط الاجتماعي {{index}}",
+        "emptyState": {
+          "title": "لم تُضف روابط اجتماعية بعد",
+          "description": "انقر على \"إضافة رابط اجتماعي\" للبدء"
         },
-        "noLinks": "لم تُضف روابط اجتماعية بعد",
-        "linkName": {
-          "label": "اسم الرابط",
-          "translate": "(ترجم هذا)",
-          "placeholder": "أدخل اسم الرابط"
-        },
-        "url": {
-          "label": "رابط الرابط الاجتماعي",
-          "placeholder": "https://example.com"
-        }
-      },
-      "imageManagement": {
-        "title": "إدارة الصور",
-        "description": "يتم إدارة الصور من اللغة الأساسية وتُشارك عبر جميع اللغات"
+        "addButton": "إضافة رابط اجتماعي"
       }
     },
-    "form": {
-      "loading": "جارٍ تحميل بيانات قسم التذييل...",
-      "saving": {
-        "updating": "تحديث التذييلات",
-        "creating": "إنشاء التذييلات",
-        "description": "يرجى الانتظار بينما نحفظ التغييرات..."
-      },
-      "validation": {
-        "countMismatch": "يجب أن تحتوي كل لغة على نفس عدد التذييلات",
-        "errorTitle": "خطأ في التحقق",
-        "errorDescription": "يجب أن تحتوي جميع اللغات على نفس عدد التذييلات.",
-        "fieldsError": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح."
-      },
-      "buttons": {
-        "saving": "جارٍ الحفظ...",
-        "update": "تحديث التذييلات",
-        "save": "حفظ التذييلات"
-      },
-      "toasts": {
-        "cannotRemove": {
-          "title": "لا يمكن الإزالة",
-          "description": "يجب أن يكون لديك تذييل واحد على الأقل"
-        },
-        "footerDeleted": {
-          "title": "تم حذف التذييل",
-          "description": "تم حذف التذييل {{number}} من قاعدة البيانات"
-        },
-        "footerRemoved": {
-          "title": "تم إزالة التذييل",
-          "description": "تم إزالة التذييل بنجاح."
-        },
-        "errorRemoving": {
-          "title": "خطأ",
-          "description": "حدث خطأ أثناء إزالة التذييل."
-        },
-        "footerAdded": {
-          "title": "تم إضافة تذييل",
-          "description": "تم إضافة تذييل جديد. يرجى ملء التفاصيل وحفظ التغييرات."
-        },
-        "errorLoading": {
-          "title": "خطأ في تحميل البيانات",
-          "description": "فشل تحميل بيانات التذييل. يرجى المحاولة مرة أخرى."
-        },
-        "success": {
-          "updated": "تم تحديث قسم التذييلات بنجاح!",
-          "created": "تم إنشاء قسم التذييلات بنجاح!",
-          "allContentSaved": "تم حفظ جميع المحتويات."
-        },
-        "errorSaving": {
-          "updated": "خطأ في تحديث قسم التذييلات",
-          "created": "خطأ في إنشاء قسم التذييلات",
-          "unknown": "حدث خطأ غير معروف"
-        },
-        "warningReload": {
-          "title": "تحذير",
-          "description": "فشل إعادة تحميل البيانات بعد الحفظ."
+  "specialLinks": {
+      "languageCard": {
+        "title": "قسم التذييل",
+        "description": "إدارة محتوى التذييل لـ {{langCode}}",
+        "buttons": {
+          "addFooter": "إضافة تذييل"
         }
       },
-      "deleteDialog": {
-        "title": "حذف التذييل",
-        "confirm": "حذف التذييل"
+      "card": {
+        "title": "قسم التذييل {{number}}",
+        "translationMode": "وضع الترجمة",
+        "socialLinksCount": "{{count}} رابط (روابط) اجتماعية",
+        "footerTitle": {
+          "label": "عنوان التذييل",
+          "translate": "(ترجم)",
+          "placeholder": "أدخل عنوان التذييل"
+        },
+        "socialLinks": {
+          "title": "الروابط الاجتماعية",
+          "translateNames": "ترجمة الأسماء",
+          "primaryControl": "التحكم الأساسي",
+          "titleWithNumber": "رابط اجتماعي {{number}}",
+          "buttons": {
+            "collapse": "طي",
+            "expand": "توسيع",
+            "add": "إضافة رابط اجتماعي"
+          },
+          "noLinks": "لم تُضف روابط اجتماعية بعد",
+          "linkName": {
+            "label": "اسم الرابط",
+            "translate": "(ترجم هذا)",
+            "placeholder": "أدخل اسم الرابط"
+          },
+          "url": {
+            "label": "رابط الرابط الاجتماعي",
+            "placeholder": "https://example.com"
+          }
+        },
+        "imageManagement": {
+          "title": "إدارة الصور",
+          "description": "يتم إدارة الصور من اللغة الأساسية وتُشارك عبر جميع اللغات"
+        }
+      },
+      "form": {
+        "loading": "جارٍ تحميل بيانات قسم التذييل...",
+        "saving": {
+          "updating": "تحديث التذييلات",
+          "creating": "إنشاء التذييلات",
+          "description": "يرجى الانتظار بينما نحفظ التغييرات..."
+        },
+        "validation": {
+          "countMismatch": "يجب أن تحتوي كل لغة على نفس عدد التذييلات",
+          "errorTitle": "خطأ في التحقق",
+          "errorDescription": "يجب أن تحتوي جميع اللغات على نفس عدد التذييلات.",
+          "fieldsError": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح."
+        },
+        "buttons": {
+          "saving": "جارٍ الحفظ...",
+          "update": "تحديث التذييلات",
+          "save": "حفظ التذييلات"
+        },
+        "toasts": {
+          "cannotRemove": {
+            "title": "لا يمكن الإزالة",
+            "description": "يجب أن يكون لديك تذييل واحد على الأقل"
+          },
+          "footerDeleted": {
+            "title": "تم حذف التذييل",
+            "description": "تم حذف التذييل {{number}} من قاعدة البيانات"
+          },
+          "footerRemoved": {
+            "title": "تم إزالة التذييل",
+            "description": "تم إزالة التذييل بنجاح."
+          },
+          "errorRemoving": {
+            "title": "خطأ",
+            "description": "حدث خطأ أثناء إزالة التذييل."
+          },
+          "footerAdded": {
+            "title": "تم إضافة تذييل",
+            "description": "تم إضافة تذييل جديد. يرجى ملء التفاصيل وحفظ التغييرات."
+          },
+          "errorLoading": {
+            "title": "خطأ في تحميل البيانات",
+            "description": "فشل تحميل بيانات التذييل. يرجى المحاولة مرة أخرى."
+          },
+          "success": {
+            "updated": "تم تحديث قسم التذييلات بنجاح!",
+            "created": "تم إنشاء قسم التذييلات بنجاح!",
+            "allContentSaved": "تم حفظ جميع المحتويات."
+          },
+          "errorSaving": {
+            "updated": "خطأ في تحديث قسم التذييلات",
+            "created": "خطأ في إنشاء قسم التذييلات",
+            "unknown": "حدث خطأ غير معروف"
+          },
+          "warningReload": {
+            "title": "تحذير",
+            "description": "فشل إعادة تحميل البيانات بعد الحفظ."
+          }
+        },
+        "deleteDialog": {
+          "title": "حذف التذييل",
+          "confirm": "حذف التذييل"
+        }
       }
-    }
-  },
+    },
   "useSectionManagement": {
       "current": "الأقسام الحالية",
       "currentShort": "الحالية",
@@ -4405,81 +4422,86 @@
     "badgeFirstLang": "اللغة الافتراضية",
     "description": "إدارة محتوى الفوائد للغة {{lang}}",
     "addBenefit": "إضافة فائدة"
-  },
-"Navigation" : {
-    "ContentConfiguration" : "تكوين المحتوى",
-    "NavigationConfiguration" : "اعدادات الظهور على القائمة الرئيسية",
-    "EditNavigation" : "تحرير اعدادات القسم",
-    "CreateNavigation": "إنشاء القسم",
-    "description" : "تحديث اسم القسم ",
-    "description1":"قم بتكوين إعدادات  لقسمك.",
-    "NavigationLanguages" : "لغات القسم",
-    "NavigationSettings" : "إعدادات القسم",
-    "AddSubNavigation" : "إضافة تنقل فرعي",
-    "enable": "تفعيل القسم الفرعي لهذه الخدمة"
-  },
-  "HeroManagement": {
-    "createTitle": "إنشاء عنصر قسم جديد",
-    "editTitle": "تعديل عنصر قسم",
-    "createSubtitle": "إنشاء عنصرقسم جديد بمحتوى متعدد اللغات",
-    "editSubtitle": "تعديل محتوى \"{{itemName}}\" عبر لغات متعددة",
-    "editSubtitleDefault": "تعديل محتوى عنصرقسم عبر لغات متعددة",
-    "defaultItemName": "واجهة تقنية جديد",
-    "tabLabel": "بدء إنشاء قسم خاص",
-    "formSections": {
-      "hero": "تكوين المحتوى",
-      "navigation": "اعدادات الظهور على القائمة الرئيسية "
     },
-    "backToList": "العودة إلى قائمةقسم",
-    "loadingMessage": "جاري تحميل بياناتقسم...",
-    "savingMessage": "جاري حفظ عنصرقسم...",
-    "savedMessage": "تم حفظ عنصرقسم بنجاح",
-    "errorMessage": "خطأ أثناء حفظ عنصرقسم"
-  },
-  "BlogManagement": {
-    "createTitle": "إنشاء عنصر قسم جديد",
-    "editTitle": "تعديل عنصر قسم",
-    "createSubtitle": "إنشاء عنصر قسم جديد بمحتوى متعدد اللغات",
-    "editSubtitle": "تعديل محتوى \"{{itemName}}\" عبر لغات متعددة",
-    "editSubtitleDefault": "تعديل محتوى عنصر قسم عبر لغات متعددة",
-    "defaultItemName": "قسم جديدة",
-    "tabLabel": "قسم",
-    "formSections": {
-      "blog": "محتوى القسم",
-      "navigation": "اعدادات الظهور على القائمة الرئيسية "
+    "Navigation" : {
+      "ContentConfiguration" : "تكوين المحتوى",
+      "NavigationConfiguration" : "اعدادات الظهور على القائمة الرئيسية",
+      "EditNavigation" : "تحرير اعدادات القسم",
+      "CreateNavigation": "إنشاء القسم",
+      "description" : "تحديث اسم القسم ",
+      "description1":"قم بتكوين إعدادات  لقسمك.",
+      "NavigationLanguages" : "لغات القسم",
+      "NavigationSettings" : "إعدادات القسم",
+      "AddSubNavigation" : "إضافة تنقل فرعي",
+      "enable": "تفعيل القسم الفرعي لهذه الخدمة",
+      "ShowNavigation": "إظهار التنقل",
+      "NavigationCurrentlyVisible": "التنقل مرئي حاليًا للمستخدمين",
+      "NavigationCurrentlyHidden": "التنقل مخفي حاليًا",
+      "StatusVisible": "الحالة: مرئي",
+      "StatusHidden": "الحالة: مخفي"
     },
-    "backToList": "العودة إلى قائمة القسم",
-    "loadingMessage": "جاري تحميل بيانات القسم...",
-    "savingMessage": "جاري حفظ عنصر القسم...",
-    "savedMessage": "تم حفظ عنصر القسم بنجاح",
-    "errorMessage": "خطأ أثناء حفظ عنصر القسم"
-  },
-   "ProductManagement": {
-    "createTitle": "إنشاء عنصر قسم جديد",
-    "editTitle": "تعديل عنصر قسم",
-    "createSubtitle": "إنشاء عنصر قسم جديد بمحتوى متعدد اللغات",
-    "editSubtitle": "تعديل محتوى \"{{itemName}}\" عبر لغات متعددة",
-    "editSubtitleDefault": "تعديل محتوى عنصر قسم عبر لغات متعددة",
-    "defaultItemName": "قسم جديدة",
-    "tabLabel": "قسم",
-    "formSections": {
-      "blog": "محتوى القسم",
-      "navigation": "اعدادات الظهور على القائمة الرئيسية "
+    "HeroManagement": {
+      "createTitle": "إنشاء عنصر قسم جديد",
+      "editTitle": "تعديل عنصر قسم",
+      "createSubtitle": "إنشاء عنصرقسم جديد بمحتوى متعدد اللغات",
+      "editSubtitle": "تعديل محتوى \"{{itemName}}\" عبر لغات متعددة",
+      "editSubtitleDefault": "تعديل محتوى عنصرقسم عبر لغات متعددة",
+      "defaultItemName": "واجهة تقنية جديد",
+      "tabLabel": "بدء إنشاء قسم خاص",
+      "formSections": {
+        "hero": "تكوين المحتوى",
+        "navigation": "اعدادات الظهور على القائمة الرئيسية "
+      },
+      "backToList": "العودة إلى قائمةقسم",
+      "loadingMessage": "جاري تحميل بياناتقسم...",
+      "savingMessage": "جاري حفظ عنصرقسم...",
+      "savedMessage": "تم حفظ عنصرقسم بنجاح",
+      "errorMessage": "خطأ أثناء حفظ عنصرقسم"
     },
-    "backToList": "العودة إلى قائمة القسم",
-    "loadingMessage": "جاري تحميل بيانات القسم...",
-    "savingMessage": "جاري حفظ عنصر القسم...",
-    "savedMessage": "تم حفظ عنصر القسم بنجاح",
-    "errorMessage": "خطأ أثناء حفظ عنصر القسم"
-  },
-  "common": {
-    "welcome": "مرحبا",
-    "logout": "تسجيل الخروج",
-    "profile": "الملف الشخصي",
-    "myAccount": "حسابي",
-    "loading": "جاري التحميل...",
-    "save": "حفظ",
-    "cancel": "إلغاء"
-  }
+    "BlogManagement": {
+      "createTitle": "إنشاء عنصر قسم جديد",
+      "editTitle": "تعديل عنصر قسم",
+      "createSubtitle": "إنشاء عنصر قسم جديد بمحتوى متعدد اللغات",
+      "editSubtitle": "تعديل محتوى \"{{itemName}}\" عبر لغات متعددة",
+      "editSubtitleDefault": "تعديل محتوى عنصر قسم عبر لغات متعددة",
+      "defaultItemName": "قسم جديدة",
+      "tabLabel": "قسم",
+      "formSections": {
+        "blog": "محتوى القسم",
+        "navigation": "اعدادات الظهور على القائمة الرئيسية "
+      },
+      "backToList": "العودة إلى قائمة القسم",
+      "loadingMessage": "جاري تحميل بيانات القسم...",
+      "savingMessage": "جاري حفظ عنصر القسم...",
+      "savedMessage": "تم حفظ عنصر القسم بنجاح",
+      "errorMessage": "خطأ أثناء حفظ عنصر القسم"
+    },
+    "ProductManagement": {
+      "createTitle": "إنشاء عنصر قسم جديد",
+      "editTitle": "تعديل عنصر قسم",
+      "createSubtitle": "إنشاء عنصر قسم جديد بمحتوى متعدد اللغات",
+      "editSubtitle": "تعديل محتوى \"{{itemName}}\" عبر لغات متعددة",
+      "editSubtitleDefault": "تعديل محتوى عنصر قسم عبر لغات متعددة",
+      "defaultItemName": "قسم جديدة",
+      "tabLabel": "قسم",
+      "formSections": {
+        "blog": "محتوى القسم",
+        "navigation": "اعدادات الظهور على القائمة الرئيسية "
+      },
+      "backToList": "العودة إلى قائمة القسم",
+      "loadingMessage": "جاري تحميل بيانات القسم...",
+      "savingMessage": "جاري حفظ عنصر القسم...",
+      "savedMessage": "تم حفظ عنصر القسم بنجاح",
+      "errorMessage": "خطأ أثناء حفظ عنصر القسم"
+    },
+    "common": {
+      "welcome": "مرحبا",
+      "logout": "تسجيل الخروج",
+      "profile": "الملف الشخصي",
+      "myAccount": "حسابي",
+      "loading": "جاري التحميل...",
+      "save": "حفظ",
+      "cancel": "إلغاء"
+    }
   
 }

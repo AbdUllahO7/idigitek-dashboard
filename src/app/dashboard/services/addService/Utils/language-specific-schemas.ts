@@ -437,7 +437,7 @@ export const createFooterSpecialLinkSectionSchema = (languageIds: string[], acti
     languageIds.forEach((langId, index) => {
         const langCode = languageCodeMap[langId] || langId;
         const isFirstLanguage = index === 0;
-        
+
         if (isFirstLanguage) {
             // First language has strict validation
             schemaShape[langCode] = z.array(
@@ -449,8 +449,22 @@ export const createFooterSpecialLinkSectionSchema = (languageIds: string[], acti
                             z.object({
                                 id: z.string().optional(),
                                 image: z.string().optional(),
-                                url: z.string().min(1, "Social link URL is required"),
+                                linkType: z.enum(["custom", "section"]).default("custom"),
+                                url: z.string().optional().default(""), // Made optional since it depends on linkType
+                                sectionId: z.string().optional().default(""), // Added sectionId field
                                 linkName: z.string().min(1, "Link name is required"),
+                            }).refine((data) => {
+                                // Custom validation: if linkType is "custom", url is required
+                                if (data.linkType === "custom") {
+                                    return data.url && data.url.length > 0;
+                                }
+                                // If linkType is "section", sectionId is required
+                                if (data.linkType === "section") {
+                                    return data.sectionId && data.sectionId.length > 0;
+                                }
+                                return true;
+                            }, {
+                                message: "URL is required for custom links, Section is required for section links",
                             })
                         )
                         .optional()
@@ -468,7 +482,9 @@ export const createFooterSpecialLinkSectionSchema = (languageIds: string[], acti
                             z.object({
                                 id: z.string().optional(),
                                 image: z.string().optional(),
+                                linkType: z.enum(["custom", "section"]).default("custom"),
                                 url: z.string().optional().default(""), // Allow empty during sync
+                                sectionId: z.string().optional().default(""), // Allow empty during sync
                                 linkName: z.string().optional().default(""), // Allow empty during sync
                             })
                         )
@@ -481,6 +497,9 @@ export const createFooterSpecialLinkSectionSchema = (languageIds: string[], acti
 
     return z.object(schemaShape);
 };
+
+
+
 const primaryNavigationSchema = z.object({
   id: z.string().optional(),
   title: z.string().min(1, "Title is required"),

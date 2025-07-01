@@ -37,12 +37,14 @@ import { useTranslation } from "react-i18next";
 // Updated interface to reflect new field structure
 interface FormData {
   [key: string]: Array<{
-    title: string; // Changed from description to title
+    title: string;
     socialLinks: Array<{
       id: any;
       image: string;
-      url: string;
-      linkName: string; // Added linkName field
+      linkType: "custom" | "section";
+      url: string; // for custom links
+      sectionId: string; // for section links
+      linkName: string;
     }>;
     id?: string;
   }>;
@@ -75,7 +77,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
     const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
     const [stepToDelete, setStepToDelete] = useState<StepToDelete | null>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
-    const [isUrlSyncing, setIsUrlSyncing] = useState<boolean>(false);
+    const [isDataSyncing, setIsDataSyncing] = useState<boolean>(false);
 
     const updateState = useCallback(
       (newState: Partial<FooteresFormState>) => {
@@ -121,37 +123,36 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
       }
     }, [languageIds]);
 
-    // Updated function to sync both URLs and link names across all languages
+    // Updated function to sync link data across all languages
     const syncSocialLinkData = useCallback((changedPath: string, newValue: string) => {
-        if (isUrlSyncing) return;
+        if (isDataSyncing) return;
         
-        // Only sync URLs, not linkNames
-        const urlMatch = changedPath.match(/^([^.]+)\.(\d+)\.socialLinks\.(\d+)\.url$/);
-        if (!urlMatch) return; // Don't sync linkName changes
+        // Sync linkType, url, and sectionId (but not linkName)
+        const linkDataMatch = changedPath.match(/^([^.]+)\.(\d+)\.socialLinks\.(\d+)\.(linkType|url|sectionId)$/);
+        if (!linkDataMatch) return;
 
-        const [, changedLangCode, footerIndex, socialLinkIndex] = urlMatch;
+        const [, changedLangCode, footerIndex, socialLinkIndex, field] = linkDataMatch;
         
-        setIsUrlSyncing(true);
+        setIsDataSyncing(true);
         
         const allValues = form.getValues();
         
-        // Update the URL in all other languages (but keep their own linkNames)
+        // Update the field in all other languages
         Object.keys(allValues).forEach((langCode) => {
             if (langCode !== changedLangCode && allValues[langCode] && allValues[langCode][parseInt(footerIndex)]) {
                 const currentFooter = allValues[langCode][parseInt(footerIndex)];
                 if (currentFooter.socialLinks && currentFooter.socialLinks[parseInt(socialLinkIndex)]) {
                     form.setValue(
-                        `${langCode}.${footerIndex}.socialLinks.${socialLinkIndex}.url`,
+                        `${langCode}.${footerIndex}.socialLinks.${socialLinkIndex}.${field}`,
                         newValue,
                         { shouldDirty: true, shouldValidate: true }
                     );
-                    // Note: We're NOT syncing linkName anymore
                 }
             }
         });
         
-        setIsUrlSyncing(false);
-    }, [form, isUrlSyncing]);
+        setIsDataSyncing(false);
+    }, [form, isDataSyncing]);
 
     const validateFormFooterCounts = useCallback(() => {
       const values = form.getValues();
@@ -216,7 +217,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
                 const oldNumber = Number.parseInt(match[1]);
                 const newNumber = oldNumber - 1;
                 const newName = element.name.replace(`Footer ${oldNumber}`, `Footer ${newNumber}`);
-                const newOrder = element.order - (5 + (currentSteps[index].socialLinks?.length || 0) * 3); // Updated to account for linkName field
+                const newOrder = element.order - (5 + (currentSteps[index].socialLinks?.length || 0) * 4); // Updated to account for linkType and sectionId fields
                 await updateContentElement.mutateAsync({
                   id: element._id,
                   data: { name: newName, order: newOrder },
@@ -301,9 +302,8 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
           langId,
           getTranslationContent
           ) => {
-            // Updated to look for Title instead of Description
-              const titleElement = elements.find((el) => el.name.includes("Title"));
-              const socialLinkElements = elements.filter((el) => el.name.match(/Footer \d+ - SocialLink \d+/i));
+            const titleElement = elements.find((el) => el.name.includes("Title"));
+            const socialLinkElements = elements.filter((el) => el.name.match(/Footer \d+ - SocialLink \d+/i));
          const socialLinks = socialLinkElements.reduce((acc, el) => {
         const match = el.name.match(/Footer \d+ - SocialLink (\d+)/i);
         if (match) {
@@ -311,13 +311,38 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
             const isImage = el.type === "image";
             const isUrl = el.name.includes("Url");
             const isLinkName = el.name.includes("LinkName");
-            if (!acc[socialLinkIndex]) acc[socialLinkIndex] = { image: "", url: "", linkName: "" };
-            if (isImage) acc[socialLinkIndex].image = el.imageUrl || "";
-            if (isUrl) acc[socialLinkIndex].url = getTranslationContent(el, "");
-            if (isLinkName) acc[socialLinkIndex].linkName = getTranslationContent(el, ""); // This will be different per language
+            const isSectionId = el.name.includes("SectionId");
+            
+            if (!acc[socialLinkIndex]) acc[socialLinkIndex] = { 
+              image: "", 
+              linkType: "custom", 
+              url: "", 
+              sectionId: "", 
+              linkName: "" 
+            };
+            
+            if (isImage) {
+              acc[socialLinkIndex].image = el.imageUrl || "";
+            }
+            if (isUrl) {
+              const urlValue = getTranslationContent(el, "");
+              acc[socialLinkIndex].url = urlValue;
+              // If URL exists, set linkType to custom
+              if (urlValue) acc[socialLinkIndex].linkType = "custom";
+            }
+            if (isSectionId) {
+              const sectionIdValue = getTranslationContent(el, "");
+              acc[socialLinkIndex].sectionId = sectionIdValue;
+              // If sectionId exists, set linkType to section
+              if (sectionIdValue) acc[socialLinkIndex].linkType = "section";
+            }
+            if (isLinkName) {
+              acc[socialLinkIndex].linkName = getTranslationContent(el, "");
+            }
         }
         return acc;
-    }, [] as { image: string; url: string; linkName: string }[]);
+    }, [] as { image: string; linkType: "custom" | "section"; url: string; sectionId: string; linkName: string }[]);
+    
     return {
         id: `footer-${footerNumber}`,
         title: getTranslationContent(titleElement, ""),
@@ -327,7 +352,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
           getDefaultValue: () => [
             {
               id: "footer-1",
-              title: "", // Changed from description to title
+              title: "",
               socialLinks: [],
             },
           ],
@@ -352,7 +377,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
         if (currentFooters.length < maxFooterCount) {
           const additionalFooters = Array(maxFooterCount - currentFooters.length).fill({
             id: `footer-${Date.now()}`,
-            title: "", // Changed from description to title
+            title: "",
             socialLinks: [],
           });
           form.setValue(langCode, [...currentFooters, ...additionalFooters], {
@@ -371,11 +396,20 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
               if (footer.socialLinks && allFormValues[langCode][footerIndex]) {
                 footer.socialLinks.forEach((socialLink, socialLinkIndex) => {
                   if (allFormValues[langCode][footerIndex].socialLinks[socialLinkIndex]) {
-                    // Sync both URL and linkName from primary language
-                    
+                    // Sync linkType, url, and sectionId from primary language
+                    form.setValue(
+                      `${langCode}.${footerIndex}.socialLinks.${socialLinkIndex}.linkType`,
+                      socialLink.linkType,
+                      { shouldDirty: false, shouldValidate: false }
+                    );
                     form.setValue(
                       `${langCode}.${footerIndex}.socialLinks.${socialLinkIndex}.url`,
                       socialLink.url,
+                      { shouldDirty: false, shouldValidate: false }
+                    );
+                    form.setValue(
+                      `${langCode}.${footerIndex}.socialLinks.${socialLinkIndex}.sectionId`,
+                      socialLink.sectionId,
                       { shouldDirty: false, shouldValidate: false }
                     );
                   }
@@ -416,9 +450,18 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
         updateState({ hasUnsavedChanges: true });
         validateFormFooterCounts();
         
-        // Sync social link data if a URL or linkName field was changed
+        // Sync social link data if a linkType, URL, or sectionId field was changed
         if (name && typeof value === 'string') {
           syncSocialLinkData(name, value);
+        }
+        
+        // Additional logging for debugging
+        if (name && name.includes('socialLinks')) {
+          console.log('Form field changed:', {
+            name,
+            value,
+            currentFormState: form.getValues()
+          });
         }
         
         if (onDataChangeRef.current) {
@@ -434,7 +477,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
         const newFooterId = `footer-${Date.now()}`;
         const newFooter = {
           id: newFooterId,
-          title: "", // Changed from description to title
+          title: "",
           socialLinks: [],
         };
 
@@ -477,7 +520,7 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
     
     if (!firstLangData) return;
 
-    // Sync social links structure and URLs (but NOT linkNames) from first language to all other languages
+    // Sync social links structure and data (but NOT linkNames) from first language to all other languages
     Object.keys(allValues).forEach((langCode) => {
         if (langCode !== firstLangKey && allValues[langCode]) {
             firstLangData.forEach((footer: any, footerIndex: number) => {
@@ -494,7 +537,9 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
                         newSocialLinks.push({
                             id: existingLink?.id || sourceLink?.id,
                             image: existingLink?.image || sourceLink?.image || "",
+                            linkType: sourceLink?.linkType || "custom", // Sync linkType from first language
                             url: sourceLink?.url || "", // Sync URL from first language
+                            sectionId: sourceLink?.sectionId || "", // Sync sectionId from first language
                             linkName: existingLink?.linkName || "", // Keep existing linkName for translation
                         });
                     }
@@ -509,15 +554,46 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
     });
 }, [form]);
 
-
     const handleSave = useCallback(async () => {
-          syncSocialLinksBeforeValidation();
+      syncSocialLinksBeforeValidation();
 
-              await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Validate that all social links have required content based on their type
+      const allFormValues = form.getValues();
+      const validationErrors: string[] = [];
+      
+      Object.entries(allFormValues).forEach(([langCode, footers]) => {
+        if (Array.isArray(footers)) {
+          footers.forEach((footer, footerIndex) => {
+            if (footer.socialLinks) {
+              footer.socialLinks.forEach((link: any, linkIndex) => {
+                if (!link.linkName || link.linkName.trim() === "") {
+                  validationErrors.push(`Footer ${footerIndex + 1}, Social Link ${linkIndex + 1} in ${langCode.toUpperCase()}: Link name is required`);
+                }
+                if (link.linkType === "custom" && (!link.url || link.url.trim() === "")) {
+                  validationErrors.push(`Footer ${footerIndex + 1}, Social Link ${linkIndex + 1} in ${langCode.toUpperCase()}: URL is required for custom links`);
+                }
+                if (link.linkType === "section" && (!link.sectionId || link.sectionId.trim() === "")) {
+                  validationErrors.push(`Footer ${footerIndex + 1}, Social Link ${linkIndex + 1} in ${langCode.toUpperCase()}: Section selection is required for section links`);
+                }
+              });
+            }
+          });
+        }
+      });
+
+      if (validationErrors.length > 0) {
+        toast({
+          title: t("specialLinks.form.validation.errorTitle"),
+          description: validationErrors.join("\n"),
+          variant: "destructive",
+        });
+        return;
+      }
 
       const isValid = await form.trigger();
       const hasEqualFooterCounts = validateFormFooterCounts();
-      const allFormValues = form.getValues();
       
       if (!hasEqualFooterCounts) {
         updateState({ isValidationDialogOpen: true });
@@ -583,15 +659,15 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
         for (let i = 0; i < footerCount; i++) {
           const footerIndex = i + 1;
           const elementNames = {
-            title: `Special Footer ${footerIndex} - Title`, // Changed from Description to Title
+            title: `Special Footer ${footerIndex} - Title`,
           };
 
           const elements: Record<string, ContentElement | null> = {
-            title: state.contentElements.find((el) => el.name === elementNames.title) ?? null, // Changed from description to title
+            title: state.contentElements.find((el) => el.name === elementNames.title) ?? null,
           };
 
           const elementTypes = [
-            { type: "text", key: "title", name: elementNames.title }, // Changed from description to title
+            { type: "text", key: "title", name: elementNames.title },
           ];
 
           for (const { type, key, name } of elementTypes) {
@@ -616,44 +692,74 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
 
           const socialLinks = allFormValues[firstLangKey][i]?.socialLinks || [];
           const socialLinkElements: Record<string, ContentElement | null>[] = [];
+          
           for (let j = 0; j < socialLinks.length; j++) {
             const socialLinkIndex = j + 1;
+            const currentSocialLink = socialLinks[j];
+            const linkType = currentSocialLink?.linkType || "custom";
+            
             const socialLinkNames = {
               url: `Special Footer ${footerIndex} - SocialLink ${socialLinkIndex} - Url`,
+              sectionId: `Special Footer ${footerIndex} - SocialLink ${socialLinkIndex} - SectionId`,
               image: `Special Footer ${footerIndex} - SocialLink ${socialLinkIndex} - Image`,
-              linkName: `Special Footer ${footerIndex} - SocialLink ${socialLinkIndex} - LinkName`, // Added linkName
+              linkName: `Special Footer ${footerIndex} - SocialLink ${socialLinkIndex} - LinkName`,
             };
 
             socialLinkElements[j] = {
-              url: state.contentElements.find((el) => el.name === socialLinkNames.url) ?? null,
+              url: null,
+              sectionId: null,
               image: state.contentElements.find((el) => el.name === socialLinkNames.image && el.type === "image") ?? null,
-              linkName: state.contentElements.find((el) => el.name === socialLinkNames.linkName) ?? null, // Added linkName
+              linkName: state.contentElements.find((el) => el.name === socialLinkNames.linkName) ?? null,
             };
 
-            // Create URL element if it doesn't exist
-            if (!socialLinkElements[j].url) {
-              const newElement = await createContentElement.mutateAsync({
-                name: socialLinkNames.url,
-                type: "text",
-                parent: sectionId,
-                isActive: true,
-                order: i * 5 + elementTypes.length + j * 3, // Updated to account for 3 fields per social link
-                defaultContent: "",
-              });
-              socialLinkElements[j].url = newElement.data;
-              updateState({
-                contentElements: [...state.contentElements, newElement.data],
-              });
+            // Only create URL element for custom links
+            if (linkType === "custom") {
+              socialLinkElements[j].url = state.contentElements.find((el) => el.name === socialLinkNames.url) ?? null;
+              if (!socialLinkElements[j].url) {
+                const newElement = await createContentElement.mutateAsync({
+                  name: socialLinkNames.url,
+                  type: "text",
+                  parent: sectionId,
+                  isActive: true,
+                  order: i * 5 + elementTypes.length + j * 4,
+                  defaultContent: "",
+                });
+                socialLinkElements[j].url = newElement.data;
+                updateState({
+                  contentElements: [...state.contentElements, newElement.data],
+                });
+              }
+              processedElementIds.add(socialLinkElements[j].url!._id);
             }
 
-            // Create Image element if it doesn't exist
+            // Only create SectionId element for section links
+            if (linkType === "section") {
+              socialLinkElements[j].sectionId = state.contentElements.find((el) => el.name === socialLinkNames.sectionId) ?? null;
+              if (!socialLinkElements[j].sectionId) {
+                const newElement = await createContentElement.mutateAsync({
+                  name: socialLinkNames.sectionId,
+                  type: "text",
+                  parent: sectionId,
+                  isActive: true,
+                  order: i * 5 + elementTypes.length + j * 4 + 1,
+                  defaultContent: "",
+                });
+                socialLinkElements[j].sectionId = newElement.data;
+                updateState({
+                  contentElements: [...state.contentElements, newElement.data],
+                });
+              }
+              processedElementIds.add(socialLinkElements[j].sectionId!._id);
+            }
+
+            // Always create Image element
             if (!socialLinkElements[j].image) {
               const newElement = await createContentElement.mutateAsync({
                 name: socialLinkNames.image,
                 type: "image",
                 parent: sectionId,
                 isActive: true,
-                order: i * 5 + elementTypes.length + j * 3 + 1, // Updated order
+                order: i * 5 + elementTypes.length + j * 4 + 2,
                 defaultContent: "image-placeholder",
               });
               socialLinkElements[j].image = newElement.data;
@@ -662,14 +768,14 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
               });
             }
 
-            // Create LinkName element if it doesn't exist
+            // Always create LinkName element
             if (!socialLinkElements[j].linkName) {
               const newElement = await createContentElement.mutateAsync({
                 name: socialLinkNames.linkName,
                 type: "text",
                 parent: sectionId,
                 isActive: true,
-                order: i * 5 + elementTypes.length + j * 3 + 2, // Added linkName order
+                order: i * 5 + elementTypes.length + j * 4 + 3,
                 defaultContent: "",
               });
               socialLinkElements[j].linkName = newElement.data;
@@ -678,9 +784,8 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
               });
             }
 
-            processedElementIds.add(socialLinkElements[j].url!._id);
             processedElementIds.add(socialLinkElements[j].image!._id);
-            processedElementIds.add(socialLinkElements[j].linkName!._id); // Added linkName to processed elements
+            processedElementIds.add(socialLinkElements[j].linkName!._id);
           }
 
           Object.entries(allFormValues).forEach(([langCode, footeres]) => {
@@ -690,7 +795,7 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
 
             const footer = footeres[i];
       
-            // Changed from description to title
+            // Add title translation
             if (elements.title) {
               translations.push({
                 _id: "",
@@ -702,22 +807,35 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
             }
 
             footer.socialLinks?.forEach((socialLink: any, j: number) => {
-              // Add URL translation
-              if (socialLinkElements[j].url) {
+              const linkType = socialLink.linkType || "custom";
+              
+              // Only add URL translation for custom links and only if URL exists
+              if (linkType === "custom" && socialLinkElements[j].url && socialLink.url) {
                 translations.push({
                   _id: "",
-                  content: socialLink.url || "",
+                  content: socialLink.url,
                   language: langId,
                   contentElement: socialLinkElements[j].url!._id,
                   isActive: true,
                 });
               }
 
-              // Add LinkName translation
-              if (socialLinkElements[j].linkName) {
+              // Only add SectionId translation for section links and only if sectionId exists
+              if (linkType === "section" && socialLinkElements[j].sectionId && socialLink.sectionId) {
                 translations.push({
                   _id: "",
-                  content: socialLink.linkName || "",
+                  content: socialLink.sectionId,
+                  language: langId,
+                  contentElement: socialLinkElements[j].sectionId!._id,
+                  isActive: true,
+                });
+              }
+
+              // Always add LinkName translation if it exists and has content
+              if (socialLinkElements[j].linkName && socialLink.linkName) {
+                translations.push({
+                  _id: "",
+                  content: socialLink.linkName,
                   language: langId,
                   contentElement: socialLinkElements[j].linkName!._id,
                   isActive: true,
@@ -775,13 +893,54 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
           }
         }
 
-        const orphanedElements = state.contentElements.filter((el) => !processedElementIds.has(el._id));
+        // Clean up orphaned elements and delete unused content elements based on link type
+        const orphanedElements = state.contentElements.filter((el) => {
+          // Don't delete if this element is in our processed list
+          if (processedElementIds.has(el._id)) return false;
+          
+          // Check if this is a social link element that should be deleted
+          const socialLinkMatch = el.name.match(/Special Footer (\d+) - SocialLink (\d+) - (Url|SectionId|LinkName|Image)/);
+          if (socialLinkMatch) {
+            const footerNum = parseInt(socialLinkMatch[1], 10);
+            const linkNum = parseInt(socialLinkMatch[2], 10);
+            const fieldType = socialLinkMatch[3];
+            
+            // Check if this footer/link combination still exists
+            const footerIndex = footerNum - 1;
+            const linkIndex = linkNum - 1;
+            
+            if (footerIndex < footerCount && allFormValues[firstLangKey][footerIndex]?.socialLinks?.[linkIndex]) {
+              const socialLink = allFormValues[firstLangKey][footerIndex].socialLinks[linkIndex];
+              const linkType = socialLink.linkType || "custom";
+              
+              // Delete URL elements for section links and SectionId elements for custom links
+              if ((fieldType === "Url" && linkType === "section") || 
+                  (fieldType === "SectionId" && linkType === "custom")) {
+                return true;
+              }
+            } else {
+              // Footer or link no longer exists, mark for deletion
+              return true;
+            }
+          }
+          
+          // Check if this is a footer element that no longer exists
+          const footerMatch = el.name.match(/Special Footer (\d+)/);
+          if (footerMatch) {
+            const footerNum = parseInt(footerMatch[1], 10);
+            const footerIndex = footerNum - 1;
+            return footerIndex >= footerCount;
+          }
+          
+          return false;
+        });
+
         if (orphanedElements.length > 0) {
           await Promise.all(
             orphanedElements.map((element) => deleteContentElement.mutateAsync(element._id))
           );
           updateState({
-            contentElements: state.contentElements.filter((el) => processedElementIds.has(el._id)),
+            contentElements: state.contentElements.filter((el) => !orphanedElements.some(orphan => orphan._id === el._id)),
           });
         }
 

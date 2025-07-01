@@ -1,6 +1,6 @@
 "use client"
-import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation" // ✅ Add this import
+import { useState, useEffect, useRef } from "react"
+import { useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
   Globe, 
@@ -147,6 +147,9 @@ export default function AdminManagementPage() {
   const { isLoaded, language } = useLanguage();
   const isRTL = language === 'ar';
 
+  // 🎯 NEW: Add ref for tabs section to enable scrolling
+  const tabsRef = useRef<HTMLDivElement>(null);
+
   // ✅ Update active tab when URL parameter changes
   useEffect(() => {
     const validTabs = ["languages", "sections", "themes"];
@@ -154,6 +157,23 @@ export default function AdminManagementPage() {
       setActiveTab(urlTab);
     }
   }, [urlTab, activeTab]);
+
+  // 🎯 NEW: Auto-scroll to tabs when navigating with tab parameter
+  useEffect(() => {
+    // Only scroll if there's a tab parameter in the URL and the page is loaded
+    if (urlTab && tabsRef.current && !isLoadingWebsites) {
+      // Add a small delay to ensure the page is fully rendered
+      const scrollTimeout = setTimeout(() => {
+        tabsRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        });
+      }, 300); // Small delay to ensure page is rendered
+
+      return () => clearTimeout(scrollTimeout);
+    }
+  }, [urlTab, isLoadingWebsites, tabsRef]);
 
   const activeTabConfig = tabConfig.find(tab => tab.id === activeTab);
 
@@ -228,11 +248,13 @@ export default function AdminManagementPage() {
             <WebsiteList />
           </motion.div>
           
-          {/* Enhanced Tabs Section - Mobile Optimized */}
+          {/* 🎯 UPDATED: Enhanced Tabs Section with scroll target ref */}
           <motion.div
+            ref={tabsRef} // Added ref for scrolling target
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
+            className="scroll-mt-4 md:scroll-mt-8" // Add scroll margin for better positioning
           >
             <Tabs 
               value={activeTab} 

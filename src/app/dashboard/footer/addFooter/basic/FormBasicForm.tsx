@@ -10,9 +10,10 @@ import {
 } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Save, AlertTriangle, Loader2 } from "lucide-react";
+import { Save, AlertTriangle, Loader2, Plus, Globe2 } from "lucide-react";
 import { Form } from "@/src/components/ui/form";
 import { Button } from "@/src/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { useToast } from "@/src/hooks/use-toast";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
@@ -29,6 +30,7 @@ import { createFooterSectionDefaultValues, createLanguageCodeMap } from "../../.
 import { createFormRef, getSubSectionCountsByLanguage, useForceUpdate, validateSubSectionCounts } from "../../../services/addService/Utils/Expose-form-data";
 import { processAndLoadData } from "../../../services/addService/Utils/load-form-data";
 import { FooterLanguageCard } from "./FooterLanguageCard";
+import { SocialLinksSection } from "./SocialLinksSection";
 import { FooteresFormState, FooterFormProps } from "@/src/api/types/sections/footer/footerSection.type";
 import { StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
 import { useHeroImages } from "../utils/FooterImageUploader";
@@ -72,7 +74,7 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
     const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
     const [stepToDelete, setStepToDelete] = useState<StepToDelete | null>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
-    const [isUrlSyncing, setIsUrlSyncing] = useState<boolean>(false); // Add this to prevent infinite loops
+    const [isUrlSyncing, setIsUrlSyncing] = useState<boolean>(false);
 
     const updateState = useCallback(
       (newState: Partial<FooteresFormState>) => {
@@ -117,6 +119,15 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
         primaryLanguageRef.current = languageIds[0];
       }
     }, [languageIds]);
+
+    // Get the primary language code for social links
+    const languageCodes = createLanguageCodeMap(activeLanguages);
+    const primaryLangCode = languageIds.length > 0 
+      ? (String(languageIds[0]) in languageCodes ? languageCodes[String(languageIds[0])] : String(languageIds[0]))
+      : 'en';
+
+    // Get footer count from primary language to show social links
+    const footerCount = form.watch(primaryLangCode)?.length || 0;
 
     // Add function to sync social link URLs across all languages
     const syncSocialLinkUrls = useCallback((changedPath: string, newValue: string) => {
@@ -776,8 +787,6 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
       },
     });
 
-    const languageCodes = createLanguageCodeMap(activeLanguages);
-
     useEffect(() => {
       const subscription = form.watch(() => {
         if (state.dataLoaded && !state.isLoadingData) {
@@ -810,26 +819,49 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
         />
 
         <Form {...form}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {languageIds.map((langId: Key | null | undefined, langIndex: number) => {
-              const langCode = String(langId) in languageCodes ? languageCodes[String(langId)] : String(langId);
-              const isFirstLanguage = langIndex === 0;
+          {/* Language-specific Footer Content */}
+          <div className="space-y-6">
+           
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {languageIds.map((langId: Key | null | undefined, langIndex: number) => {
+                const langCode = String(langId) in languageCodes ? languageCodes[String(langId)] : String(langId);
+                const isFirstLanguage = langIndex === 0;
 
-              return (
-                <FooterLanguageCard
-                  key={langId}
-                  langCode={langCode}
-                  isFirstLanguage={isFirstLanguage}
-                  form={form}
-                  addFooter={addFooter}
-                  removeFooter={confirmDeleteStep}
-                  onDeleteStep={confirmDeleteStep}
-                  FooterImageUploader={HeroImageUploader}
-                  SocialLinkImageUploader={SocialLinkImageUploader}
-                />
-              );
-            })}
+                return (
+                  <FooterLanguageCard
+                    key={langId}
+                    langCode={langCode}
+                    isFirstLanguage={isFirstLanguage}
+                    form={form}
+                    addFooter={addFooter}
+                    removeFooter={confirmDeleteStep}
+                    onDeleteStep={confirmDeleteStep}
+                    FooterImageUploader={HeroImageUploader}
+                  />
+                );
+              })}
+            </div>
+
+        
           </div>
+
+          {/* Global Social Links Section */}
+          {footerCount > 0 && (
+            <div className="space-y-6 mt-8 bg-transparent">
+          
+              <div className="space-y-4">
+                {Array.from({ length: footerCount }, (_, index) => (
+                  <SocialLinksSection
+                    key={`social-links-${index}`}
+                    form={form}
+                    footerIndex={index}
+                    primaryLangCode={primaryLangCode}
+                    SocialLinkImageUploader={SocialLinkImageUploader}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </Form>
 
         <div className="flex justify-end mt-6">

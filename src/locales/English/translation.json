@@ -4009,7 +4009,24 @@
         "removeErrorDesc": "There was an error removing the footer.",
         "reloadWarning": "Warning",
         "reloadWarningDesc": "Failed to reload data after save."
-      }
+      },
+      "socialLinks": {
+        "title": "Social Links for Footer {{index}}",
+        "appliesToAll": "Applies to all languages",
+        "collapse": "Collapse",
+        "expand": "Expand",
+        "linkTitle": "Social Link {{index}}",
+        "urlLabel": "Social Link URL",
+        "urlPlaceholder": "https://example.com",
+        "imageLabel": "Social Link Image",
+        "imageHelper": "This image will be used across all languages",
+        "linkTitleImage": "Social Link {{index}} Image",
+        "emptyState": {
+          "title": "No social links added yet",
+          "description": "Click \"Add Social Link\" to get started"
+        },
+        "addButton": "Add Social Link"
+    }
   },
   "specialLinks": {
       "languageCard": {
@@ -4374,7 +4391,13 @@
     "NavigationLanguages" : "Navigation Languages",
     "NavigationSettings" : "Navigation Settings",
     "AddSubNavigation" : "Add SubNavigation",
-    "enable": "Enable sub-navigation for this section"
+    "enable": "Enable sub-navigation for this section",
+    "ShowNavigationn" : "Show Navigation",
+    "NavigationCurrentlyVisible" : "Navigation is currently visible to users",
+    "NavigationCurrentlyHidden" : "Navigation is currently hidden from users",
+    "StatusVisible" : "Status: Visible",
+    "StatusHidden" :  "Status: Hidden"
+    
   },
   "HeroManagement": {
     "createTitle": "Create New  Item",
