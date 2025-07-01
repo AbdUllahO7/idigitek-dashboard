@@ -129,13 +129,26 @@ export default function AddFooter() {
       label: t('addFooter.tabs.footer', 'Footer'),
       icon: <Layout className="h-4 w-4" />,
       component: (
-        <FormBasicForm
+        <>
+          <ClickableImage
+            imageSrc="/assets/PartsOfSections/footer-basic.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
+           <FormBasicForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
           slug={getSlug('footer-section')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('footer-section')}
         />
+        </>
       )
     },
      {
@@ -143,6 +156,19 @@ export default function AddFooter() {
       label: t('addFooter.tabs.specialLinks', 'Special Links'),
       icon: <Layout className="h-4 w-4" />,
       component: (
+        <>
+            <ClickableImage
+            imageSrc="/assets/PartsOfSections/footer-info.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
+
         <SpecialFormBasicForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
@@ -150,6 +176,7 @@ export default function AddFooter() {
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('footer-section-specialLinks')}
         />
+        </>
       )
     }
   ]

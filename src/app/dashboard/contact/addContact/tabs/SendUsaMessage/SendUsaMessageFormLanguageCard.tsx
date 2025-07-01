@@ -21,7 +21,7 @@ interface SendUsaMessageFormLanguageCardProps {
 export const SendUsaMessageFormLanguageCard = memo(({ langCode, form, isFirstLanguage = false }: SendUsaMessageFormLanguageCardProps) => {
   const { t } = useTranslation();
   const [openSections, setOpenSections] = useState({
-    formFields: false,
+    formFields: true,
     phone: false,
     email: false,
   });

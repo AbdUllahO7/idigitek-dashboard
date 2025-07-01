@@ -443,6 +443,7 @@ export default function Team() {
               onSubSectionCreated={handleMainSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
               sectionInfo={sectionInfoForNavigation}
+              imageUrl ={"/assets/PartsOfSections/team.png"}
             />
           </TabsContent>
           

@@ -126,7 +126,7 @@ export default function AddProject() {
     // Default fallback - construct the expected slug format
     return `${baseSlug.toLowerCase()}-${sectionItemId}`;
   };
-  
+    
   // Define tabs configuration
   const tabs = [
     {
@@ -134,13 +134,27 @@ export default function AddProject() {
       label: t('addProject.projectTab', 'Project'),
       icon: <Layout className="h-4 w-4" />,
       component: (
-        <BasicForm
+        <>
+         <ClickableImage
+            imageSrc="/assets/PartsOfSections/project-hero.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
+
+          <BasicForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
           slug={getSlug('project-section')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('project-section')}
         />
+        </>
       )
     },
     {
@@ -148,6 +162,19 @@ export default function AddProject() {
       label: t('addProject.moreInfoTab', 'More Info'),
       icon: <Sparkles className="h-4 w-4" />,
       component: (
+        <>
+             <ClickableImage
+            imageSrc="/assets/PartsOfSections/project-client.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
+
         <MoreInfoForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
@@ -155,6 +182,7 @@ export default function AddProject() {
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('project-moreInfo-section')}
         />
+        </>
       )
     },
     {
@@ -162,6 +190,20 @@ export default function AddProject() {
       label: t('addProject.imagesTab', 'Images'),
       icon: <Sparkles className="h-4 w-4" />,
       component: (
+      <>
+       <ClickableImage
+            imageSrc="/assets/PartsOfSections/project-gallery.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
+
+
         <MultiImageForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
@@ -169,6 +211,7 @@ export default function AddProject() {
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('project-images-section')}
         />
+      </>
       )
     },
     {
@@ -176,6 +219,19 @@ export default function AddProject() {
       label: t('addProject.filesTab', 'Files'),
       icon: <FileText className="h-4 w-4" />,
       component: (
+       <>
+        <ClickableImage
+            imageSrc="/assets/PartsOfSections/project-file.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
+
         <MultiFileForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
@@ -183,6 +239,8 @@ export default function AddProject() {
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('project-files-section')}
         />
+        
+       </>
       )
     },
   ]
@@ -235,17 +293,17 @@ export default function AddProject() {
   return (
     <>
      <ClickableImage
-                  imageSrc="/assets/sections/projects.png"
-                  imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
-                  size="large"
-                  title={t('HeroManagement.tabLabel', 'Hero Section')}
-                  subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
-                  t={t}
-                  priority
-                  className="w-full"
-                  previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
-                />
-          
+        imageSrc="/assets/sections/projects.png"
+        imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+        size="large"
+        title={t('HeroManagement.tabLabel', 'Hero Section')}
+        subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+        t={t}
+        priority
+        className="w-full"
+        previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+      />
+
                 
     <FormShell
       title={isCreateMode ? t('addProject.createTitle', 'Create New Project') : t('addProject.editTitle', 'Edit Project')}

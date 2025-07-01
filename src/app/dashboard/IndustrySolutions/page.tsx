@@ -449,9 +449,10 @@ export default function IndustryPage() {
               onSubSectionCreated={handleMainSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
               sectionInfo={sectionInfoForNavigation}
+              imageUrl ={"/assets/PartsOfSections/Industry.png"}
             />
           </TabsContent>
-          
+         
           <TabsContent value="navigation" className="mt-6">
             <CreateNavigationSubSection 
               sectionId={sectionId}

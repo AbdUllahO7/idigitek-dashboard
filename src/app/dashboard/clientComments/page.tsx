@@ -490,17 +490,18 @@ export default function ClientComments() {
 
   return (
     <div className="space-y-6">
-      <ClickableImage
-        imageSrc="/assets/sections/testimonials.png"
-        imageAlt={t('clientComments.sectionImage', 'Client Comments Section')}
-        size="large"
-        title={t('clientComments.sectionImageTitle', 'Client Comments Section')}
-        subtitle={t('clientComments.sectionImageSubtitle', 'Click to view full size')}
-        t={t}
-        priority
-        className="w-full"
-        previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
-      />
+       <ClickableImage
+              imageSrc="/assets/sections/testimonials.png"
+              imageAlt={t('servicesPage.title', 'Services Section')}
+              size="large"
+              title={t('servicesPage.title', 'Services Section')}
+              subtitle={t('servicesPage.description', 'Click to view full size')}
+              t={t}
+              priority
+              className="w-full"
+              previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+            />
+      
 
       {/* Main list page with table and section integration */}
       <GenericListPage
@@ -533,6 +534,8 @@ export default function ClientComments() {
             </TabsTrigger>
           </TabsList>
           
+
+
           <TabsContent value="content" className="mt-6">
             <CreateMainSubSection 
               sectionId={sectionId}
@@ -540,6 +543,8 @@ export default function ClientComments() {
               onSubSectionCreated={handleMainSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
               sectionInfo={sectionInfoForNavigation}
+              imageUrl ={"/assets/PartsOfSections/clientComments.png"}
+
             />
           </TabsContent>
           

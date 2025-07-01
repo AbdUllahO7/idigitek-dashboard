@@ -451,6 +451,7 @@ export default function ServicesPage() {
               sectionInfo={sectionInfoForNavigation} 
               onSubSectionCreated={handleMainSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
+              imageUrl ={"/assets/PartsOfSections/services.png"}
             />
           </TabsContent>
           

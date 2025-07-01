@@ -27,6 +27,7 @@ import { useLanguage } from "@/src/context/LanguageContext"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations"
 import { ActionButton, CancelButton, ErrorCard, LoadingCard, MainFormCard, SuccessCard, WarningCard } from "@/src/utils/MainSectionComponents"
+import { ClickableImage } from "@/src/components/ClickableImage"
 
 // 🎯 NEW: Extended interface to include section info
 interface CreateNavigationSubSectionProps {
@@ -1400,6 +1401,18 @@ const renderNavigationVisibilitySwitch = () => (
 return (
   <div className="space-y-4">
     {/* Always show the visibility switch at the top */}
+      <ClickableImage
+                    imageSrc="/assets/PartsOfSections/header.png"
+                    imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+                    size="large"
+                    title={t('HeroManagement.tabLabel', 'Hero Section')}
+                    subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+                    t={t}
+                    priority
+                    className="w-full"
+                    previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+                  />
+                  
     {renderNavigationVisibilitySwitch()}
 
     {/* Show SuccessCard when not in edit mode and subsection exists */}
@@ -1428,6 +1441,8 @@ return (
               <Link size={20} className="mr-3 text-blue-600 dark:text-blue-400" />
               <span>{subsectionExists ? t('Navigation.EditNavigation') : t('Navigation.CreateNavigation')}</span>
             </div>
+          
+            
             <motion.div
               animate={{ rotate: isExpanded ? 0 : 180 }}
               transition={{ duration: 0.3 }}

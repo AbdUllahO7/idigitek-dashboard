@@ -174,7 +174,7 @@ export const ClickableImage = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className={`relative group cursor-pointer justify-center items-center flex m-auto ${className}`}
+        className={`relative group cursor-pointer mb-2 justify-center items-center flex m-auto ${className}`}
         onClick={openModal}
         style={{
           width: currentSizeConfig.preview.width,
@@ -318,35 +318,7 @@ export const ClickableImage = ({
             </motion.div>
 
             {/* Image Caption */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.3 }}
-              style={{
-                position: "absolute",
-                bottom: size === 'small' ? "20px" : "30px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                backgroundColor: "rgba(0, 0, 0, 0.7)",
-                backdropFilter: "blur(8px)",
-                borderRadius: size === 'small' ? "6px" : "8px",
-                padding: size === 'small' ? "8px 16px" : size === 'medium' ? "12px 20px" : "16px 24px",
-                textAlign: "center",
-                zIndex: 100000,
-                maxWidth: currentSizeConfig.modal.maxWidth
-              }}
-            >
-              <h3 className={`text-white font-semibold mb-1 ${
-                size === 'small' ? 'text-sm' : size === 'medium' ? 'text-base' : 'text-lg'
-              }`}>
-                {title || imageAlt}
-              </h3>
-              <p className={`text-white/80 ${
-                size === 'small' ? 'text-xs' : size === 'medium' ? 'text-sm' : 'text-base'
-              }`}>
-                {subtitle || (t ? t("sectionManagement.clickOutsideToClose", "Click outside to close") : "Click outside to close")}
-              </p>
-            </motion.div>
+           
           </motion.div>
         </AnimatePresence>
       )}

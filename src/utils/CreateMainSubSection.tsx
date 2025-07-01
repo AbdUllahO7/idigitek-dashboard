@@ -26,11 +26,13 @@ import { useWebsiteContext } from "../providers/WebsiteContext"
 import { useContentTranslations } from "../hooks/webConfiguration/use-content-translations"
 import { useTranslation } from "react-i18next"
 import { useLanguage } from "../context/LanguageContext"
+import { ClickableImage } from "../components/ClickableImage"
 
 // 🎯 NEW: Extended interface to include section info for main subsection
 interface CreateMainSubSectionProps {
   sectionId: string;
   sectionConfig: any;
+  imageUrl?:string,
   sectionInfo?: {
     id: string;
     name: {
@@ -302,7 +304,8 @@ export default function CreateMainSubSection({
   sectionConfig,
   sectionInfo, // 🎯 NEW: Accept section info prop
   onSubSectionCreated,
-  onFormValidityChange
+  onFormValidityChange,
+  imageUrl
 }: CreateMainSubSectionProps) {
   // Hooks
   const { toast } = useToast()
@@ -1123,10 +1126,19 @@ export default function CreateMainSubSection({
           className="flex items-center justify-between w-full cursor-pointer"
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          <div className="flex items-center">
-            <span>{subsectionExists ? t('mainSubsection.editMainSubsection') : t('mainSubsection.createMainSubsection')}</span>
-           
-          </div>
+             <ClickableImage
+                imageSrc={imageUrl ?? ""}
+                imageAlt={t('clientComments.sectionImage', 'Client Comments Section')}
+                size="large"
+                title={t('clientComments.sectionImageTitle', 'Client Comments Section')}
+                subtitle={t('clientComments.sectionImageSubtitle', 'Click to view full size')}
+                t={t}
+                priority
+                className="w-full"
+                previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+      />
+
+        
           <motion.div
             animate={{ rotate: isExpanded ? 0 : 180 }}
             transition={{ duration: 0.3 }}

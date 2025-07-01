@@ -459,6 +459,8 @@ export default function PartnersPage() {
               onSubSectionCreated={handleMainSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
               sectionInfo={sectionInfoForNavigation}
+              imageUrl ={"/assets/PartsOfSections/partners.png"}
+              
             />
           </TabsContent>
           

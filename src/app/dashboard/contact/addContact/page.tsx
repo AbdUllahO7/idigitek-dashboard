@@ -159,6 +159,7 @@ export default function AddContact() {
       label: t('addContact.tabs.contact'),
       icon: <Mail className="h-4 w-4" />,
       component: (
+
         <div className="space-y-4">
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {t('addContact.form.contactInfoDescription')}
@@ -171,6 +172,7 @@ export default function AddContact() {
             initialData={findSubsection('ContactInformationForm-section')}
           />
         </div>
+
       )
     },
     {
@@ -290,16 +292,16 @@ export default function AddContact() {
   return (
    <>
     <ClickableImage
-                  imageSrc="/assets/sections/contact.png"
-                  imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
-                  size="large"
-                  title={t('HeroManagement.tabLabel', 'Hero Section')}
-                  subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
-                  t={t}
-                  priority
-                  className="w-full"
-                  previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
-                />
+      imageSrc="/assets/sections/contact.png"
+      imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
+      size="large"
+      title={t('HeroManagement.tabLabel', 'Hero Section')}
+      subtitle={t('HeroManagement.createSubtitle', 'Click to view full size')}
+      t={t}
+      priority
+      className="w-full"
+      previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
+    />
           
                 
     <FormShell

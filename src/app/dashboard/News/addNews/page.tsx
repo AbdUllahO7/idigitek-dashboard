@@ -201,7 +201,7 @@ export default function AddNews() {
   return (
      <>
      <ClickableImage
-            imageSrc="/assets/sections/hero.png"
+            imageSrc="/assets/sections/news.png"
             imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
             size="large"
             title={t('HeroManagement.tabLabel', 'Hero Section')}

@@ -142,13 +142,29 @@ export default function AddService() {
       label: t('addServicePage.tabs.hero'),
       icon: <Layout className="h-4 w-4" />,
       component: (
+       <>
+        <ClickableImage
+            imageSrc="/assets/PartsOfSections/service-hero.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
+
         <HeroForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
           slug={getSlug('hero-section')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('hero-section')}
-        />
+        />ß
+      
+
+       </>
       )
     },
     {
@@ -156,6 +172,19 @@ export default function AddService() {
       label: t('addServicePage.tabs.benefits'),
       icon: <Sparkles className="h-4 w-4" />,
       component: (
+       <>
+        <ClickableImage
+            imageSrc="/assets/PartsOfSections/service-benifits.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
+
         <BenefitsForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
@@ -163,6 +192,8 @@ export default function AddService() {
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('benefits')}
         />
+
+       </>
       )
     },
     {
@@ -170,6 +201,18 @@ export default function AddService() {
       label: t('addServicePage.tabs.overview'),
       icon: <Sparkles className="h-4 w-4" />,
       component: (
+       <>
+           <ClickableImage
+            imageSrc="/assets/PartsOfSections/service-overView.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
         <OverviewForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
@@ -177,6 +220,8 @@ export default function AddService() {
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('overView')}
         />
+        
+       </>
       )
     },
     {
@@ -184,6 +229,18 @@ export default function AddService() {
       label: t('addServicePage.tabs.features'),
       icon: <ListChecks className="h-4 w-4" />,
       component: (
+        <>
+         <ClickableImage
+            imageSrc="/assets/PartsOfSections/service-featuers.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
         <FeaturesForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
@@ -191,6 +248,8 @@ export default function AddService() {
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('features')}
         />
+
+        </>
       )
     },
     {
@@ -198,13 +257,27 @@ export default function AddService() {
       label: t('addServicePage.tabs.process'),
       icon: <ArrowRight className="h-4 w-4" />,
       component: (
-        <ProcessStepsForm
+        <>
+          <ClickableImage
+            imageSrc="/assets/PartsOfSections/service-proccess.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
+
+           <ProcessStepsForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
           slug={getSlug('process-steps')}  // Fixed: now using lowercase 's'
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('process-steps')} // Fixed: now using lowercase 's'
         />
+        </>
       )
     },
     {
@@ -212,13 +285,27 @@ export default function AddService() {
       label: t('addServicePage.tabs.faq'),
       icon: <HelpCircle className="h-4 w-4" />,
       component: (
-        <FaqForm
+        <>
+          <ClickableImage
+            imageSrc="/assets/PartsOfSections/service-faq.png"
+            imageAlt={t('servicesPage.title', 'Services Section')}
+            size="large"
+            title={t('servicesPage.title', 'Services Section')}
+            subtitle={t('servicesPage.description', 'Click to view full size')}
+            t={t}
+            priority
+            className="w-full"
+            previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
+          />
+          <FaqForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
           slug={getSlug('faq-section')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('faq-section')}
         />
+
+        </>
       )
     }
   ]
@@ -282,7 +369,7 @@ export default function AddService() {
 
    <>
 
-  <ClickableImage
+      <ClickableImage
               imageSrc="/assets/sections/services.png"
               imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
               size="large"
@@ -292,7 +379,7 @@ export default function AddService() {
               priority
               className="w-full"
               previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
-            />
+        />
           
     <FormShell
       title={getTitle()}

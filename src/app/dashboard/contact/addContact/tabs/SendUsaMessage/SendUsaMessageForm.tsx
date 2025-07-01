@@ -64,7 +64,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
     setState((prev) => ({ ...prev, ...newState }));
   }, []);
 
-  const { isLoadingData, dataLoaded, hasUnsavedChanges, existingSubSectionId, contentElements, isSaving, showDeleteConfirm, isRefreshingAfterDelete } = state;
+  const { isLoadingData, dataLoaded, hasUnsavedChanges, existingSubSectionId, contentElements, isSaving, isRefreshingAfterDelete } = state;
 
   // Hooks
   const { toast } = useToast();
@@ -634,12 +634,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
         description={t('sendUsaMessageForm.loading.refreshDescription', 'Updating the interface after deletion...')}
       />
 
-      {/* Delete Confirmation Dialog */}
-        {/* <DeleteConfirmationDialog
-        {...deleteManager.confirmationDialogProps}
-        title={t('sendUsaMessageForm.delete.dialog.title', 'Delete Contact Form')}
-        description={t('sendUsaMessageForm.delete.dialog.description', 'Are you sure you want to delete this contact form? This action cannot be undone.')}
-      /> */}
+
 
       <Form {...form}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -658,20 +653,7 @@ const SendUsaMessageForm = forwardRef<any, ContactFormProps>((props, ref) => {
       </Form>
 
       <div className="flex justify-end mt-6">
-        {/* Delete Button - Only show if there's an existing subsection */}
-        {/* {existingSubSectionId && (
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={deleteManager.openDeleteDialog}
-            disabled={isLoadingData || isSaving || deleteManager.isDeleting || isRefreshingAfterDelete}
-            className="flex items-center"
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            {t('sendUsaMessageForm.button.delete', 'Delete Contact Form')}
-          </Button>
-        )} */}
-
+      
         {/* Save Button */}
         <div className={existingSubSectionId ? "" : "ml-auto"}>
           <Button

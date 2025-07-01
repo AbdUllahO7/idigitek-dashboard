@@ -206,7 +206,7 @@ export default function AddIndustry() {
   return (
    <>
       <ClickableImage
-                imageSrc="/assets/sections/solutions.png"
+                imageSrc="/assets/PartsOfSections/industry-items.png"
                 imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}
                 size="large"
                 title={t('HeroManagement.tabLabel', 'Hero Section')}

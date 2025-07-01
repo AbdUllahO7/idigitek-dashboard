@@ -485,6 +485,7 @@ export default function ContactPage() {
               onSubSectionCreated={handleMainSubSectionCreated}
               sectionInfo={sectionInfoForNavigation}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
+              imageUrl ={"/assets/PartsOfSections/contact.png"}
             />
           </TabsContent>
           

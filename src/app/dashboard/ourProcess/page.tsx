@@ -443,6 +443,7 @@ export default function OurProcess() {
               onSubSectionCreated={handleMainSubSectionCreated}
               onFormValidityChange={() => {/* We don't need to track form validity */}}
               sectionInfo={sectionInfoForNavigation}
+              imageUrl ={"/assets/PartsOfSections/ourProcess.png"}
             />
           </TabsContent>
           
