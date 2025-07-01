@@ -247,7 +247,7 @@ export const COLOR_PRESETS: ColorPreset[] = [
 export const FONT_PRESETS: FontPreset[] = [
   {
     name: 'Modern Sans',
-    translationKey: 'themeManagement.fontPresets.modernSans',
+    translationKey: 'themeManagement.fontPresets.modern',
     fonts: {
       heading: {
         family: 'Inter, sans-serif',
@@ -268,7 +268,7 @@ export const FONT_PRESETS: FontPreset[] = [
   },
   {
     name: 'Classic Serif',
-    translationKey: 'themeManagement.fontPresets.classicSerif',
+    translationKey: 'themeManagement.fontPresets.elegant',
     fonts: {
       heading: {
         family: 'Playfair Display, serif',
@@ -289,7 +289,7 @@ export const FONT_PRESETS: FontPreset[] = [
   },
   {
     name: 'Tech Stack',
-    translationKey: 'themeManagement.fontPresets.techStack',
+    translationKey: 'themeManagement.fontPresets.creative',
     fonts: {
       heading: {
         family: 'Roboto, sans-serif',
@@ -310,7 +310,7 @@ export const FONT_PRESETS: FontPreset[] = [
   },
   {
     name: 'Editorial',
-    translationKey: 'themeManagement.fontPresets.editorial',
+    translationKey: 'themeManagement.fontPresets.minimal',
     fonts: {
       heading: {
         family: 'Merriweather, serif',

@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
   Globe, 
@@ -133,7 +133,9 @@ export default function AdminManagementPage() {
   const { useGetMyWebsites } = useWebSite();
   const { data: websites = [], isLoading: isLoadingWebsites, error: websitesError } = useGetMyWebsites();
   
-  // ✅ Read URL parameters to set initial tab
+  // ✅ Router and pathname for URL updates
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const urlTab = searchParams.get('tab');
   
@@ -147,18 +149,30 @@ export default function AdminManagementPage() {
   const { isLoaded, language } = useLanguage();
   const isRTL = language === 'ar';
 
-  // 🎯 NEW: Add ref for tabs section to enable scrolling
+  // 🎯 Add ref for tabs section to enable scrolling
   const tabsRef = useRef<HTMLDivElement>(null);
 
-  // ✅ Update active tab when URL parameter changes
+  // ✅ FIXED: Update active tab when URL parameter changes - removed activeTab from dependencies
   useEffect(() => {
     const validTabs = ["languages", "sections", "themes"];
     if (urlTab && validTabs.includes(urlTab) && urlTab !== activeTab) {
       setActiveTab(urlTab);
     }
-  }, [urlTab, activeTab]);
+  }, [urlTab]); // Only depend on urlTab to prevent infinite loops
 
-  // 🎯 NEW: Auto-scroll to tabs when navigating with tab parameter
+  // ✅ NEW: Function to update both state and URL
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    
+    // Update URL without page reload
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set('tab', newTab);
+    
+    const newUrl = `${pathname}?${newSearchParams.toString()}`;
+    router.push(newUrl, { scroll: false });
+  };
+
+  // 🎯 Auto-scroll to tabs when navigating with tab parameter
   useEffect(() => {
     // Only scroll if there's a tab parameter in the URL and the page is loaded
     if (urlTab && tabsRef.current && !isLoadingWebsites) {
@@ -248,17 +262,17 @@ export default function AdminManagementPage() {
             <WebsiteList />
           </motion.div>
           
-          {/* 🎯 UPDATED: Enhanced Tabs Section with scroll target ref */}
+          {/* ✅ FIXED: Enhanced Tabs Section with proper navigation */}
           <motion.div
-            ref={tabsRef} // Added ref for scrolling target
+            ref={tabsRef}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="scroll-mt-4 md:scroll-mt-8" // Add scroll margin for better positioning
+            className="scroll-mt-4 md:scroll-mt-8"
           >
             <Tabs 
               value={activeTab} 
-              onValueChange={setActiveTab}
+              onValueChange={handleTabChange} // ✅ Use the new handler instead of setActiveTab
               className="w-full"
               dir={isRTL ? 'rtl' : 'ltr'}
             >

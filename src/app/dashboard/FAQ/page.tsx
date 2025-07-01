@@ -12,7 +12,7 @@ import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { useTranslation } from "react-i18next"
-import { getFaqSectionConfig } from "./FaqSectionConfig"
+import { getFaqSectionConfig, FAQ_SECTION_CONSTANTS, faqSectionTranslations } from "./FaqSectionConfig"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Navigation, Users } from "lucide-react"
 import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSection"
@@ -196,9 +196,34 @@ export default function FaqPage() {
     let foundNavigationSubSection = false;
     let mainSubSection = null;
     
-    // Use FAQ configurations
-    const expectedFaqSlug = faqSectionConfig.name;
-    const expectedNavigationSlug = NavigationConfig.name;
+    // Use language-independent identifiers instead of translated names
+    const expectedFaqSlug = faqSectionConfig.slug; // "Faq-main" - consistent across languages
+    const expectedFaqType = faqSectionConfig.type; // "FAQ" - consistent across languages
+    const expectedNavigationSlug = NavigationConfig.slug || NavigationConfig.name; // Fallback to name if no slug
+    const expectedNavigationType = NavigationConfig.type;
+    
+    // Helper function to check if a subsection matches FAQ criteria
+    const isFaqMainSubsection = (sub: any) => {
+      return sub.isMain === true && (
+        sub.slug === expectedFaqSlug || // Check by slug first
+        sub.type === expectedFaqType || // Check by type
+        // Fallback: check if any language version name matches
+        sub.name === faqSectionTranslations.en.sectionName ||
+        sub.name === faqSectionTranslations.ar.sectionName ||
+        sub.name === faqSectionTranslations.tr.sectionName
+      );
+    };
+    
+    // Helper function to check if a subsection matches Navigation criteria
+    const isNavigationSubsection = (sub: any) => {
+      return (
+        sub.type === expectedNavigationType || // Match by type first (most reliable)
+        sub.slug === expectedNavigationSlug || // Match by slug
+        sub.name === expectedNavigationSlug || // Match by name
+        // Flexible matching for navigation subsections
+        (sub.name && sub.name.toLowerCase().includes('faq') && sub.name.toLowerCase().includes('navigation'))
+      );
+    };
     
     // If we have a sectionId, prioritize checking the section-specific subsections
     if (sectionId && sectionSubsections?.data) {
@@ -206,34 +231,22 @@ export default function FaqPage() {
       
       if (Array.isArray(sectionData)) {
         // Find the main FAQ subsection
-        mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedFaqSlug
-        );
+        mainSubSection = sectionData.find(isFaqMainSubsection);
         foundMainSubSection = !!mainSubSection;
 
-        // Check for navigation subsection - be more flexible in matching
-        const navigationSubSection = sectionData.find(sub => {
-          // Match by type first (most reliable)
-          if (sub.type === NavigationConfig.type) return true;
-          // Match by name
-          if (sub.name === expectedNavigationSlug) return true;
-          // Match by partial name (in case of slug differences)
-          if (sub.name && sub.name.toLowerCase().includes('faq') && sub.name.toLowerCase().includes('navigation')) return true;
-          return false;
-        });
+        // Check for navigation subsection
+        const navigationSubSection = sectionData.find(isNavigationSubsection);
         foundNavigationSubSection = !!navigationSubSection;
 
       } else {
         // Single object response - check if it's faq main or navigation
-        if (sectionData.isMain === true && sectionData.name === expectedFaqSlug) {
+        if (isFaqMainSubsection(sectionData)) {
           foundMainSubSection = true;
           mainSubSection = sectionData;
         }
         
-        // Check if it's a faq navigation subsection
-        if (sectionData.type === NavigationConfig.type || 
-            sectionData.name === expectedNavigationSlug ||
-            (sectionData.name && sectionData.name.toLowerCase().includes('faq') && sectionData.name.toLowerCase().includes('navigation'))) {
+        // Check if it's a navigation subsection
+        if (isNavigationSubsection(sectionData)) {
           foundNavigationSubSection = true;
         }
       }
@@ -246,39 +259,25 @@ export default function FaqPage() {
       if (Array.isArray(websiteData)) {
         // Find the main FAQ subsection
         if (!foundMainSubSection) {
-          mainSubSection = websiteData.find(sub => 
-            sub.isMain === true && sub.name === expectedFaqSlug
-          );
+          mainSubSection = websiteData.find(isFaqMainSubsection);
           foundMainSubSection = !!mainSubSection;
         }
 
-        // Check for navigation subsection - be more flexible in matching
+        // Check for navigation subsection
         if (!foundNavigationSubSection) {
-          const navigationSubSection = websiteData.find(sub => {
-            // Match by type first (most reliable)
-            if (sub.type === NavigationConfig.type) return true;
-            // Match by name
-            if (sub.name === expectedNavigationSlug) return true;
-            // Match by partial name (in case of slug differences)
-            if (sub.name && sub.name.toLowerCase().includes('faq') && sub.name.toLowerCase().includes('navigation')) return true;
-            return false;
-          });
+          const navigationSubSection = websiteData.find(isNavigationSubsection);
           foundNavigationSubSection = !!navigationSubSection;
         }
 
       } else {
         // Single object response - check what type it is
-        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedFaqSlug) {
+        if (!foundMainSubSection && isFaqMainSubsection(websiteData)) {
           foundMainSubSection = true;
           mainSubSection = websiteData;
         }
         
         // Check if it's a navigation subsection
-        if (!foundNavigationSubSection && (
-          websiteData.type === NavigationConfig.type || 
-          websiteData.name === expectedNavigationSlug ||
-          (websiteData.name && websiteData.name.toLowerCase().includes('faq') && websiteData.name.toLowerCase().includes('navigation'))
-        )) {
+        if (!foundNavigationSubSection && isNavigationSubsection(websiteData)) {
           foundNavigationSubSection = true;
         }
       }
@@ -311,19 +310,22 @@ export default function FaqPage() {
     sectionId, 
     faqSection, 
     setSection,
-    faqSectionConfig.name,
-    NavigationConfig.name,
+    faqSectionConfig.slug, // Changed from name to slug
+    faqSectionConfig.type, // Added type
+    NavigationConfig.slug || NavigationConfig.name, // Use slug or fallback to name
     NavigationConfig.type
   ]);
 
   // Handle navigation subsection creation
   const handleNavigationSubSectionCreated = (subsection: any) => {    
-    // Check if subsection has the correct name or type for FAQ
-    const expectedSlug = NavigationConfig.name;
+    // Check if subsection has the correct identifier for Navigation
+    const expectedSlug = NavigationConfig.slug || NavigationConfig.name;
     const expectedType = NavigationConfig.type;
+    
     const hasCorrectIdentifier = (
-      subsection.name === expectedSlug || 
+      subsection.slug === expectedSlug || 
       subsection.type === expectedType ||
+      subsection.name === expectedSlug ||
       (subsection.name && subsection.name.toLowerCase().includes('faq') && subsection.name.toLowerCase().includes('navigation'))
     );
     
@@ -340,12 +342,21 @@ export default function FaqPage() {
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
-    // Check if subsection has the correct name
-    const expectedName = faqSectionConfig.subSectionName;
-    const hasCorrectName = subsection.name === expectedName;
+    // Check if subsection matches FAQ criteria using multiple methods
+    const expectedSlug = faqSectionConfig.slug;
+    const expectedType = faqSectionConfig.type;
     
-    // Set that we have a main subsection now (only if it also has the correct name)
-    setHasMainSubSection(subsection.isMain === true && hasCorrectName);
+    const isCorrectFaqSubsection = (
+      subsection.slug === expectedSlug || // Check by slug
+      subsection.type === expectedType || // Check by type
+      // Check if name matches any language version
+      subsection.name === faqSectionTranslations.en.sectionName ||
+      subsection.name === faqSectionTranslations.ar.sectionName ||
+      subsection.name === faqSectionTranslations.tr.sectionName
+    );
+    
+    // Set that we have a main subsection now (only if it matches and is main)
+    setHasMainSubSection(subsection.isMain === true && isCorrectFaqSubsection);
     
     // If we have section data from the subsection, update it
     if (subsection.section) {

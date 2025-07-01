@@ -17,11 +17,11 @@ export const productSectionTranslations = {
   },
   ar: {
     sectionName: "product Section Basic",
-    sectionDescription: "قسم المدونة لإدارة معلومات الخدمة",
+    sectionDescription: "قسم  لإدارة معلومات الخدمة",
     sectionBadgeLabel: "شارة القسم",
     sectionTitleLabel: "عنوان القسم",
     sectionDescriptionLabel: "وصف القسم",
-    productDetailsLabel: "تفاصيل المدونة",
+    productDetailsLabel: "تفاصيل القسم",
     type: "مدونة",
     badgeElement: "الشارة",
     titleElement: "العنوان",

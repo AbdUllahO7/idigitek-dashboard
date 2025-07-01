@@ -16,12 +16,12 @@ export const blogSectionTranslations = {
     serviceDetailsElement: "ServiceDetails"
   },
   ar: {
-    sectionName: "قسم المدونة الأساسي",
-    sectionDescription: "قسم المدونة لإدارة معلومات الخدمة",
+    sectionName: "القسم  الأساسي",
+    sectionDescription: "قسم  لإدارة معلومات الخدمة",
     sectionBadgeLabel: "شارة القسم",
     sectionTitleLabel: "عنوان القسم",
     sectionDescriptionLabel: "وصف القسم",
-    blogDetailsLabel: "تفاصيل المدونة",
+    blogDetailsLabel: "تفاصيل القسم",
     type: "مدونة",
     badgeElement: "الشارة",
     titleElement: "العنوان",

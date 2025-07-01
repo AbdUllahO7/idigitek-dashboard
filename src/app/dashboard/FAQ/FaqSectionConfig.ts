@@ -24,7 +24,7 @@ export const faqSectionTranslations = {
         titleElement: "العنوان",
         descriptionElement: "الوصف",
     },
-    tr: {
+    tr:{
         sectionName: "Temel SSS Bölümü",
         sectionDescription: "Hizmet bilgilerini yönetmek için SSS bölümü",
         sectionBadgeLabel: "Bölüm Rozeti",
@@ -37,17 +37,25 @@ export const faqSectionTranslations = {
     },
 };
 
+// Language-independent constants
+export const FAQ_SECTION_CONSTANTS = {
+    slug: "Faq-main", // Always the same regardless of language
+    type: "FAQ", // Use English type for consistency
+    baseIdentifier: "faq-section-basic" // New consistent identifier
+};
+
 // Function to get translated FAQ section config
 export const getFaqSectionConfig = (language: string = 'en') => {
   const translations = faqSectionTranslations[language as keyof typeof faqSectionTranslations] || faqSectionTranslations.en;
   
   return {
     name: translations.sectionName,
-    slug: "Faq-main",
+    slug: FAQ_SECTION_CONSTANTS.slug,
     subSectionName: translations.sectionName,
     description: translations.sectionDescription,
     isMain: true,
-    type: translations.type,
+    type: FAQ_SECTION_CONSTANTS.type, // Use consistent type
+    baseIdentifier: FAQ_SECTION_CONSTANTS.baseIdentifier, // Add consistent identifier
     fields: [
       { 
         id: "sectionBadge", 
@@ -122,17 +130,25 @@ export const newsSectionTranslations = {
   },
 };
 
+// Language-independent constants for news
+export const NEWS_SECTION_CONSTANTS = {
+    slug: "News-main",
+    type: "News", // Use English type for consistency
+    baseIdentifier: "news-section-basic"
+};
+
 // Function to get translated news section config
 export const getNewsSectionConfig = (language: string = 'en') => {
   const translations = newsSectionTranslations[language as keyof typeof newsSectionTranslations] || newsSectionTranslations.en;
   
   return {
     name: translations.sectionName,
-    slug: "News-main",
+    slug: NEWS_SECTION_CONSTANTS.slug,
     subSectionName: translations.sectionName,
     description: translations.sectionDescription,
     isMain: true,
-    type: translations.type,
+    type: NEWS_SECTION_CONSTANTS.type,
+    baseIdentifier: NEWS_SECTION_CONSTANTS.baseIdentifier,
     fields: [
       { 
         id: "sectionBadge", 
