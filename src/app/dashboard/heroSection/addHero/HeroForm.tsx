@@ -109,6 +109,8 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       refetch,
     } = useGetCompleteBySlug(slug || "", Boolean(slug));
 
+    console.log("completeSubsectionData" , completeSubsectionData)
+
     const { heroImages, handleHeroImageRemove, updateHeroImageIndices, HeroImageUploader } = useHeroImages(form);
 
     useEffect(() => {
@@ -304,61 +306,140 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             languageIds,
             activeLanguages,
             {
-              groupElements: (elements) => {
-                const heroGroups: { [key: number]: ContentElement[] } = {};
-                elements.forEach((element: any) => {
-                  const match = element.name.match(/Hero (\d+)/i);
-                  if (match) {
-                    const heroNumber = parseInt(match[1], 10);
-                    if (!heroGroups[heroNumber]) {
-                      heroGroups[heroNumber] = [];
-                    }
-                    heroGroups[heroNumber].push(element);
-                  }
-                });
-                return heroGroups;
-              },
-              processElementGroup: (
-                heroNumber,
-                elements,
-                langId,
-                getTranslationContent
-              ) => {
-                const titleElement = elements.find((el) => el.name.includes("Title"));
-                const descriptionElement = elements.find((el) => el.name.includes("Description"));
-                const exploreButtonElement = elements.find((el) => el.name.includes("ExploreButton") && !el.name.includes("Type") && !el.name.includes("Url"));
-                const exploreButtonTypeElement = elements.find((el) => el.name.includes("ExploreButtonType"));
-                const exploreButtonUrlElement = elements.find((el) => el.name.includes("ExploreButtonUrl"));
-                const requestButtonElement = elements.find((el) => el.name.includes("RequestButton") && !el.name.includes("Type") && !el.name.includes("Url"));
-                const requestButtonTypeElement = elements.find((el) => el.name.includes("RequestButtonType"));
-                const requestButtonUrlElement = elements.find((el) => el.name.includes("RequestButtonUrl"));
-                const imageElement = elements.find((el) => el.name.includes("Image") && el.type === "image");
+       groupElements: (elements) => {
+  console.log("All elements to group:", elements);
+  const heroGroups: { [key: number]: ContentElement[] } = {};
+  
+  elements.forEach((element: any) => {
+    console.log("Processing element:", element.name, element.type);
+    
+    // Handle both "Hero X" and "section X" patterns
+    const heroMatch = element.name.match(/Hero (\d+)/i);
+    const sectionMatch = element.name.match(/section (\d+)/i);
+    
+    let heroNumber = null;
+    
+    if (heroMatch) {
+      heroNumber = parseInt(heroMatch[1], 10);
+      console.log("Found Hero pattern:", heroNumber, element.name);
+    } else if (sectionMatch) {
+      heroNumber = parseInt(sectionMatch[1], 10);
+      console.log("Found section pattern:", heroNumber, element.name);
+    } else {
+      console.log("Element doesn't match hero or section pattern:", element.name);
+    }
+    
+    if (heroNumber) {
+      if (!heroGroups[heroNumber]) {
+        heroGroups[heroNumber] = [];
+      }
+      heroGroups[heroNumber].push(element);
+    }
+  });
+  
+  console.log("Final hero groups:", heroGroups);
+  return heroGroups;
+},
+         processElementGroup: (
+  heroNumber,
+  elements,
+  langId,
+  getTranslationContent
+) => {
+  console.log(`Processing group for hero ${heroNumber}, language ${langId}`);
+  console.log("Elements in group:", elements.map(el => ({ name: el.name, type: el.type })));
+  
+  // Updated element finding logic to handle both old and new naming patterns
+  const findElement = (patterns: string[]) => {
+    return elements.find((el) => 
+      patterns.some(pattern => el.name.toLowerCase().includes(pattern.toLowerCase()))
+    );
+  };
 
-                // For URL fields, use primary language values for all languages
-                const primaryLangId = activeLanguages[0]?._id;
-                const useTranslationContent = (element: ContentElement | undefined, fallback: string, forceUsePrimaryLang = false) => {
-                  if (!element) return fallback;
-                  if (forceUsePrimaryLang && langId !== primaryLangId) {
-                    // Find translation for primary language
-                    const primaryTranslation = element.translations?.find((t: any) => t.language._id === primaryLangId);
-                    return primaryTranslation?.content || fallback;
-                  }
-                  return getTranslationContent(element, fallback);
-                };
+  // Handle both "section X - Title" and "Hero X Title" patterns
+  const titleElement = findElement(["title"]);
+  const descriptionElement = findElement(["description"]);
+  const exploreButtonElement = findElement(["explorebutton"]) && !findElement(["explorebuttontype", "explorebuttonurl"]) 
+    ? findElement(["explorebutton"]) 
+    : elements.find((el) => 
+        el.name.toLowerCase().includes("explorebutton") && 
+        !el.name.toLowerCase().includes("type") && 
+        !el.name.toLowerCase().includes("url")
+      );
+  
+  const exploreButtonTypeElement = findElement(["explorebuttontype", "explorebutton"]) && 
+    elements.find((el) => el.name.toLowerCase().includes("type"));
+  
+  const exploreButtonUrlElement = findElement(["explorebuttonurl", "explorebutton"]) && 
+    elements.find((el) => el.name.toLowerCase().includes("url"));
+  
+  const requestButtonElement = findElement(["requestbutton"]) && !findElement(["requestbuttontype", "requestbuttonurl"]) 
+    ? findElement(["requestbutton"]) 
+    : elements.find((el) => 
+        el.name.toLowerCase().includes("requestbutton") && 
+        !el.name.toLowerCase().includes("type") && 
+        !el.name.toLowerCase().includes("url")
+      );
+  
+  const requestButtonTypeElement = findElement(["requestbuttontype", "requestbutton"]) && 
+    elements.find((el) => el.name.toLowerCase().includes("type"));
+  
+  const requestButtonUrlElement = findElement(["requestbuttonurl", "requestbutton"]) && 
+    elements.find((el) => el.name.toLowerCase().includes("url"));
+  
+  const imageElement = elements.find((el) => 
+    el.name.toLowerCase().includes("image") && el.type === "image"
+  );
 
-                return {
-                  id: `hero-${heroNumber}`,
-                  title: useTranslationContent(titleElement, ""),
-                  description: useTranslationContent(descriptionElement, ""),
-                  exploreButton: useTranslationContent(exploreButtonElement, ""),
-                  exploreButtonType: useTranslationContent(exploreButtonTypeElement, t("heroesForm.defaultButtonType"), true), // Use primary language
-                  exploreButtonUrl: useTranslationContent(exploreButtonUrlElement, "", true), // Use primary language
-                  requestButton: useTranslationContent(requestButtonElement, ""),
-                  requestButtonType: useTranslationContent(requestButtonTypeElement, t("heroesForm.defaultButtonType"), true), // Use primary language
-                  requestButtonUrl: useTranslationContent(requestButtonUrlElement, "", true), // Use primary language
-                  image: imageElement?.imageUrl || "",
-                };
-              },
+  console.log("Found elements:", {
+    title: titleElement?.name,
+    description: descriptionElement?.name,
+    exploreButton: exploreButtonElement?.name,
+    exploreButtonType: exploreButtonTypeElement?.name,
+    exploreButtonUrl: exploreButtonUrlElement?.name,
+    requestButton: requestButtonElement?.name,
+    requestButtonType: requestButtonTypeElement?.name,
+    requestButtonUrl: requestButtonUrlElement?.name,
+    image: imageElement?.name
+  });
+
+  // For URL fields, use primary language values for all languages
+  const primaryLangId = activeLanguages[0]?._id;
+  const useTranslationContent = (element: ContentElement | undefined, fallback: string, forceUsePrimaryLang = false) => {
+    if (!element) {
+      console.log("No element found, using fallback:", fallback);
+      return fallback;
+    }
+    
+    console.log("Element translations:", element.translations);
+    
+    if (forceUsePrimaryLang && langId !== primaryLangId) {
+      // Find translation for primary language
+      const primaryTranslation = element.translations?.find((t: any) => t.language._id === primaryLangId);
+      console.log("Primary language translation:", primaryTranslation);
+      return primaryTranslation?.content || fallback;
+    }
+    const content = getTranslationContent(element, fallback);
+    console.log("Final content:", content);
+    return content;
+  };
+
+  const result = {
+    id: `hero-${heroNumber}`,
+    title: useTranslationContent(titleElement, ""),
+    description: useTranslationContent(descriptionElement, ""),
+    exploreButton: useTranslationContent(exploreButtonElement, ""),
+    exploreButtonType: useTranslationContent(exploreButtonTypeElement, t("heroesForm.defaultButtonType"), true),
+    exploreButtonUrl: useTranslationContent(exploreButtonUrlElement, "", true),
+    requestButton: useTranslationContent(requestButtonElement, ""),
+    requestButtonType: useTranslationContent(requestButtonTypeElement, t("heroesForm.defaultButtonType"), true),
+    requestButtonUrl: useTranslationContent(requestButtonUrlElement, "", true),
+    image: imageElement?.imageUrl || "",
+  };
+  
+  console.log(`Final processed hero ${heroNumber} for language ${langId}:`, result);
+  return result;
+},
               getDefaultValue: () => [
                 {
                   id: "hero-1",

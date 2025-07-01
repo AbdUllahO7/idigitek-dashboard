@@ -131,7 +131,7 @@ export default function AddHero() {
         <HeroesForm
           languageIds={activeLanguages.map((lang: { _id: any }) => lang._id)}
           activeLanguages={activeLanguages}
-          slug={getSlug('hero-section')}
+          slug={getSlug('hero-section-686394e2975b53bbe43f6dc3')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('hero-section')}
         />

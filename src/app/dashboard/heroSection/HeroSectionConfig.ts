@@ -12,14 +12,14 @@ export const heroSectionTranslations = {
     titleElement: "Title"
   },
   ar: {
-    sectionName: "قسم شريط التنقل الأساسي",
+    sectionName: "Hero Section Basic",
     sectionDescription: "قسم شريط التنقل لإدارة معلومات الخدمة",
     sectionTitleLabel: "عنوان القسم",
     type: "بطل",
     titleElement: "العنوان"
   },
   tr: {
-    sectionName: "Temel Ana Bölüm",
+    sectionName: "Hero Section Basic",
     sectionDescription: "Hizmet bilgilerini yönetmek için ana bölüm",
     sectionTitleLabel: "Bölüm Başlığı",
     type: "Ana",
