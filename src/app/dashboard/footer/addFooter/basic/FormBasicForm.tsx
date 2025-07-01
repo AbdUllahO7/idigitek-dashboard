@@ -129,11 +129,11 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
     // Get footer count from primary language to show social links
     const footerCount = form.watch(primaryLangCode)?.length || 0;
 
-    // Add function to sync social link URLs across all languages
+    // Add function to sync  link URLs across all languages
     const syncSocialLinkUrls = useCallback((changedPath: string, newValue: string) => {
       if (isUrlSyncing) return; // Prevent infinite loops
       
-      // Check if the changed field is a social link URL
+      // Check if the changed field is a  link URL
       const urlMatch = changedPath.match(/^([^.]+)\.(\d+)\.socialLinks\.(\d+)\.url$/);
       if (!urlMatch) return;
 
@@ -144,7 +144,7 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
       // Get all form values
       const allValues = form.getValues();
       
-      // Update the same social link URL in all other languages
+      // Update the same  link URL in all other languages
       Object.keys(allValues).forEach((langCode) => {
         if (langCode !== changedLangCode && allValues[langCode] && allValues[langCode][parseInt(footerIndex)]) {
           const currentFooter = allValues[langCode][parseInt(footerIndex)];
@@ -349,7 +349,7 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
         }
       );
 
-      // Normalize footer counts across languages and sync social link URLs
+      // Normalize footer counts across languages and sync  link URLs
       const allFormValues = form.getValues();
       const firstLangKey = Object.keys(allFormValues)[0];
       const maxFooterCount = allFormValues[firstLangKey]?.length || 1;
@@ -369,7 +369,7 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
         }
       });
 
-      // Sync social link URLs from the first language to all other languages
+      // Sync  link URLs from the first language to all other languages
       if (firstLangKey && allFormValues[firstLangKey]) {
         const primaryLanguageData = allFormValues[firstLangKey];
         Object.keys(allFormValues).forEach((langCode) => {
@@ -422,7 +422,7 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
         updateState({ hasUnsavedChanges: true });
         validateFormFooterCounts();
         
-        // Sync social link URLs if a URL field was changed
+        // Sync  link URLs if a URL field was changed
         if (name && typeof value === 'string') {
           syncSocialLinkUrls(name, value);
         }
@@ -683,10 +683,10 @@ const FormBasicForm = forwardRef<any, FooterFormProps>(
                   }
                 })
                 .catch((uploadError) => {
-                  console.error(`Image upload failed for Social Link ${j + 1} of Footer ${footerIndex}`, uploadError);
+                  console.error(`Image upload failed for  Link ${j + 1} of Footer ${footerIndex}`, uploadError);
                   toast({
                     title: t('footerForm.toast.imageUploadError', 'Image Upload Error'),
-                    description: t('footerForm.toast.imageUploadErrorDesc', 'Failed to upload image for Social Link {{linkIndex}} of Footer {{footerIndex}}.', {
+                    description: t('footerForm.toast.imageUploadErrorDesc', 'Failed to upload image for  Link {{linkIndex}} of Footer {{footerIndex}}.', {
                       linkIndex: j + 1,
                       footerIndex: footerIndex
                     }),

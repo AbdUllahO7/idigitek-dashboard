@@ -802,11 +802,12 @@ const HeroForm = forwardRef<any, HeroFormProps>((props, ref) => {
         />
 
         {/* Navigation Settings */}
-        <Card>
+        <Card>        
           <CardHeader>
             <CardTitle className="flex items-center">
               <Navigation className="h-5 w-5 mr-2" />
-{t('Navigation.NavigationSettings')}            </CardTitle>
+              {t('Navigation.NavigationSettings')}            
+              </CardTitle>
           </CardHeader>
           <CardContent>
             <FormField

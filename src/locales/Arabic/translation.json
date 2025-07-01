@@ -46,7 +46,7 @@
         "idigitekAdmin": "إدارة إيديجيتك"
     }
   },
-    "Dashboard": {
+  "Dashboard": {
     "title": "لوحة التحكم",
     "subtitle": "راقب إعدادات موقعك والتحليلات",
     "noWebsiteSelected": {
@@ -375,7 +375,7 @@
       "hidePassword": "إخفاء كلمة المرور"
     }
   },
-    "ProfilePage": {
+  "ProfilePage": {
     "title": "إعدادات ملفي الشخصي",
     "subtitle": "إدارة معلوماتك الشخصية وإعدادات حسابك",
     "personalInfo": "المعلومات الشخصية",
@@ -446,7 +446,7 @@
     },
     "footer": {
       "description": "إدارة اللغات والأقسام والقوالب المرئية لموقعك الإلكتروني.",
-      "note": "سيتم استخدام هذه الإعدادات في جميع أنحاء عملية بناء موقعك الإلكتروني."
+      "note": "سيتم استخدام هذه الإعدادات في جميع أنحاء قسم بناء موقعك الإلكتروني."
     }
   },
   "websiteList": {
@@ -1257,12 +1257,12 @@
       "title": "إدارة القسم",
       "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
       "addButtonLabel": "إضافة عنصر  جديد",
-      "emptyStateMessage": "لم يتم العثور على عمليات. أنشئ عمليتك الأولى بالنقر على زر \"إضافة عملية جديدة\".",
+      "emptyStateMessage": "لم يتم العثور على عمليات. أنشئ عمليتك الأولى بالنقر على زر \"إضافة قسم جديد\".",
       "noSectionMessage": "يرجى إنشاء قسم  أولاً   .",
       "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي .",
       "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي   .",
       "sectionIntegrationTitle": "محتوى القسم ",
-      "sectionIntegrationDescription": "إدارة محتوى قسم العملية بلغات متعددة.",
+      "sectionIntegrationDescription": "إدارة محتوى القسم الرئيسي بلغات متعددة.",
       "addSectionButtonLabel": "إضافة القسم ",
       "editSectionButtonLabel": "تحرير القسم ",
       "saveSectionButtonLabel": "حفظ القسم ",
@@ -1281,19 +1281,19 @@
       "mainSubsectionCreated": "تم إنشاء القسم  الرئيسي",
       "sectionDataUpdated": "تم تحديث بيانات القسم",
       "refetchingData": "إعادة جلب البيانات",
-      "noDataMessage": "لا توجد بيانات عملية متاحة",
-      "createDialogTitle": "عملية",
-      "deleteDialogTitle": "حذف عنصر العملية",
+      "noDataMessage": "لا توجد بيانات قسم متاحة",
+      "createDialogTitle": "قسم",
+      "deleteDialogTitle": "حذف عنصر القسم",
       "deleteConfirmText": "تأكيد"
   },
   "addProcess": {
-      "processTabLabel": "عملية",
-      "defaultProcessName": "عملية جديدة",
-      "createTitle": "إنشاء عملية جديدة",
-      "editTitle": "تحرير العملية",
-      "createSubtitle": "إنشاء عملية جديدة بمحتوى متعدد اللغات",
+      "processTabLabel": "قسم",
+      "defaultProcessName": "قسم جديد",
+      "createTitle": "إنشاء قسم جديد",
+      "editTitle": "تحرير القسم",
+      "createSubtitle": "إنشاء قسم جديد بمحتوى متعدد اللغات",
       "editSubtitle": "تحرير محتوى  عبر لغات متعددة",
-      "processPlaceholder": "عملية"
+      "processPlaceholder": "قسم"
   },
   "mainSubsection": {
       "validationError": "خطأ في التحقق",
@@ -1386,7 +1386,7 @@
       "couldNotLoad": "تعذر تحميل البيانات",
       "unexpectedError": "حدث خطأ غير متوقع",
       "pleaseWait": "يرجى الانتظار...",
-      "operationInProgress": "العملية قيد التنفيذ",
+      "operationInProgress": "القسم قيد التنفيذ",
       "almostDone": "شارف على الانتهاء...",
       "preparingData": "جاري تحضير البيانات...",
       "validatingInput": "جاري التحقق من الإدخال...",
@@ -1548,7 +1548,7 @@
     },
     "subtitle": {
       "create": "إنشاء عنصر تنقل جديد بمحتوى متعدد اللغات",
-      "edit": "تعديل محتوى \"{{name}}\" عبر لغات متعددة"
+      "edit": "تعديل محتوى  عبر لغات متعددة"
     },
     "tabs": {
       "navItems": "عناصر القسم"
@@ -1568,7 +1568,7 @@
     "uploadImage": "تحميل صورة",
     "logoImageUploading": "تحميل صورة الشعار",
     "sectionImage": "صورة القسم",
-    "logoImageUploadingForHeader": "تحميل صورة الشعار للرأس",
+    "logoImageUploadingForHeader": "تحميل صورة الشعار ",
     "uploadImageForSection": "تحميل صورة للقسم (ينطبق على جميع اللغات)",
     "logo": "الشعار",
     "backgroundImage": "صورة الخلفية",
@@ -1622,7 +1622,7 @@
     "close": "إغلاق",
     "deleteNavigationItem": "حذف عنصر القسم",
     "deleteItem": "حذف العنصر",
-    "navigationSection": "قسم القسم",
+    "navigationSection": "القسم الرئيسي",
     "navigationSectionDescription": "قسم  للموقع الإلكتروني",
     "logo": "الشعار",
     "navItem": "عنصر القسم"
@@ -1713,7 +1713,7 @@
     "noSectionMessage": "يرجى إنشاء القسم أولاً.",
     "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة القسم.",
     "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة القسم.",
-    "sectionIntegrationTitle": "محتوى قسم القسم",
+    "sectionIntegrationTitle": "محتوى القسم الرئيسي",
     "sectionIntegrationDescription": "إدارة محتوى القسم بلغات متعددة.",
     "addSectionButtonLabel": "إضافة القسم",
     "editSectionButtonLabel": "تعديل القسم",
@@ -1764,7 +1764,7 @@
     
     "// Helper Text": "",
     "sectionBadgeHelper": "نص قصير يتم عرضه كشارة فوق القسم",
-    "sectionTitleHelper": "العنوان الرئيسي لقسم القسم",
+    "sectionTitleHelper": "العنوان الرئيسي لالقسم الرئيسي",
     "sectionDescriptionHelper": "وصف موجز لما يحتويه هذا القسم",
     "newsDetailsHelper": "معلومات مفصلة حول عناصر القسم"
   },
@@ -1835,13 +1835,13 @@
     "descriptionPlaceholder": "أدخل الوصف",
     "buttonTextLabel": "نص الزر",
     "buttonTextPlaceholder": "ابدأ",
-    "cardTitle": "قسم القسم",
+    "cardTitle": "القسم الرئيسي",
     "cardDescription": "إدارة محتوى القسم باللغة العربية"
   },
   "newsForm": {
-    "loadingData": "جارٍ تحميل بيانات قسم القسم...",
-    "loadingDialogTitleCreating": "إنشاء قسم القسم",
-    "loadingDialogTitleUpdating": "تحديث قسم القسم",
+    "loadingData": "جارٍ تحميل بيانات القسم الرئيسي...",
+    "loadingDialogTitleCreating": "إنشاء القسم الرئيسي",
+    "loadingDialogTitleUpdating": "تحديث القسم الرئيسي",
     "loadingDialogDescription": "يرجى الانتظار بينما نحفظ التغييرات...",
     "saveButton": "حفظ محتوى القسم",
     "updateButton": "تحديث محتوى القسم",
@@ -1930,7 +1930,7 @@
     "createTitle": "إنشاء عنصر  جديد",
     "editTitle": "تعديل عنصر القسم",
     "createSubtitle": "إنشاء عنصر  جديد بمحتوى متعدد اللغات",
-    "editSubtitle": "تحرير محتوى \"{{name}}\" عبر عدة لغات",
+    "editSubtitle": "تحرير محتوى  عبر عدة لغات",
     "defaultItemName": "عنصر ",
     
     "// Default Values": "",
@@ -2075,7 +2075,7 @@
     "// Save Process": "",
     "parentSectionRequired": "معرف القسم الرئيسي مطلوب لإنشاء قسم فرعي",
     "failedToCreateSubsection": "فشل في إنشاء أو استرداد معرف القسم الفرعي",
-    "operationFailed": "فشلت العملية:",
+    "operationFailed": "فشلت القسم:",
     "unknownError": "حدث خطأ غير معروف",
     
     "// Success Messages": "",
@@ -2084,8 +2084,8 @@
     "allContentSaved": "تم حفظ جميع المحتويات.",
     
     "// Error Messages": "",
-    "errorUpdatingSection": "خطأ في تحديث القسم اللوح الرئيسي",
-    "errorCreatingSection": "خطأ في إنشاء القسم اللوح الرئيسي",
+    "errorUpdatingSection": "خطأ في تحديث الالقسم الرئيسي",
+    "errorCreatingSection": "خطأ في إنشاء الالقسم الرئيسي",
     
     "// Button Labels": "",
     "updateIndustryContent": "تحديث محتوى القسم",
@@ -2129,7 +2129,7 @@
   },
   "heroPage": {
       "// Loading States": "",
-      "loadingHeroData": "جارٍ تحميل بيانات قسم اللوح الرئيسي...",
+      "loadingHeroData": "جارٍ تحميل بيانات القسم الرئيسي...",
       "loadingData": "جارٍ تحميل البيانات...",
       "loadingSubsection": "جارٍ تحميل القسم الفرعي...",
       "saving": "جارٍ الحفظ...",
@@ -2142,17 +2142,17 @@
       "editPath": "heroSection/addHero",
       
       "// Messages": "",
-      "emptyStateMessage": "لم يتم العثور على بطل. قم بإنشاء اللوح الرئيسي الأول الخاص بك بالنقر على زر \"إضافة بطل جديد\".",
-      "noSectionMessage": "يرجى إنشاء قسم اللوح الرئيسي أولاً    .",
+      "emptyStateMessage": "لم يتم العثور على القسم. قم بإنشاء اللوح الرئيسي الأول الخاص بك بالنقر على زر \"إضافة القسم جديد\".",
+      "noSectionMessage": "يرجى إنشاء القسم الرئيسي أولاً    .",
       "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي  .",
       "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي    .",
       
       "// Section Integration": "",
-      "sectionIntegrationTitle": "محتوى قسم اللوح الرئيسي",
-      "sectionIntegrationDescription": "إدارة محتوى قسم اللوح الرئيسي بلغات متعددة.",
-      "addSectionButtonLabel": "إضافة قسم اللوح الرئيسي",
-      "editSectionButtonLabel": "تحرير قسم اللوح الرئيسي",
-      "saveSectionButtonLabel": "حفظ قسم اللوح الرئيسي",
+      "sectionIntegrationTitle": "محتوى القسم الرئيسي",
+      "sectionIntegrationDescription": "إدارة محتوى القسم الرئيسي بلغات متعددة.",
+      "addSectionButtonLabel": "إضافة القسم الرئيسي",
+      "editSectionButtonLabel": "تحرير القسم الرئيسي",
+      "saveSectionButtonLabel": "حفظ القسم الرئيسي",
       
       "// Table Columns": "",
       "nameColumn": "الاسم",
@@ -2181,7 +2181,7 @@
   },
   "addHero": {
     "// Page Titles": "",
-    "createTitle": "إنشاء بطل جديد",
+    "createTitle": "إنشاء القسم جديد",
     "editTitle": "تحرير اللوح الرئيسي",
     
     "// Page Subtitles": "",
@@ -2193,7 +2193,7 @@
     "heroTabLabel": "اللوح الرئيسي",
     
     "// Default Values": "",
-    "defaultServiceName": "بطل جديد",
+    "defaultServiceName": "القسم جديد",
     "defaultServiceDescription": "",
     
     "// URL Paths": "",
@@ -2232,7 +2232,7 @@
   },
   "HeroLanguageCard": {
       "// Card Header": "",
-      "heroSection": "قسم اللوح الرئيسي",
+      "heroSection": "القسم الرئيسي",
       "primaryBadge": "الأساسي",
       
       "// Card Description": "",
@@ -2240,7 +2240,7 @@
       "urlSettingsNote": "(إعدادات الرابط المكونة هنا تنطبق على جميع اللغات)",
       
       "// Button Labels": "",
-      "addHeroButton": "إضافة بطل",
+      "addHeroButton": "إضافة القسم",
       
       "// Accessibility": "",
       "heroCardTitle": "محتوى اللوح الرئيسي للغة",
@@ -2248,15 +2248,15 @@
   },
   "heroesForm": {
       "// Loading States": "",
-      "loadingHeroData": "جارٍ تحميل بيانات قسم الأبطال...",
+      "loadingHeroData": "جارٍ تحميل بيانات القسم الرئيسي...",
       "saving": "جارٍ الحفظ...",
-      "updatingHeroes": "تحديث الأبطال",
-      "creatingHeroes": "إنشاء الأبطال",
+      "updatingHeroes": "تحديث القسم",
+      "creatingHeroes": "إنشاء القسم",
       "saveDescription": "يرجى الانتظار بينما نحفظ التغييرات...",
       
       "// Section Names": "",
-      "sectionName": "قسم الأبطال",
-      "sectionDescription": "قسم الأبطال للموقع الإلكتروني",
+      "sectionName": "القسم الرئيسي",
+      "sectionDescription": "القسم الرئيسي للموقع الإلكتروني",
       
       "// Element Names": "",
       "heroTitle": "اللوح الرئيسي {{heroIndex}} - العنوان",
@@ -2271,7 +2271,7 @@
       
       "// Toast Messages - Remove": "",
       "cannotRemove": "لا يمكن الإزالة",
-      "needAtLeastOneHero": "تحتاج إلى بطل واحد على الأقل",
+      "needAtLeastOneHero": "تحتاج إلى القسم واحد على الأقل",
       "heroDeleted": "تم حذف اللوح الرئيسي",
       "heroDeletedFromDatabase": "تم حذف اللوح الرئيسي {{heroNumber}} من قاعدة البيانات",
       "heroRemoved": "تم إزالة اللوح الرئيسي",
@@ -2281,11 +2281,11 @@
       
       "// Toast Messages - Add": "",
       "heroAdded": "تم إضافة اللوح الرئيسي",
-      "heroAddedDescription": "تم إضافة بطل جديد. يرجى ملء التفاصيل وحفظ التغييرات.",
+      "heroAddedDescription": "تم إضافة القسم جديد. يرجى ملء التفاصيل وحفظ التغييرات.",
       
       "// Toast Messages - Validation": "",
       "validationError": "خطأ في التحقق",
-      "allLanguagesSameCount": "يجب أن تحتوي جميع اللغات على نفس عدد الأبطال.",
+      "allLanguagesSameCount": "يجب أن تحتوي جميع اللغات على نفس عدد القسم.",
       "fillAllRequiredFields": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح.",
       
       "// Toast Messages - Loading": "",
@@ -2294,27 +2294,27 @@
       
       "// Toast Messages - Image Upload": "",
       "imageUploadError": "خطأ في رفع الصورة",
-      "failedToUploadImage": "فشل في رفع الصورة للبطل {{heroIndex}}. يرجى المحاولة مرة أخرى.",
+      "failedToUploadImage": "فشل في رفع الصورة للالقسم {{heroIndex}}. يرجى المحاولة مرة أخرى.",
       "configurationError": "خطأ في التكوين",
-      "imageMissingForHero": "عنصر محتوى الصورة مفقود للبطل {{heroIndex}}.",
+      "imageMissingForHero": "عنصر محتوى الصورة مفقود للالقسم {{heroIndex}}.",
       
       "// Toast Messages - Save Success": "",
-      "heroesUpdatedSuccessfully": "تم تحديث قسم الأبطال بنجاح!",
-      "heroesCreatedSuccessfully": "تم إنشاء قسم الأبطال بنجاح!",
+      "heroesUpdatedSuccessfully": "تم تحديث القسم الرئيسي بنجاح!",
+      "heroesCreatedSuccessfully": "تم إنشاء القسم الرئيسي بنجاح!",
       "allContentSaved": "تم حفظ جميع المحتويات.",
       
       "// Toast Messages - Save Error": "",
       "warning": "تحذير",
       "failedToReloadData": "فشل في إعادة تحميل البيانات بعد الحفظ.",
-      "errorUpdatingHeroes": "خطأ في تحديث قسم الأبطال",
-      "errorCreatingHeroes": "خطأ في إنشاء قسم الأبطال",
+      "errorUpdatingHeroes": "خطأ في تحديث القسم الرئيسي",
+      "errorCreatingHeroes": "خطأ في إنشاء القسم الرئيسي",
       
       "// Button Labels": "",
-      "saveHeroes": "حفظ الأبطال",
-      "updateHeroes": "تحديث الأبطال",
+      "saveHeroes": "حفظ القسم",
+      "updateHeroes": "تحديث القسم",
       
       "// Validation Messages": "",
-      "samNumberOfHeroes": "يجب أن تحتوي كل لغة على نفس عدد الأبطال",
+      "samNumberOfHeroes": "يجب أن تحتوي كل لغة على نفس عدد القسم",
       
       "// Dialog Titles": "",
       "deleteHero": "حذف اللوح الرئيسي",
@@ -2326,16 +2326,16 @@
       "imagePlaceholder": "عنصر نائب للصورة",
       
       "// Console Messages": "",
-      "formValuesAfterProcess": "قيم النموذج بعد معالجة بيانات الأبطال:",
+      "formValuesAfterProcess": "قيم النموذج بعد معالجة بيانات القسم:",
       "refetchingData": "إعادة جلب البيانات:",
       "formValuesBeforeSave": "قيم النموذج قبل الحفظ:",
-      "uploadingImageForHero": "رفع الصورة للبطل",
+      "uploadingImageForHero": "رفع الصورة للالقسم",
       "uploadResult": "نتيجة الرفع:",
-      "noImageFileProvided": "لم يتم توفير ملف صورة للبطل {{heroIndex}}",
-      "imageElementNotFound": "عنصر محتوى الصورة غير موجود للبطل {{heroIndex}}",
+      "noImageFileProvided": "لم يتم توفير ملف صورة للالقسم {{heroIndex}}",
+      "imageElementNotFound": "عنصر محتوى الصورة غير موجود للالقسم {{heroIndex}}",
       "formValuesAfterSave": "قيم النموذج بعد الحفظ:",
       "refetchedData": "البيانات المعاد جلبها:",
-      "saveOperationFailed": "فشلت عملية الحفظ:",
+      "saveOperationFailed": "فشلت قسم الحفظ:",
       "errorRemovingHeroConsole": "خطأ في إزالة اللوح الرئيسي:",
       "errorProcessingHeroData": "خطأ في معالجة بيانات اللوح الرئيسي:",
       
@@ -2428,7 +2428,7 @@
       
       "// Page Subtitles": "",
       "createSubtitle": "إنشاء خدمة جديدة بمحتوى متعدد اللغات",
-      "editSubtitle": "تحرير محتوى \"{{projectName}}\" عبر لغات متعددة",
+      "editSubtitle": "تحرير محتوى  عبر لغات متعددة",
       
       "// Tab Labels": "",
       "projectTab": "المشروع",
@@ -2622,9 +2622,9 @@
       "noImage": "لا توجد صورة"
   },
   "processForm": {
-    "loadingProcessData": "جاري تحميل بيانات قسم العملية...",
-    "updatingProcessSection": "تحديث قسم العملية",
-    "creatingProcessSection": "إنشاء قسم العملية",
+    "loadingProcessData": "جاري تحميل بيانات القسم الرئيسي...",
+    "updatingProcessSection": "تحديث القسم الرئيسي",
+    "creatingProcessSection": "إنشاء القسم الرئيسي",
     "pleaseWaitSaving": "يرجى الانتظار أثناء حفظ التغييرات...",
     "validationError": "خطأ في التحقق",
     "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
@@ -2632,19 +2632,19 @@
     "backgroundImageUploaded": "تم تحميل صورة الخلفية بنجاح.",
     "imageUploadFailed": "فشل تحميل الصورة",
     "failedToUploadImage": "فشل في تحميل الصورة",
-    "processUpdatedSuccess": "تم تحديث قسم العملية بنجاح!",
-    "processCreatedSuccess": "تم إنشاء قسم العملية بنجاح!",
+    "processUpdatedSuccess": "تم تحديث القسم الرئيسي بنجاح!",
+    "processCreatedSuccess": "تم إنشاء القسم الرئيسي بنجاح!",
     "allContentSaved": "تم حفظ جميع المحتويات.",
-    "errorUpdatingProcess": "خطأ في تحديث قسم العملية",
-    "errorCreatingProcess": "خطأ في إنشاء قسم العملية",
+    "errorUpdatingProcess": "خطأ في تحديث القسم الرئيسي",
+    "errorCreatingProcess": "خطأ في إنشاء القسم الرئيسي",
     "unknownError": "حدث خطأ غير معروف",
-    "updateProcessContent": "تحديث محتوى العملية",
-    "saveProcessContent": "حفظ محتوى العملية",
+    "updateProcessContent": "تحديث محتوى القسم",
+    "saveProcessContent": "حفظ محتوى القسم",
     "saving": "جاري الحفظ..."
   },
   "processLanguageCard": {
-    "processSection": "قسم العملية",
-    "manageProcessContent": "إدارة محتوى العملية لـ {{language}}",
+    "processSection": "القسم الرئيسي",
+    "manageProcessContent": "إدارة محتوى القسم لـ {{language}}",
     "title": "العنوان",
     "enterTitle": "أدخل العنوان",
     "description": "الوصف",
@@ -2658,8 +2658,8 @@
     "noSectionMessage": "يرجى إنشاء القسم  أولاً .",
     "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي   .",
     "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي   .",
-    "sectionIntegrationTitle": "محتوى قسم القسم",
-    "sectionIntegrationDescription": "إدارة محتوى قسم القسم بلغات متعددة.",
+    "sectionIntegrationTitle": "محتوى القسم الرئيسي",
+    "sectionIntegrationDescription": "إدارة محتوى القسم الرئيسي بلغات متعددة.",
     "addSectionButtonLabel": "إضافة  القسم",
     "editSectionButtonLabel": "تحرير القسم ",
     "saveSectionButtonLabel": "حفظ القسم ",
@@ -2702,8 +2702,8 @@
       "manageContentDescription": "إدارة محتوى القسم للغة {{langCode}}",
       "titleLabel": "العنوان",
       "titlePlaceholder": "أدخل العنوان",
-      "jobLabel": "الوظيفة",
-      "jobPlaceholder": "أدخل الوظيفة",
+      "jobLabel": "عنوان ٢",
+      "jobPlaceholder": "أدخل عنوان ٢ ",
       "descriptionLabel": "الوصف",
       "descriptionPlaceholder": "أدخل الوصف"
     },
@@ -2711,7 +2711,7 @@
       "createTitle": "إنشاء قسم جديد",
       "editTitle": "تحرير القسم",
       "createSubtitle": "إنشاء قسم جديد بمحتوى متعدد اللغات",
-      "editSubtitle": "تحرير محتوى \"{{name}}\" عبر عدة لغات",
+      "editSubtitle": "تحرير محتوى عبر عدة لغات",
       "defaultTeamName": "قسم جديد"
     }
   },
@@ -2723,11 +2723,11 @@
     "noSectionMessage": "يرجى إنشاء  القسم أولاً .",
     "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة القسم.",
     "emptyFieldsMessage": "يرجى ملء جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة القسم.",
-    "sectionIntegrationTitle": "محتوى قسم القسم",
-    "sectionIntegrationDescription": "إدارة محتوى قسم القسم بأكثر من لغة.",
-    "addSectionButtonLabel": "إضافة قسم القسم",
-    "editSectionButtonLabel": "تحرير قسم القسم",
-    "saveSectionButtonLabel": "حفظ قسم القسم",
+    "sectionIntegrationTitle": "محتوى القسم الرئيسي",
+    "sectionIntegrationDescription": "إدارة محتوى القسم الرئيسي بأكثر من لغة.",
+    "addSectionButtonLabel": "إضافة القسم الرئيسي",
+    "editSectionButtonLabel": "تحرير القسم الرئيسي",
+    "saveSectionButtonLabel": "حفظ القسم الرئيسي",
     "listTitle": "قائمة القسم",
     "columnName": "الاسم",
     "columnDescription": "الوصف",
@@ -2740,12 +2740,12 @@
     "confirmDelete": "تأكيد"
   },
   "clientCommentsForm": {
-    "loadingData": "جارٍ تحميل بيانات قسم القسم...",
+    "loadingData": "جارٍ تحميل بيانات القسم الرئيسي...",
     "updatingClientComments": "تحديث القسم",
     "creatingClientComments": "إنشاء القسم",
     "savingChanges": "يرجى الانتظار بينما نحفظ التغييرات...",
     "cannotRemove": "لا يمكن الإزالة",
-    "needOneClientComment": "يجب أن يكون لديك تعليق عميل واحد على الأقل",
+    "needOneClientComment": "يجب أن يكون لديك قسم عميل واحد على الأقل",
     "stepDeleted": "تم حذف الخطوة",
     "stepDeletedDescription": "تم حذف الخطوة {{number}} من قاعدة البيانات",
     "errorRemovingStep": "خطأ في إزالة الخطوة",
@@ -2756,32 +2756,32 @@
     "errorRemovingClientCommentsDescription": "حدث خطأ أثناء إزالة القسم من قاعدة البيانات",
     "validationError": "خطأ في التحقق",
     "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
-    "clientCommentsUpdated": "تم تحديث قسم القسم بنجاح!",
-    "clientCommentsCreated": "تم إنشاء قسم القسم بنجاح!",
-    "errorUpdatingClientComments": "خطأ في تحديث قسم القسم",
-    "errorCreatingClientComments": "خطأ في إنشاء قسم القسم",
+    "clientCommentsUpdated": "تم تحديث القسم الرئيسي بنجاح!",
+    "clientCommentsCreated": "تم إنشاء القسم الرئيسي بنجاح!",
+    "errorUpdatingClientComments": "خطأ في تحديث القسم الرئيسي",
+    "errorCreatingClientComments": "خطأ في إنشاء القسم الرئيسي",
     "unknownError": "حدث خطأ غير معروف",
     "sameNumberClientComments": "يجب أن يحتوي كل لغة على نفس عدد القسم",
     "updateClientComments": "تحديث القسم",
     "saveClientComments": "حفظ القسم",
-    "deleteComment": "حذف التعليق",
-    "deleteCommentConfirm": "حذف التعليق"
+    "deleteComment": "حذف القسم",
+    "deleteCommentConfirm": "حذف القسم"
   },
   "clientCommentsLanguageCard": {
-    "title": "قسم القسم",
+    "title": "القسم الرئيسي",
     "description": "إدارة محتوى القسم للغة {{langCode}}",
-    "addComment": "إضافة تعليق"
+    "addComment": "إضافة قسم"
   },
   "AddClientComment": {
     "createTitle": "إنشاء عنصر   جديد",
     "editTitle": "تحرير عنصر القسم",
     "createSubtitle": "إنشاء عنصر  جديد بمحتوى متعدد اللغات",
-    "editSubtitle": "تحرير محتوى \"{{name}}\" عبر لغات متعددة",
-    "defaultClientCommentName": "تعليق جديد",
+    "editSubtitle": "تحرير محتوى  عبر لغات متعددة",
+    "defaultClientCommentName": "قسم جديد",
     "clientCommentsTabLabel": "القسم"
   },
   "clientCommentsCard": {
-    "commentTitle": "تعليق {{number}}",
+    "commentTitle": "قسم {{number}}",
     "iconLabel": "أيقونة",
     "iconPlaceholder": "اختر أيقونة",
     "iconControlledByPrimary": "(يتم التحكم بها بواسطة اللغة الأساسية)",
@@ -2793,8 +2793,8 @@
   "servicesPage": {
     "title": "إدارة القسم",
     "description": "إدارة مخزون القسم والمحتوى متعدد اللغات",
-    "addButtonLabel": "إضافة خدمة جديدة",
-    "emptyStateMessage": "لم يتم العثور على خدمات. أنشئ خدمتك الأولى بالنقر على زر \"إضافة خدمة جديدة\".",
+    "addButtonLabel": "إضافة عنصر جديدة",
+    "emptyStateMessage": "لم يتم العثور على خدمات. أنشئ خدمتك الأولى بالنقر على زر \"إضافة عنصر جديدة\".",
     "noSectionMessage": "يرجى إنشاء  القسم أولاً قبل إضافة القسم.",
     "mainSectionRequiredMessage": "يرجى إدخال بيانات القسم الرئيسي قبل إضافة القسم.",
     "emptyFieldsMessage": "يرجى إكمال جميع الحقول المطلوبة في القسم الرئيسي قبل إضافة القسم.",
@@ -2824,18 +2824,18 @@
   "addServicePage": {
     "titles": {
       "create": "إنشاء خدمة جديدة",
-      "edit": "تحرير الخدمة"
+      "edit": "تحرير القسم"
     },
     "subtitles": {
       "create": "إنشاء خدمة جديدة مع محتوى متعدد اللغات",
-      "edit": "تحرير محتوى \"{{serviceName}}\" عبر لغات متعددة"
+      "edit": "تحرير محتوى  عبر لغات متعددة"
     },
     "tabs": {
       "hero": "الشعار الرئيسي",
       "benefits": "المزايا",
       "overview": "نظرة عامة",
       "features": "الميزات",
-      "process": "العملية",
+      "process": "القسم",
       "faq": "القسم"
     },
     "defaults": {
@@ -2848,16 +2848,16 @@
   "heroForm": {
     "loadingDialogs": {
       "creating": {
-        "title": "إنشاء قسم اللوح الرئيسي",
+        "title": "إنشاء القسم الرئيسي",
         "description": "يرجى الانتظار بينما نحفظ تغييراتك..."
       },
       "updating": {
-        "title": "تحديث قسم اللوح الرئيسي",
+        "title": "تحديث القسم الرئيسي",
         "description": "يرجى الانتظار بينما نحفظ تغييراتك..."
       },
       "deleting": {
-        "title": "حذف قسم اللوح الرئيسي",
-        "description": "يرجى الانتظار بينما نحذف قسم اللوح الرئيسي..."
+        "title": "حذف القسم الرئيسي",
+        "description": "يرجى الانتظار بينما نحذف القسم الرئيسي..."
       },
       "refreshing": {
         "title": "تحديث البيانات",
@@ -2865,13 +2865,13 @@
       }
     },
     "deleteDialog": {
-      "title": "حذف قسم اللوح الرئيسي",
-      "description": "هل أنت متأكد من أنك تريد حذف قسم اللوح الرئيسي هذا؟ لا يمكن التراجع عن هذا الإجراء."
+      "title": "حذف القسم الرئيسي",
+      "description": "هل أنت متأكد من أنك تريد حذف القسم الرئيسي هذا؟ لا يمكن التراجع عن هذا الإجراء."
     },
     "buttons": {
       "save": "حفظ محتوى اللوح الرئيسي",
-      "update": "تحديث محتوى اللوح الرئيسي",
-      "delete": "حذف قسم اللوح الرئيسي",
+      "update": "تحديث محتوى القسم الرئيسي",
+      "delete": "حذف القسم الرئيسي",
       "saving": "جاري الحفظ..."
     },
     "toasts": {
@@ -2891,18 +2891,18 @@
       },
       "save": {
         "success": {
-          "created": "تم إنشاء قسم اللوح الرئيسي بنجاح!",
-          "updated": "تم تحديث قسم اللوح الرئيسي بنجاح!",
+          "created": "تم إنشاء القسم الرئيسي بنجاح!",
+          "updated": "تم تحديث القسم الرئيسي بنجاح!",
           "description": "تم حفظ جميع المحتويات."
         },
         "error": {
-          "created": "خطأ في إنشاء قسم اللوح الرئيسي",
-          "updated": "خطأ في تحديث قسم اللوح الرئيسي"
+          "created": "خطأ في إنشاء القسم الرئيسي",
+          "updated": "خطأ في تحديث القسم الرئيسي"
         }
       }
     },
     "languageCard": {
-      "title": "قسم اللوح الرئيسي",
+      "title": "القسم الرئيسي",
       "description": "إدارة محتوى اللوح الرئيسي لـ {{language}}",
       "fields": {
         "title": {
@@ -3208,7 +3208,7 @@
           "primary": "أساسي"
         },
         "sections": {
-          "processStepsSection": "قسم خطوات العملية"
+          "processStepsSection": "قسم خطوات القسم"
         },
         "fields": {
           "icon": {
@@ -3226,13 +3226,13 @@
           }
         },
         "buttons": {
-          "addStep": "إضافة خطوة عملية",
+          "addStep": "إضافة خطوة قسم",
           "deleteStep": "حذف الخطوة"
         },
         "actions": {
-          "save": "حفظ خطوات العملية",
-          "update": "تحديث خطوات العملية",
-          "delete": "حذف خطوات العملية", 
+          "save": "حفظ خطوات القسم",
+          "update": "تحديث خطوات القسم",
+          "delete": "حذف خطوات القسم", 
           "saving": "جاري الحفظ...",
           "deleting": "جاري الحذف..."
         },
@@ -3240,61 +3240,61 @@
           "stepCountMismatch": "يجب أن يكون لكل لغة نفس عدد الخطوات",
           "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
           "cannotRemove": "لا يمكن الإزالة",
-          "needAtLeastOneStep": "تحتاج إلى خطوة عملية واحدة على الأقل"
+          "needAtLeastOneStep": "تحتاج إلى خطوة قسم واحدة على الأقل"
         },
         "dialogs": {
           "deleteStep": {
-            "title": "حذف العملية",
+            "title": "حذف القسم",
             "description": "هل أنت متأكد من رغبتك في حذف هذه الخطوة؟ لا يمكن التراجع عن هذا الإجراء.",
-            "confirmText": "حذف العملية"
+            "confirmText": "حذف القسم"
           },
           "deleteSection": {
-            "title": "حذف قسم خطوات العملية",
-            "description": "هل أنت متأكد من رغبتك في حذف قسم خطوات العملية بالكامل؟ لا يمكن التراجع عن هذا الإجراء.",
+            "title": "حذف قسم خطوات القسم",
+            "description": "هل أنت متأكد من رغبتك في حذف قسم خطوات القسم بالكامل؟ لا يمكن التراجع عن هذا الإجراء.",
             "warnings": [
-              "ستتم إزالة جميع خطوات العملية نهائياً",
+              "ستتم إزالة جميع خطوات القسم نهائياً",
               "لا يمكن التراجع عن هذا الإجراء"
             ]
           },
           "validationError": {
             "title": "عدم تطابق عدد الخطوات",
-            "description": "يجب أن تحتوي كل لغة على نفس عدد خطوات العملية قبل الحفظ. يرجى إضافة أو إزالة الخطوات للتأكد من أن جميع اللغات لها نفس العدد:",
+            "description": "يجب أن تحتوي كل لغة على نفس عدد خطوات القسم قبل الحفظ. يرجى إضافة أو إزالة الخطوات للتأكد من أن جميع اللغات لها نفس العدد:",
             "close": "إغلاق"
           }
         },
         "loading": {
-          "loadingData": "جاري تحميل بيانات خطوات العملية...",
-          "creatingSection": "إنشاء خطوات العملية",
-          "updatingSection": "تحديث خطوات العملية",
-          "deletingSection": "حذف خطوات العملية", 
+          "loadingData": "جاري تحميل بيانات خطوات القسم...",
+          "creatingSection": "إنشاء خطوات القسم",
+          "updatingSection": "تحديث خطوات القسم",
+          "deletingSection": "حذف خطوات القسم", 
           "refreshingData": "تحديث البيانات",
           "pleaseWait": "يرجى الانتظار بينما نحفظ التغييرات...",
-          "pleaseWaitDelete": "يرجى الانتظار بينما نحذف قسم خطوات العملية...",
+          "pleaseWaitDelete": "يرجى الانتظار بينما نحذف قسم خطوات القسم...",
           "pleaseWaitRefresh": "تحديث  بعد الحذف..."
         },
         "toast": {
           "stepAdded": "تمت إضافة الخطوة",
-          "stepAddedDesc": "تمت إضافة خطوة عملية جديدة لجميع اللغات.",
+          "stepAddedDesc": "تمت إضافة خطوة قسم جديد لجميع اللغات.",
           "stepDeleted": "تم حذف الخطوة",
           "stepDeletedDesc": "تم حذف الخطوة {{number}} من قاعدة البيانات",
           "stepRemoved": "تمت إزالة الخطوة",
           "stepRemovedDesc": "تمت إزالة الخطوة بنجاح.",
-          "sectionCreated": "تم إنشاء خطوات العملية بنجاح!",
-          "sectionUpdated": "تم تحديث خطوات العملية بنجاح!",
+          "sectionCreated": "تم إنشاء خطوات القسم بنجاح!",
+          "sectionUpdated": "تم تحديث خطوات القسم بنجاح!",
           "contentSaved": "تم حفظ جميع التغييرات.",
-          "creatingSection": "إنشاء قسم خطوات العملية الجديد...",
-          "creatingSectionDesc": "إعداد محتوى خطوات العملية الجديد.",
+          "creatingSection": "إنشاء قسم خطوات القسم الجديد...",
+          "creatingSectionDesc": "إعداد محتوى خطوات القسم الجديد.",
           "refreshingContent": "تحديث المحتوى",
           "refreshingContentDesc": "تحميل المحتوى المحدث...",
-          "errorCreating": "خطأ في إنشاء خطوات العملية",
-          "errorUpdating": "خطأ في تحديث خطوات العملية",
+          "errorCreating": "خطأ في إنشاء خطوات القسم",
+          "errorUpdating": "خطأ في تحديث خطوات القسم",
           "errorRemoving": "خطأ في إزالة الخطوة",
           "errorRemovingDesc": "حدث خطأ في إزالة الخطوة من قاعدة البيانات"
         }
       },
       "languageCard": {
-        "title": "قسم خطوات العملية",
-        "description": "إدارة محتوى خطوات العملية لـ {{language}}",
+        "title": "قسم خطوات القسم",
+        "description": "إدارة محتوى خطوات القسم لـ {{language}}",
         "iconControlDesc": "الأيقونات المحددة هنا ستُستخدم لجميع اللغات"
       }
   },
@@ -3320,18 +3320,18 @@
         "addFaq": "إضافة سؤال شائع",
         "save": "حفظ محتوى القسم",
         "update": "تحديث محتوى القسم",
-        "delete": "حذف قسم القسم",
+        "delete": "حذف القسم",
         "saving": "جاري الحفظ...",
         "deleting": "جاري الحذف..."
       },
       "loading": {
-        "loadingData": "جاري تحميل بيانات قسم القسم...",
-        "creatingSection": "إنشاء قسم القسم",
-        "updatingSection": "تحديث قسم القسم",
-        "deletingSection": "حذف قسم القسم",
+        "loadingData": "جاري تحميل بيانات القسم الرئيسي...",
+        "creatingSection": "إنشاء القسم الرئيسي",
+        "updatingSection": "تحديث القسم الرئيسي",
+        "deletingSection": "حذف القسم",
         "refreshingData": "تحديث البيانات",
         "pleaseWait": "يرجى الانتظار بينما نحفظ التغييرات...",
-        "pleaseWaitDelete": "يرجى الانتظار بينما نحذف قسم القسم...",
+        "pleaseWaitDelete": "يرجى الانتظار بينما نحذف القسم...",
         "pleaseWaitRefresh": "تحديث  بعد الحذف..."
       },
       "validation": {
@@ -3347,7 +3347,7 @@
           "confirmText": "حذف السؤال الشائع"
         },
         "deleteSection": {
-          "title": "حذف قسم القسم",
+          "title": "حذف القسم",
           "description": "هل أنت متأكد من رغبتك في حذف القسم بالكامل؟ لا يمكن التراجع عن هذا الإجراء.",
           "warnings": [
             "ستتم إزالة جميع الأسئلة والأجوبة الشائعة نهائياً",
@@ -3374,8 +3374,8 @@
         "creatingSectionDesc": "إعداد محتوى القسم الجديد.",
         "refreshingContent": "تحديث المحتوى",
         "refreshingContentDesc": "تحميل المحتوى المحدث...",
-        "errorCreating": "خطأ في إنشاء قسم القسم",
-        "errorUpdating": "خطأ في تحديث قسم القسم",
+        "errorCreating": "خطأ في إنشاء القسم الرئيسي",
+        "errorUpdating": "خطأ في تحديث القسم الرئيسي",
         "errorRemoving": "خطأ في إزالة السؤال الشائع",
         "errorRemovingDesc": "حدث خطأ في إزالة السؤال الشائع من قاعدة البيانات",
         "validationError": "خطأ في التحقق"
@@ -3383,7 +3383,7 @@
   },
   "faqFormSection": {
       "section": {
-        "title": "قسم القسم",
+        "title": "القسم الرئيسي",
         "description": "إدارة محتوى القسم باللغة العربية"
       },
       "item": {
@@ -3403,18 +3403,18 @@
         "addFaq": "إضافة سؤال شائع",
         "save": "حفظ محتوى القسم",
         "update": "تحديث محتوى القسم",
-        "delete": "حذف قسم القسم",
+        "delete": "حذف القسم",
         "saving": "جاري الحفظ...",
         "deleting": "جاري الحذف..."
       },
       "loading": {
-        "loadingData": "جاري تحميل بيانات قسم القسم...",
-        "creatingSection": "إنشاء قسم القسم",
-        "updatingSection": "تحديث قسم القسم",
-        "deletingSection": "حذف قسم القسم",
+        "loadingData": "جاري تحميل بيانات القسم الرئيسي...",
+        "creatingSection": "إنشاء القسم الرئيسي",
+        "updatingSection": "تحديث القسم الرئيسي",
+        "deletingSection": "حذف القسم",
         "refreshingData": "تحديث البيانات",
         "pleaseWait": "يرجى الانتظار أثناء حفظ التغييرات...",
-        "pleaseWaitDelete": "يرجى الانتظار أثناء حذف قسم القسم...",
+        "pleaseWaitDelete": "يرجى الانتظار أثناء حذف القسم...",
         "pleaseWaitRefresh": "تحديث  بعد الحذف..."
       },
       "validation": {
@@ -3457,8 +3457,8 @@
         "creatingSectionDesc": "إعداد محتوى القسم الجديد.",
         "refreshingContent": "تحديث المحتوى",
         "refreshingContentDesc": "تحميل المحتوى المحدث...",
-        "errorCreating": "خطأ في إنشاء قسم القسم",
-        "errorUpdating": "خطأ في تحديث قسم القسم",
+        "errorCreating": "خطأ في إنشاء القسم الرئيسي",
+        "errorUpdating": "خطأ في تحديث القسم الرئيسي",
         "errorRemoving": "خطأ في إزالة سؤال شائع",
         "errorRemovingDesc": "حدث خطأ أثناء إزالة السؤال الشائع من قاعدة البيانات",
         "validationError": "خطأ في التحقق",
@@ -3477,7 +3477,7 @@
       "createTitle": "إنشاء عنصر أسئلة شائعة جديد",
       "editTitle": "تعديل عنصر القسم",
       "createSubtitle": "إنشاء عنصر أسئلة شائعة جديد بمحتوى متعدد اللغات",
-      "editSubtitle": "تعديل محتوى \"{{name}}\" عبر لغات متعددة",
+      "editSubtitle": "تعديل محتوى  عبر لغات متعددة",
       "backUrl": "العودة إلى لوحة تحكم القسم",
       "tabs": {
         "faqItems": "عناصر القسم"
@@ -3485,7 +3485,7 @@
       "defaultHeaderName": "رأس جديد"
   },
   "addFaqForm": {
-      "loadingText": "جارٍ تحميل بيانات قسم القسم...",
+      "loadingText": "جارٍ تحميل بيانات القسم الرئيسي...",
       "saveButton": {
         "create": "حفظ محتوى القسم",
         "update": "تحديث محتوى القسم",
@@ -3500,8 +3500,8 @@
         "languageCount": "{lang}: {count} أسئلة شائعة"
       },
       "dialog": {
-        "createTitle": "إنشاء قسم القسم",
-        "updateTitle": "تحديث قسم القسم",
+        "createTitle": "إنشاء القسم الرئيسي",
+        "updateTitle": "تحديث القسم الرئيسي",
         "createDescription": "يرجى الانتظار بينما نحفظ التغييرات...",
         "deleteTitle": "حذف القسم",
         "deleteConfirm": "حذف القسم"
@@ -3520,8 +3520,8 @@
         "saveSuccessDescription": "تم حفظ جميع التغييرات.",
         "refreshing": "جارٍ تحديث المحتوى",
         "refreshingDescription": "جارٍ تحميل المحتوى المحدث...",
-        "createError": "خطأ في إنشاء قسم القسم",
-        "updateError": "خطأ في تحديث قسم القسم",
+        "createError": "خطأ في إنشاء القسم الرئيسي",
+        "updateError": "خطأ في تحديث القسم الرئيسي",
         "deleteError": "خطأ في حذف السؤال الشائع",
         "deleteErrorDescription": "حدث خطأ أثناء حذف السؤال الشائع من قاعدة البيانات",
         "errorDescription": "حدث خطأ غير معروف"
@@ -3534,22 +3534,22 @@
       "answerLabel": "الإجابة",
       "answerPlaceholder": "أدخل الإجابة التفصيلية لهذا السؤال",
       "socialLinks": {
-        "title": "الروابط الاجتماعية",
+        "title": "الروابط ",
         "appliesToAll": "يُطبق على جميع اللغات",
-        "addButton": "إضافة رابط اجتماعي",
+        "addButton": "إضافة رابط ",
         "platformLabel": "اسم المنصة",
         "platformPlaceholder": "مثال: تويتر, فيسبوك",
         "urlLabel": "الرابط",
         "urlPlaceholder": "https://example.com",
-        "imageLabel": "صورة الرابط الاجتماعي",
+        "imageLabel": "صورة الرابط ",
         "imageNote": "سيتم استخدام هذه الصورة عبر جميع اللغات",
-        "noLinks": "لم تُضف روابط اجتماعية بعد",
-        "noLinksDescription": "انقر على \"إضافة رابط اجتماعي\" للبدء",
-        "linkCount": "{{count}} رابط(روابط) اجتماعي(ة)"
+        "noLinks": "لم تُضف روابط  بعد",
+        "noLinksDescription": "انقر على \"إضافة رابط \" للبدء",
+        "linkCount": "{{count}} رابط(روابط) (ة)"
       }
   },
   "faqLanguageCard": {
-      "title": "قسم القسم",
+      "title": "القسم الرئيسي",
       "description": "إدارة محتوى القسم للغة {{language}}",
       "addFaqButton": "إضافة سؤال شائع"
   },
@@ -3588,7 +3588,7 @@
         "createTitle": "إنشاء قسم جديد",
         "editTitle": "تحرير قسم",
         "createSubtitle": "إنشاء قسم جديد بمحتوى متعدد اللغات",
-        "editSubtitle": "تحرير محتوى \"{{name}}\" عبر لغات متعددة",
+        "editSubtitle": "تحرير محتوى  عبر لغات متعددة",
         "defaultPartnerName": "قسم جديد"
       },
       "tabs": {
@@ -3682,7 +3682,7 @@
         "createTitle": " إنشاء قسم جديدة",
         "editTitle": "تحرير  القسم",
         "createSubtitle": "إنشاء  اقسام جديدة بمحتوى متعدد اللغات",
-        "editSubtitle": "تحرير محتوى \"{{name}}\" عبر لغات متعددة",
+        "editSubtitle": "تحرير محتوى  عبر لغات متعددة",
         "defaultContactName": " اقسام جديدة"
       },
       "tabs": {
@@ -3955,157 +3955,157 @@
   "addFooter": {
       "title": {
         "create": "إنشاء تذييل جديد",
-        "edit": "تحرير التذييل"
+        "edit": "تحرير القسم"
       },
       "subtitle": {
         "create": "إنشاء تذييل جديد بمحتوى متعدد اللغات",
-        "edit": "تحرير محتوى \"{{name}}\" عبر لغات متعددة"
+        "edit": "تحرير محتوى عبر لغات متعددة"
       },
       "tabs": {
-        "footer": "التذييل",
+        "footer": "القسم",
         "specialLinks": "الروابط الخاصة"
       },
       "form": {
         "defaultName": "تذييل جديد",
-        "saveButton": "حفظ التذييل",
+        "saveButton": "حفظ القسم",
         "cancelButton": "إلغاء",
         "loading": "جاري التحميل...",
         "saving": "جاري الحفظ..."
       },
       "navigation": {
-        "backToList": "العودة إلى قائمة التذييل"
+        "backToList": "العودة إلى قائمة القسم"
       },
       "messages": {
-        "saveSuccess": "تم حفظ التذييل بنجاح",
-        "saveError": "فشل في حفظ التذييل",
-        "loadError": "فشل في تحميل بيانات التذييل"
+        "saveSuccess": "تم حفظ القسم بنجاح",
+        "saveError": "فشل في حفظ القسم",
+        "loadError": "فشل في تحميل بيانات القسم"
       }
   },
   "footerForm": {
       "card": {
-        "title": "قسم التذييل {{index}}",
-        "description": "وصف التذييل",
+        "title": "القسم الرئيسي {{index}}",
+        "description": "الوصف",
         "socialLinks": {
-          "title": "الروابط الاجتماعية",
+          "title": "الروابط ",
           "appliesToAll": "ينطبق على جميع اللغات",
           "collapse": "طي",
           "expand": "توسيع",
-          "linkTitle": "الرابط الاجتماعي {{index}}",
-          "urlLabel": "رابط URL الاجتماعي",
+          "linkTitle": "الرابط  {{index}}",
+          "urlLabel": "رابط URL ",
           "urlPlaceholder": "https://example.com",
-          "imageLabel": "صورة الرابط الاجتماعي",
+          "imageLabel": "صورة الرابط ",
           "imageHelper": "سيتم استخدام هذه الصورة عبر جميع اللغات",
           "emptyState": {
-            "title": "لم يتم إضافة روابط اجتماعية بعد",
-            "description": "انقر على \"إضافة رابط اجتماعي\" للبدء"
+            "title": "لم يتم إضافة روابط  بعد",
+            "description": "انقر على \"إضافة رابط \" للبدء"
           },
-          "addButton": "إضافة رابط اجتماعي"
+          "addButton": "إضافة رابط "
         },
-        "descriptionPlaceholder": "أدخل وصف التذييل"
+        "descriptionPlaceholder": "أدخل الوصف"
       },
       "languageCard": {
-        "title": "قسم التذييل",
-        "description": "إدارة محتوى التذييل للغة {{language}}"
+        "title": "القسم الرئيسي",
+        "description": "إدارة محتوى القسم للغة {{language}}"
       },
       "form": {
-        "loading": "جاري تحميل بيانات قسم التذييل...",
+        "loading": "جاري تحميل بيانات القسم الرئيسي...",
         "saving": {
-          "updating": "تحديث التذييل",
-          "creating": "إنشاء التذييل",
+          "updating": "تحديث القسم",
+          "creating": "إنشاء القسم",
           "description": "يرجى الانتظار بينما نحفظ التغييرات..."
         },
         "validation": {
-          "countMismatch": "يجب أن يكون لكل لغة نفس عدد التذييلات"
+          "countMismatch": "يجب أن يكون لكل لغة نفس عدد القسمات"
         },
         "buttons": {
           "saving": "جاري الحفظ...",
-          "update": "تحديث التذييل",
-          "save": "حفظ التذييل"
+          "update": "تحديث القسم",
+          "save": "حفظ القسم"
         }
       },
       "delete": {
-        "title": "حذف التذييل",
-        "confirmText": "حذف التذييل",
+        "title": "حذف القسم",
+        "confirmText": "حذف القسم",
         "cannotRemove": "لا يمكن الإزالة",
         "needAtLeast": "تحتاج إلى تذييل واحد على الأقل"
       },
       "toast": {
-        "footerAdded": "تم إضافة التذييل",
+        "footerAdded": "تم إضافة القسم",
         "footerAddedDesc": "تم إضافة تذييل جديد. يرجى ملء التفاصيل وحفظ التغييرات.",
-        "footerRemoved": "تم إزالة التذييل",
-        "footerRemovedDesc": "تم إزالة التذييل بنجاح.",
-        "footerDeleted": "تم حذف التذييل",
-        "footerDeletedDesc": "تم حذف التذييل {{index}} من قاعدة البيانات",
-        "saveSuccess": "تم حفظ قسم التذييل بنجاح!",
+        "footerRemoved": "تم إزالة القسم",
+        "footerRemovedDesc": "تم إزالة القسم بنجاح.",
+        "footerDeleted": "تم حذف القسم",
+        "footerDeletedDesc": "تم حذف القسم {{index}} من قاعدة البيانات",
+        "saveSuccess": "تم حفظ القسم الرئيسي بنجاح!",
         "saveSuccessDesc": "تم حفظ جميع المحتويات.",
-        "updateSuccess": "تم تحديث قسم التذييل بنجاح!",
-        "saveError": "خطأ في حفظ قسم التذييل",
-        "updateError": "خطأ في تحديث قسم التذييل",
+        "updateSuccess": "تم تحديث القسم الرئيسي بنجاح!",
+        "saveError": "خطأ في حفظ القسم الرئيسي",
+        "updateError": "خطأ في تحديث القسم الرئيسي",
         "loadError": "خطأ في تحميل البيانات",
-        "loadErrorDesc": "فشل في تحميل بيانات التذييل. يرجى المحاولة مرة أخرى.",
+        "loadErrorDesc": "فشل في تحميل بيانات القسم. يرجى المحاولة مرة أخرى.",
         "validationError": "خطأ في التحقق",
         "validationErrorDesc": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح.",
-        "validationCountError": "يجب أن يكون لجميع اللغات نفس عدد التذييلات.",
+        "validationCountError": "يجب أن يكون لجميع اللغات نفس عدد القسمات.",
         "imageUploadError": "خطأ في رفع الصورة",
-        "imageUploadErrorDesc": "فشل في رفع الصورة للرابط الاجتماعي {{linkIndex}} في التذييل {{footerIndex}}.",
+        "imageUploadErrorDesc": "فشل في رفع الصورة للرابط  {{linkIndex}} في القسم {{footerIndex}}.",
         "removeError": "خطأ",
-        "removeErrorDesc": "حدث خطأ أثناء إزالة التذييل.",
+        "removeErrorDesc": "حدث خطأ أثناء إزالة القسم.",
         "reloadWarning": "تحذير",
         "reloadWarningDesc": "فشل في إعادة تحميل البيانات بعد الحفظ."
       },
       "socialLinks": {
-        "title": "روابط اجتماعية للتذييل {{index}}",
+        "title": "روابط   {{index}}",
         "appliesToAll": "يُطبق على جميع اللغات",
         "collapse": "طي",
         "expand": "توسيع",
-        "linkTitle": "رابط اجتماعي {{index}}",
-        "urlLabel": "رابط الرابط الاجتماعي",
+        "linkTitle": "رابط {{index}}",
+        "urlLabel": "رابط  ",
         "urlPlaceholder": "https://example.com",
-        "imageLabel": "صورة الرابط الاجتماعي",
+        "imageLabel": "صورة الرابط ",
         "imageHelper": "سيتم استخدام هذه الصورة عبر جميع اللغات",
-        "linkTitleImage": "صورة الرابط الاجتماعي {{index}}",
+        "linkTitleImage": "صورة الرابط  {{index}}",
         "emptyState": {
-          "title": "لم تُضف روابط اجتماعية بعد",
-          "description": "انقر على \"إضافة رابط اجتماعي\" للبدء"
+          "title": "لم تُضف روابط  بعد",
+          "description": "انقر على \"إضافة رابط \" للبدء"
         },
-        "addButton": "إضافة رابط اجتماعي"
+        "addButton": "إضافة رابط "
       }
     },
   "specialLinks": {
       "languageCard": {
-        "title": "قسم التذييل",
-        "description": "إدارة محتوى التذييل لـ {{langCode}}",
+        "title": "القسم الرئيسي",
+        "description": "إدارة محتوى القسم لـ {{langCode}}",
         "buttons": {
           "addFooter": "إضافة تذييل"
         }
       },
       "card": {
-        "title": "قسم التذييل {{number}}",
+        "title": "القسم الرئيسي {{number}}",
         "translationMode": "وضع الترجمة",
-        "socialLinksCount": "{{count}} رابط (روابط) اجتماعية",
+        "socialLinksCount": "{{count}} رابط (روابط) ",
         "footerTitle": {
-          "label": "عنوان التذييل",
+          "label": "عنوان القسم",
           "translate": "(ترجم)",
-          "placeholder": "أدخل عنوان التذييل"
+          "placeholder": "أدخل عنوان القسم"
         },
         "socialLinks": {
-          "title": "الروابط الاجتماعية",
+          "title": "الروابط ",
           "translateNames": "ترجمة الأسماء",
           "primaryControl": "التحكم الأساسي",
-          "titleWithNumber": "رابط اجتماعي {{number}}",
+          "titleWithNumber": "رابط  {{number}}",
           "buttons": {
             "collapse": "طي",
             "expand": "توسيع",
-            "add": "إضافة رابط اجتماعي"
+            "add": "إضافة رابط "
           },
-          "noLinks": "لم تُضف روابط اجتماعية بعد",
+          "noLinks": "لم تُضف روابط  بعد",
           "linkName": {
             "label": "اسم الرابط",
             "translate": "(ترجم هذا)",
             "placeholder": "أدخل اسم الرابط"
           },
           "url": {
-            "label": "رابط الرابط الاجتماعي",
+            "label": " الرابط ",
             "placeholder": "https://example.com"
           }
         },
@@ -4115,22 +4115,22 @@
         }
       },
       "form": {
-        "loading": "جارٍ تحميل بيانات قسم التذييل...",
+        "loading": "جارٍ تحميل بيانات القسم الرئيسي...",
         "saving": {
-          "updating": "تحديث التذييلات",
-          "creating": "إنشاء التذييلات",
+          "updating": "تحديث القسمات",
+          "creating": "إنشاء القسمات",
           "description": "يرجى الانتظار بينما نحفظ التغييرات..."
         },
         "validation": {
-          "countMismatch": "يجب أن تحتوي كل لغة على نفس عدد التذييلات",
+          "countMismatch": "يجب أن تحتوي كل لغة على نفس عدد القسمات",
           "errorTitle": "خطأ في التحقق",
-          "errorDescription": "يجب أن تحتوي جميع اللغات على نفس عدد التذييلات.",
+          "errorDescription": "يجب أن تحتوي جميع اللغات على نفس عدد القسمات.",
           "fieldsError": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح."
         },
         "buttons": {
           "saving": "جارٍ الحفظ...",
-          "update": "تحديث التذييلات",
-          "save": "حفظ التذييلات"
+          "update": "تحديث القسمات",
+          "save": "حفظ القسمات"
         },
         "toasts": {
           "cannotRemove": {
@@ -4138,16 +4138,16 @@
             "description": "يجب أن يكون لديك تذييل واحد على الأقل"
           },
           "footerDeleted": {
-            "title": "تم حذف التذييل",
-            "description": "تم حذف التذييل {{number}} من قاعدة البيانات"
+            "title": "تم حذف القسم",
+            "description": "تم حذف القسم {{number}} من قاعدة البيانات"
           },
           "footerRemoved": {
-            "title": "تم إزالة التذييل",
-            "description": "تم إزالة التذييل بنجاح."
+            "title": "تم إزالة القسم",
+            "description": "تم إزالة القسم بنجاح."
           },
           "errorRemoving": {
             "title": "خطأ",
-            "description": "حدث خطأ أثناء إزالة التذييل."
+            "description": "حدث خطأ أثناء إزالة القسم."
           },
           "footerAdded": {
             "title": "تم إضافة تذييل",
@@ -4155,16 +4155,16 @@
           },
           "errorLoading": {
             "title": "خطأ في تحميل البيانات",
-            "description": "فشل تحميل بيانات التذييل. يرجى المحاولة مرة أخرى."
+            "description": "فشل تحميل بيانات القسم. يرجى المحاولة مرة أخرى."
           },
           "success": {
-            "updated": "تم تحديث قسم التذييلات بنجاح!",
-            "created": "تم إنشاء قسم التذييلات بنجاح!",
+            "updated": "تم تحديث القسم الرئيسيات بنجاح!",
+            "created": "تم إنشاء القسم الرئيسيات بنجاح!",
             "allContentSaved": "تم حفظ جميع المحتويات."
           },
           "errorSaving": {
-            "updated": "خطأ في تحديث قسم التذييلات",
-            "created": "خطأ في إنشاء قسم التذييلات",
+            "updated": "خطأ في تحديث القسم الرئيسيات",
+            "created": "خطأ في إنشاء القسم الرئيسيات",
             "unknown": "حدث خطأ غير معروف"
           },
           "warningReload": {
@@ -4173,8 +4173,8 @@
           }
         },
         "deleteDialog": {
-          "title": "حذف التذييل",
-          "confirm": "حذف التذييل"
+          "title": "حذف القسم",
+          "confirm": "حذف القسم"
         }
       }
     },
@@ -4202,7 +4202,7 @@
         "portfolio": "المعرض",
         "testimonials": "الشهادات",
         "contact": "القسم",
-        "footer": "التذييل",
+        "footer": "القسم",
         "blog": "القسم",
         "team": "الفريق",
         "pricing": "الأسعار",
@@ -4365,7 +4365,7 @@
       "createTitle": "إنشاء عنصر جديدالقسم",
       "editTitle": "تحرير عنصرالقسم",
       "createSubtitle": "إنشاء عنصر جديدالقسم مع محتوى متعدد اللغات",
-      "editSubtitle": "تحرير محتوى \"{{itemName}}\" بلغات متعددة",
+      "editSubtitle": "تحرير محتوى  بلغات متعددة",
       "editSubtitleDefault": "تحرير محتوى عنصرالقسم بلغات متعددة",
       "defaultItemName": "لماذا تختارنا جديد",
       "tabLabel": "لماذا تختارنا",
@@ -4403,7 +4403,7 @@
       "benefitCountMismatch": "يجب أن تحتوي كل لغة على نفس عدد المزايا",
       "saveChoseUs": "حفظالقسم",
       "updateChoseUs": "تحديثالقسم",
-      "deleteProcess": "حذف العملية",
+      "deleteProcess": "حذف القسم",
       "saving": "جارٍ الحفظ..."
     },
     "ChooseUsCard": {
@@ -4418,7 +4418,7 @@
       "controlled_by_primary_language": "(يتم التحكم به بواسطة اللغة الأساسية)"
     },
      "ChooseUsLanguageCard": {
-    "sectionLabel": "قسم لماذا نحن",
+    "sectionLabel": "القسم الرئيسي",
     "badgeFirstLang": "اللغة الافتراضية",
     "description": "إدارة محتوى الفوائد للغة {{lang}}",
     "addBenefit": "إضافة فائدة"
@@ -4433,7 +4433,7 @@
       "NavigationLanguages" : "لغات القسم",
       "NavigationSettings" : "إعدادات القسم",
       "AddSubNavigation" : "إضافة تنقل فرعي",
-      "enable": "تفعيل القسم الفرعي لهذه الخدمة",
+      "enable": "تفعيل التنقل الفرعي لهذا القسم",
       "ShowNavigation": "إظهار التنقل",
       "NavigationCurrentlyVisible": "التنقل مرئي حاليًا للمستخدمين",
       "NavigationCurrentlyHidden": "التنقل مخفي حاليًا",
@@ -4444,7 +4444,7 @@
       "createTitle": "إنشاء عنصر قسم جديد",
       "editTitle": "تعديل عنصر قسم",
       "createSubtitle": "إنشاء عنصرقسم جديد بمحتوى متعدد اللغات",
-      "editSubtitle": "تعديل محتوى \"{{itemName}}\" عبر لغات متعددة",
+      "editSubtitle": "تعديل محتوى عبر لغات متعددة",
       "editSubtitleDefault": "تعديل محتوى عنصرقسم عبر لغات متعددة",
       "defaultItemName": "واجهة تقنية جديد",
       "tabLabel": "بدء إنشاء قسم خاص",
@@ -4462,7 +4462,7 @@
       "createTitle": "إنشاء عنصر قسم جديد",
       "editTitle": "تعديل عنصر قسم",
       "createSubtitle": "إنشاء عنصر قسم جديد بمحتوى متعدد اللغات",
-      "editSubtitle": "تعديل محتوى \"{{itemName}}\" عبر لغات متعددة",
+      "editSubtitle": "تعديل محتوى عبر لغات متعددة",
       "editSubtitleDefault": "تعديل محتوى عنصر قسم عبر لغات متعددة",
       "defaultItemName": "قسم جديدة",
       "tabLabel": "قسم",
@@ -4480,7 +4480,7 @@
       "createTitle": "إنشاء عنصر قسم جديد",
       "editTitle": "تعديل عنصر قسم",
       "createSubtitle": "إنشاء عنصر قسم جديد بمحتوى متعدد اللغات",
-      "editSubtitle": "تعديل محتوى \"{{itemName}}\" عبر لغات متعددة",
+      "editSubtitle": "تعديل محتوى  عبر لغات متعددة",
       "editSubtitleDefault": "تعديل محتوى عنصر قسم عبر لغات متعددة",
       "defaultItemName": "قسم جديدة",
       "tabLabel": "قسم",
@@ -4503,5 +4503,4 @@
       "save": "حفظ",
       "cancel": "إلغاء"
     }
-  
 }

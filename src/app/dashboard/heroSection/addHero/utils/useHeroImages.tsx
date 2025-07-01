@@ -118,8 +118,7 @@ export const useHeroImages = (form: UseFormReturn<any>) => {
   const HeroImageUploader = ({
     featureIndex,
     langCode,
-    label = "Hero Image",
-    helperText = "(applies to all languages)",
+    label = "Image",
   }: {
     featureIndex: number;
     langCode: string;
@@ -132,7 +131,6 @@ export const useHeroImages = (form: UseFormReturn<any>) => {
     return (
       <LabeledImageUploader
         label={label}
-        helperText={helperText}
         imageValue={imageValue}
         inputId={inputId}
         onUpload={(file) => handleHeroImageUpload(featureIndex, file)}

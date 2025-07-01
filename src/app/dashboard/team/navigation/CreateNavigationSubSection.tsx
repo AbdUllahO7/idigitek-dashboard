@@ -28,6 +28,7 @@ import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations"
 import { ActionButton, CancelButton, ErrorCard, LoadingCard, MainFormCard, SuccessCard, WarningCard } from "@/src/utils/MainSectionComponents"
 import { ClickableImage } from "@/src/components/ClickableImage"
+import { Button } from "@/src/components/ui/button"
 
 // 🎯 NEW: Extended interface to include section info
 interface CreateNavigationSubSectionProps {
@@ -156,6 +157,7 @@ const NavigationLanguageCard = ({
   const langCode = String(language.languageID);
   const hasMatchingLanguage = sectionInfo?.name?.hasOwnProperty(langCode);
   const sectionValue = hasMatchingLanguage ? sectionInfo.name[langCode] : null;
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -166,15 +168,16 @@ const NavigationLanguageCard = ({
           ? 'border-blue-500 dark:border-blue-400' 
           : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
       }`}
+      dir={isRtl ? 'rtl' : 'ltr'}
     >
-      {/* Language Header */}
+      {/* Language Header with RTL support */}
       <div className={`px-6 py-4 border-b border-gray-200 dark:border-gray-700 ${
         isDefault 
           ? 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20' 
           : 'bg-gray-50 dark:bg-gray-800/50'
       }`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+        <div className={`flex items-center justify-between ${isRtl ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-center ${isRtl ? 'space-x-reverse space-x-3' : 'space-x-3'}`}>
             <div className={`p-2 rounded-full ${
               isDefault 
                 ? 'bg-blue-500 text-white' 
@@ -184,24 +187,21 @@ const NavigationLanguageCard = ({
             </div>
             <div>
               <div className="flex items-center">
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mr-2 ml-2">
+                <h3 className={`font-semibold text-gray-900 dark:text-gray-100 ${isRtl ? 'ml-2' : 'mr-2'}`}>
                   {language.name || language.language}
                 </h3>
-            
               </div>
-              <div className="flex items-center space-x-2">
-                <p className="text-sm text-gray-500 dark:text-gray-400 mr-2 ml-2">
+              <div className={`flex items-center ${isRtl ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+                <p className={`text-sm text-gray-500 dark:text-gray-400 ${isRtl ? 'ml-2' : 'mr-2'}`}>
                   {language.languageID} {isDefault && '(Default)'}
                 </p>
-              
               </div>
             </div>
           </div>
-       
         </div>
       </div>
 
-      {/* Form Content */}
+      {/* Form Content with RTL support */}
       <div className="p-6">
         <Form {...form}>
           <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
@@ -228,10 +228,10 @@ const NavigationLanguageCard = ({
 
                     return (
                       <FormItem className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-100 dark:border-gray-800 shadow-sm">
-                        <FormLabel className="text-gray-800 dark:text-gray-200 font-medium flex items-center">
-                          {field.id === 'url' && <Link size={16} className="mr-2" />}
+                        <FormLabel className={`text-gray-800 dark:text-gray-200 font-medium flex items-center ${isRtl ? 'flex-row-reverse' : ''}`}>
+                          {field.id === 'url' && <Link size={16} className={isRtl ? 'ml-2' : 'mr-2'} />}
                           {field.label}
-                          {field.required && <span className="text-red-500 ml-1">*</span>}
+                          {field.required && <span className={`text-red-500 ${isRtl ? 'mr-1' : 'ml-1'}`}>*</span>}
                         </FormLabel>
                         
                         <FormControl>
@@ -243,14 +243,15 @@ const NavigationLanguageCard = ({
                                 (isFromSectionData || isURLFromSection) 
                                   ? 'bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800' 
                                   : ''
-                              }`}
+                              } ${isRtl ? 'text-right' : 'text-left'}`}
+                              dir={isRtl ? 'rtl' : 'ltr'}
                             />
                             
-                            {/* Show section data preview if available but not used */}
+                            {/* Show section data preview if available but not used - with RTL support */}
                             {hasMatchingLanguage && !isFromSectionData && 
                              (field.id === 'navigationLabel' || field.id === 'label' || field.id === 'title' || field.id === 'name') && 
                              !formField.value && (
-                              <div className="absolute right-2 top-2 flex items-center space-x-2">
+                              <div className={`absolute top-2 flex items-center space-x-2 ${isRtl ? 'left-2 space-x-reverse' : 'right-2'}`}>
                                 <span className="text-xs text-gray-400 dark:text-gray-500">
                                   Available: "{sectionValue}"
                                 </span>
@@ -1335,46 +1336,73 @@ if (languages.length === 0) {
   )
 }
 
-// 🆕 NEW: Always render the Navigation Visibility switch at the top
-const renderNavigationVisibilitySwitch = () => (
+// Complete RTL-aware Navigation Visibility Switch Component
+const NavigationVisibilitySwitch = ({ 
+  isNavigationVisible, 
+  handleNavigationVisibilityChange, 
+  isUpdatingVisibility, 
+  subsection, 
+  t, 
+  isRtl 
+}: {
+  isNavigationVisible: boolean;
+  handleNavigationVisibilityChange: (isVisible: boolean) => void;
+  isUpdatingVisibility: boolean;
+  subsection: any;
+  t: any;
+  isRtl: boolean;
+}) => (
   <Card className="mb-6">
     <CardHeader>
-      <CardTitle className="flex items-center text-lg">
-        <Navigation className="h-5 w-5 mr-3 text-blue-600 dark:text-blue-400" />
+      <CardTitle className={`flex items-center text-lg ${isRtl ? 'flex-row-reverse' : ''}`}>
+        <Navigation className={`h-5 w-5 text-blue-600 dark:text-blue-400 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+        <span>{t('Navigation.NavigationSettings', 'إعدادات القسم')}</span>
       </CardTitle>
     </CardHeader>
     <CardContent>
-
-      <div className="flex flex-row items-center justify-between rounded-lg border p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
-        <div className="space-y-0.5">
-          <div className="flex items-center">
-            {isNavigationVisible ? (
-              <Eye className="h-4 w-4 mr-2 text-green-600 dark:text-green-400" />
-            ) : (
-              <EyeOff className="h-4 w-4 mr-2 text-red-600 dark:text-red-400" />
-            )}
-            <span className="text-base font-medium text-gray-900 dark:text-gray-100">
-              {t('Navigation.ShowNavigation', 'Show Navigation')}
-            </span>
+      <div 
+        className="rounded-lg border p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800"
+        dir={isRtl ? 'rtl' : 'ltr'}
+      >
+        {/* RTL-aware layout container */}
+        <div className={`flex items-center justify-between w-full ${isRtl ? '' : ''}`}>
+          {/* Text content - positioned based on RTL */}
+          <div className={`flex-1 space-y-0.5 ${isRtl ? 'text-right' : 'text-left'}`}>
+            <div className={`flex items-center ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
+              {isNavigationVisible ? (
+                <Eye className={`h-4 w-4 text-green-600 dark:text-green-400 ${isRtl ? 'ml-2' : 'mr-2'}`} />
+              ) : (
+                <EyeOff className={`h-4 w-4 text-red-600 dark:text-red-400 ${isRtl ? 'ml-2' : 'mr-2'}`} />
+              )}
+              <span className="text-base font-medium text-gray-900 dark:text-gray-100">
+                {t('Navigation.ShowNavigation', 'إظهار التنقل')}
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {isNavigationVisible
+                ? t('Navigation.NavigationCurrentlyVisible', 'التنقل مرئي حالياً للمستخدمين')
+                : t('Navigation.NavigationCurrentlyHidden', 'التنقل مخفي حالياً عن المستخدمين')
+              }
+            </p>
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {isNavigationVisible
-              ? t('Navigation.NavigationCurrentlyVisible', 'Navigation is currently visible to users')
-              : t('Navigation.NavigationCurrentlyHidden', 'Navigation is currently hidden from users')
-            }
-          </p>
+          
+          {/* Switch container with proper RTL positioning */}
+          <div className={`flex-shrink-0 ${isRtl ? 'mr-4' : 'ml-4'}`}>
+            <div className={`${isRtl ? 'transform scale-x-[-1]' : ''}`}>
+              <Switch
+                checked={isNavigationVisible}
+                onCheckedChange={handleNavigationVisibilityChange}
+                disabled={isUpdatingVisibility || !subsection?._id}
+                className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-400"
+              />
+            </div>
+          </div>
         </div>
-        <Switch
-          checked={isNavigationVisible}
-          onCheckedChange={handleNavigationVisibilityChange}
-          disabled={isUpdatingVisibility || !subsection?._id} // Disable if no subsection exists
-          className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-400"
-        />
       </div>
       
-      {/* Status indicator */}
-      <div className="mt-3 flex items-center text-sm">
-        <div className={`w-2 h-2 rounded-full mr-2 ${
+      {/* Status indicator with RTL support */}
+      <div className={`mt-3 flex items-center text-sm ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
+        <div className={`w-2 h-2 rounded-full ${isRtl ? 'ml-2' : 'mr-2'} ${
           isNavigationVisible 
             ? 'bg-green-500 animate-pulse' 
             : 'bg-red-500'
@@ -1384,13 +1412,231 @@ const renderNavigationVisibilitySwitch = () => (
           : 'text-red-700 dark:text-red-300'
         }>
           {isNavigationVisible 
-            ? t('Navigation.StatusVisible', 'Status: Visible')
-            : t('Navigation.StatusHidden', 'Status: Hidden')
+            ? t('Navigation.StatusVisible', 'الحالة: مرئي')
+            : t('Navigation.StatusHidden', 'الحالة: مخفي')
           }
         </span>
         {isUpdatingVisibility && (
-          <span className="ml-2 text-blue-600 dark:text-blue-400 text-xs">
-            {t('Navigation.Updating', 'Updating...')}
+          <span className={`text-blue-600 dark:text-blue-400 text-xs ${isRtl ? 'mr-2' : 'ml-2'}`}>
+            {t('Navigation.Updating', 'جاري التحديث...')}
+          </span>
+        )}
+      </div>
+    </CardContent>
+  </Card>
+);
+
+// Updated render function
+// Simple RTL-fixed switch replacement - just copy this function
+const renderNavigationVisibilitySwitch = () => (
+  <Card className="mb-6">
+    <CardHeader>
+      <CardTitle className={`flex items-center text-lg ${isRtl ? 'flex-row-reverse' : ''}`}>
+        <Navigation className={`h-5 w-5 text-blue-600 dark:text-blue-400 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+        <span>{t('Navigation.NavigationSettings', 'إعدادات القسم')}</span>
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div 
+        className="rounded-lg border p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800"
+        dir={isRtl ? 'rtl' : 'ltr'}
+      >
+        {/* Use CSS Grid for proper RTL layout */}
+        <div className={`grid ${isRtl ? 'grid-cols-[1fr_auto]' : 'grid-cols-[1fr_auto]'} gap-4 items-center`}>
+          {/* Text content */}
+          <div className={`space-y-0.5 ${isRtl ? 'order-2 text-right' : 'order-1 text-left'}`}>
+            <div className={`flex items-center ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
+              {isNavigationVisible ? (
+                <Eye className={`h-4 w-4 text-green-600 dark:text-green-400 ${isRtl ? 'ml-2' : 'mr-2'}`} />
+              ) : (
+                <EyeOff className={`h-4 w-4 text-red-600 dark:text-red-400 ${isRtl ? 'ml-2' : 'mr-2'}`} />
+              )}
+              <span className="text-base font-medium text-gray-900 dark:text-gray-100">
+                {t('Navigation.ShowNavigation', 'إظهار التنقل')}
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {isNavigationVisible
+                ? t('Navigation.NavigationCurrentlyVisible', 'التنقل مرئي حالياً للمستخدمين')
+                : t('Navigation.NavigationCurrentlyHidden', 'التنقل مخفي حالياً عن المستخدمين')
+              }
+            </p>
+          </div>
+          
+          {/* Custom Switch for RTL */}
+          <div className={`${isRtl ? 'order-1' : 'order-2'}`}>
+            <button
+              type="button"
+              onClick={() => handleNavigationVisibilityChange(!isNavigationVisible)}
+              disabled={isUpdatingVisibility || !subsection?._id}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                isNavigationVisible 
+                  ? 'bg-green-500' 
+                  : 'bg-red-400'
+              } ${isUpdatingVisibility || !subsection?._id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+              role="switch"
+              aria-checked={isNavigationVisible}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                  isNavigationVisible 
+                    ? isRtl 
+                      ? 'translate-x-[-1.25rem]'  // RTL: move left when ON
+                      : 'translate-x-5'          // LTR: move right when ON
+                    : isRtl
+                      ? 'translate-x-[-0.25rem]' // RTL: slight left when OFF
+                      : 'translate-x-1'          // LTR: slight right when OFF
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Status indicator */}
+      <div className={`mt-3 flex items-center text-sm ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
+        <div className={`w-2 h-2 rounded-full ${isRtl ? 'ml-2' : 'mr-2'} ${
+          isNavigationVisible 
+            ? 'bg-green-500 animate-pulse' 
+            : 'bg-red-500'
+        }`} />
+        <span className={isNavigationVisible 
+          ? 'text-green-700 dark:text-green-300' 
+          : 'text-red-700 dark:text-red-300'
+        }>
+          {isNavigationVisible 
+            ? t('Navigation.StatusVisible', 'الحالة: مرئي')
+            : t('Navigation.StatusHidden', 'الحالة: مخفي')
+          }
+        </span>
+        {isUpdatingVisibility && (
+          <span className={`text-blue-600 dark:text-blue-400 text-xs ${isRtl ? 'mr-2' : 'ml-2'}`}>
+            {t('Navigation.Updating', 'جاري التحديث...')}
+          </span>
+        )}
+      </div>
+    </CardContent>
+  </Card>
+);
+
+// Alternative approach - Custom RTL Switch Component
+const RTLAwareSwitch = ({ 
+  checked, 
+  onCheckedChange, 
+  disabled, 
+  isRtl 
+}: {
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+  disabled?: boolean;
+  isRtl: boolean;
+}) => {
+  return (
+    <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 ${
+      checked 
+        ? 'bg-green-500' 
+        : 'bg-red-400'
+    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+      <Button
+        type="button"
+        className={`${
+          checked 
+            ? isRtl 
+              ? 'translate-x-[-1.25rem]' // Move left in RTL when checked
+              : 'translate-x-5'           // Move right in LTR when checked
+            : isRtl
+              ? 'translate-x-[-0.25rem]'  // Slight left in RTL when unchecked
+              : 'translate-x-1'           // Slight right in LTR when unchecked
+        } inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out focus:outline-none`}
+        onClick={() => !disabled && onCheckedChange(!checked)}
+        disabled={disabled}
+        aria-checked={checked}
+        role="switch"
+      />
+    </div>
+  );
+};
+
+// Usage with custom switch
+const NavigationVisibilitySwitchCustom = ({ 
+  isNavigationVisible, 
+  handleNavigationVisibilityChange, 
+  isUpdatingVisibility, 
+  subsection, 
+  t, 
+  isRtl 
+}: {
+  isNavigationVisible: boolean;
+  handleNavigationVisibilityChange: (isVisible: boolean) => void;
+  isUpdatingVisibility: boolean;
+  subsection: any;
+  t: any;
+  isRtl: boolean;
+}) => (
+  <Card className="mb-6">
+    <CardHeader>
+      <CardTitle className={`flex items-center text-lg ${isRtl ? 'flex-row-reverse' : ''}`}>
+        <Navigation className={`h-5 w-5 text-blue-600 dark:text-blue-400 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+        <span>{t('Navigation.NavigationSettings', 'إعدادات القسم')}</span>
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div 
+        className="rounded-lg border p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800"
+        dir={isRtl ? 'rtl' : 'ltr'}
+      >
+        <div className={`flex items-center justify-between w-full`}>
+          {/* Text content */}
+          <div className={`flex-1 space-y-0.5 ${isRtl ? 'text-right order-2' : 'text-left order-1'}`}>
+            <div className={`flex items-center ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
+              {isNavigationVisible ? (
+                <Eye className={`h-4 w-4 text-green-600 dark:text-green-400 ${isRtl ? 'ml-2' : 'mr-2'}`} />
+              ) : (
+                <EyeOff className={`h-4 w-4 text-red-600 dark:text-red-400 ${isRtl ? 'ml-2' : 'mr-2'}`} />
+              )}
+              <span className="text-base font-medium text-gray-900 dark:text-gray-100">
+                {t('Navigation.ShowNavigation', 'إظهار التنقل')}
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {isNavigationVisible
+                ? t('Navigation.NavigationCurrentlyVisible', 'التنقل مرئي حالياً للمستخدمين')
+                : t('Navigation.NavigationCurrentlyHidden', 'التنقل مخفي حالياً عن المستخدمين')
+              }
+            </p>
+          </div>
+          
+          {/* Custom Switch */}
+          <div className={`flex-shrink-0 ${isRtl ? 'order-1 mr-4' : 'order-2 ml-4'}`}>
+            <RTLAwareSwitch
+              checked={isNavigationVisible}
+              onCheckedChange={handleNavigationVisibilityChange}
+              disabled={isUpdatingVisibility || !subsection?._id}
+              isRtl={isRtl}
+            />
+          </div>
+        </div>
+      </div>
+      
+      {/* Status indicator */}
+      <div className={`mt-3 flex items-center text-sm ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
+        <div className={`w-2 h-2 rounded-full ${isRtl ? 'ml-2' : 'mr-2'} ${
+          isNavigationVisible 
+            ? 'bg-green-500 animate-pulse' 
+            : 'bg-red-500'
+        }`} />
+        <span className={isNavigationVisible 
+          ? 'text-green-700 dark:text-green-300' 
+          : 'text-red-700 dark:text-red-300'
+        }>
+          {isNavigationVisible 
+            ? t('Navigation.StatusVisible', 'الحالة: مرئي')
+            : t('Navigation.StatusHidden', 'الحالة: مخفي')
+          }
+        </span>
+        {isUpdatingVisibility && (
+          <span className={`text-blue-600 dark:text-blue-400 text-xs ${isRtl ? 'mr-2' : 'ml-2'}`}>
+            {t('Navigation.Updating', 'جاري التحديث...')}
           </span>
         )}
       </div>

@@ -102,7 +102,7 @@ export const SocialLinksSection = memo(({
                         {socialLinkIndex + 1}
                       </div>
                       <h5 className="text-sm font-medium">
-                        {t('footerForm.socialLinks.linkTitle', 'Social Link {{index}}', { index: socialLinkIndex + 1 })}
+                        {t('footerForm.socialLinks.linkTitle', ' Link {{index}}', { index: socialLinkIndex + 1 })}
                       </h5>
                     </div>
                     <Button
@@ -122,7 +122,7 @@ export const SocialLinksSection = memo(({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-medium">
-                          {t('footerForm.socialLinks.urlLabel', 'Social Link URL')}
+                          {t('footerForm.socialLinks.urlLabel', ' Link URL')}
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -138,7 +138,7 @@ export const SocialLinksSection = memo(({
 
                   <div className="space-y-2">
                     <FormLabel className="text-sm font-medium">
-                      {t('footerForm.socialLinks.imageLabel', 'Social Link Image')}
+                      {t('footerForm.socialLinks.imageLabel', ' Link Image')}
                     </FormLabel>
                     {SocialLinkImageUploader ? (
                       <SocialLinkImageUploader
@@ -174,7 +174,7 @@ export const SocialLinksSection = memo(({
                             shouldValidate: true,
                           })
                         }}
-                        altText={t('footerForm.socialLinks.linkTitleImage', 'Social Link {{index}} image', { index: socialLinkIndex + 1 })}
+                        altText={t('footerForm.socialLinks.linkTitleImage', ' Link {{index}} image', { index: socialLinkIndex + 1 })}
                       />
                     )}
                   </div>

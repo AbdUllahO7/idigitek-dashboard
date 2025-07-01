@@ -201,7 +201,7 @@ export default function AddHero() {
       title={isCreateMode ? t("addHero.createTitle") : t("addHero.editTitle")}
       subtitle={isCreateMode 
         ? t("addHero.createSubtitle")
-        : `${t("addHero.editingPrefix")} "${sectionItemData?.data?.name || t("addHero.heroTabLabel")}" ${t("addHero.editSubtitle")}`}
+        : `${t("addHero.editingPrefix")}  ${t("addHero.editSubtitle")}`}
       backUrl={`${t("addHero.backUrlPath")}?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}

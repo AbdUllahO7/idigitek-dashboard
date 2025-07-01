@@ -31,7 +31,6 @@ import { SubSection } from "@/src/api/types/hooks/section.types";
 import { useWebsiteContext } from "@/src/providers/WebsiteContext";
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
-import { DeleteConfirmationDialog } from "@/src/components/DeleteConfirmationDialog";
 import { useSubsectionDeleteManager } from "@/src/hooks/DeleteSubSections/useSubsectionDeleteManager";
 
 // Main Component

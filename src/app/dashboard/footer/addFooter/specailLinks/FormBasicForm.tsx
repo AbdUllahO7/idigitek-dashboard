@@ -367,7 +367,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
         }
       );
 
-      // Normalize footer counts across languages and sync social link data
+      // Normalize footer counts across languages and sync  link data
       const allFormValues = form.getValues();
       const firstLangKey = Object.keys(allFormValues)[0];
       const maxFooterCount = allFormValues[firstLangKey]?.length || 1;
@@ -387,7 +387,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
         }
       });
 
-      // Sync social link data from the first language to all other languages
+      // Sync  link data from the first language to all other languages
       if (firstLangKey && allFormValues[firstLangKey]) {
         const primaryLanguageData = allFormValues[firstLangKey];
         Object.keys(allFormValues).forEach((langCode) => {
@@ -442,7 +442,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
       processFooteresData(completeSubsectionData.data);
     }, [completeSubsectionData, isLoadingSubsection, state.dataLoaded, slug, processFooteresData]);
 
-    // Modified useEffect to include social link data synchronization
+    // Modified useEffect to include  link data synchronization
     useEffect(() => {
       if (state.isLoadingData || !state.dataLoaded) return;
 
@@ -450,7 +450,7 @@ const SpecialFormBasicForm = forwardRef<any, FooterFormProps>(
         updateState({ hasUnsavedChanges: true });
         validateFormFooterCounts();
         
-        // Sync social link data if a linkType, URL, or sectionId field was changed
+        // Sync  link data if a linkType, URL, or sectionId field was changed
         if (name && typeof value === 'string') {
           syncSocialLinkData(name, value);
         }
@@ -569,13 +569,13 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
             if (footer.socialLinks) {
               footer.socialLinks.forEach((link: any, linkIndex) => {
                 if (!link.linkName || link.linkName.trim() === "") {
-                  validationErrors.push(`Footer ${footerIndex + 1}, Social Link ${linkIndex + 1} in ${langCode.toUpperCase()}: Link name is required`);
+                  validationErrors.push(`Footer ${footerIndex + 1},  Link ${linkIndex + 1} in ${langCode.toUpperCase()}: Link name is required`);
                 }
                 if (link.linkType === "custom" && (!link.url || link.url.trim() === "")) {
-                  validationErrors.push(`Footer ${footerIndex + 1}, Social Link ${linkIndex + 1} in ${langCode.toUpperCase()}: URL is required for custom links`);
+                  validationErrors.push(`Footer ${footerIndex + 1},  Link ${linkIndex + 1} in ${langCode.toUpperCase()}: URL is required for custom links`);
                 }
                 if (link.linkType === "section" && (!link.sectionId || link.sectionId.trim() === "")) {
-                  validationErrors.push(`Footer ${footerIndex + 1}, Social Link ${linkIndex + 1} in ${langCode.toUpperCase()}: Section selection is required for section links`);
+                  validationErrors.push(`Footer ${footerIndex + 1},  Link ${linkIndex + 1} in ${langCode.toUpperCase()}: Section selection is required for section links`);
                 }
               });
             }
@@ -874,10 +874,10 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
                   }
                 })
                 .catch((uploadError) => {
-                  console.error(`Image upload failed for Social Link ${j + 1} of Footer ${footerIndex}`, uploadError);
+                  console.error(`Image upload failed for  Link ${j + 1} of Footer ${footerIndex}`, uploadError);
                   toast({
                     title: "Image Upload Error",
-                    description: `Failed to upload image for Social Link ${j + 1} of Footer ${footerIndex}.`,
+                    description: `Failed to upload image for  Link ${j + 1} of Footer ${footerIndex}.`,
                     variant: "destructive",
                   });
                 });
@@ -898,7 +898,7 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
           // Don't delete if this element is in our processed list
           if (processedElementIds.has(el._id)) return false;
           
-          // Check if this is a social link element that should be deleted
+          // Check if this is a  link element that should be deleted
           const socialLinkMatch = el.name.match(/Special Footer (\d+) - SocialLink (\d+) - (Url|SectionId|LinkName|Image)/);
           if (socialLinkMatch) {
             const footerNum = parseInt(socialLinkMatch[1], 10);

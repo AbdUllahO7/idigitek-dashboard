@@ -3498,7 +3498,7 @@
         "platformPlaceholder": "e.g., Twitter, Facebook",
         "urlLabel": "URL",
         "urlPlaceholder": "https://example.com",
-        "imageLabel": "Social Link Image",
+        "imageLabel": " Link Image",
         "imageNote": "This image will be used across all languages",
         "noLinks": "No social links added yet",
         "noLinksDescription": "Click \"Add Social Link\" to get started",
@@ -3943,20 +3943,20 @@
         "title": "Footer Section {{index}}",
         "description": "Footer Description",
         "socialLinks": {
-          "title": "Social Links",
+          "title": " Links",
           "appliesToAll": "Applies to all languages",
           "collapse": "Collapse",
           "expand": "Expand",
-          "linkTitle": "Social Link {{index}}",
-          "urlLabel": "Social Link URL",
+          "linkTitle": " Link {{index}}",
+          "urlLabel": " Link URL",
           "urlPlaceholder": "https://example.com",
-          "imageLabel": "Social Link Image",
+          "imageLabel": " Link Image",
           "imageHelper": "This image will be used across all languages",
           "emptyState": {
             "title": "No social links added yet",
-            "description": "Click \"Add Social Link\" to get started"
+            "description": "Click \"Add  Link\" to get started"
           },
-          "addButton": "Add Social Link"
+          "addButton": "Add  Link"
         },
         "descriptionPlaceholder": "Enter footer description"
       },
@@ -4004,28 +4004,28 @@
         "validationErrorDesc": "Please fill all required fields correctly.",
         "validationCountError": "All languages must have the same number of footers.",
         "imageUploadError": "Image Upload Error",
-        "imageUploadErrorDesc": "Failed to upload image for Social Link {{linkIndex}} of Footer {{footerIndex}}.",
+        "imageUploadErrorDesc": "Failed to upload image for  Link {{linkIndex}} of Footer {{footerIndex}}.",
         "removeError": "Error",
         "removeErrorDesc": "There was an error removing the footer.",
         "reloadWarning": "Warning",
         "reloadWarningDesc": "Failed to reload data after save."
       },
       "socialLinks": {
-        "title": "Social Links for Footer {{index}}",
+        "title": " Links for Footer {{index}}",
         "appliesToAll": "Applies to all languages",
         "collapse": "Collapse",
         "expand": "Expand",
-        "linkTitle": "Social Link {{index}}",
-        "urlLabel": "Social Link URL",
+        "linkTitle": " Link {{index}}",
+        "urlLabel": " Link URL",
         "urlPlaceholder": "https://example.com",
-        "imageLabel": "Social Link Image",
+        "imageLabel": " Link Image",
         "imageHelper": "This image will be used across all languages",
-        "linkTitleImage": "Social Link {{index}} Image",
+        "linkTitleImage": " Link {{index}} Image",
         "emptyState": {
           "title": "No social links added yet",
-          "description": "Click \"Add Social Link\" to get started"
+          "description": "Click \"Add  Link\" to get started"
         },
-        "addButton": "Add Social Link"
+        "addButton": "Add  Link"
     }
   },
   "specialLinks": {
@@ -4049,7 +4049,7 @@
       "title": "Social Links",
       "translateNames": "Translate Names",
       "primaryControl": "Primary Control",
-      "titleWithNumber": "Social Link  {{number}}",
+      "titleWithNumber": " Link  {{number}}",
       "buttons": {
       "collapse": "Collapse",
       "expand": "Expand",
@@ -4062,7 +4062,7 @@
       "placeholder": "Enter a link name"
       },
       "url": {
-      "label": "Social Link URL",
+      "label": " Link URL",
       "placeholder": "https://example.com"
       }
       },

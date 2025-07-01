@@ -732,7 +732,7 @@ const NewsForm = forwardRef<any, NewsFormProps>((props, ref) => {
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base font-medium">
-                      {t("newsForm.addSubNavigationLabel", "Add SubNavigation")}
+                      {t("Navigation.AddSubNavigation", "Add SubNavigation")}
                     </FormLabel>
                     <p className="text-sm text-muted-foreground">
                       {t('Navigation.enable')}

@@ -192,8 +192,8 @@ const schemaDefinitions = {
                 .array(
                   z.object({
                     id: z.string().optional(),
-                    image: z.string().min(1, "Social link image is required"),
-                    url: z.string().url("Invalid URL").min(1, "Social link URL is required"),
+                    image: z.string().min(1, " link image is required"),
+                    url: z.string().url("Invalid URL").min(1, " link URL is required"),
                   })
                 )
                 .optional()
@@ -210,7 +210,7 @@ const schemaDefinitions = {
                         z.object({
                             id: z.string().optional(),
                             image: z.string().optional(), // Made optional since images might not be uploaded initially
-                            url: z.string().url("Invalid URL").min(1, "Social link URL is required"),
+                            url: z.string().url("Invalid URL").min(1, " link URL is required"),
                             linkName: z.string().min(1, "Link name is required"), // Added linkName field
                         })
                     )

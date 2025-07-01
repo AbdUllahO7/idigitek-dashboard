@@ -38,7 +38,7 @@ export const useHeroImages = (form: any) => {
 
     return (
       <LabeledImageUploader
-        label="Hero Image"
+        label=" Image"
         helperText="(applies to all languages)"
         imageValue={imagePreview || form.watch(`${langCode}.${featureIndex}.image`) || ""}
         inputId={`hero-image-${langCode}-${featureIndex}`}
@@ -71,12 +71,12 @@ export const useHeroImages = (form: any) => {
     const { imageFile, imagePreview, handleImageUpload, handleImageRemove } = useImageUpload({
       form,
       fieldPath: `${langCode}.${heroIndex}.socialLinks.${socialLinkIndex}.image`,
-      validate: (file) => file.size <= 1 * 1024 * 1024 || "Social link image must be less than 1MB",
+      validate: (file) => file.size <= 1 * 1024 * 1024 || "link image must be less than 1MB",
     });
 
     return (
       <LabeledImageUploader
-        label={`Social Link ${socialLinkIndex + 1} Image`}
+        label={`Link ${socialLinkIndex + 1} Image`}
         helperText="(applies to all languages)"
         imageValue={imagePreview || form.watch(`${langCode}.${heroIndex}.socialLinks.${socialLinkIndex}.image`) || ""}
         inputId={`social-link-image-${langCode}-${heroIndex}-${socialLinkIndex}`}
@@ -98,7 +98,7 @@ export const useHeroImages = (form: any) => {
             return newSocialImages;
           });
         }}
-        altText={`Social Link ${socialLinkIndex + 1} image`}
+        altText={` Link ${socialLinkIndex + 1} image`}
       />
     );
   };

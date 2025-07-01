@@ -161,7 +161,7 @@ export default function AddService() {
           slug={getSlug('hero-section')}
           ParentSectionId={isCreateMode ? sectionId || "" : (sectionItemId || "")}
           initialData={findSubsection('hero-section')}
-        />ß
+        />
       
 
        </>

@@ -221,7 +221,7 @@ export default function AddIndustry() {
       title={isCreateMode ? t("addIndustryPage.createTitle") : t("addIndustryPage.editTitle")}
       subtitle={isCreateMode 
         ? t("addIndustryPage.createSubtitle")
-        : t("addIndustryPage.editSubtitle").replace("{name}", itemName)
+        : t("addIndustryPage.editSubtitle")
       }
       backUrl={`/dashboard/IndustrySolutions?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}

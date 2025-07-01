@@ -638,7 +638,7 @@ export const FooterCard = memo(
                       )
                     })}
 
-                    {/* Add Social Link button - Only for first language */}
+                    {/* Add  Link button - Only for first language */}
                     {isFirstLanguage && (
                       <Button
                         type="button"
