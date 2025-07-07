@@ -39,13 +39,13 @@ export const DeleteDialog = ({
             </div>
             <div>
               <AlertDialogTitle className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                {ready ? t("sectionManagement.deleteSection", "Delete Section") : "Delete Section"}
+                {ready ? t("sectionManagement.modal.delete", "Delete Section") : "Delete Section"}
               </AlertDialogTitle>
             </div>
           </div>
           <AlertDialogDescription className="text-slate-600 dark:text-slate-400 leading-relaxed">
             {ready ? 
-              t("sectionManagement.deleteConfirmation", "This will permanently delete the section. This action cannot be undone, and any content in this section will be lost.") :
+              t("sectionManagement.modal.deleteConfirmation", "This will permanently delete the section. This action cannot be undone, and any content in this section will be lost.") :
               "This will permanently delete the section. This action cannot be undone, and any content in this section will be lost."
             }
             {itemToDelete && (
@@ -58,14 +58,14 @@ export const DeleteDialog = ({
             onClick={onCancel} 
             className="rounded-xl border-slate-200 dark:border-slate-700"
           >
-            {ready ? t("sectionManagement.cancel", "Cancel") : "Cancel"}
+            {ready ? t("sectionManagement.modal.cancel", "Cancel") : "Cancel"}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             className="bg-red-600 hover:bg-red-700 text-white hover:text-white flex items-center gap-2 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
           >
             {isDeleting && <Loader2 className="h-4 w-4 animate-spin" />}
-            {ready ? t("sectionManagement.delete", "Delete Section") : "Delete Section"}
+            {ready ? t("sectionManagement.modal.delete", "Delete Section") : "Delete Section"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

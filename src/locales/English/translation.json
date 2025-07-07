@@ -732,6 +732,50 @@
     "sections.blog.description": "section for articles, insights and thought leadership content",
     "sections.contact.description": "Contact information, forms and location details for customer inquiries",
     "sections.footer.description": "Bottom section with links, social media and additional company information",
+      "duplicateDialog": {
+        "title": "Duplicate Section",
+        "description": "Create an independent copy of this section with separate content and configuration.",
+        "sectionNames": "Section Names (All Languages)",
+        "nameInEN": "English Name",
+        "nameInAR": "Arabic Name", 
+        "nameInTR": "Turkish Name",
+        "namePlaceholderEN": "Enter section name in English...",
+        "namePlaceholderAR": "Enter section name in Arabic...",
+        "namePlaceholderTR": "Enter section name in Turkish...",
+        "duplicateContent": "Duplicate Content",
+        "duplicateContentDescription": "Also copy all subsection content (recommended for complete duplication)",
+        "whatYouGet": "What you'll get",
+        "cancel": "Cancel",
+        "duplicate": "Duplicate Section",
+        "duplicating": "Duplicating...",
+        "validation": {
+          "nameRequired": "Section name is required",
+          "nameMinLength": "Section name must be at least 2 characters",
+          "nameMaxLength": "Section name must be less than 100 characters",
+          "completeAllLanguages": "Please complete all language fields"
+        },
+        "features": {
+          "independentSection": "Independent section with unique content",
+          "sameDesign": "Same design and layout as original",
+          "separateManagement": "Separate content management",
+          "fullCustomization": "Full customization capabilities"
+        }
+      },
+       "duplicate": {
+        "success": {
+          "title": "Section Duplicated",
+          "description": "{{sectionName}} has been created as a duplicate of {{originalName}}."
+        },
+        "error": {
+          "title": "Duplication Failed", 
+          "description": "Failed to duplicate section. Please try again."
+        },
+        "badge": "Copy",
+        "tooltip": {
+          "title": "Duplicated Section",
+          "description": "Copy of"
+        }
+      },
     "editDialog": {
       "title": "Edit Language",
       "description": "Make changes to the language details below.",

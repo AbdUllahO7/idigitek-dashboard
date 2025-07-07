@@ -13,6 +13,7 @@ import { CurrentSectionsTab } from "./CurrentSectionsTab"
 import { AvailableSectionsTab } from "./AvailableSectionsTab"
 import { DeleteDialog } from "./DeleteDialog"
 import { AddSectionDialog } from "./AddSectionDialog"
+import { DuplicateSectionDialog } from "./DuplicateSectionDialog"
 
 export function SectionManagement({ hasWebsite }: ManagementProps) {
   const {
@@ -53,7 +54,13 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
     handleReorder,
     confirmDelete,
     refetchSections,
-    
+
+     handleOpenDuplicateDialog,
+    handleCloseDuplicateDialog,
+    handleConfirmDuplication,
+    showDuplicateDialog,
+    sectionToDuplicate,
+    isDuplicating,
     // Utils
     t,
     ready
@@ -228,11 +235,11 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
                     onToggleActive={handleToggleActive}
                     onDelete={handleOpenDelete}
                     onReorder={handleReorder}
+                    onDuplicateSection={handleOpenDuplicateDialog} // NEW: Add this prop
                     isToggling={toggleSectionActiveMutation.isPending}
                     toggleSectionId={toggleSectionActiveMutation.variables?.id}
                     t={t}
-                            onUpdateSection={sectionManagement.handleUpdateSection} // ✅ This fixes the error
-
+                    onUpdateSection={sectionManagement.handleUpdateSection}
                     ready={ready}
                   />
                 </div>
@@ -260,6 +267,15 @@ export function SectionManagement({ hasWebsite }: ManagementProps) {
               createSectionMutation.isPending ||
               (createUserSectionMutation?.isPending ?? false)
             }
+            t={t}
+          />
+
+           <DuplicateSectionDialog
+            isOpen={showDuplicateDialog}
+            onClose={handleCloseDuplicateDialog}
+            section={sectionToDuplicate}
+            onConfirm={handleConfirmDuplication}
+            isLoading={isDuplicating || createSectionMutation.isPending || (createUserSectionMutation?.isPending ?? false)}
             t={t}
           />
         </div>

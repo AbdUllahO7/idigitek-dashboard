@@ -720,6 +720,50 @@
       "sections.blog.description": "Makaleler, görüşler ve düşünce liderliği içeriği için blog bölümü",
       "sections.contact.description": "Müşteri sorguları için iletişim bilgileri, formlar ve konum detayları",
       "sections.footer.description": "Bağlantılar, sosyal medya ve ek şirket bilgileri içeren alt bölüm",
+       "duplicate": {
+        "success": {
+          "title": "Bölüm Kopyalandı",
+          "description": "{{sectionName}}, {{originalName}} bölümünün kopyası olarak oluşturuldu."
+        },
+        "error": {
+          "title": "Kopyalama Başarısız",
+          "description": "Bölüm kopyalanamadı. Lütfen tekrar deneyin."
+        },
+        "badge": "Kopya",
+        "tooltip": {
+          "title": "Kopyalanmış Bölüm",
+          "description": "Kopyası"
+        }
+      },
+       "duplicateDialog": {
+        "title": "Bölümü Kopyala",
+        "description": "Bu bölümün ayrı içerik ve yapılandırma ile bağımsız bir kopyasını oluşturun.",
+        "sectionNames": "Bölüm Adları (Tüm Diller)",
+        "nameInEN": "İngilizce Adı",
+        "nameInAR": "Arapça Adı",
+        "nameInTR": "Türkçe Adı",
+        "namePlaceholderEN": "İngilizce bölüm adını girin...",
+        "namePlaceholderAR": "Arapça bölüm adını girin...",
+        "namePlaceholderTR": "Türkçe bölüm adını girin...",
+        "duplicateContent": "İçeriği Kopyala",
+        "duplicateContentDescription": "Tüm alt bölüm içeriklerini de kopyala (tam kopyalama için önerilir)",
+        "whatYouGet": "Ne elde edeceksiniz",
+        "cancel": "İptal",
+        "duplicate": "Bölümü Kopyala",
+        "duplicating": "Kopyalanıyor...",
+        "validation": {
+          "nameRequired": "Bölüm adı gereklidir",
+          "nameMinLength": "Bölüm adı en az 2 karakter olmalıdır",
+          "nameMaxLength": "Bölüm adı 100 karakterden az olmalıdır",
+          "completeAllLanguages": "Lütfen tüm dil alanlarını doldurun"
+        },
+        "features": {
+          "independentSection": "Benzersiz içerikli bağımsız bölüm",
+          "sameDesign": "Orijinal ile aynı tasarım ve düzen",
+          "separateManagement": "Ayrı içerik yönetimi",
+          "fullCustomization": "Tam özelleştirme yetenekleri"
+        }
+      },
       "editDialog": {
       "title": "Dili Düzenle",
       "description": "Aşağıdaki dil detaylarında değişiklik yapın.",

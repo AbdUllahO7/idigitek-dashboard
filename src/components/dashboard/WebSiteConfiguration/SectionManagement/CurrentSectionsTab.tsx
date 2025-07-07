@@ -25,7 +25,8 @@ import {
   Save,
   XCircle,
   Check,
-  AlertCircle
+  AlertCircle,
+  Copy
 } from "lucide-react"
 import { Button } from "@/src/components/ui/button"
 import { Input } from "@/src/components/ui/input"
@@ -63,13 +64,15 @@ interface CurrentSectionsTabProps {
   onToggleActive: (section: Section) => void
   onDelete: (section: Section) => void
   onReorder: (sections: Section[]) => void
-  onUpdateSection?: (sectionId: string, updateData: { name: MultilingualName }) => void // 🎯 Made optional
+  onUpdateSection?: (sectionId: string, updateData: { name: MultilingualName }) => void
   isToggling: boolean
   toggleSectionId?: string
   isUpdating?: boolean
   updateSectionId?: string
   t: TFunction
   ready: boolean
+    onDuplicateSection: (section: Section) => void // NEW: Add this prop
+
 }
 
 // Image Modal Component
@@ -84,6 +87,7 @@ const ImageModal = ({
   onClose: () => void
   imageSrc: string
   imageAlt: string
+
   t: TFunction
 }) => {
   if (!isOpen) return null
@@ -130,8 +134,6 @@ const ImageModal = ({
   )
 }
 
-// Edit Form Component
-// Edit Form Component - Without Tabs Design
 const EditSectionNameForm = ({
   section,
   onSave,
@@ -370,6 +372,7 @@ export const CurrentSectionsTab = ({
   toggleSectionId,
   isUpdating = false,
   updateSectionId,
+  onDuplicateSection,
   t,
   ready
 }: CurrentSectionsTabProps) => {
@@ -762,6 +765,29 @@ export const CurrentSectionsTab = ({
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
+                              <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDuplicateSection(section);
+                                }}
+                                className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 rounded-lg md:rounded-xl touch-manipulation"
+                              >
+                                <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-sm">
+                                {t("sectionManagement.actions.duplicateSection", "Duplicate section")}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
 
                             <TooltipProvider>
                               <Tooltip>
@@ -818,6 +844,31 @@ export const CurrentSectionsTab = ({
                             </TooltipProvider>
                           </div>
                         </div>
+                        {section.isDuplicate && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Badge 
+                                  variant="secondary"
+                                  className="text-xs bg-orange-100 text-orange-600 dark:bg-orange-900/20 dark:text-orange-300 flex items-center gap-1"
+                                >
+                                  <Copy className="h-3 w-3" />
+                                  {t("sectionManagement.duplicate.badge", "Copy")} {section.duplicateIndex}
+                                </Badge>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <div className="space-y-1">
+                                  <p className="text-sm font-medium">
+                                    {t("sectionManagement.duplicate.tooltip.title", "Duplicated Section")}
+                                  </p>
+                                  <p className="text-xs">
+                                    {t("sectionManagement.duplicate.tooltip.description", "Copy of")}: {section.duplicateOf}
+                                  </p>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
 
                         {/* Edit Form */}
                         <AnimatePresence>

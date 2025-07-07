@@ -6,9 +6,10 @@ import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useSections } from "@/src/hooks/webConfiguration/use-section"
 import { useUserSections } from "@/src/hooks/webConfiguration/useUserSections"
 import useUpdateOrder from "@/src/hooks/webConfiguration/useUpdateOrder"
-import type { Section } from "@/src/api/types/hooks/section.types"
+import type { DuplicateSectionRequest, Section } from "@/src/api/types/hooks/section.types"
 import type { DeleteItemData } from "@/src/api/types/hooks/Common.types"
 import { PredefinedSection } from "@/src/api/types/management/SectionManagement.type"
+import i18next from "i18next"
 
 // Type for multilingual names
 interface MultilingualName {
@@ -36,6 +37,10 @@ export const useSectionManagement = (hasWebsite: boolean) => {
   // New state for add section dialog
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [sectionToAdd, setSectionToAdd] = useState<PredefinedSection | null>(null)
+
+  const [showDuplicateDialog, setShowDuplicateDialog] = useState(false)
+  const [sectionToDuplicate, setSectionToDuplicate] = useState<Section | null>(null)
+  const [isDuplicating, setIsDuplicating] = useState(false)
 
   // Hooks
   const {
@@ -176,12 +181,13 @@ export const useSectionManagement = (hasWebsite: boolean) => {
       return
     }
 
-    // Check for duplicate names (check all language variants)
+    // REMOVED: Check for duplicate names to allow multiple sections of the same type
+    // Only check for exact name duplicates, not subName duplicates
     const hasDuplicateName = orderedSections?.some((section: Section) => 
       checkSectionNameMatch(section, trimmedCustomNames.en) || 
       checkSectionNameMatch(section, trimmedCustomNames.ar) || 
-      checkSectionNameMatch(section, trimmedCustomNames.tr) ||
-      section.subName === predefinedSection.subName
+      checkSectionNameMatch(section, trimmedCustomNames.tr)
+      // REMOVED: || section.subName === predefinedSection.subName
     )
 
     if (hasDuplicateName) {
@@ -248,8 +254,8 @@ export const useSectionManagement = (hasWebsite: boolean) => {
           setActiveTab("current")
           handleCloseAddDialog()
 
-          if (createdSection._id) {
-            createUserSectionRelation(createdSection._id)
+          if (createdSection?.data?._id) {
+            createUserSectionRelation(createdSection.data?._id)
           }
         },
         onError: (error: any) => {
@@ -266,10 +272,180 @@ export const useSectionManagement = (hasWebsite: boolean) => {
     }
   }
 
+  // IMPROVED: Generate unique subName for duplicates
+  const generateUniqueSubName = (originalSubName: string, duplicateIndex: number): string => {
+    return `${originalSubName}-duplicate-${duplicateIndex}`;
+  };
+
+  // IMPROVED: Count all duplicates more accurately
+  const countExistingDuplicates = (originalSection: Section): number => {
+    const baseSubName = getBaseSubName(originalSection.subName);
+    
+    return orderedSections.filter(section => {
+      const sectionBaseSubName = getBaseSubName(section.subName);
+      return sectionBaseSubName === baseSubName;
+    }).length;
+  };
+
+  // NEW: Helper function to get the base subName (without duplicate suffix)
+  const getBaseSubName = (subName: string): string => {
+    return subName.replace(/-duplicate-\d+.*$/, '');
+  };
+
+  // NEW: Helper function to get the original section for any section (including duplicates)
+  const getOriginalSectionId = (section: Section): string => {
+    // If it's already a duplicate, return its original section ID
+    if (section.originalSectionId) {
+      return section.originalSectionId;
+    }
+    // If it's an original section, return its own ID
+    return section._id!;
+  };
+
+  // IMPROVED: Enhanced duplication handler that allows unlimited duplicates
+  const handleConfirmDuplication = async (customNames: MultilingualName, duplicateContent: boolean = false) => {
+    if (!sectionToDuplicate) return;
+
+    setIsDuplicating(true);
+
+    try {
+      // Get the original section ID (works for both original and duplicate sections)
+      const originalSectionId = getOriginalSectionId(sectionToDuplicate);
+      
+      // Count ALL duplicates of this section type (including the original)
+      const totalCount = countExistingDuplicates(sectionToDuplicate);
+      const duplicateIndex = totalCount; // This will be the next number in sequence
+      
+      // Generate unique identifiers
+      const uniqueIdentifier = generateUniqueIdentifier(sectionToDuplicate, duplicateIndex);
+      const baseSubName = getBaseSubName(sectionToDuplicate.subName);
+      const duplicateSubName = generateUniqueSubName(baseSubName, duplicateIndex);
+      
+      // Create multilingual description
+      const createMultilingualContent = (content: string) => {
+        return {
+          en: content,
+          ar: content,
+          tr: content
+        }
+      };
+
+      // Ensure description is always MultilingualDescription
+      let duplicateDescription: any = sectionToDuplicate.description;
+      if (typeof duplicateDescription === "string" || !duplicateDescription) {
+        duplicateDescription = createMultilingualContent(duplicateDescription || "");
+      }
+
+      // Prepare duplicate section data
+      const duplicateData = {
+        // Copy basic properties from original
+        name: customNames,
+        description: duplicateDescription,
+        subName: duplicateSubName,
+        image: sectionToDuplicate.image,
+        
+        // Set as last in order
+        order: orderedSections.length,
+        isActive: true, // Start active
+        WebSiteId: websiteId,
+        
+        // Duplication metadata
+        originalSectionId: originalSectionId, // Always points to the original section
+        duplicateIndex: duplicateIndex,
+        isDuplicate: true,
+        duplicateOf: getDisplayName(sectionToDuplicate.name),
+        uniqueIdentifier: uniqueIdentifier,
+        
+        // Don't copy these fields
+        _id: undefined,
+        createdAt: undefined,
+        updatedAt: undefined,
+        subSections: duplicateContent ? sectionToDuplicate.subSections : [], // Copy content if requested
+      };
+
+      // Create the duplicate section using existing create mutation
+      if (createUserSectionMutation) {
+        createUserSectionMutation.mutate(duplicateData, {
+          onSuccess: (createdSection) => {
+            console.log("createdSection", createdSection);
+
+            toast({
+              title: ready ? t("sectionManagement.duplicate.success.title") : "Section duplicated",
+              description: ready ? 
+                t("sectionManagement.duplicate.success.description", { 
+                  sectionName: getDisplayName(customNames),
+                  originalName: getDisplayName(sectionToDuplicate.name)
+                }) : 
+                `${getDisplayName(customNames)} has been created as a duplicate.`,
+            });
+            
+            showSuccessMessage();
+            setActiveTab("current");
+            handleCloseDuplicateDialog();
+        
+          },
+          onError: (error: any) => {
+            console.error("Error duplicating section:", error);
+            toast({
+              title: ready ? t("sectionManagement.duplicate.error.title") : "Duplication failed",
+              description: ready ? 
+                t("sectionManagement.duplicate.error.description") : 
+                error.message || "Failed to duplicate section.",
+              variant: "destructive",
+            });
+          },
+        });
+      } else {
+        // Fallback to regular create mutation
+        createSectionMutation.mutate(duplicateData, {
+          onSuccess: (createdSection) => {
+            console.log("createdSection", createdSection)
+            toast({
+              title: ready ? t("sectionManagement.duplicate.success.title") : "Section duplicated",
+              description: ready ? 
+                t("sectionManagement.duplicate.success.description", { 
+                  sectionName: getDisplayName(customNames),
+                  originalName: getDisplayName(sectionToDuplicate.name)
+                }) : 
+                `${getDisplayName(customNames)} has been created as a duplicate.`,
+            });
+            
+            showSuccessMessage();
+            setActiveTab("current");
+            handleCloseDuplicateDialog();
+
+            // Create user-section relationship if needed
+            if (createdSection.data?._id && userId) {
+              createUserSectionRelation(createdSection.data?._id);
+            }
+          },
+          onError: (error: any) => {
+            console.error("Error duplicating section:", error);
+            toast({
+              title: ready ? t("sectionManagement.duplicate.error.title") : "Duplication failed",
+              description: ready ? 
+                t("sectionManagement.duplicate.error.description") : 
+                error.message || "Failed to duplicate section.",
+              variant: "destructive",
+            });
+          },
+        });
+      }
+    } finally {
+      setIsDuplicating(false);
+    }
+  };
+
   // Keep the original handler for backwards compatibility (now opens dialog)
   const handleAddPredefinedSection = (predefinedSection: PredefinedSection) => {
     handleOpenAddDialog(predefinedSection)
   }
+
+  const getDisplayName = (name: MultilingualName | string): string => {
+    if (typeof name === 'string') return name;
+    const currentLang = (ready ? i18next.language : 'en') as keyof MultilingualName;
+    return name[currentLang] || name.en || '';
+  };
 
   // Handler to update section
   const handleUpdateSection = (sectionId: string, updateData: { name: MultilingualName }) => {
@@ -420,6 +596,24 @@ export const useSectionManagement = (hasWebsite: boolean) => {
     }
   }
 
+  // Open duplicate dialog
+  const handleOpenDuplicateDialog = (section: Section) => {
+    setSectionToDuplicate(section);
+    setShowDuplicateDialog(true);
+  };
+
+  // IMPROVED: Generate more unique identifier
+  const generateUniqueIdentifier = (originalSection: Section, duplicateIndex: number): string => {
+    const baseSubName = getBaseSubName(originalSection.subName);
+    return `${baseSubName}-duplicate-${duplicateIndex}-${Date.now()}`;
+  };
+
+  // Close duplicate dialog
+  const handleCloseDuplicateDialog = () => {
+    setShowDuplicateDialog(false);
+    setSectionToDuplicate(null);
+  };
+
   return {
     // State
     itemToDelete,
@@ -467,6 +661,14 @@ export const useSectionManagement = (hasWebsite: boolean) => {
     confirmDelete,
     showSuccessMessage,
     refetchSections,
+
+    handleOpenDuplicateDialog,
+    handleCloseDuplicateDialog,
+    handleConfirmDuplication,
+
+    showDuplicateDialog,
+    sectionToDuplicate,
+    isDuplicating,
     
     // Utils
     t,

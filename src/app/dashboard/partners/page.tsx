@@ -14,7 +14,7 @@ import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { useTranslation } from "react-i18next"
 import { getPartnersSectionConfig } from "./PartnersSectionConfig"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
-import { Navigation, Users } from "lucide-react"
+import { Copy, Navigation, Users } from "lucide-react"
 import CreateNavigationSubSection from "../team/navigation/CreateNavigationSubSection"
 import { getTeamNavigationSectionConfig } from "../team/navigation/team-navigation-config"
 import { ClickableImage } from "@/src/components/ClickableImage"
@@ -31,6 +31,29 @@ export default function PartnersPage() {
   const {t , i18n} = useTranslation()
   const [hasNavigationSubSection, setHasNavigationSubSection] = useState<boolean>(false)
   const NavigationConfig = getTeamNavigationSectionConfig(i18n.language);
+  const [isDuplicateSection, setIsDuplicateSection] = useState<boolean>(false)
+  const [originalSectionInfo, setOriginalSectionInfo] = useState<any>(null)
+
+   const { useGetById: useGetSectionById } = useSections()
+  const { data: currentSectionData } = useGetSectionById(sectionId || "", !!sectionId)
+  useEffect(() => {
+    if (currentSectionData?.data) {
+      const section = currentSectionData.data;
+      
+      // Check for duplication metadata
+      if (section.isDuplicate) {
+        setIsDuplicateSection(true);
+        setOriginalSectionInfo({
+          name: section.duplicateOf || 'Original Section',
+          index: section.duplicateIndex || 1,
+          originalId: section.originalSectionId
+        });
+      } else {
+        setIsDuplicateSection(false);
+        setOriginalSectionInfo(null);
+      }
+    }
+  }, [currentSectionData]);
   
   // Get basic section info for both navigation and main content pre-population
   const {useGetBasicInfoByWebsiteId} = useSections()
@@ -94,10 +117,22 @@ export default function PartnersPage() {
   const shouldShowAddButton = navItems.length === 0;
 
   // Configuration for Partners page with dynamic addButtonLabel
-  const HEADER_CONFIG = useMemo(() => {
+   const HEADER_CONFIG = useMemo(() => {
+    const baseTitle = isDuplicateSection && originalSectionInfo
+      ? t('partners.management.duplicateTitle', 'Partners Management (Copy {{index}})', { 
+          index: originalSectionInfo.index 
+        })
+      : t('partners.management.title', 'Partners Management');
+
+    const baseDescription = isDuplicateSection && originalSectionInfo
+      ? t('partners.management.duplicateDescription', 'Manage your partners inventory - this is an independent copy of "{{originalName}}"', {
+          originalName: originalSectionInfo.name
+        })
+      : t('partners.management.description', 'Manage your partners inventory and multilingual content');
+
     const baseConfig = {
-      title: t('partners.management.title', 'Partners Management'),
-      description: t('partners.management.description', 'Manage your partners inventory and multilingual content'),
+      title: baseTitle,
+      description: baseDescription,
       emptyStateMessage: t('partners.management.emptyStateMessage', 'No partners found. Create your first partner by clicking the "Add New Partner" button.'),
       noSectionMessage: t('partners.management.noSectionMessage', 'Please create a partners section first before adding partners.'),
       mainSectionRequiredMessage: t('partners.management.mainSectionRequiredMessage', 'Please enter your main section data before adding partners.'),
@@ -112,13 +147,14 @@ export default function PartnersPage() {
       addButtonLabel: '', 
     };
 
-    // Only add addButtonLabel if no items exist (this helps hide the button)
+    // Only add addButtonLabel if no items exist
     if (shouldShowAddButton) {
       baseConfig.addButtonLabel = t('partners.management.addButtonLabel', 'Add New Partner');
     }
 
     return baseConfig;
-  }, [t, shouldShowAddButton]);
+  }, [t, shouldShowAddButton, isDuplicateSection, originalSectionInfo]);
+
 
   const PARTNERS_COLUMNS = [
     {
@@ -409,6 +445,28 @@ export default function PartnersPage() {
 
   return (
     <div className="space-y-6">
+
+      {isDuplicateSection && originalSectionInfo && (
+        <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+              <Copy className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-orange-800 dark:text-orange-300">
+                {t('partners.management.duplicateIndicator.title', 'Duplicate Section')}
+              </h3>
+              <p className="text-sm text-orange-700 dark:text-orange-400">
+                {t('partners.management.duplicateIndicator.description', 'This is copy {{index}} of "{{originalName}}". All content is independent.', {
+                  index: originalSectionInfo.index,
+                  originalName: originalSectionInfo.name
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
        <ClickableImage
               imageSrc="/assets/sections/partners.png"
               imageAlt={t('HeroManagement.tabLabel', 'Hero Section')}

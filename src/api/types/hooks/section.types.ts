@@ -37,6 +37,12 @@ export interface Section extends Resource {
   sectionType?: string;
   type?: string;
   slug?: string;
+
+  originalSectionId?: string; // Reference to original section
+  duplicateIndex?: number; // 1, 2, 3, etc.
+  isDuplicate?: boolean;
+  duplicateOf?: string; // Original section name for display
+  uniqueIdentifier?: string; // Unique identifier for content separation
   
   // 🎯 NEW: Server-provided localized fields (optional)
   displayName?: string; // Localized name based on request language
@@ -342,4 +348,21 @@ export interface BasicSectionInfoResponse {
   success: boolean;
   count: number;
   data: BasicSectionInfo[];
+}
+
+export interface DuplicateSectionRequest {
+  originalSectionId: string;
+  customName?: MultilingualName;
+  duplicateData?: boolean; // Whether to copy existing content
+}
+
+// NEW: Duplication response interface
+export interface DuplicateSectionResponse {
+  success: boolean;
+  message: string;
+  data: {
+    duplicatedSection: Section;
+    originalSection: Section;
+    duplicateIndex: number;
+  };
 }

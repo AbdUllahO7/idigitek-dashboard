@@ -731,6 +731,50 @@
       "sections.blog.description": "قسم للمقالات والرؤى ومحتوى القيادة الفكرية",
       "sections.contact.description": "معلومات القسم والنماذج وتفاصيل الموقع لاستفسارات العملاء",
       "sections.footer.description": "القسم السفلي مع الروابط ووسائل التواصل الاجتماعي ومعلومات الشركة الإضافية",
+      "duplicate": {
+        "success": {
+          "title": "تم تكرار القسم",
+          "description": "تم إنشاء {{sectionName}} كنسخة مكررة من {{originalName}}."
+        },
+        "error": {
+          "title": "فشل في التكرار",
+          "description": "فشل في تكرار القسم. يرجى المحاولة مرة أخرى."
+        },
+        "badge": "نسخة",
+        "tooltip": {
+          "title": "قسم مكرر",
+          "description": "نسخة من"
+        }
+      },
+        "duplicateDialog": {
+        "title": "تكرار القسم",
+        "description": "إنشاء نسخة مستقلة من هذا القسم مع محتوى وإعدادات منفصلة.",
+        "sectionNames": "أسماء الأقسام (جميع اللغات)",
+        "nameInEN": "الاسم الإنجليزي",
+        "nameInAR": "الاسم العربي",
+        "nameInTR": "الاسم التركي",
+        "namePlaceholderEN": "أدخل اسم القسم بالإنجليزية...",
+        "namePlaceholderAR": "أدخل اسم القسم بالعربية...",
+        "namePlaceholderTR": "أدخل اسم القسم بالتركية...",
+        "duplicateContent": "تكرار المحتوى",
+        "duplicateContentDescription": "نسخ جميع محتويات الأقسام الفرعية أيضًا (موصى به للتكرار الكامل)",
+        "whatYouGet": "ما ستحصل عليه",
+        "cancel": "إلغاء",
+        "duplicate": "تكرار القسم",
+        "duplicating": "جارٍ التكرار...",
+        "validation": {
+          "nameRequired": "اسم القسم مطلوب",
+          "nameMinLength": "يجب ألا يقل طول اسم القسم عن حرفين",
+          "nameMaxLength": "يجب ألا يزيد طول اسم القسم عن 100 حرف",
+          "completeAllLanguages": "يرجى إكمال جميع حقول اللغات"
+        },
+        "features": {
+          "independentSection": "قسم مستقل بمحتوى فريد",
+          "sameDesign": "نفس التصميم والتخطيط الأصلي",
+          "separateManagement": "إدارة محتوى منفصلة",
+          "fullCustomization": "إمكانيات تخصيص كاملة"
+        }
+      },
       "addDialog": {
         "title": "إضافة قسم إلى الموقع الإلكتروني",
         "customName": "اسم قسم مخصص",

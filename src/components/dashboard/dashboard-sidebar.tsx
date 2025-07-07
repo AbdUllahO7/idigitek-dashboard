@@ -34,6 +34,7 @@ import {
   Files,
   Type,
   Globe,
+  Copy, // NEW: Add Copy icon
 } from "lucide-react"
 import { Button } from "../ui/button"
 import { cn } from "@/src/lib/utils"
@@ -58,18 +59,26 @@ interface DashboardSidebarProps {
 }
 
 /**
- * Navigation item interface
+ * Navigation item interface - UPDATED to handle duplicates
  */
 interface NavItem {
   titleKey: string
   href: string
   icon: React.ElementType
   sectionId?: string
+  actualSectionId?: string // NEW: Actual section ID from database
   roles?: string[]
-  customName?: string // Custom name based on current language
-  originalName?: string // Original predefined name for tooltip
-  isMultilingual?: boolean // 🎯 NEW: Whether this section has multilingual names
-  multilingualNames?: { en: string; ar: string; tr: string } // 🎯 NEW: All language names for tooltip
+  customName?: string
+  originalName?: string
+  isMultilingual?: boolean
+  multilingualNames?: { en: string; ar: string; tr: string }
+  
+  // NEW: Duplicate information
+  isDuplicate?: boolean
+  duplicateIndex?: number
+  originalSectionId?: string
+  duplicateOf?: string
+  sectionType?: string // The base section type (e.g., "partners", "services")
 }
 
 /**
@@ -79,6 +88,8 @@ interface SectionOrder {
   name: string
   order: number
   id: string
+  isDuplicate?: boolean // NEW
+  duplicateIndex?: number // NEW
 }
 
 /**
@@ -103,102 +114,117 @@ const allNavItems: NavItem[] = [
     roles: ["superAdmin", "owner"],
     icon: Files,
   },
-
   {
     titleKey: "Dashboard_sideBar.nav.services",
     href: "/dashboard/services",
     icon: FolderKanban,
     sectionId: "services",
+    sectionType: "services", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.header",
     href: "#",
     icon: Package,
     sectionId: "header",
+    sectionType: "header", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.news",
     href: "/dashboard/News",
     icon: Megaphone,
     sectionId: "news",
+    sectionType: "news", // NEW
   },
-    {
+  {
     titleKey: "Dashboard_sideBar.nav.products",
     href: "/dashboard/products",
     icon: Megaphone,
     sectionId: "products",
+    sectionType: "products", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.industrySolutions",
     href: "/dashboard/IndustrySolutions",
     icon: Building,
     sectionId: "industrysolutions",
+    sectionType: "industrysolutions", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.whyChooseUs",
     href: "/dashboard/WhyChooseUs",
     icon: Briefcase,
     sectionId: "whychooseus",
+    sectionType: "whychooseus", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.projects",
     href: "/dashboard/projects",
     icon: Handshake,
     sectionId: "projects",
+    sectionType: "projects", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.ourProcess",
     href: "/dashboard/ourProcess",
     icon: HelpCircle,
     sectionId: "ourprocess",
+    sectionType: "ourprocess", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.team",
     href: "/dashboard/team",
     icon: Component,
     sectionId: "team",
+    sectionType: "team", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.clientComments",
     href: "/dashboard/clientComments",
     icon: MessageCircle,
     sectionId: "clientcomments",
+    sectionType: "clientcomments", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.partners",
     href: "/dashboard/partners",
     icon: HeartHandshake,
     sectionId: "partners",
+    sectionType: "partners", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.faq",
     href: "/dashboard/FAQ",
     icon: ShieldQuestion,
     sectionId: "faq",
+    sectionType: "faq", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.blog",
     href: "/dashboard/blog",
     icon: PenBoxIcon,
     sectionId: "blog",
+    sectionType: "blog", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.contact",
     href: "/dashboard/contact",
     icon: Contact,
     sectionId: "contact",
+    sectionType: "contact", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.hero",
     href: "/dashboard/heroSection",
     icon: TouchpadOff,
     sectionId: "hero",
+    sectionType: "hero", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.footer",
     href: "/dashboard/footer",
     icon: TouchpadOff,
     sectionId: "footer",
+    sectionType: "footer", // NEW
   },
   {
     titleKey: "Dashboard_sideBar.nav.profile",
@@ -212,7 +238,7 @@ const allNavItems: NavItem[] = [
     icon: Workflow,
     roles: ["superAdmin", "owner"],
   },
-      {
+  {
     titleKey: "Dashboard_sideBar.nav.addNewSection",
     href: "/dashboard/addWebSiteConfiguration?tab=sections", 
     roles: ["superAdmin", "owner"],
@@ -228,7 +254,6 @@ const allNavItems: NavItem[] = [
 
 /**
  * Dashboard Sidebar component
- * Contains the main navigation for the dashboard
  */
 export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar }: DashboardSidebarProps) {
   const pathname = usePathname()
@@ -241,23 +266,19 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null)
   const { t, ready } = useTranslation()
-  const { isLoaded, language } = useLanguage() // 🎯 UPDATED: Get current language
+  const { isLoaded, language } = useLanguage()
 
-  // Check if screen is mobile
   const isMobile = useMediaQuery("(max-width: 1024px)")
 
-  // Store the mapping of section names to actual section IDs and orders
-  const [sectionIdMapping, setSectionIdMapping] = useState<Map<string, string>>(new Map())
+  // Store the mapping of section IDs to actual section data
+  const [sectionDataMapping, setSectionDataMapping] = useState<Map<string, Section>>(new Map())
   const [sectionOrderMapping, setSectionOrderMapping] = useState<Map<string, SectionOrder>>(new Map())
 
-  // Use refs to track the current user and website for cache invalidation
   const processedWebsiteRef = useRef<string | null>(null)
   const processedUserRef = useRef<string | null>(null)
 
-  // Use the website-specific sections hook
   const { useGetByWebsiteId } = useSections()
 
-  // Fetch sections for this website
   const {
     data: websiteSections,
     isLoading: isLoadingSections,
@@ -267,71 +288,85 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
     dataUpdatedAt,
   } = useGetByWebsiteId(websiteId || "", false, !!websiteId)
 
-  // 🎯 UPDATED: Function to get section identifier for matching with multilingual support
-  const getSectionIdentifier = (section: Section) => {
-    // Try to match by subName first (most reliable)
+  // NEW: Function to get section type from subName
+  const getSectionType = (section: Section): string => {
     if (section.subName) {
+      // Handle duplicates - extract base type
+      if (section.subName.includes('-duplicate-')) {
+        return section.subName.split('-duplicate-')[0].toLowerCase()
+      }
       return section.subName.toLowerCase()
     }
-    // Fallback to processed English name for multilingual sections
+    
     if (typeof section.name === 'object' && section.name.en) {
       return section.name.en.toLowerCase().replace(/\s/g, "")
     }
-    // Fallback to processed name for legacy sections
+    
     if (typeof section.name === 'string') {
       return section.name.toLowerCase().replace(/\s/g, "")
     }
+    
     return 'unknown'
   }
 
-  // 🎯 UPDATED: Function to get the original section name for tooltip with multilingual support
-  const getOriginalSectionName = (section: Section) => {
-    if (section.subName) {
-      // Find the predefined section to get translated name
-      const predefinedSection = PREDEFINED_SECTIONS.find(ps => ps.subName === section.subName)
-      if (predefinedSection && ready) {
-        return t(predefinedSection.nameKey, predefinedSection.nameKey.split('.').pop() || '')
-      }
+  // NEW: Function to create unique identifier for sections (including duplicates)
+  const createUniqueIdentifier = (section: Section): string => {
+    if (section._id) {
+      return section._id // Use actual ID as unique identifier
     }
-    return null
+    
+    // Fallback for sections without ID
+    const baseType = getSectionType(section)
+    const duplicateInfo = section.isDuplicate ? `-duplicate-${section.duplicateIndex}` : ''
+    return `${baseType}${duplicateInfo}`
   }
 
-  // 🎯 NEW: Function to get section display name based on current language
+  // Updated function to get section display name
   const getSectionDisplayName = (section: Section) => {
-    // Handle multilingual names based on current language
     if (typeof section.name === 'object') {
-      // Use current language if available
       if (section.name[language as keyof typeof section.name]) {
         return section.name[language as keyof typeof section.name]
       }
-      // Fallback to English
       if (section.name.en) {
         return section.name.en
       }
     }
     
-    // Handle legacy string names
     if (typeof section.name === 'string' && section.name.trim()) {
       return section.name.trim()
     }
     
-    // Final fallback to translated predefined name
     if (section.subName) {
-      const predefinedSection = PREDEFINED_SECTIONS.find(ps => ps.subName === section.subName)
+      const predefinedSection = PREDEFINED_SECTIONS.find(ps => ps.subName === getSectionType(section))
       if (predefinedSection && ready) {
-        return t(predefinedSection.nameKey, predefinedSection.nameKey.split('.').pop() || '')
+        const baseName = t(predefinedSection.nameKey, predefinedSection.nameKey.split('.').pop() || '')
+        // Add duplicate indicator if it's a duplicate
+        if (section.isDuplicate) {
+          return `${baseName} (${t('navigation.copy', 'Copy')} ${section.duplicateIndex})`
+        }
+        return baseName
       }
     }
     
     return section.subName || 'Unknown Section'
   }
 
-  // 🎯 NEW: Function to check if section has multilingual names
+  // Updated function to get original section name
+  const getOriginalSectionName = (section: Section) => {
+    const baseType = getSectionType(section)
+    const predefinedSection = PREDEFINED_SECTIONS.find(ps => ps.subName.toLowerCase() === baseType)
+    if (predefinedSection && ready) {
+      return t(predefinedSection.nameKey, predefinedSection.nameKey.split('.').pop() || '')
+    }
+    return null
+  }
+
+  // Function to check if section has multilingual names
   const hasMultilingualNames = (section: Section) => {
     return typeof section.name === 'object' && section.name.en && section.name.ar && section.name.tr
   }
 
-  // Manual refresh function for sections
+  // Manual refresh function
   const handleManualRefresh = useCallback(() => {
     setIsRefreshing(true)
     refetchWebsiteSections()
@@ -353,17 +388,15 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
     if (currentUserId !== processedUserRef.current) {
       processedUserRef.current = currentUserId as string
       processedWebsiteRef.current = null
-
       setNavItems([])
       setIsLoading(true)
-
       if (websiteId) {
         refetchWebsiteSections()
       }
     }
   }, [user, websiteId, refetchWebsiteSections])
 
-  // Listen for changes in the URL and close mobile menu when navigating
+  // Listen for URL changes
   useEffect(() => {
     if (pathname.includes("/addWebSiteConfiguration")) {
       const needsRefresh = true
@@ -374,75 +407,102 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
     }
   }, [pathname, handleManualRefresh])
 
-  // 🎯 UPDATED: Filter nav items based on role and active sections with custom names
+  // NEW: Updated filter function to handle both original and duplicate sections
   const filterNavItems = (
     userRole: string | undefined,
     activeSections: Section[],
-    sectionNameMap: Map<string, string>,
-    sectionOrderMap: Map<string, SectionOrder>,
   ) => {
     try {
-      // 🎯 UPDATED: Create a mapping of section identifiers to section data
+      // Create mapping of sections by their unique identifiers
       const sectionDataMap = new Map<string, Section>()
+      const sectionOrderMap = new Map<string, SectionOrder>()
+      
       activeSections.forEach((section: Section) => {
-        const identifier = getSectionIdentifier(section)
-        sectionDataMap.set(identifier, section)
+        const uniqueId = createUniqueIdentifier(section)
+        sectionDataMap.set(uniqueId, section)
+        
+        if (section._id) {
+          sectionOrderMap.set(uniqueId, {
+            name: getSectionDisplayName(section),
+            order: section.order ?? 0,
+            id: section._id,
+            isDuplicate: section.isDuplicate,
+            duplicateIndex: section.duplicateIndex,
+          })
+        }
       })
 
-      // Get active section identifiers
-      const activeSectionIds = Array.from(sectionDataMap.keys())
+      // Store mappings for navigation
+      setSectionDataMapping(sectionDataMap)
+      setSectionOrderMapping(sectionOrderMap)
 
-      // Start with all non-section-based nav items that match the user's role
+      // Filter base nav items (non-section items)
       const baseNavItems = allNavItems.filter((item) => {
-        // Check role restrictions first
         if (item.roles && userRole) {
           if (!item.roles.includes(userRole)) {
             return false
           }
         }
-        // Include if it's not a section-specific item
         return !item.sectionId
       })
 
-      // 🎯 UPDATED: Add section-specific items with custom names
-      const sectionNavItems = allNavItems
-        .filter((item) => {
-          // Only process items with section IDs
-          if (!item.sectionId) return false
-          // Check if this section ID is in our active sections
-          return activeSectionIds.includes(item.sectionId)
-        })
-        .map((item) => {
-          // Create a copy to modify
-          const newItem = { ...item }
+      // NEW: Create nav items for ALL active sections (originals + duplicates)
+      const sectionNavItems: NavItem[] = []
+      
+      activeSections.forEach((section: Section) => {
+        const sectionType = getSectionType(section)
+        
+        // Find matching nav item template
+        const navTemplate = allNavItems.find(item => item.sectionType === sectionType)
+        if (!navTemplate) return
+        
+        // Create unique nav item for this section
+        const uniqueId = createUniqueIdentifier(section)
+        const customName = getSectionDisplayName(section)
+        const originalName = getOriginalSectionName(section)
+        
+        const navItem: NavItem = {
+          ...navTemplate,
+          // Create unique href by appending section ID
+          href: `${navTemplate.href}?sectionId=${section._id}`,
+          sectionId: uniqueId, // Use unique identifier
+          actualSectionId: section._id, // Store actual section ID
+          customName: customName,
+          originalName: originalName,
+          isMultilingual: hasMultilingualNames(section),
+          multilingualNames: hasMultilingualNames(section) ? section.name : undefined,
           
-          // 🎯 NEW: Get the section data and set custom name with multilingual support
-          const sectionData = sectionDataMap.get(item.sectionId!)
-          if (sectionData) {
-            // Use the display name based on current language
-            newItem.customName = getSectionDisplayName(sectionData)
-            // Get the original translated name for tooltip
-            newItem.originalName = getOriginalSectionName(sectionData)
-            // Store multilingual info for tooltip
-            newItem.isMultilingual = hasMultilingualNames(sectionData)
-            newItem.multilingualNames = hasMultilingualNames(sectionData) ? sectionData.name : undefined
-          }
-          
-          return newItem
-        })
-        // Sort section-specific items based on order from sectionOrderMap
-        .sort((a, b) => {
-          if (!a.sectionId || !b.sectionId) return 0
-          const orderA = sectionOrderMap.get(a.sectionId)?.order ?? Number.POSITIVE_INFINITY
-          const orderB = sectionOrderMap.get(b.sectionId)?.order ?? Number.POSITIVE_INFINITY
-          return orderA - orderB
-        })
+          // NEW: Duplicate information
+          isDuplicate: section.isDuplicate || false,
+          duplicateIndex: section.duplicateIndex,
+          originalSectionId: section.originalSectionId,
+          duplicateOf: section.duplicateOf,
+          sectionType: sectionType,
+        }
+        
+        sectionNavItems.push(navItem)
+      })
 
-      // Combine and return all matching nav items
+      // Sort section nav items by order, with duplicates after their originals
+      sectionNavItems.sort((a, b) => {
+        const orderA = sectionOrderMap.get(a.sectionId!)?.order ?? Number.POSITIVE_INFINITY
+        const orderB = sectionOrderMap.get(b.sectionId!)?.order ?? Number.POSITIVE_INFINITY
+        
+        // If same order, sort by duplicate status (original first)
+        if (orderA === orderB) {
+          if (a.isDuplicate && !b.isDuplicate) return 1
+          if (!a.isDuplicate && b.isDuplicate) return -1
+          if (a.isDuplicate && b.isDuplicate) {
+            return (a.duplicateIndex || 0) - (b.duplicateIndex || 0)
+          }
+        }
+        
+        return orderA - orderB
+      })
+
       return [...baseNavItems, ...sectionNavItems]
     } catch (error) {
       console.error("Error filtering nav items:", error)
-      // In case of error, show only the items without sectionId and respect role restrictions
       return allNavItems.filter((item) => {
         if (item.roles && userRole) {
           if (!item.roles.includes(userRole)) {
@@ -454,18 +514,15 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
     }
   }
 
-  // Process sections only when necessary
+  // Process sections effect
   useEffect(() => {
-    // Skip if we're still loading users or sections, or if we're refreshing
     if (userIsLoading || (websiteId && isLoadingSections) || isRefreshing) {
       return
     }
 
-    // Get the current user ID
     const currentUserId = user?.id || user?.id
-
-    // Check if we've already processed this website for this user on this data update
     const currentTimestamp = dataUpdatedAt || 0
+    
     if (
       websiteId === processedWebsiteRef.current &&
       currentUserId === processedUserRef.current &&
@@ -474,86 +531,47 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
       return
     }
 
-    // Map section IDs to their names and orders
-    const sectionNameMap = new Map<string, string>()
-    const idMapping = new Map<string, string>()
-    const orderMapping = new Map<string, SectionOrder>()
-
     if (websiteSections?.data?.length > 0) {
       const activeSections = websiteSections.data.filter((section: Section) => section.isActive)
-      activeSections.forEach((section: Section) => {
-        const sectionId = getSectionIdentifier(section)
-        sectionNameMap.set(sectionId, section.name)
-        if (section._id) {
-          idMapping.set(sectionId, section._id)
-          orderMapping.set(sectionId, {
-            name: section.name,
-            order: section.order ?? 0,
-            id: section._id,
-          })
-        }
-      })
-
-      // Save the ID and order mappings
-      setSectionIdMapping(idMapping)
-      setSectionOrderMapping(orderMapping)
-
-      // Store active section IDs in localStorage for persistence
+      
+      // Store active section IDs in localStorage
       const storageKey = currentUserId ? `selectedSections_${currentUserId}` : "selectedSections"
-      const activeSectionIds = activeSections.map((section: Section) => getSectionIdentifier(section))
+      const activeSectionIds = activeSections.map((section: Section) => createUniqueIdentifier(section))
       localStorage.setItem(storageKey, JSON.stringify(activeSectionIds))
     }
 
-    // Filter nav items based on user role, active sections, and order
+    // Filter nav items with new logic
     const filteredItems = filterNavItems(
       user?.role,
       websiteSections?.data?.filter((section: Section) => section.isActive) || [],
-      sectionNameMap,
-      orderMapping,
     )
     setNavItems(filteredItems)
-
-    // Update loading state
     setIsLoading(false)
 
-    // Mark this website, user, and timestamp as processed
     processedWebsiteRef.current = websiteId
     processedUserRef.current = currentUserId as string
     setLastRefreshTime(new Date(currentTimestamp))
   }, [user, userIsLoading, websiteId, isLoadingSections, websiteSections, dataUpdatedAt, isRefreshing, lastRefreshTime])
 
-  /**
-   * Handle navigation with loading indicator and section ID parameter
-   */
-  const handleNavigation = useCallback((href: string, sectionId?: string) => {
-    // Don't navigate if already navigating or if clicking the current page
+  // Updated navigation handler
+  const handleNavigation = useCallback((href: string, actualSectionId?: string) => {
     if (navigatingTo || pathname === href) {
       return
     }
 
-    // Close mobile sidebar when navigating
     if (isMobile && isSidebarOpen && toggleSidebar) {
       toggleSidebar()
     }
 
-    // Set the navigating state to show loading indicator
     setNavigatingTo(href)
 
-    // If this navigation item is for a section that has an ID in our mapping, append it as a query param
-    let targetUrl = href
-    if (sectionId && sectionIdMapping.has(sectionId)) {
-      const actualSectionId = sectionIdMapping.get(sectionId)
-      targetUrl = `${href}?sectionId=${actualSectionId}`
-    }
+    // Use the href as-is since it already contains the section ID
+    router.push(href)
 
-    // Navigate to the new page with section ID if available
-    router.push(targetUrl)
-
-    // Clear the navigating state after navigation completes
     setTimeout(() => {
       setNavigatingTo(null)
     }, 500)
-  }, [navigatingTo, pathname, isMobile, isSidebarOpen, toggleSidebar, sectionIdMapping, router])
+  }, [navigatingTo, pathname, isMobile, isSidebarOpen, toggleSidebar, router])
 
   // Safe translation function
   const safeTranslate = useCallback((key: string, fallback: string = "") => {
@@ -567,19 +585,16 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
     }
   }, [ready, t])
 
-  // 🎯 NEW: Function to get display name for navigation item
+  // Function to get display name for navigation item
   const getDisplayName = (item: NavItem) => {
-    // Use custom name if available (for sections)
     if (item.customName) {
       return item.customName
     }
-    // Fallback to translated name
     return safeTranslate(item.titleKey, item.titleKey.split(".").pop() || "")
   }
 
   // Render navigation items
   const renderNavItems = () => {
-    // Show loading state if still loading
     if ((isLoading || userIsLoading || (websiteId && isLoadingSections)) && navItems.length === 0) {
       return (
         <div className="space-y-3">
@@ -592,7 +607,6 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
 
     return (
       <>
-        {/* Warning if no sections */}
         {websiteSections?.data?.length === 0 && websiteId && (
           <div className="p-3 mb-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-center">
             <AlertTriangle className="h-5 w-5 text-amber-500 mx-auto mb-1" />
@@ -609,17 +623,17 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
           </div>
         )}
 
-        {/* Navigation items */}
         <nav className="space-y-1">
           {navItems.map((item, index) => {
-            const isActive = pathname === item.href
+            const isActive = pathname === item.href || pathname.includes(`${item.href.split('?')[0]}`)
             const isNavigating = navigatingTo === item.href
             const displayName = getDisplayName(item)
             const hasCustomName = !!item.customName
             const originalName = item.originalName
-            const isMultilingual = item.isMultilingual // 🎯 NEW
+            const isMultilingual = item.isMultilingual
+            const isDuplicate = item.isDuplicate // NEW
 
-            // 🎯 UPDATED: Navigation item with multilingual support
+            // NEW: Enhanced navigation button with duplicate indicators
             const NavigationButton = (
               <Button
                 key={item.href}
@@ -630,8 +644,9 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
                     ? "bg-primary text-primary-foreground shadow-md hover:bg-primary/90"
                     : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200",
                   item.sectionId && "border-l-2 border-slate-200 dark:border-slate-700 pl-4",
+                  isDuplicate && "border-l-4 border-orange-400 dark:border-orange-500", // NEW: Different border for duplicates
                 )}
-                onClick={() => handleNavigation(item.href, item.sectionId)}
+                onClick={() => handleNavigation(item.href, item.actualSectionId)}
                 disabled={isNavigating}
               >
                 {isNavigating ? (
@@ -645,16 +660,25 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
                   />
                 )}
                 
-                {/* 🎯 UPDATED: Display name with multilingual indicators */}
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                   <span className="truncate text-left">{displayName}</span>
+                  
+                  {/* NEW: Show duplicate indicator */}
+                  {isDuplicate && (
+                    <Copy className={cn(
+                      "h-3 w-3 flex-shrink-0",
+                      isActive ? "text-primary-foreground/70" : "text-orange-500"
+                    )} />
+                  )}
+                  
                   {isMultilingual && (
                     <Globe className={cn(
                       "h-3 w-3 flex-shrink-0",
                       isActive ? "text-primary-foreground/70" : "text-green-500"
                     )} />
                   )}
-                  {hasCustomName && !isMultilingual && originalName && (
+                  
+                  {hasCustomName && !isMultilingual && !isDuplicate && originalName && (
                     <Type className={cn(
                       "h-3 w-3 flex-shrink-0",
                       isActive ? "text-primary-foreground/70" : "text-blue-500"
@@ -666,20 +690,42 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
               </Button>
             )
 
-            // 🎯 UPDATED: Enhanced tooltip with multilingual support
-            if (hasCustomName && (originalName || isMultilingual)) {
+            // Enhanced tooltip with duplicate information
+            if (hasCustomName && (originalName || isMultilingual || isDuplicate)) {
               return (
                 <TooltipProvider key={item.href}>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       {NavigationButton}
                     </TooltipTrigger>
-                    <TooltipContent side="right" className="max-w-[280px]">
+                    <TooltipContent side="right" className="max-w-[320px]">
                       <div className="space-y-2">
                         <div className="font-semibold text-sm flex items-center gap-2">
+                          {isDuplicate && <Copy className="h-3 w-3 text-orange-500" />}
                           {isMultilingual && <Globe className="h-3 w-3" />}
                           {displayName}
                         </div>
+                        
+                        {/* NEW: Show duplicate information */}
+                        {isDuplicate && (
+                          <div className="space-y-1">
+                            <div className="text-xs text-orange-600 dark:text-orange-400 font-medium">
+                              {safeTranslate("navigation.duplicateSection", "Duplicate Section")}
+                            </div>
+                            <div className="text-xs space-y-1">
+                              {item.duplicateOf && (
+                                <div>
+                                  <span className="font-medium">{safeTranslate("navigation.originalSection", "Original")}:</span> {item.duplicateOf}
+                                </div>
+                              )}
+                              {item.duplicateIndex && (
+                                <div>
+                                  <span className="font-medium">{safeTranslate("navigation.copyNumber", "Copy")}:</span> #{item.duplicateIndex}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                         
                         {isMultilingual && item.multilingualNames && (
                           <div className="space-y-1">
@@ -709,7 +755,7 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
                           </div>
                         )}
                         
-                        {!isMultilingual && originalName && originalName !== displayName && (
+                        {!isMultilingual && !isDuplicate && originalName && originalName !== displayName && (
                           <div className="text-xs text-muted-foreground">
                             {safeTranslate("Dashboard_sideBar.sectionType", "Section Type")}: {originalName}
                           </div>
@@ -728,13 +774,12 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
     )
   }
 
-  // Mobile view
+  // Rest of the component remains the same (mobile/desktop views)
   if (isMobile) {
     return (
       <AnimatePresence mode="wait">
         {isSidebarOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.5 }}
@@ -744,7 +789,6 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
               onClick={toggleSidebar}
             />
 
-            {/* Mobile Sidebar */}
             <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
@@ -757,7 +801,6 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
               }}
               className="fixed top-0 left-0 z-50 h-full w-[320px] max-w-[85vw] bg-background dark:bg-slate-900 shadow-2xl border-r dark:border-slate-700 flex flex-col"
             >
-              {/* Mobile Header */}
               <div className="flex h-16 items-center justify-between border-b dark:border-slate-700 px-4 flex-shrink-0">
                 <div className="flex items-center gap-2 font-semibold">
                   <Home className="h-6 w-6" />
@@ -773,7 +816,6 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
                 </Button>
               </div>
 
-              {/* Mobile User Info */}
               <div className="px-4 py-3 border-b dark:border-slate-700 flex-shrink-0">
                 <div className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
@@ -790,12 +832,10 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
                 </div>
               </div>
 
-              {/* Mobile Navigation */}
               <div className="flex-1 overflow-y-auto px-3 py-2">
                 {renderNavItems()}
               </div>
 
-              {/* Mobile Footer */}
               <div className="p-3 border-t dark:border-slate-700 flex-shrink-0">
                 <Link
                   href={`https://wa.me/905465234640`}
@@ -819,7 +859,6 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
     )
   }
 
-  // Desktop loading state
   if (isLoading || userIsLoading || (websiteId && isLoadingSections) || !isLoaded || !ready) {
     return (
       <div className="flex h-full flex-col border-r dark:border-slate-700 bg-background dark:bg-slate-900">
@@ -840,10 +879,8 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
     )
   }
 
-  // Desktop view
   return (
     <div className="flex h-full flex-col border-r dark:border-slate-700 bg-background dark:bg-slate-900 shadow-sm">
-      {/* Desktop Header */}
       <div className="flex h-16 items-center border-b dark:border-slate-700 px-4">
         <button
           onClick={() => handleNavigation("/dashboard")}
@@ -859,12 +896,10 @@ export default function DashboardSidebar({ isSidebarOpen = false, toggleSidebar 
         </button>
       </div>
       
-      {/* Desktop Navigation */}
       <div className="flex-1 overflow-auto p-2">
         {renderNavItems()}
       </div>
 
-      {/* Desktop Footer */}
       <div className="p-4 border-t dark:border-slate-700">
         <Link
           href={`https://wa.me/905465234640`}

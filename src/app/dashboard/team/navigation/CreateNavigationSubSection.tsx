@@ -830,7 +830,7 @@ export default function CreateNavigationSubSection({
     return true
   }
 
-  // 🆕 NEW: Handle navigation visibility change
+  // Handle navigation visibility change
   const handleNavigationVisibilityChange = async (isVisible: boolean) => {
     if (!subsection?._id) return;
 
@@ -856,7 +856,7 @@ export default function CreateNavigationSubSection({
           name: "Navigation Visibility",
           type: "boolean",
           parent: subsection._id,
-          isActive: true,
+          isActive: isVisible,
           order: contentElements.length,
           defaultContent: String(isVisible),
           metadata: {
@@ -1336,95 +1336,6 @@ if (languages.length === 0) {
   )
 }
 
-// Complete RTL-aware Navigation Visibility Switch Component
-const NavigationVisibilitySwitch = ({ 
-  isNavigationVisible, 
-  handleNavigationVisibilityChange, 
-  isUpdatingVisibility, 
-  subsection, 
-  t, 
-  isRtl 
-}: {
-  isNavigationVisible: boolean;
-  handleNavigationVisibilityChange: (isVisible: boolean) => void;
-  isUpdatingVisibility: boolean;
-  subsection: any;
-  t: any;
-  isRtl: boolean;
-}) => (
-  <Card className="mb-6">
-    <CardHeader>
-      <CardTitle className={`flex items-center text-lg ${isRtl ? 'flex-row-reverse' : ''}`}>
-        <Navigation className={`h-5 w-5 text-blue-600 dark:text-blue-400 ${isRtl ? 'ml-3' : 'mr-3'}`} />
-        <span>{t('Navigation.NavigationSettings', 'إعدادات القسم')}</span>
-      </CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div 
-        className="rounded-lg border p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800"
-        dir={isRtl ? 'rtl' : 'ltr'}
-      >
-        {/* RTL-aware layout container */}
-        <div className={`flex items-center justify-between w-full ${isRtl ? '' : ''}`}>
-          {/* Text content - positioned based on RTL */}
-          <div className={`flex-1 space-y-0.5 ${isRtl ? 'text-right' : 'text-left'}`}>
-            <div className={`flex items-center ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
-              {isNavigationVisible ? (
-                <Eye className={`h-4 w-4 text-green-600 dark:text-green-400 ${isRtl ? 'ml-2' : 'mr-2'}`} />
-              ) : (
-                <EyeOff className={`h-4 w-4 text-red-600 dark:text-red-400 ${isRtl ? 'ml-2' : 'mr-2'}`} />
-              )}
-              <span className="text-base font-medium text-gray-900 dark:text-gray-100">
-                {t('Navigation.ShowNavigation', 'إظهار التنقل')}
-              </span>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {isNavigationVisible
-                ? t('Navigation.NavigationCurrentlyVisible', 'التنقل مرئي حالياً للمستخدمين')
-                : t('Navigation.NavigationCurrentlyHidden', 'التنقل مخفي حالياً عن المستخدمين')
-              }
-            </p>
-          </div>
-          
-          {/* Switch container with proper RTL positioning */}
-          <div className={`flex-shrink-0 ${isRtl ? 'mr-4' : 'ml-4'}`}>
-            <div className={`${isRtl ? 'transform scale-x-[-1]' : ''}`}>
-              <Switch
-                checked={isNavigationVisible}
-                onCheckedChange={handleNavigationVisibilityChange}
-                disabled={isUpdatingVisibility || !subsection?._id}
-                className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-400"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Status indicator with RTL support */}
-      <div className={`mt-3 flex items-center text-sm ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
-        <div className={`w-2 h-2 rounded-full ${isRtl ? 'ml-2' : 'mr-2'} ${
-          isNavigationVisible 
-            ? 'bg-green-500 animate-pulse' 
-            : 'bg-red-500'
-        }`} />
-        <span className={isNavigationVisible 
-          ? 'text-green-700 dark:text-green-300' 
-          : 'text-red-700 dark:text-red-300'
-        }>
-          {isNavigationVisible 
-            ? t('Navigation.StatusVisible', 'الحالة: مرئي')
-            : t('Navigation.StatusHidden', 'الحالة: مخفي')
-          }
-        </span>
-        {isUpdatingVisibility && (
-          <span className={`text-blue-600 dark:text-blue-400 text-xs ${isRtl ? 'mr-2' : 'ml-2'}`}>
-            {t('Navigation.Updating', 'جاري التحديث...')}
-          </span>
-        )}
-      </div>
-    </CardContent>
-  </Card>
-);
 
 // Updated render function
 // Simple RTL-fixed switch replacement - just copy this function
@@ -1519,130 +1430,8 @@ const renderNavigationVisibilitySwitch = () => (
   </Card>
 );
 
-// Alternative approach - Custom RTL Switch Component
-const RTLAwareSwitch = ({ 
-  checked, 
-  onCheckedChange, 
-  disabled, 
-  isRtl 
-}: {
-  checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
-  disabled?: boolean;
-  isRtl: boolean;
-}) => {
-  return (
-    <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 ${
-      checked 
-        ? 'bg-green-500' 
-        : 'bg-red-400'
-    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
-      <Button
-        type="button"
-        className={`${
-          checked 
-            ? isRtl 
-              ? 'translate-x-[-1.25rem]' // Move left in RTL when checked
-              : 'translate-x-5'           // Move right in LTR when checked
-            : isRtl
-              ? 'translate-x-[-0.25rem]'  // Slight left in RTL when unchecked
-              : 'translate-x-1'           // Slight right in LTR when unchecked
-        } inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out focus:outline-none`}
-        onClick={() => !disabled && onCheckedChange(!checked)}
-        disabled={disabled}
-        aria-checked={checked}
-        role="switch"
-      />
-    </div>
-  );
-};
 
-// Usage with custom switch
-const NavigationVisibilitySwitchCustom = ({ 
-  isNavigationVisible, 
-  handleNavigationVisibilityChange, 
-  isUpdatingVisibility, 
-  subsection, 
-  t, 
-  isRtl 
-}: {
-  isNavigationVisible: boolean;
-  handleNavigationVisibilityChange: (isVisible: boolean) => void;
-  isUpdatingVisibility: boolean;
-  subsection: any;
-  t: any;
-  isRtl: boolean;
-}) => (
-  <Card className="mb-6">
-    <CardHeader>
-      <CardTitle className={`flex items-center text-lg ${isRtl ? 'flex-row-reverse' : ''}`}>
-        <Navigation className={`h-5 w-5 text-blue-600 dark:text-blue-400 ${isRtl ? 'ml-3' : 'mr-3'}`} />
-        <span>{t('Navigation.NavigationSettings', 'إعدادات القسم')}</span>
-      </CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div 
-        className="rounded-lg border p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800"
-        dir={isRtl ? 'rtl' : 'ltr'}
-      >
-        <div className={`flex items-center justify-between w-full`}>
-          {/* Text content */}
-          <div className={`flex-1 space-y-0.5 ${isRtl ? 'text-right order-2' : 'text-left order-1'}`}>
-            <div className={`flex items-center ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
-              {isNavigationVisible ? (
-                <Eye className={`h-4 w-4 text-green-600 dark:text-green-400 ${isRtl ? 'ml-2' : 'mr-2'}`} />
-              ) : (
-                <EyeOff className={`h-4 w-4 text-red-600 dark:text-red-400 ${isRtl ? 'ml-2' : 'mr-2'}`} />
-              )}
-              <span className="text-base font-medium text-gray-900 dark:text-gray-100">
-                {t('Navigation.ShowNavigation', 'إظهار التنقل')}
-              </span>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {isNavigationVisible
-                ? t('Navigation.NavigationCurrentlyVisible', 'التنقل مرئي حالياً للمستخدمين')
-                : t('Navigation.NavigationCurrentlyHidden', 'التنقل مخفي حالياً عن المستخدمين')
-              }
-            </p>
-          </div>
-          
-          {/* Custom Switch */}
-          <div className={`flex-shrink-0 ${isRtl ? 'order-1 mr-4' : 'order-2 ml-4'}`}>
-            <RTLAwareSwitch
-              checked={isNavigationVisible}
-              onCheckedChange={handleNavigationVisibilityChange}
-              disabled={isUpdatingVisibility || !subsection?._id}
-              isRtl={isRtl}
-            />
-          </div>
-        </div>
-      </div>
-      
-      {/* Status indicator */}
-      <div className={`mt-3 flex items-center text-sm ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
-        <div className={`w-2 h-2 rounded-full ${isRtl ? 'ml-2' : 'mr-2'} ${
-          isNavigationVisible 
-            ? 'bg-green-500 animate-pulse' 
-            : 'bg-red-500'
-        }`} />
-        <span className={isNavigationVisible 
-          ? 'text-green-700 dark:text-green-300' 
-          : 'text-red-700 dark:text-red-300'
-        }>
-          {isNavigationVisible 
-            ? t('Navigation.StatusVisible', 'الحالة: مرئي')
-            : t('Navigation.StatusHidden', 'الحالة: مخفي')
-          }
-        </span>
-        {isUpdatingVisibility && (
-          <span className={`text-blue-600 dark:text-blue-400 text-xs ${isRtl ? 'mr-2' : 'ml-2'}`}>
-            {t('Navigation.Updating', 'جاري التحديث...')}
-          </span>
-        )}
-      </div>
-    </CardContent>
-  </Card>
-);
+
 
 return (
   <div className="space-y-4">

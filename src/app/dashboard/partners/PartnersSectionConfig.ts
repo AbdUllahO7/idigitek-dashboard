@@ -46,8 +46,17 @@ export const partnersSectionTranslations = {
 };
 
 // Function to get translated partners section config
-export const getPartnersSectionConfig = (language: string = 'en') => {
+export const getPartnersSectionConfig = (language: string = 'en' , sectionData?: any) => {
   const translations = partnersSectionTranslations[language as keyof typeof partnersSectionTranslations] || partnersSectionTranslations.en;
+   const baseSlug = "Partners-main";
+  let sectionSlug = baseSlug;
+
+
+ if (sectionData?.isDuplicate && sectionData?.uniqueIdentifier) {
+    sectionSlug = `${baseSlug}-${sectionData.uniqueIdentifier}`;
+  } else if (sectionData?.duplicateIndex) {
+    sectionSlug = `${baseSlug}-duplicate-${sectionData.duplicateIndex}`;
+  }
   
   return {
     name: "Partners Section Basic",
@@ -56,6 +65,12 @@ export const getPartnersSectionConfig = (language: string = 'en') => {
     description: translations.sectionDescription,
     isMain: true,
     type: translations.type,
+    isDuplicate: sectionData?.isDuplicate || false,
+    duplicateIndex: sectionData?.duplicateIndex,
+    uniqueIdentifier: sectionData?.uniqueIdentifier,
+    originalSectionId: sectionData?.originalSectionId,
+    
+
     // Define fields with translated labels
     fields: [
       { 
