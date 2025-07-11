@@ -38,9 +38,7 @@ interface FormData {
   [key: string]: Array<{
     title: string;
     description: string;
-    requestButton: string;
-    requestButtonType: string,
-    requestButtonUrl: string,
+
     exploreButton: string;
     exploreButtonType: string,
     exploreButtonUrl: string,
@@ -109,7 +107,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       refetch,
     } = useGetCompleteBySlug(slug || "", Boolean(slug));
 
-    console.log("completeSubsectionData" , completeSubsectionData)
 
     const { heroImages, handleHeroImageRemove, updateHeroImageIndices, HeroImageUploader } = useHeroImages(form);
 
@@ -139,9 +136,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
         // Only sync URL-related fields from primary language to other languages
         if (name && name.startsWith(primaryLanguageRef.current)) {
           const isUrlField = name.includes('exploreButtonType') || 
-                            name.includes('exploreButtonUrl') || 
-                            name.includes('requestButtonType') || 
-                            name.includes('requestButtonUrl');
+                            name.includes('exploreButtonUrl')
           
           if (isUrlField) {
             // Extract the field name and index
@@ -373,20 +368,10 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
   const exploreButtonUrlElement = findElement(["explorebuttonurl", "explorebutton"]) && 
     elements.find((el) => el.name.toLowerCase().includes("url"));
   
-  const requestButtonElement = findElement(["requestbutton"]) && !findElement(["requestbuttontype", "requestbuttonurl"]) 
-    ? findElement(["requestbutton"]) 
-    : elements.find((el) => 
-        el.name.toLowerCase().includes("requestbutton") && 
-        !el.name.toLowerCase().includes("type") && 
-        !el.name.toLowerCase().includes("url")
-      );
+
   
-  const requestButtonTypeElement = findElement(["requestbuttontype", "requestbutton"]) && 
-    elements.find((el) => el.name.toLowerCase().includes("type"));
-  
-  const requestButtonUrlElement = findElement(["requestbuttonurl", "requestbutton"]) && 
-    elements.find((el) => el.name.toLowerCase().includes("url"));
-  
+
+
   const imageElement = elements.find((el) => 
     el.name.toLowerCase().includes("image") && el.type === "image"
   );
@@ -397,9 +382,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
     exploreButton: exploreButtonElement?.name,
     exploreButtonType: exploreButtonTypeElement?.name,
     exploreButtonUrl: exploreButtonUrlElement?.name,
-    requestButton: requestButtonElement?.name,
-    requestButtonType: requestButtonTypeElement?.name,
-    requestButtonUrl: requestButtonUrlElement?.name,
     image: imageElement?.name
   });
 
@@ -431,9 +413,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
     exploreButton: useTranslationContent(exploreButtonElement, ""),
     exploreButtonType: useTranslationContent(exploreButtonTypeElement, t("heroesForm.defaultButtonType"), true),
     exploreButtonUrl: useTranslationContent(exploreButtonUrlElement, "", true),
-    requestButton: useTranslationContent(requestButtonElement, ""),
-    requestButtonType: useTranslationContent(requestButtonTypeElement, t("heroesForm.defaultButtonType"), true),
-    requestButtonUrl: useTranslationContent(requestButtonUrlElement, "", true),
     image: imageElement?.imageUrl || "",
   };
   
@@ -448,9 +427,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
                   exploreButton: "",
                   exploreButtonType: t("heroesForm.defaultButtonType"),
                   exploreButtonUrl: "",
-                  requestButton: "",
-                  requestButtonType: t("heroesForm.defaultButtonType"),
-                  requestButtonUrl: "",
                   image: "",
                 },
               ],
@@ -514,9 +490,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
           exploreButton: "",
           exploreButtonType: t("heroesForm.defaultButtonType"),
           exploreButtonUrl: "",
-          requestButton: "",
-          requestButtonType: t("heroesForm.defaultButtonType"),
-          requestButtonUrl: "",
           image: "",
         };
 
@@ -531,8 +504,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             if (primaryHeroes[heroIndex]) {
               newHero.exploreButtonType = primaryHeroes[heroIndex].exploreButtonType || t("heroesForm.defaultButtonType");
               newHero.exploreButtonUrl = primaryHeroes[heroIndex].exploreButtonUrl || "";
-              newHero.requestButtonType = primaryHeroes[heroIndex].requestButtonType || t("heroesForm.defaultButtonType");
-              newHero.requestButtonUrl = primaryHeroes[heroIndex].requestButtonUrl || "";
             }
           }
           
@@ -639,9 +610,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             exploreButton: t("heroesForm.heroExploreButton", { heroIndex }),
             exploreButtonType: t("heroesForm.heroExploreButtonType", { heroIndex }),
             exploreButtonUrl: t("heroesForm.heroExploreButtonUrl", { heroIndex }),
-            requestButton: t("heroesForm.heroRequestButton", { heroIndex }),
-            requestButtonType: t("heroesForm.heroRequestButtonType", { heroIndex }),
-            requestButtonUrl: t("heroesForm.heroRequestButtonUrl", { heroIndex }),
             image: t("heroesForm.heroImage", { heroIndex }),
           };
 
@@ -651,9 +619,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             exploreButton: state.contentElements.find((el) => el.name === elementNames.exploreButton) ?? null,
             exploreButtonType: state.contentElements.find((el) => el.name === elementNames.exploreButtonType) ?? null,
             exploreButtonUrl: state.contentElements.find((el) => el.name === elementNames.exploreButtonUrl) ?? null,
-            requestButton: state.contentElements.find((el) => el.name === elementNames.requestButton) ?? null,
-            requestButtonType: state.contentElements.find((el) => el.name === elementNames.requestButtonType) ?? null,
-            requestButtonUrl: state.contentElements.find((el) => el.name === elementNames.requestButtonUrl) ?? null,
             image: state.contentElements.find((el) => el.name === elementNames.image && el.type === "image") ?? null,
           };
 
@@ -663,9 +628,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             { type: "text", key: "exploreButton", name: elementNames.exploreButton },
             { type: "text", key: "exploreButtonType", name: elementNames.exploreButtonType },
             { type: "text", key: "exploreButtonUrl", name: elementNames.exploreButtonUrl },
-            { type: "text", key: "requestButton", name: elementNames.requestButton },
-            { type: "text", key: "requestButtonType", name: elementNames.requestButtonType },
-            { type: "text", key: "requestButtonUrl", name: elementNames.requestButtonUrl },
             { type: "image", key: "image", name: elementNames.image },
           ];
 
@@ -724,15 +686,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
                 isActive: true,
               });
             }
-            if (elements.requestButton) {
-              translations.push({
-                _id: "",
-                content: hero.requestButton || "",
-                language: langId,
-                contentElement: elements.requestButton._id,
-                isActive: true,
-              });
-            }
+           
 
             // URL fields - only save from primary language to avoid duplicates
             const primaryLangCode = activeLanguages[0]?.languageID;
@@ -759,27 +713,10 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
                 });
               }
               
-              if (elements.requestButtonType) {
-                const requestButtonTypeContent = hero.requestButtonType || t("heroesForm.defaultButtonType");
-                translations.push({
-                  _id: "",
-                  content: requestButtonTypeContent,
-                  language: langId,
-                  contentElement: elements.requestButtonType._id,
-                  isActive: true,
-                });
-              }
+         
               
               // Only create translation if URL is not empty
-              if (elements.requestButtonUrl && hero.requestButtonUrl && hero.requestButtonUrl.trim() !== "") {
-                translations.push({
-                  _id: "",
-                  content: hero.requestButtonUrl.trim(),
-                  language: langId,
-                  contentElement: elements.requestButtonUrl._id,
-                  isActive: true,
-                });
-              }
+            
             }
           });
 

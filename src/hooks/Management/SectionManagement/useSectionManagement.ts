@@ -555,19 +555,7 @@ export const useSectionManagement = (hasWebsite: boolean) => {
         showSuccessMessage()
         refetchSections()
       },
-      onError: (error: any) => {
-        console.error("Error updating section order:", error)
-        toast({
-          title: ready ? t("useSectionManagement.toast.errorUpdatingOrder.title") : "Error updating order",
-          description: ready ? 
-            t("useSectionManagement.toast.errorUpdatingOrder.description") : 
-            error.message || "An error occurred while updating section order.",
-          variant: "destructive",
-        })
-        if (websiteSections?.data) {
-          setOrderedSections([...websiteSections.data].sort((a, b) => a.order - b.order))
-        }
-      },
+   
     })
   }
 

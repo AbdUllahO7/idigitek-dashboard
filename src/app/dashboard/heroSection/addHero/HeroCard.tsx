@@ -72,12 +72,10 @@ export const HeroCard = memo(({
   // Mock form watch function
   const mockWatch = (path: string) => {
     if (path.includes('exploreButtonType')) return 'default';
-    if (path.includes('requestButtonType')) return 'default';
     return '';
   };
 
   const exploreButtonType = form?.watch ? form.watch(`${langCode}.${index}.exploreButtonType`) || "default" : mockWatch(`${langCode}.${index}.exploreButtonType`);
-  const requestButtonType = form?.watch ? form.watch(`${langCode}.${index}.requestButtonType`) || "default" : mockWatch(`${langCode}.${index}.requestButtonType`);
 
   return (
     <Card className="border border-muted" dir={language === 'ar' ? 'rtl' : 'ltr'}>
@@ -225,84 +223,7 @@ export const HeroCard = memo(({
             )}
           </div>
 
-          {/* Request Button Section */}
-          <div className="space-y-3 border-t pt-4">
-            <FormField
-              control={form?.control}
-              name={`${langCode}.${index}.requestButton`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("heroCard.requestButtonTextLabel")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("heroCard.requestButtonPlaceholder")} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Only show button type selection and URL for first language */}
-            {isFirstLanguage && (
-              <>
-                <FormField
-                  control={form?.control}
-                  name={`${langCode}.${index}.requestButtonType`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("heroCard.requestButtonLinkTypeLabel")}</FormLabel>
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field?.onChange}
-                          defaultValue={field?.value || "default"}
-                          className="flex flex-row space-x-4"
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="default" id={`request-default-${index}`} />
-                            <Label htmlFor={`request-default-${index}`}>
-                              {t("heroCard.defaultOption")}
-                            </Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="special" id={`request-special-${index}`} />
-                            <Label htmlFor={`request-special-${index}`}>
-                              {t("heroCard.specialLinkOption")}
-                            </Label>
-                          </div>
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Show URL field only if special link is selected */}
-                {requestButtonType === "special" && (
-                  <FormField
-                    control={form?.control}
-                    name={`${langCode}.${index}.requestButtonUrl`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t("heroCard.requestButtonUrlLabel")} {" "}
-                          <span className="text-muted-foreground">
-                            {t("heroCard.optionalText")}
-                          </span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder={t("heroCard.urlPlaceholder")} 
-                            type="url"
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-              </>
-            )}
-          </div>
+  
 
           {/* Image Section */}
           <div className="border-t pt-4">

@@ -78,14 +78,7 @@ const useUpdateOrder = () => {
             });
         }
         },
-        onError: (error: any) => {
-        console.error('Mutation error:', error);
-        toast({
-            title: 'Error updating order',
-            description: error.message || 'An error occurred while updating section order.',
-            variant: 'destructive',
-        });
-        },
+     
     });
 };
 

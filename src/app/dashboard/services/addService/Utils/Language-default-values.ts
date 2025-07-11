@@ -68,9 +68,6 @@ const defaultValueDefinitions = {
         exploreButton: "",
         exploreButtonType: "default",
         exploreButtonUrl: "",
-        requestButton: "",
-        requestButtonType: "default", 
-        requestButtonUrl: "",
         image :""
     }],
         teamSection: () => [{

@@ -175,9 +175,6 @@ const schemaDefinitions = {
         exploreButton: z.string().min(1, "Explore Button text is required"),
         exploreButtonType: z.enum(["default", "special"]).default("default"),
         exploreButtonUrl: z.string().url().optional().or(z.literal("")), 
-        requestButton: z.string().min(1, "Request Button text is required"),
-        requestButtonType: z.enum(["default", "special"]).default("default"),
-        requestButtonUrl: z.string().url().optional().or(z.literal("")), 
         image : z.string().min(1, "Request Button text is required"),
       })
     ).min(1, { message: "At least one feature is required" }),

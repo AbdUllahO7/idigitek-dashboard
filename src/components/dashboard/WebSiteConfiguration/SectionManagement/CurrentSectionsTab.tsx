@@ -40,7 +40,7 @@ import { filterCurrentSections, getSectionVisualInfo } from "@/src/utils/managem
 import { TFunction } from "i18next"
 import { useState } from "react"
 import { PREDEFINED_SECTIONS } from "@/src/Const/SectionsData"
-import { getMultilingualDescription, getMultilingualName, hasMultilingualName } from "@/src/hooks/Management/SectionManagement/MultilingualManagement"
+import { getMultilingualName, hasMultilingualName } from "@/src/hooks/Management/SectionManagement/MultilingualManagement"
 
 // Multilingual name interface
 interface MultilingualName {
@@ -72,7 +72,6 @@ interface CurrentSectionsTabProps {
   t: TFunction
   ready: boolean
     onDuplicateSection: (section: Section) => void // NEW: Add this prop
-
 }
 
 // Image Modal Component
