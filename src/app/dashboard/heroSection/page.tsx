@@ -8,7 +8,6 @@ import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections"
 import { CountBadgeCell, GenericTable, StatusCell, TruncatedCell } from "@/src/components/dashboard/MainSections/GenericTable"
 import { GenericListPage } from "@/src/components/dashboard/MainSections/GenericListPage"
 import DialogCreateSectionItem from "@/src/components/DialogCreateSectionItem"
-import CreateMainSubSection from "@/src/utils/CreateMainSubSection"
 import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { getHeroSectionConfig } from "./HeroSectionConfig"
@@ -424,7 +423,21 @@ export default function HeroPage() {
         previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
       />
 
-      {/* Main list page with table and section integration */}
+   
+
+     
+
+      {/* Navigation subsection management (only shown when section exists) */}
+      {sectionId && (
+        <CreateNavigationSubSection
+          sectionId={sectionId}
+          sectionConfig={NavigationConfig}
+          sectionInfo={sectionInfoForNavigation}
+          onSubSectionCreated={handleNavigationSubSectionCreated}
+          onFormValidityChange={() => {/* We don't need to track form validity */}}
+        />
+      )}
+         {/* Main list page with table and section integration */}
       <GenericListPage
         config={Hero_CONFIG}
         sectionId={sectionId}
@@ -440,19 +453,6 @@ export default function HeroPage() {
         noSectionCondition={false}
         customEmptyMessage={emptyStateMessage}
       />
-
-     
-
-      {/* Navigation subsection management (only shown when section exists) */}
-      {sectionId && (
-        <CreateNavigationSubSection
-          sectionId={sectionId}
-          sectionConfig={NavigationConfig}
-          sectionInfo={sectionInfoForNavigation}
-          onSubSectionCreated={handleNavigationSubSectionCreated}
-          onFormValidityChange={() => {/* We don't need to track form validity */}}
-        />
-      )}
     </div>
   )
 }

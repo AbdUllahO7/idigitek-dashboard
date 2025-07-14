@@ -6,6 +6,7 @@ import { toast } from '@/src/hooks/use-toast';
 import { Card } from '@/src/components/ui/card';
 import { Button } from '@/src/components/ui/button';
 import { Label } from '@/src/components/ui/label';
+import { useTranslation } from 'react-i18next';
 
 // Maximum file size in bytes (2MB)
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
@@ -223,6 +224,8 @@ export const SimpleImageUploader = ({
     }
   };
 
+  const {t} = useTranslation()
+
   return (
     <Card className="overflow-hidden">
       <div className="p-4">
@@ -257,7 +260,9 @@ export const SimpleImageUploader = ({
                 className="w-full"
                 onClick={() => document.getElementById(inputId)?.click()}
               >
-                Change Image
+                {
+                    t('SectionTable.ChangeImage')
+                  }
               </Button>
             </div>
           </div>
@@ -304,7 +309,6 @@ export const LabeledImageUploader = ({
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
         <ImageIcon className="h-4 w-4" />
-        {label}
       </Label>
       {helperText && (
         <p className="text-xs text-muted-foreground mb-1">{helperText}</p>

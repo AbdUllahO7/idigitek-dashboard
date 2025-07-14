@@ -10,12 +10,10 @@ export const partnersSectionTranslations = {
     sectionBadgeLabel: "Section Badge",
     sectionTitleLabel: "Section Title",
     sectionDescriptionLabel: "Section Description",
-    partnersDetailsLabel: "Section Details",
     type: "Partners",
     badgeElement: "Badge",
     titleElement: "Title",
     descriptionElement: "Description",
-    partnersDetailsElement: "PartnersDetails"
   },
   ar: {
     sectionName: "القسم  الأساسي",
@@ -23,12 +21,10 @@ export const partnersSectionTranslations = {
     sectionBadgeLabel: "شارة القسم",
     sectionTitleLabel: "عنوان القسم",
     sectionDescriptionLabel: "وصف القسم",
-    partnersDetailsLabel: "تفاصيل القسم",
     type: "شركاء",
     badgeElement: "الشارة",
     titleElement: "العنوان",
     descriptionElement: "الوصف",
-    partnersDetailsElement: "تفاصيل القسم"
   },
   tr: {
     sectionName: "Temel Ortak Bölümü",
@@ -36,12 +32,10 @@ export const partnersSectionTranslations = {
     sectionBadgeLabel: "Bölüm Rozeti",
     sectionTitleLabel: "Bölüm Başlığı",
     sectionDescriptionLabel: "Bölüm Açıklaması",
-    partnersDetailsLabel: "Bölüm Detayları",
     type: "Ortak",
     badgeElement: "Rozet",
     titleElement: "Başlık",
     descriptionElement: "Açıklama",
-    partnersDetailsElement: "Bölüm Detayları"
   }
 };
 
@@ -91,19 +85,13 @@ export const getPartnersSectionConfig = (language: string = 'en' , sectionData?:
         type: "textarea", 
         required: false 
       },
-      { 
-        id: "partnersDetails", 
-        label: translations.partnersDetailsLabel, 
-        type: "badge", 
-        required: true 
-      },
+  
     ] as FieldConfig[],
     // Define element mapping with translated values
     elementsMapping: {
       "sectionBadge": translations.badgeElement,
       "sectionTitle": translations.titleElement, 
       "sectionDescription": translations.descriptionElement,
-      "partnersDetails": translations.partnersDetailsElement
     }
   };
 };
@@ -131,6 +119,5 @@ export const legacyPartnersSectionConfig = {
         "sectionBadge": "Badge",
         "sectionTitle": "Title", 
         "sectionDescription": "Description",
-        "industryDetails": "PartnersDetails"
     }
 };

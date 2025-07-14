@@ -169,6 +169,7 @@ export default function ProjectPage() {
     apiHooks: useSectionItems(),
     editPath: PROJECTS_CONFIG.editPath
   })
+
   // Handle navigation subsection creation
   const handleNavigationSubSectionCreated = (subsection: any) => {
     
@@ -192,152 +193,144 @@ export default function ProjectPage() {
       }, 1000); // Give it a bit more time to ensure data is saved
     }
   };
-  // Determine if main subsection exists when data loads & set section data if needed
-   useEffect(() => {    
-    // First check if we are still loading
-    if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
-      setIsLoadingMainSubSection(true);
-      return;
-    }
-    
-   
-    
-    // We're done loading, now check the data
-    let foundMainSubSection = false;
-    let foundNavigationSubSection = false;
-    let mainSubSection = null;
-    
-    // 🔧 FIXED: Use NEWS configurations instead of team configurations
-    const expectedNewsSlug = projectSectionConfig.name; // This is correct for NEWS
-    const expectedNavigationSlug = NavigationConfig.name; // This is correct for NEWS navigation
-    
+ // Replace the useEffect in your Project page with this fixed version:
 
+useEffect(() => {    
+  // First check if we are still loading
+  if (isLoadingCompleteSubsections || (sectionId && isLoadingSectionSubsections)) {
+    setIsLoadingMainSubSection(true);
+    return;
+  }
+  
+  // We're done loading, now check the data
+  let foundMainSubSection = false;
+  let foundNavigationSubSection = false;
+  let mainSubSection = null;
+  
+  // ✅ FIXED: Use PROJECTS configurations instead of wrong variable names
+  const expectedProjectsSlug = translatedProjectSectionConfig.name; // ✅ Use correct variable name
+  const expectedNavigationSlug = NavigationConfig.name; // This is correct for PROJECTS navigation
+  
+  // If we have a sectionId, prioritize checking the section-specific subsections
+  if (sectionId && sectionSubsections?.data) {
+    const sectionData = sectionSubsections.data;
     
-    // If we have a sectionId, prioritize checking the section-specific subsections
-    if (sectionId && sectionSubsections?.data) {
-      const sectionData = sectionSubsections.data;
+    if (Array.isArray(sectionData)) {
+      // ✅ FIXED: Find the main PROJECTS subsection
+      mainSubSection = sectionData.find(sub => 
+        sub.isMain === true && sub.name === expectedProjectsSlug
+      );
+      foundMainSubSection = !!mainSubSection;
+
+      // Check for navigation subsection - be more flexible in matching
+      const navigationSubSection = sectionData.find(sub => {
+        // Match by type first (most reliable)
+        if (sub.type === NavigationConfig.type) return true;
+        // Match by name
+        if (sub.name === expectedNavigationSlug) return true;
+        // Match by partial name (in case of slug differences)
+        if (sub.name && sub.name.toLowerCase().includes('project') && sub.name.toLowerCase().includes('navigation')) return true;
+        return false;
+      });
+      foundNavigationSubSection = !!navigationSubSection;
       
-      if (Array.isArray(sectionData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
-        mainSubSection = sectionData.find(sub => 
-          sub.isMain === true && sub.name === expectedNewsSlug
+    } else {
+      // Single object response - check if it's projects main or navigation
+      if (sectionData.isMain === true && sectionData.name === expectedProjectsSlug) {
+        foundMainSubSection = true;
+        mainSubSection = sectionData;
+      }
+      
+      // Check if it's a projects navigation subsection
+      if (sectionData.type === NavigationConfig.type || 
+          sectionData.name === expectedNavigationSlug ||
+          (sectionData.name && sectionData.name.toLowerCase().includes('project') && sectionData.name.toLowerCase().includes('navigation'))) {
+        foundNavigationSubSection = true;
+      }
+    }
+  }
+  
+  // If we didn't find anything in the section-specific data, check the website-wide data
+  if ((!foundMainSubSection || !foundNavigationSubSection) && mainSubSectionData?.data) {
+    const websiteData = mainSubSectionData.data;
+    
+    if (Array.isArray(websiteData)) {
+      // ✅ FIXED: Find the main PROJECTS subsection
+      if (!foundMainSubSection) {
+        mainSubSection = websiteData.find(sub => 
+          sub.isMain === true && sub.name === expectedProjectsSlug
         );
         foundMainSubSection = !!mainSubSection;
+      }
 
-        // Check for navigation subsection - be more flexible in matching
-        const navigationSubSection = sectionData.find(sub => {
+      // Check for navigation subsection - be more flexible in matching
+      if (!foundNavigationSubSection) {
+        const navigationSubSection = websiteData.find(sub => {
           // Match by type first (most reliable)
           if (sub.type === NavigationConfig.type) return true;
           // Match by name
           if (sub.name === expectedNavigationSlug) return true;
           // Match by partial name (in case of slug differences)
-          if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
+          if (sub.name && sub.name.toLowerCase().includes('project') && sub.name.toLowerCase().includes('navigation')) return true;
           return false;
         });
         foundNavigationSubSection = !!navigationSubSection;
-        
-      
-      } else {
-        // Single object response - check if it's news main or navigation
-        if (sectionData.isMain === true && sectionData.name === expectedNewsSlug) {
-          foundMainSubSection = true;
-          mainSubSection = sectionData;
-        }
-        
-        // Check if it's a news navigation subsection
-        if (sectionData.type === NavigationConfig.type || 
-            sectionData.name === expectedNavigationSlug ||
-            (sectionData.name && sectionData.name.toLowerCase().includes('news') && sectionData.name.toLowerCase().includes('navigation'))) {
-          foundNavigationSubSection = true;
-        }
-      }
-    }
-    
-    // If we didn't find anything in the section-specific data, check the website-wide data
-    if ((!foundMainSubSection || !foundNavigationSubSection) && mainSubSectionData?.data) {
-      const websiteData = mainSubSectionData.data;
-      
-      if (Array.isArray(websiteData)) {
-        // 🔧 FIXED: Find the main NEWS subsection (not team!)
-        if (!foundMainSubSection) {
-          mainSubSection = websiteData.find(sub => 
-            sub.isMain === true && sub.name === expectedNewsSlug
-          );
-          foundMainSubSection = !!mainSubSection;
-        }
-
-        // Check for navigation subsection - be more flexible in matching
-        if (!foundNavigationSubSection) {
-          const navigationSubSection = websiteData.find(sub => {
-            // Match by type first (most reliable)
-            if (sub.type === NavigationConfig.type) return true;
-            // Match by name
-            if (sub.name === expectedNavigationSlug) return true;
-            // Match by partial name (in case of slug differences)
-            if (sub.name && sub.name.toLowerCase().includes('news') && sub.name.toLowerCase().includes('navigation')) return true;
-            return false;
-          });
-          foundNavigationSubSection = !!navigationSubSection;
-        }
-        
-      
-      } else {
-        // Single object response - check what type it is
-        if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedNewsSlug) {
-          foundMainSubSection = true;
-          mainSubSection = websiteData;
-        }
-        
-        // Check if it's a navigation subsection
-        if (!foundNavigationSubSection && (
-          websiteData.type === NavigationConfig.type || 
-          websiteData.name === expectedNavigationSlug ||
-          (websiteData.name && websiteData.name.toLowerCase().includes('news') && websiteData.name.toLowerCase().includes('navigation'))
-        )) {
-          foundNavigationSubSection = true;
-        }
-      }
-    }
-    
-   
-    
-    setHasMainSubSection(foundMainSubSection);
-    setHasNavigationSubSection(foundNavigationSubSection);
-    setIsLoadingMainSubSection(false);
-    
-    // Extract section data from the main subsection if we found one
-    if (foundMainSubSection && mainSubSection && mainSubSection.section) {
-      const sectionInfo = typeof mainSubSection.section === 'string' 
-        ? { _id: mainSubSection.section } 
-        : mainSubSection.section;
-      
-      // Set local section data
-      setSectionData(sectionInfo);
-      
-      // Update the newsSection in useGenericList hook if not already set
-      if (projectSection === null) {
-        setSection(sectionInfo);
       }
       
+    } else {
+      // Single object response - check what type it is
+      if (!foundMainSubSection && websiteData.isMain === true && websiteData.name === expectedProjectsSlug) {
+        foundMainSubSection = true;
+        mainSubSection = websiteData;
+      }
+      
+      // Check if it's a navigation subsection
+      if (!foundNavigationSubSection && (
+        websiteData.type === NavigationConfig.type || 
+        websiteData.name === expectedNavigationSlug ||
+        (websiteData.name && websiteData.name.toLowerCase().includes('project') && websiteData.name.toLowerCase().includes('navigation'))
+      )) {
+        foundNavigationSubSection = true;
+      }
     }
+  }
+  
+  setHasMainSubSection(foundMainSubSection);
+  setHasNavigationSubSection(foundNavigationSubSection);
+  setIsLoadingMainSubSection(false);
+  
+  // Extract section data from the main subsection if we found one
+  if (foundMainSubSection && mainSubSection && mainSubSection.section) {
+    const sectionInfo = typeof mainSubSection.section === 'string' 
+      ? { _id: mainSubSection.section } 
+      : mainSubSection.section;
     
-  }, [
-    mainSubSectionData, 
-    sectionSubsections, 
-    isLoadingCompleteSubsections, 
-    isLoadingSectionSubsections, 
-    sectionId, 
-    projectSection, 
-    setSection,
-    projectSectionConfig.name,        // 🔧 FIXED: Use news config
-    NavigationConfig.name,     // 🔧 FIXED: Use news navigation config
-    NavigationConfig.type      // 🔧 FIXED: Use news navigation config
-  ]);
+    // Set local section data
+    setSectionData(sectionInfo);
+    
+    // Update the projectSection in useGenericList hook if not already set
+    if (projectSection === null) {
+      setSection(sectionInfo);
+    }
+  }
+  
+}, [
+  mainSubSectionData, 
+  sectionSubsections, 
+  isLoadingCompleteSubsections, 
+  isLoadingSectionSubsections, 
+  sectionId, 
+  projectSection, 
+  setSection,
+  translatedProjectSectionConfig.name,  // ✅ FIXED: Use correct variable name
+  NavigationConfig.name,                // ✅ FIXED: Correct for projects navigation
+  NavigationConfig.type                 // ✅ FIXED: Correct for projects navigation
+]);
 
 
   // Handle main subsection creation
   const handleMainSubSectionCreated = (subsection: any) => {
-    
+    console.log("handleMainSubSectionCreated" ,subsection )
     // Check if subsection has the correct name (using translated config)
     const expectedSlug = translatedProjectSectionConfig.name;
     const hasCorrectSlug = subsection.name === expectedSlug;
@@ -360,6 +353,7 @@ export default function ProjectPage() {
       refetchMainSubSection();
     }
   };
+
 
   // Logic for disabling the add button
   const isAddButtonDisabled: boolean = 
@@ -422,22 +416,7 @@ export default function ProjectPage() {
       
 
       {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={PROJECTS_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={translatedProjectSectionConfig} // Use translated config with language parameter
-        isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={ProjectTable}
-        createDialogComponent={CreateDialog}
-        deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
-        isLoading={isLoadingProjectItems || isLoadingMainSubSection}
-        emptyCondition={projectItems.length === 0}
-        noSectionCondition={!projectSection && !sectionData}
-        customEmptyMessage={emptyStateMessage}
-      />
-      
-      {/* Main subsection management (only shown when section exists) */}
+    
        
       {/* Section Configuration Tabs (only shown when section exists) */}
       {sectionId && (
@@ -475,6 +454,22 @@ export default function ProjectPage() {
           </TabsContent>
         </Tabs>
       )}
+
+        <GenericListPage
+        config={PROJECTS_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={translatedProjectSectionConfig} // Use translated config with language parameter
+        isAddButtonDisabled={isAddButtonDisabled}
+        tableComponent={ProjectTable}
+        createDialogComponent={CreateDialog}
+        deleteDialogComponent={DeleteDialog}
+        onAddNew={handleAddNew}
+        isLoading={isLoadingProjectItems || isLoadingMainSubSection}
+        emptyCondition={projectItems.length === 0}
+        noSectionCondition={!projectSection && !sectionData}
+        customEmptyMessage={emptyStateMessage}
+      />
+      
     </div>
   );
 }

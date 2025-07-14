@@ -77,7 +77,7 @@ export const getProjectSectionConfig = (language: string = 'en') => {
         required: false 
       },
       { 
-        id: "serviceDetails", 
+        id: "project Details", 
         label: translations.projectDetailsLabel, 
         type: "badge", 
         required: true 
@@ -88,7 +88,7 @@ export const getProjectSectionConfig = (language: string = 'en') => {
       "sectionBadge": translations.badgeElement,
       "sectionTitle": translations.titleElement, 
       "sectionDescription": translations.descriptionElement,
-      "serviceDetails": translations.serviceDetailsElement
+      "project Details": translations.serviceDetailsElement
     }
   };
 };

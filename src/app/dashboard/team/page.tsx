@@ -405,21 +405,7 @@ export default function Team() {
         previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
       />
 
-      {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={TEAM_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={teamSectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={TeamTable}
-        createDialogComponent={CreateDialog}
-        deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
-        isLoading={isLoadingTeamItems || isLoadingMainSubSection}
-        emptyCondition={teamItems.length === 0}
-        noSectionCondition={!teamSection && !sectionData}
-        customEmptyMessage={emptyStateMessage}
-      />
+
       
       {/* Section Configuration Tabs (only shown when section exists) */}
       {sectionId && (
@@ -459,6 +445,22 @@ export default function Team() {
           </TabsContent>
         </Tabs>
       )}
+
+            {/* Main list page with table and section integration */}
+      <GenericListPage
+        config={TEAM_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={teamSectionConfig}
+        isAddButtonDisabled={isAddButtonDisabled}
+        tableComponent={TeamTable}
+        createDialogComponent={CreateDialog}
+        deleteDialogComponent={DeleteDialog}
+        onAddNew={handleAddNew}
+        isLoading={isLoadingTeamItems || isLoadingMainSubSection}
+        emptyCondition={teamItems.length === 0}
+        noSectionCondition={!teamSection && !sectionData}
+        customEmptyMessage={emptyStateMessage}
+      />
     </div>
   );
 }

@@ -414,22 +414,7 @@ export default function ProductPage() {
       />
 
 
-      {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={Product_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={ProductSectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={ProductTable}
-        createDialogComponent={CreateDialog}
-        deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
-        isLoading={isLoadingProductItems || isLoadingMainSubSection}
-        emptyCondition={ProductItems.length === 0}
-        noSectionCondition={!ProductSection && !sectionData}
-        customEmptyMessage={emptyStateMessage}
-      />
-      
+     
       {/* Main subsection management (only shown when section exists) */}
       {sectionId && (
         <Tabs defaultValue="content" className="w-full">
@@ -466,6 +451,23 @@ export default function ProductPage() {
           </TabsContent>
         </Tabs>
       )}
+
+       {/* Main list page with table and section integration */}
+      <GenericListPage
+        config={Product_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={ProductSectionConfig}
+        isAddButtonDisabled={isAddButtonDisabled}
+        tableComponent={ProductTable}
+        createDialogComponent={CreateDialog}
+        deleteDialogComponent={DeleteDialog}
+        onAddNew={handleAddNew}
+        isLoading={isLoadingProductItems || isLoadingMainSubSection}
+        emptyCondition={ProductItems.length === 0}
+        noSectionCondition={!ProductSection && !sectionData}
+        customEmptyMessage={emptyStateMessage}
+      />
+      
       
     </div>
   );

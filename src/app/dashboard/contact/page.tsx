@@ -447,23 +447,7 @@ export default function ContactPage() {
               previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
             />
       
-      {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={CONTACTS_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={contactSectionConfig}
-        isAddButtonDisabled={false}
-        tableComponent={ContactTable}
-        createDialogComponent={CreateDialog}
-        showAddButton={shouldShowAddButton} // Only show button when we should
-        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
-        deleteDialogComponent={DeleteDialog}
-        isLoading={isLoadingContactItems || isLoadingMainSubSection}
-        emptyCondition={contactItems.length === 0}
-        noSectionCondition={false}
-        customEmptyMessage={emptyStateMessage}
-      />
-      
+     
       {/* Section Configuration Tabs (only shown when section exists) */}
       {sectionId && (
         <Tabs defaultValue="content" className="w-full">
@@ -500,6 +484,24 @@ export default function ContactPage() {
           </TabsContent>
         </Tabs>
       )}
+
+       {/* Main list page with table and section integration */}
+      <GenericListPage
+        config={CONTACTS_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={contactSectionConfig}
+        isAddButtonDisabled={false}
+        tableComponent={ContactTable}
+        createDialogComponent={CreateDialog}
+        showAddButton={shouldShowAddButton} // Only show button when we should
+        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
+        deleteDialogComponent={DeleteDialog}
+        isLoading={isLoadingContactItems || isLoadingMainSubSection}
+        emptyCondition={contactItems.length === 0}
+        noSectionCondition={false}
+        customEmptyMessage={emptyStateMessage}
+      />
+      
     </div>
   );
 }

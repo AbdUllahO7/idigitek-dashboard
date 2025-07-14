@@ -3,6 +3,11 @@
     "dark":"داكن",
     "light":"فاتح"
   },
+   "preview" : {
+        "section": "قسم",
+    "title" : "معاينة القسم",
+    "description": "عرض مرئي للقسم"
+  },
   "Dashboard_sideBar": {
     "title": "لوحة التحكم الإدارية",
     "menu": "القائمة",
@@ -1531,7 +1536,8 @@
   "subsections": "الأقسام الفرعية",
   "header": "رأس",
   "deleteSection": "حذف القسم",
-  "confirm": "تأكيد"
+  "confirm": "تأكيد",
+  "ChangeImage": "تغيير الصورة"
   },
   "createSectionItemDialog" : {
    "createNew": "إنشاء {{title}} جديد",
@@ -2292,6 +2298,7 @@
   },
   "heroesForm": {
       "// Loading States": "",
+      "heroSection" :"القسم الرئيسي",
       "loadingHeroData": "جارٍ تحميل بيانات القسم الرئيسي...",
       "saving": "جارٍ الحفظ...",
       "updatingHeroes": "تحديث القسم",

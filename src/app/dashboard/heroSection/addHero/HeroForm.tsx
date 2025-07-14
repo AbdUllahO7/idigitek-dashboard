@@ -38,7 +38,6 @@ interface FormData {
   [key: string]: Array<{
     title: string;
     description: string;
-
     exploreButton: string;
     exploreButtonType: string,
     exploreButtonUrl: string,
@@ -86,6 +85,9 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
     const { toast } = useToast();
     const primaryLanguageRef = useRef<string | null>(null);
     const onDataChangeRef = useRef(onDataChange);
+    
+    // Add this ref to prevent multiple simultaneous sync operations
+    const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const { useCreate: useCreateSubSection, useGetCompleteBySlug } = useSubSections();
     const {
@@ -107,70 +109,86 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       refetch,
     } = useGetCompleteBySlug(slug || "", Boolean(slug));
 
-
     const { heroImages, handleHeroImageRemove, updateHeroImageIndices, HeroImageUploader } = useHeroImages(form);
 
     useEffect(() => {
       onDataChangeRef.current = onDataChange;
     }, [onDataChange]);
 
-    // Fix: Set primary language code instead of ID
+    // Fix: Set primary language code correctly
     useEffect(() => {
-      if (languageIds.length > 0) {
-        const primaryLangCode = activeLanguages.find(lang => lang._id === languageIds[0])?.languageID || languageIds[0];
+      if (languageIds.length > 0 && activeLanguages.length > 0) {
+        const primaryLang = activeLanguages.find(lang => lang._id === languageIds[0]);
+        const primaryLangCode = primaryLang?.languageID || languageIds[0];
         primaryLanguageRef.current = primaryLangCode;
+        console.log("Primary language set to:", primaryLangCode);
       }
     }, [languageIds, activeLanguages]);
 
     // Track if we're currently syncing to prevent infinite loops
     const isSyncing = useRef(false);
 
-    // URL Field Syncing Effect - sync from primary language to others
+    // FIXED: Improved URL Field Syncing Effect with debouncing
     useEffect(() => {
       if (!primaryLanguageRef.current) return;
       
       const subscription = form.watch((value, { name }) => {
-        // Prevent infinite loops
-        if (isSyncing.current) return;
+        // Prevent infinite loops and only sync URL fields from primary language
+        if (isSyncing.current || !name || !name.startsWith(primaryLanguageRef.current!)) {
+          return;
+        }
         
-        // Only sync URL-related fields from primary language to other languages
-        if (name && name.startsWith(primaryLanguageRef.current)) {
-          const isUrlField = name.includes('exploreButtonType') || 
-                            name.includes('exploreButtonUrl')
+        // Only sync URL-related fields
+        const isUrlField = name.includes('exploreButtonType') || name.includes('exploreButtonUrl');
+        
+        if (isUrlField) {
+          // Clear any existing timeout
+          if (syncTimeoutRef.current) {
+            clearTimeout(syncTimeoutRef.current);
+          }
           
-          if (isUrlField) {
-            // Extract the field name and index
+          // Debounce the sync operation
+          syncTimeoutRef.current = setTimeout(() => {
             const matches = name.match(new RegExp(`${primaryLanguageRef.current}\\.(\\d+)\\.(.*)`));
             if (matches) {
               const [, index, fieldName] = matches;
-              const newValue = value[primaryLanguageRef.current]?.[parseInt(index)]?.[fieldName];
+              const newValue = value[primaryLanguageRef.current!]?.[parseInt(index)]?.[fieldName];
               
-              // Set syncing flag to prevent recursive calls
+              console.log(`Syncing ${fieldName} from primary language:`, newValue);
+              
+              // Set syncing flag
               isSyncing.current = true;
               
-              // Update all other languages with the same URL setting
               try {
+                // Update all other languages with the same URL setting
                 Object.keys(form.getValues()).forEach((langCode) => {
                   if (langCode !== primaryLanguageRef.current) {
                     form.setValue(`${langCode}.${index}.${fieldName}`, newValue, {
                       shouldDirty: false,
-                      shouldValidate: false, // Prevent validation during sync
+                      shouldValidate: false,
                     });
                   }
                 });
+              } catch (error) {
+                console.error("Error during sync:", error);
               } finally {
-                // Reset syncing flag after a brief delay
+                // Reset syncing flag
                 setTimeout(() => {
                   isSyncing.current = false;
-                }, 10);
+                }, 50);
               }
             }
-          }
+          }, 100); // 100ms debounce
         }
       });
 
-      return () => subscription.unsubscribe();
-    }, [form]);
+      return () => {
+        subscription.unsubscribe();
+        if (syncTimeoutRef.current) {
+          clearTimeout(syncTimeoutRef.current);
+        }
+      };
+    }, [form, primaryLanguageRef.current]);
 
     const validateFormHeroCounts = useCallback(() => {
       const values = form.getValues();
@@ -235,7 +253,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
                 const oldNumber = Number.parseInt(match[1]);
                 const newNumber = oldNumber - 1;
                 const newName = element.name.replace(`Hero ${oldNumber}`, `Hero ${newNumber}`);
-                const newOrder = element.order - 9; // Updated for 9 fields (including URL fields)
+                const newOrder = element.order - 6; // 6 fields per hero: title, description, exploreButton, exploreButtonType, exploreButtonUrl, image
 
                 await updateContentElement.mutateAsync({
                   id: element._id,
@@ -301,131 +319,170 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
             languageIds,
             activeLanguages,
             {
-       groupElements: (elements) => {
-  console.log("All elements to group:", elements);
-  const heroGroups: { [key: number]: ContentElement[] } = {};
-  
-  elements.forEach((element: any) => {
-    console.log("Processing element:", element.name, element.type);
-    
-    // Handle both "Hero X" and "section X" patterns
-    const heroMatch = element.name.match(/Hero (\d+)/i);
-    const sectionMatch = element.name.match(/section (\d+)/i);
-    
-    let heroNumber = null;
-    
-    if (heroMatch) {
-      heroNumber = parseInt(heroMatch[1], 10);
-      console.log("Found Hero pattern:", heroNumber, element.name);
-    } else if (sectionMatch) {
-      heroNumber = parseInt(sectionMatch[1], 10);
-      console.log("Found section pattern:", heroNumber, element.name);
-    } else {
-      console.log("Element doesn't match hero or section pattern:", element.name);
-    }
-    
-    if (heroNumber) {
-      if (!heroGroups[heroNumber]) {
-        heroGroups[heroNumber] = [];
-      }
-      heroGroups[heroNumber].push(element);
-    }
-  });
-  
-  console.log("Final hero groups:", heroGroups);
-  return heroGroups;
-},
-         processElementGroup: (
-  heroNumber,
-  elements,
-  langId,
-  getTranslationContent
-) => {
-  console.log(`Processing group for hero ${heroNumber}, language ${langId}`);
-  console.log("Elements in group:", elements.map(el => ({ name: el.name, type: el.type })));
-  
-  // Updated element finding logic to handle both old and new naming patterns
-  const findElement = (patterns: string[]) => {
-    return elements.find((el) => 
-      patterns.some(pattern => el.name.toLowerCase().includes(pattern.toLowerCase()))
-    );
-  };
+              groupElements: (elements) => {
+                console.log("All elements to group:", elements);
+                const heroGroups: { [key: number]: ContentElement[] } = {};
+                
+                elements.forEach((element: any) => {
+                  console.log("Processing element:", element.name, element.type);
+                  
+                  // Handle multiple naming patterns including new "section" format
+                  const sectionNewMatch = element.name.match(/section (\d+) - /i);
+                  const heroMatch = element.name.match(/Hero (\d+)/i);
+                  const sectionMatch = element.name.match(/section (\d+)/i);
+                  
+                  // Legacy Arabic patterns (for backward compatibility)
+                  const arabicMainPanelMatch = element.name.match(/اللوح الرئيسي (\d+)/i);
+                  const mainPanelMatch = element.name.match(/Main Panel (\d+)/i);
+                  const heroArabicMatch = element.name.match(/البطل (\d+)/i);
+                  
+                  let heroNumber = null;
+                  
+                  if (sectionNewMatch) {
+                    heroNumber = parseInt(sectionNewMatch[1], 10);
+                    console.log("Found new section pattern:", heroNumber, element.name);
+                  } else if (heroMatch) {
+                    heroNumber = parseInt(heroMatch[1], 10);
+                    console.log("Found Hero pattern:", heroNumber, element.name);
+                  } else if (sectionMatch) {
+                    heroNumber = parseInt(sectionMatch[1], 10);
+                    console.log("Found section pattern:", heroNumber, element.name);
+                  } else if (arabicMainPanelMatch) {
+                    heroNumber = parseInt(arabicMainPanelMatch[1], 10);
+                    console.log("Found Arabic Main Panel pattern (legacy):", heroNumber, element.name);
+                  } else if (mainPanelMatch) {
+                    heroNumber = parseInt(mainPanelMatch[1], 10);
+                    console.log("Found Main Panel pattern (legacy):", heroNumber, element.name);
+                  } else if (heroArabicMatch) {
+                    heroNumber = parseInt(heroArabicMatch[1], 10);
+                    console.log("Found Arabic Hero pattern (legacy):", heroNumber, element.name);
+                  } else {
+                    console.log("Element doesn't match any hero pattern:", element.name);
+                  }
+                  
+                  if (heroNumber) {
+                    if (!heroGroups[heroNumber]) {
+                      heroGroups[heroNumber] = [];
+                    }
+                    heroGroups[heroNumber].push(element);
+                  }
+                });
+                
+                console.log("Final hero groups:", heroGroups);
+                return heroGroups;
+              },
+              processElementGroup: (
+                heroNumber,
+                elements,
+                langId,
+                getTranslationContent
+              ) => {
+                console.log(`Processing group for hero ${heroNumber}, language ${langId}`);
+                console.log("Elements in group:", elements.map(el => ({ name: el.name, type: el.type })));
+                
+                // Enhanced element finding logic to prioritize new "section X - FieldName" format
+                const findElement = (newPatterns: string[], legacyPatterns: string[] = []) => {
+                  // First try to find by new "section X - FieldName" patterns
+                  const newElement = elements.find((el) => 
+                    newPatterns.some(pattern => el.name.toLowerCase().includes(pattern.toLowerCase()))
+                  );
+                  
+                  if (newElement) return newElement;
+                  
+                  // Fallback to legacy patterns for backward compatibility
+                  return elements.find((el) => 
+                    legacyPatterns.some(pattern => el.name.toLowerCase().includes(pattern.toLowerCase()))
+                  );
+                };
 
-  // Handle both "section X - Title" and "Hero X Title" patterns
-  const titleElement = findElement(["title"]);
-  const descriptionElement = findElement(["description"]);
-  const exploreButtonElement = findElement(["explorebutton"]) && !findElement(["explorebuttontype", "explorebuttonurl"]) 
-    ? findElement(["explorebutton"]) 
-    : elements.find((el) => 
-        el.name.toLowerCase().includes("explorebutton") && 
-        !el.name.toLowerCase().includes("type") && 
-        !el.name.toLowerCase().includes("url")
-      );
-  
-  const exploreButtonTypeElement = findElement(["explorebuttontype", "explorebutton"]) && 
-    elements.find((el) => el.name.toLowerCase().includes("type"));
-  
-  const exploreButtonUrlElement = findElement(["explorebuttonurl", "explorebutton"]) && 
-    elements.find((el) => el.name.toLowerCase().includes("url"));
-  
+                // Find elements using new "section X - FieldName" format first, then legacy names
+                const titleElement = findElement(
+                  [`section ${heroNumber} - title`], 
+                  ["hero", "title", "العنوان", "عنوان"]
+                );
+                
+                const descriptionElement = findElement(
+                  [`section ${heroNumber} - description`], 
+                  ["hero", "description", "الوصف", "وصف"]
+                );
+                
+                const exploreButtonElement = findElement(
+                  [`section ${heroNumber} - explorebutton`],
+                  ["explore button", "explorebutton", "زر الاستكشاف"]
+                );
+                
+                const exploreButtonTypeElement = findElement(
+                  [`section ${heroNumber} - explorebuttontype`],
+                  ["explore button", "type", "explorebutton", "زر الاستكشاف", "نوع"]
+                );
+                
+                const exploreButtonUrlElement = findElement(
+                  [`section ${heroNumber} - explorebuttonurl`],
+                  ["explore button", "url", "explorebutton", "زر الاستكشاف", "رابط"]
+                );
 
-  
+                const imageElement = elements.find((el) => {
+                  const name = el.name.toLowerCase();
+                  const isImageType = el.type === "image";
+                  
+                  // New "section X - Image" pattern has highest priority
+                  const isNewSectionPattern = name.includes(`section ${heroNumber} - image`);
+                  
+                  // Legacy patterns
+                  const hasImageName = name.includes("image") || name.includes("الصورة") || name.includes("صورة");
+                  
+                  return isImageType && (isNewSectionPattern || hasImageName);
+                });
 
+                console.log("Found elements:", {
+                  title: titleElement?.name,
+                  description: descriptionElement?.name,
+                  exploreButton: exploreButtonElement?.name,
+                  exploreButtonType: exploreButtonTypeElement?.name,
+                  exploreButtonUrl: exploreButtonUrlElement?.name,
+                  image: imageElement?.name
+                });
 
-  const imageElement = elements.find((el) => 
-    el.name.toLowerCase().includes("image") && el.type === "image"
-  );
+                // For URL fields, use primary language values for all languages
+                const primaryLangId = activeLanguages[0]?._id;
+                const useTranslationContent = (element: ContentElement | undefined, fallback: string, forceUsePrimaryLang = false) => {
+                  if (!element) {
+                    console.log("No element found, using fallback:", fallback);
+                    return fallback;
+                  }
+                  
+                  console.log("Element translations:", element.translations);
+                  
+                  if (forceUsePrimaryLang && langId !== primaryLangId) {
+                    const primaryTranslation = element.translations?.find((t: any) => t.language._id === primaryLangId);
+                    console.log("Primary language translation:", primaryTranslation);
+                    return primaryTranslation?.content || fallback;
+                  }
+                  const content = getTranslationContent(element, fallback);
+                  console.log("Final content:", content);
+                  return content;
+                };
 
-  console.log("Found elements:", {
-    title: titleElement?.name,
-    description: descriptionElement?.name,
-    exploreButton: exploreButtonElement?.name,
-    exploreButtonType: exploreButtonTypeElement?.name,
-    exploreButtonUrl: exploreButtonUrlElement?.name,
-    image: imageElement?.name
-  });
-
-  // For URL fields, use primary language values for all languages
-  const primaryLangId = activeLanguages[0]?._id;
-  const useTranslationContent = (element: ContentElement | undefined, fallback: string, forceUsePrimaryLang = false) => {
-    if (!element) {
-      console.log("No element found, using fallback:", fallback);
-      return fallback;
-    }
-    
-    console.log("Element translations:", element.translations);
-    
-    if (forceUsePrimaryLang && langId !== primaryLangId) {
-      // Find translation for primary language
-      const primaryTranslation = element.translations?.find((t: any) => t.language._id === primaryLangId);
-      console.log("Primary language translation:", primaryTranslation);
-      return primaryTranslation?.content || fallback;
-    }
-    const content = getTranslationContent(element, fallback);
-    console.log("Final content:", content);
-    return content;
-  };
-
-  const result = {
-    id: `hero-${heroNumber}`,
-    title: useTranslationContent(titleElement, ""),
-    description: useTranslationContent(descriptionElement, ""),
-    exploreButton: useTranslationContent(exploreButtonElement, ""),
-    exploreButtonType: useTranslationContent(exploreButtonTypeElement, t("heroesForm.defaultButtonType"), true),
-    exploreButtonUrl: useTranslationContent(exploreButtonUrlElement, "", true),
-    image: imageElement?.imageUrl || "",
-  };
-  
-  console.log(`Final processed hero ${heroNumber} for language ${langId}:`, result);
-  return result;
-},
+                const result = {
+                  id: `hero-${heroNumber}`,
+                  title: useTranslationContent(titleElement, ""),
+                  description: useTranslationContent(descriptionElement, ""),
+                  exploreButton: useTranslationContent(exploreButtonElement, ""),
+                  exploreButtonType: useTranslationContent(exploreButtonTypeElement, "default", true),
+                  exploreButtonUrl: useTranslationContent(exploreButtonUrlElement, "", true),
+                  image: imageElement?.imageUrl || "",
+                };
+                
+                console.log(`Final processed hero ${heroNumber} for language ${langId}:`, result);
+                return result;
+              },
               getDefaultValue: () => [
                 {
                   id: "hero-1",
                   title: "",
                   description: "",
                   exploreButton: "",
-                  exploreButtonType: t("heroesForm.defaultButtonType"),
+                  exploreButtonType: "default",
                   exploreButtonUrl: "",
                   image: "",
                 },
@@ -461,19 +518,19 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       processHeroesData(completeSubsectionData.data);
     }, [completeSubsectionData, isLoadingSubsection, state.dataLoaded, slug, processHeroesData, t]);
 
-    // Combined form watch effect - handles all form changes
+    // FIXED: Simplified form watch effect
     useEffect(() => {
-      if (state.isLoadingData || !state.dataLoaded) return;
+      if (state.isLoadingData || !state.dataLoaded || isSyncing.current) return;
 
       const subscription = form.watch((value) => {
-        // Skip if we're currently syncing URL fields
-        if (isSyncing.current) return;
-        
-        updateState({ hasUnsavedChanges: true });
-        validateFormHeroCounts();
-        
-        if (onDataChangeRef.current) {
-          onDataChangeRef.current(value as FormData);
+        // Only update state if we're not in the middle of a sync operation
+        if (!isSyncing.current) {
+          updateState({ hasUnsavedChanges: true });
+          validateFormHeroCounts();
+          
+          if (onDataChangeRef.current) {
+            onDataChangeRef.current(value as FormData);
+          }
         }
       });
 
@@ -483,28 +540,29 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
     const addHero = useCallback(
       (langCode: string) => {
         const newHeroId = `hero-${Date.now()}`;
+        const primaryLanguageCode = primaryLanguageRef.current;
+        
+        // Get current primary language settings for URL fields
+        const primaryHeroes = primaryLanguageCode ? form.getValues()[primaryLanguageCode] || [] : [];
+        
         const newHero = {
           id: newHeroId,
           title: "",
           description: "",
           exploreButton: "",
-          exploreButtonType: t("heroesForm.defaultButtonType"),
+          exploreButtonType: "default",
           exploreButtonUrl: "",
           image: "",
         };
 
         Object.keys(form.getValues()).forEach((lang) => {
           const currentHeroes = form.getValues()[lang] || [];
+          const heroIndex = currentHeroes.length; // This will be the index of the new hero
           
-          // For non-primary languages, sync URL settings from primary language if adding to existing index
-          if (lang !== primaryLanguageRef.current && currentHeroes.length > 0) {
-            const primaryHeroes = form.getValues()[primaryLanguageRef.current] || [];
-            const heroIndex = currentHeroes.length; // This will be the index of the new hero
-            
-            if (primaryHeroes[heroIndex]) {
-              newHero.exploreButtonType = primaryHeroes[heroIndex].exploreButtonType || t("heroesForm.defaultButtonType");
-              newHero.exploreButtonUrl = primaryHeroes[heroIndex].exploreButtonUrl || "";
-            }
+          // For non-primary languages, sync URL settings from primary language
+          if (lang !== primaryLanguageCode && primaryHeroes[heroIndex]) {
+            newHero.exploreButtonType = primaryHeroes[heroIndex].exploreButtonType || "default";
+            newHero.exploreButtonUrl = primaryHeroes[heroIndex].exploreButtonUrl || "";
           }
           
           form.setValue(lang, [...currentHeroes, newHero], {
@@ -520,7 +578,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
           description: t("heroesForm.heroAddedDescription"),
         });
       },
-      [form, validateFormHeroCounts, updateState, toast, primaryLanguageRef, t]
+      [form, validateFormHeroCounts, updateState, toast, t]
     );
 
     const confirmDeleteStep = useCallback((langCode: string, index: number) => {
@@ -538,6 +596,9 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
     }, [form, toast, t]);
 
     const handleSave = useCallback(async () => {
+      // FIXED: Reset syncing flag before validation
+      isSyncing.current = false;
+      
       const isValid = await form.trigger();
       const hasEqualHeroCounts = validateFormHeroCounts();
 
@@ -604,13 +665,14 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
 
         for (let i = 0; i < heroCount; i++) {
           const heroIndex = i + 1;
+          // Use "section" naming convention to match field mappings
           const elementNames = {
-            title: t("heroesForm.heroTitle", { heroIndex }),
-            description: t("heroesForm.heroDescription", { heroIndex }),
-            exploreButton: t("heroesForm.heroExploreButton", { heroIndex }),
-            exploreButtonType: t("heroesForm.heroExploreButtonType", { heroIndex }),
-            exploreButtonUrl: t("heroesForm.heroExploreButtonUrl", { heroIndex }),
-            image: t("heroesForm.heroImage", { heroIndex }),
+            title: `section ${heroIndex} - Title`,
+            description: `section ${heroIndex} - Description`,
+            exploreButton: `section ${heroIndex} - ExploreButton`,
+            exploreButtonType: `section ${heroIndex} - ExploreButtonType`,
+            exploreButtonUrl: `section ${heroIndex} - ExploreButtonUrl`,
+            image: `section ${heroIndex} - Image`,
           };
 
           const elements: Record<string, ContentElement | null> = {
@@ -638,7 +700,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
                 type,
                 parent: sectionId,
                 isActive: true,
-                order: i * 9 + elementTypes.findIndex((t) => t.key === key), // Updated for 9 fields
+                order: i * 6 + elementTypes.findIndex((t) => t.key === key), // 6 fields per hero
                 defaultContent: type === "image" ? t("heroesForm.imagePlaceholder") : "",
               });
               elements[key] = newElement.data;
@@ -686,37 +748,26 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
                 isActive: true,
               });
             }
-           
 
-            // URL fields - only save from primary language to avoid duplicates
-            const primaryLangCode = activeLanguages[0]?.languageID;
-            if (langCode === primaryLangCode) {
-              if (elements.exploreButtonType) {
-                const exploreButtonTypeContent = hero.exploreButtonType || t("heroesForm.defaultButtonType");
-                translations.push({
-                  _id: "",
-                  content: exploreButtonTypeContent,
-                  language: langId,
-                  contentElement: elements.exploreButtonType._id,
-                  isActive: true,
-                });
-              }
-              
-              // Only create translation if URL is not empty
-              if (elements.exploreButtonUrl && hero.exploreButtonUrl && hero.exploreButtonUrl.trim() !== "") {
-                translations.push({
-                  _id: "",
-                  content: hero.exploreButtonUrl.trim(),
-                  language: langId,
-                  contentElement: elements.exploreButtonUrl._id,
-                  isActive: true,
-                });
-              }
-              
-         
-              
-              // Only create translation if URL is not empty
+            // URL fields - save for all languages (they should be synced)
+            if (elements.exploreButtonType) {
+              translations.push({
+                _id: "",
+                content: hero.exploreButtonType || "default",
+                language: langId,
+                contentElement: elements.exploreButtonType._id,
+                isActive: true,
+              });
+            }
             
+            if (elements.exploreButtonUrl) {
+              translations.push({
+                _id: "",
+                content: hero.exploreButtonUrl || "",
+                language: langId,
+                contentElement: elements.exploreButtonUrl._id,
+                isActive: true,
+              });
             }
           });
 
@@ -732,7 +783,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
               if (uploadResult.data?.imageUrl) {
                 Object.entries(allFormValues).forEach(([langCode]) => {
                   if (allFormValues[langCode] && allFormValues[langCode][i]) {
-                    form.setValue(`${langCode}.${i}.image`, uploadResult.data.imageUrl, { shouldDirty: true });
+                    form.setValue(`${langCode}.${i}.image`, uploadResult.data.imageUrl, { shouldDirty: false });
                   }
                 });
               } 
@@ -744,14 +795,6 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
                 variant: "destructive",
               });
             }
-          } else if (!imageFile && elements.image) {
-          } else if (!elements.image) {
-            console.error(t("heroesForm.imageElementNotFound", { heroIndex }));
-            toast({
-              title: t("heroesForm.configurationError"),
-              description: t("heroesForm.imageMissingForHero", { heroIndex }),
-              variant: "destructive",
-            });
           }
         }
 
@@ -779,21 +822,31 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
           duration: 5000,
         });
 
+        // FIXED: Improved data reloading after save
         if (slug) {
-          updateState({ isLoadingData: true, dataLoaded: false });
-          const result = await refetch();
-          if (result.data?.data) {
-            processHeroesData(result.data.data);
-          } else {
-            updateState({ isLoadingData: false });
-            toast({
-              title: t("heroesForm.warning"),
-              description: t("heroesForm.failedToReloadData"),
-              variant: "destructive",
-            });
-          }
+          updateState({ hasUnsavedChanges: false });
+          // Wait a bit before reloading to ensure data is saved
+          setTimeout(async () => {
+            updateState({ isLoadingData: true, dataLoaded: false });
+            try {
+              const result = await refetch();
+              if (result.data?.data) {
+                processHeroesData(result.data.data);
+              } else {
+                updateState({ isLoadingData: false, dataLoaded: true });
+                toast({
+                  title: t("heroesForm.warning"),
+                  description: t("heroesForm.failedToReloadData"),
+                  variant: "destructive",
+                });
+              }
+            } catch (error) {
+              console.error("Error reloading data:", error);
+              updateState({ isLoadingData: false, dataLoaded: true });
+            }
+          }, 1000);
         } else {
-          updateState({ hasUnsavedChanges: false, isLoadingData: false });
+          updateState({ hasUnsavedChanges: false });
         }
       } catch (error) {
         console.error(t("heroesForm.saveOperationFailed"), error);
@@ -810,9 +863,9 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
       form,
       validateFormHeroCounts,
       state.existingSubSectionId,
+      state.contentElements,
       ParentSectionId,
       slug,
-      state.contentElements,
       activeLanguages,
       languageIds,
       createSubSection,
@@ -841,7 +894,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
 
     const languageCodes = createLanguageCodeMap(activeLanguages);
 
-    if (slug && ( isLoadingSubsection) && !state.dataLoaded) {
+    if (slug && isLoadingSubsection && !state.dataLoaded) {
       return (
         <div className="flex items-center justify-center p-8">
           <Loader2 className="h-8 w-8 animate-spin text-primary mr-2" />
@@ -890,7 +943,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
           <Button
             type="button"
             onClick={handleSave}
-            disabled={ state.heroCountMismatch || state.isSaving}
+            disabled={state.heroCountMismatch || state.isSaving}
             className="flex items-center"
           >
             {state.isSaving ? (

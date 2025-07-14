@@ -412,24 +412,7 @@ export default function ServicesPage() {
               previewClassName="bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 shadow-2xl h-64 md:h-80 lg:h-96"
             />
       
-
-      {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={SERVICES_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={serviceSectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={ServicesTable}
-        createDialogComponent={CreateDialog}
-        deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
-        isLoading={isLoadingServices || isLoadingMainSubSection}
-        emptyCondition={services.length === 0}
-        noSectionCondition={!serviceSection && !sectionData}
-        customEmptyMessage={emptyStateMessage}
-      />
-      
-      {/* Section Configuration Tabs (only shown when section exists) */}
+    {/* Section Configuration Tabs (only shown when section exists) */}
       {sectionId && (
         <Tabs defaultValue="content" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -467,6 +450,23 @@ export default function ServicesPage() {
           </TabsContent>
         </Tabs>
       )}
+      {/* Main list page with table and section integration */}
+      <GenericListPage
+        config={SERVICES_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={serviceSectionConfig}
+        isAddButtonDisabled={isAddButtonDisabled}
+        tableComponent={ServicesTable}
+        createDialogComponent={CreateDialog}
+        deleteDialogComponent={DeleteDialog}
+        onAddNew={handleAddNew}
+        isLoading={isLoadingServices || isLoadingMainSubSection}
+        emptyCondition={services.length === 0}
+        noSectionCondition={!serviceSection && !sectionData}
+        customEmptyMessage={emptyStateMessage}
+      />
+      
+   
     </div>
   );
 }

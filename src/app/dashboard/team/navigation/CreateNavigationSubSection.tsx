@@ -1363,7 +1363,7 @@ const renderNavigationVisibilitySwitch = () => (
                 <EyeOff className={`h-4 w-4 text-red-600 dark:text-red-400 ${isRtl ? 'ml-2' : 'mr-2'}`} />
               )}
               <span className="text-base font-medium text-gray-900 dark:text-gray-100">
-                {t('Navigation.ShowNavigation', 'إظهار التنقل')}
+                {t('Navigation.ShowNavigation')}
               </span>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">

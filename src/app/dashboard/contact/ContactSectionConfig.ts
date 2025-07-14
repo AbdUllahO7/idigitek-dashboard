@@ -10,12 +10,10 @@ export const contactSectionTranslations = {
     sectionBadgeLabel: "Section Badge",
     sectionTitleLabel: "Section Title",
     sectionDescriptionLabel: "Section Description",
-    contactDetailsLabel: "Contact Details",
     type: "Contact",
     badgeElement: "Badge",
     titleElement: "Title",
     descriptionElement: "Description",
-    contactDetailsElement: "ContactDetails"
   },
   ar: {
     sectionName: "قسم الاتصال الأساسي",
@@ -23,12 +21,10 @@ export const contactSectionTranslations = {
     sectionBadgeLabel: "شارة القسم",
     sectionTitleLabel: "عنوان القسم",
     sectionDescriptionLabel: "وصف القسم",
-    contactDetailsLabel: "تفاصيل الاتصال",
     type: "اتصال",
     badgeElement: "الشارة",
     titleElement: "العنوان",
     descriptionElement: "الوصف",
-    contactDetailsElement: "تفاصيل الاتصال"
   },
   tr: {
     sectionName: "Temel İletişim Bölümü",
@@ -36,12 +32,10 @@ export const contactSectionTranslations = {
     sectionBadgeLabel: "Bölüm Rozeti",
     sectionTitleLabel: "Bölüm Başlığı",
     sectionDescriptionLabel: "Bölüm Açıklaması",
-    contactDetailsLabel: "İletişim Detayları",
     type: "İletişim",
     badgeElement: "Rozet",
     titleElement: "Başlık",
     descriptionElement: "Açıklama",
-    contactDetailsElement: "İletişim Detayları"
   }
 };
 
@@ -76,19 +70,13 @@ export const getContactSectionConfig = (language: string = 'en') => {
         type: "textarea", 
         required: false 
       },
-      { 
-        id: "contactDetails", 
-        label: translations.contactDetailsLabel, 
-        type: "badge", 
-        required: true 
-      },
+  
     ] as FieldConfig[],
     // Define element mapping with translated values
     elementsMapping: {
       "sectionBadge": translations.badgeElement,
       "sectionTitle": translations.titleElement, 
       "sectionDescription": translations.descriptionElement,
-      "contactDetails": translations.contactDetailsElement
     }
   };
 };

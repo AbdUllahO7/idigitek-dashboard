@@ -508,22 +508,7 @@ export default function ChoseUsPage() {
             />
       
 
-      {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={CHOSE_US_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={whyChooseUsSectionConfig}
-        isAddButtonDisabled={false}
-        tableComponent={ChoseUsItemsTable}
-        createDialogComponent={CreateDialog}
-        showAddButton={shouldShowAddButton} // Only show button when we should
-        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
-        deleteDialogComponent={DeleteDialog}
-        isLoading={isLoadingChoseUs || isLoadingMainSubSection}
-        emptyCondition={navItems.length === 0}
-        noSectionCondition={false}
-        customEmptyMessage={emptyStateMessage}
-      />
+    
       
       {/* Main subsection management (only shown when section exists) */}
        {sectionId && (
@@ -561,6 +546,23 @@ export default function ChoseUsPage() {
           </TabsContent>
         </Tabs>
       )}
+
+        {/* Main list page with table and section integration */}
+      <GenericListPage
+        config={CHOSE_US_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={whyChooseUsSectionConfig}
+        isAddButtonDisabled={false}
+        tableComponent={ChoseUsItemsTable}
+        createDialogComponent={CreateDialog}
+        showAddButton={shouldShowAddButton} // Only show button when we should
+        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
+        deleteDialogComponent={DeleteDialog}
+        isLoading={isLoadingChoseUs || isLoadingMainSubSection}
+        emptyCondition={navItems.length === 0}
+        noSectionCondition={false}
+        customEmptyMessage={emptyStateMessage}
+      />
     </div>
   );
 }

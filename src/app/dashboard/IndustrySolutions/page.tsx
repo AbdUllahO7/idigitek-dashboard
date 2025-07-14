@@ -412,22 +412,7 @@ export default function IndustryPage() {
             previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
           />
   
-      {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={INDUSTRY_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={industrySectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={IndustryTable}
-        createDialogComponent={CreateDialog}
-        deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
-        isLoading={isLoadingIndustryItems || isLoadingMainSubSection}
-        emptyCondition={industryItems.length === 0}
-        noSectionCondition={!industrySection && !sectionData}
-        customEmptyMessage={emptyStateMessage}
-      />
-      
+   
       {/* Main subsection management (only shown when section exists) */}
        {sectionId && (
         <Tabs defaultValue="content" className="w-full">
@@ -464,6 +449,23 @@ export default function IndustryPage() {
           </TabsContent>
         </Tabs>
       )}
+
+         {/* Main list page with table and section integration */}
+      <GenericListPage
+        config={INDUSTRY_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={industrySectionConfig}
+        isAddButtonDisabled={isAddButtonDisabled}
+        tableComponent={IndustryTable}
+        createDialogComponent={CreateDialog}
+        deleteDialogComponent={DeleteDialog}
+        onAddNew={handleAddNew}
+        isLoading={isLoadingIndustryItems || isLoadingMainSubSection}
+        emptyCondition={industryItems.length === 0}
+        noSectionCondition={!industrySection && !sectionData}
+        customEmptyMessage={emptyStateMessage}
+      />
+      
     </div>
   );
 }

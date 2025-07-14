@@ -503,22 +503,7 @@ export default function ClientComments() {
             />
       
 
-      {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={ClientComments_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={clientCommentsSectionConfig}
-        isAddButtonDisabled={false}
-        tableComponent={ClientCommentsItemsTable}
-        createDialogComponent={CreateDialog}
-        showAddButton={shouldShowAddButton} // Only show button when we should
-        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
-        deleteDialogComponent={DeleteDialog}
-        isLoading={isLoadingClientComments || isLoadingMainSubSection}
-        emptyCondition={clientCommentsItems.length === 0}
-        noSectionCondition={false}
-        customEmptyMessage={emptyStateMessage}
-      />
+   
       
       {/* Main subsection management (only shown when section exists) */}
       {sectionId && (
@@ -559,6 +544,23 @@ export default function ClientComments() {
           </TabsContent>
         </Tabs>
       )}
+
+         {/* Main list page with table and section integration */}
+      <GenericListPage
+        config={ClientComments_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={clientCommentsSectionConfig}
+        isAddButtonDisabled={false}
+        tableComponent={ClientCommentsItemsTable}
+        createDialogComponent={CreateDialog}
+        showAddButton={shouldShowAddButton} // Only show button when we should
+        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
+        deleteDialogComponent={DeleteDialog}
+        isLoading={isLoadingClientComments || isLoadingMainSubSection}
+        emptyCondition={clientCommentsItems.length === 0}
+        noSectionCondition={false}
+        customEmptyMessage={emptyStateMessage}
+      />
     </div>
   )
 }

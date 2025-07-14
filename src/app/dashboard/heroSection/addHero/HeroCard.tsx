@@ -198,7 +198,7 @@ export const HeroCard = memo(({
                 {exploreButtonType === "special" && (
                   <FormField
                     control={form?.control}
-                    name={`${langCode}.${index}.exploreButtonUrl`}
+                    name={`${"en"}.${index}.exploreButtonUrl`}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>

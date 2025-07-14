@@ -3,6 +3,11 @@
     "dark":"Dark",
     "light":"Light"
   },
+  "preview" : {
+    "section": "Section",
+    "title" : "Section Preview",
+    "description": "Visual representation of your  section"
+  },
   "Dashboard_sideBar": {
      "sectionType": "Section Type",
     "customSectionName": "Custom Section Name", 
@@ -1540,7 +1545,8 @@
     "subsections": "Subsections",
     "header": "Header",
     "deleteSection": "Delete Section",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "ChangeImage" : "Change Image"
   },
   "createSectionItemDialog" : {
   "createNew": "Create New {{title}}",
@@ -2241,6 +2247,7 @@
   },
   "heroesForm": {
       "// Loading States": "",
+            "heroSection" :"Main section",
       "loadingHeroData": "Loading section data...",
       "saving": "Saving...",
       "updatingHeroes": "Updating section",
@@ -2264,13 +2271,13 @@
       
       "// Toast Messages - Remove": "",
       "cannotRemove": "Cannot remove",
-      "needAtLeastOneHero": "You need at least one hero",
-      "heroDeleted": "Hero deleted",
-      "heroDeletedFromDatabase": "Hero {{heroNumber}} has been deleted from the database",
-      "heroRemoved": "Hero removed",
-      "heroRemovedSuccessfully": "The hero has been removed successfully.",
+      "needAtLeastOneHero": "You need at least one section",
+      "heroDeleted": "section deleted",
+      "heroDeletedFromDatabase": "section {{heroNumber}} has been deleted from the database",
+      "heroRemoved": "section removed",
+      "heroRemovedSuccessfully": "The section has been removed successfully.",
       "errorRemoving": "Error",
-      "errorRemovingHero": "There was an error removing the hero.",
+      "errorRemovingHero": "There was an error removing the section.",
       
       "// Toast Messages - Add": "",
       "heroAdded": "section added",
@@ -2282,6 +2289,7 @@
       "fillAllRequiredFields": "Please fill all required fields correctly.",
       
       "// Toast Messages - Loading": "",
+      
       "errorLoadingData": "Error loading data",
       "failedToLoadHeroData": "Failed to load section data. Please try again.",
       
@@ -2867,7 +2875,7 @@
       }
     },
     "deleteDialog": {
-      "title": "Delete Hero Section",
+      "title": "Delete  Section",
       "description": "Are you sure you want to delete this  section? This action cannot be undone."
     },
     "buttons": {
@@ -4436,7 +4444,7 @@
     "NavigationSettings" : "Navigation Settings",
     "AddSubNavigation" : "Add SubNavigation",
     "enable": "Enable sub-navigation for this section",
-    "ShowNavigationn" : "Show Navigation",
+    "ShowNavigation" : "Show Navigation",
     "NavigationCurrentlyVisible" : "Navigation is currently visible to users",
     "NavigationCurrentlyHidden" : "Navigation is currently hidden from users",
     "StatusVisible" : "Status: Visible",

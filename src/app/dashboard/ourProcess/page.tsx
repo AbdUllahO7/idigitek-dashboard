@@ -407,21 +407,7 @@ export default function OurProcess() {
       />
 
       {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={PROCESS_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={processSectionConfig} // Use reactive config
-        isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={ProcessTable}
-        createDialogComponent={CreateDialog}
-        deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
-        isLoading={isLoadingProcessItems || isLoadingMainSubSection}
-        emptyCondition={processItems.length === 0}
-        noSectionCondition={!processSection && !sectionData}
-        customEmptyMessage={emptyStateMessage}
-      />
-      
+    
       {/* Main subsection management (only shown when section exists) */}
       {sectionId && (
         <Tabs defaultValue="content" className="w-full">
@@ -458,6 +444,22 @@ export default function OurProcess() {
           </TabsContent>
         </Tabs>
       )}
+
+        <GenericListPage
+        config={PROCESS_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={processSectionConfig} // Use reactive config
+        isAddButtonDisabled={isAddButtonDisabled}
+        tableComponent={ProcessTable}
+        createDialogComponent={CreateDialog}
+        deleteDialogComponent={DeleteDialog}
+        onAddNew={handleAddNew}
+        isLoading={isLoadingProcessItems || isLoadingMainSubSection}
+        emptyCondition={processItems.length === 0}
+        noSectionCondition={!processSection && !sectionData}
+        customEmptyMessage={emptyStateMessage}
+      />
+      
     </div>
   );
 }

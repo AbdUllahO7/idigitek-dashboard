@@ -302,7 +302,7 @@ const LanguageCard = ({
 export default function CreateMainSubSection({
   sectionId,
   sectionConfig,
-  sectionInfo, // 🎯 NEW: Accept section info prop
+  sectionInfo, 
   onSubSectionCreated,
   onFormValidityChange,
   imageUrl
@@ -375,6 +375,8 @@ export default function CreateMainSubSection({
     error: completeSubsectionsError,
     refetch: refetchCompleteSubsections
   } = useGetBySectionId(sectionId)
+
+  console.log("completeSubsectionsData",completeSubsectionsData)
 
   // Mutations
   const createMutation = useCreate();
@@ -573,13 +575,11 @@ export default function CreateMainSubSection({
           // Only pre-populate sectionBadge field
           if (field.id === 'sectionBadge') {
             value = getSectionBadgeValue(langCode, sectionInfo);
-            console.log(`📝 Setting sectionBadge for ${langCode}: "${value}"`);
           }
           
           fieldValues[field.id] = value;
         });
         
-        console.log(`📝 Final values for ${langCode}:`, fieldValues);
         
         // Only reset if values are different from current form values
         const currentValues = form.getValues();

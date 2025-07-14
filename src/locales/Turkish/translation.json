@@ -3,6 +3,12 @@
     "dark": "Karanlık",
     "light": "Aydınlık"
   },
+   "preview" : {
+        "section": "Bölüm",
+
+    "title" : "Bölüm Önizlemesi",
+    "description": "Bölümünüzün görsel temsili"
+  },
   "Dashboard_sideBar": {
     "title": "Yönetici Kontrol Paneli",
     "menu": "Menü",
@@ -1518,7 +1524,8 @@
     "subsections": "Alt Bölümler",
     "header": "Başlık",
     "deleteSection": "Bölümü Sil",
-    "confirm": "Onayla"
+    "confirm": "Onayla",
+    "ChangeImage" : "Resmi Değiştir"
   },
   "createSectionItemDialog": {
     "createNew": "Yeni {{title}} Oluştur",
@@ -2221,6 +2228,7 @@
   },
   "heroesForm": {
       "// Loading States": "",
+            "heroSection" :" Ana bölüm",
       "loadingHeroData": "Ana bölüm verileri yükleniyor...",
       "saving": "Kaydediliyor...",
       "updatingHeroes": "Analar Güncelleniyor",

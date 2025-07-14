@@ -410,22 +410,6 @@ export default function BlogPage() {
                   previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
                 />
 
-      {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={BLOG_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={blogSectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={BlogTable}
-        createDialogComponent={CreateDialog}
-        deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
-        isLoading={isLoadingBlogItems || isLoadingMainSubSection}
-        emptyCondition={blogItems.length === 0}
-        noSectionCondition={!blogSection && !sectionData}
-        customEmptyMessage={emptyStateMessage}
-      />
-      
       {/* Main subsection management (only shown when section exists) */}
       {sectionId && (
         <Tabs defaultValue="content" className="w-full">
@@ -461,6 +445,24 @@ export default function BlogPage() {
           </TabsContent>
         </Tabs>
       )}
+
+
+      {/* Main list page with table and section integration */}
+      <GenericListPage
+        config={BLOG_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={blogSectionConfig}
+        isAddButtonDisabled={isAddButtonDisabled}
+        tableComponent={BlogTable}
+        createDialogComponent={CreateDialog}
+        deleteDialogComponent={DeleteDialog}
+        onAddNew={handleAddNew}
+        isLoading={isLoadingBlogItems || isLoadingMainSubSection}
+        emptyCondition={blogItems.length === 0}
+        noSectionCondition={!blogSection && !sectionData}
+        customEmptyMessage={emptyStateMessage}
+      />
+      
       
     </div>
   );

@@ -416,21 +416,7 @@ export default function NewsPage() {
       
 
       {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={NEWS_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={newsSectionConfig}
-        isAddButtonDisabled={isAddButtonDisabled}
-        tableComponent={NewsTable}
-        createDialogComponent={CreateDialog}
-        deleteDialogComponent={DeleteDialog}
-        onAddNew={handleAddNew}
-        isLoading={isLoadingNewsItems || isLoadingMainSubSection}
-        emptyCondition={newsItems.length === 0}
-        noSectionCondition={!newsSection && !sectionData}
-        customEmptyMessage={emptyStateMessage}
-      />
-      
+     
        
       {/* Section Configuration Tabs (only shown when section exists) */}
       {sectionId && (
@@ -468,6 +454,22 @@ export default function NewsPage() {
           </TabsContent>
         </Tabs>
       )}
+
+       <GenericListPage
+        config={NEWS_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={newsSectionConfig}
+        isAddButtonDisabled={isAddButtonDisabled}
+        tableComponent={NewsTable}
+        createDialogComponent={CreateDialog}
+        deleteDialogComponent={DeleteDialog}
+        onAddNew={handleAddNew}
+        isLoading={isLoadingNewsItems || isLoadingMainSubSection}
+        emptyCondition={newsItems.length === 0}
+        noSectionCondition={!newsSection && !sectionData}
+        customEmptyMessage={emptyStateMessage}
+      />
+      
       
     </div>
   );

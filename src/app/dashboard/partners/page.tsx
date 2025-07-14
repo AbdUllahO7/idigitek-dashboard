@@ -479,22 +479,7 @@ export default function PartnersPage() {
               previewClassName="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-2xl h-64 md:h-80 lg:h-96"
             />
       
-      {/* Main list page with table and section integration */}
-      <GenericListPage
-        config={HEADER_CONFIG}
-        sectionId={sectionId}
-        sectionConfig={partnersSectionConfig}
-        isAddButtonDisabled={false}
-        tableComponent={NavItemsTable}
-        createDialogComponent={CreateDialog}
-        showAddButton={shouldShowAddButton} // Only show button when we should
-        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
-        deleteDialogComponent={DeleteDialog}
-        isLoading={isLoadingNavItems || isLoadingMainSubSection}
-        emptyCondition={navItems.length === 0}
-        noSectionCondition={false}
-        customEmptyMessage={emptyStateMessage}
-      />
+     
       
       {/* Main subsection management (only shown when section exists) */}
       {sectionId && (
@@ -533,6 +518,23 @@ export default function PartnersPage() {
           </TabsContent>
         </Tabs>
       )}
+
+       {/* Main list page with table and section integration */}
+      <GenericListPage
+        config={HEADER_CONFIG}
+        sectionId={sectionId}
+        sectionConfig={partnersSectionConfig}
+        isAddButtonDisabled={false}
+        tableComponent={NavItemsTable}
+        createDialogComponent={CreateDialog}
+        showAddButton={shouldShowAddButton} // Only show button when we should
+        onAddNew={shouldShowAddButton ? handleAddNew : () => {}} // Only pass handler when we should show button
+        deleteDialogComponent={DeleteDialog}
+        isLoading={isLoadingNavItems || isLoadingMainSubSection}
+        emptyCondition={navItems.length === 0}
+        noSectionCondition={false}
+        customEmptyMessage={emptyStateMessage}
+      />
     </div>
   );
 }
