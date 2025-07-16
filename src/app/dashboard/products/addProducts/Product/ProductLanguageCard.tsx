@@ -6,12 +6,11 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/src/
 import { Input } from "@/src/components/ui/input"
 import { Textarea } from "@/src/components/ui/textarea"
 import { useFormContext, type UseFormReturn } from "react-hook-form"
-import { CalendarIcon, ChevronDown, ChevronUp, X, BookOpen, Clock, DollarSign } from "lucide-react"
+import { ChevronDown, ChevronUp, X, BookOpen, DollarSign } from "lucide-react"
 import { format } from "date-fns"
-import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover"
 import { Button } from "@/src/components/ui/button"
-import { Calendar } from "@/src/components/ui/calendar"
 import { cn } from "@/src/lib/utils"
+import { useTranslation } from "react-i18next"
 
 interface ProductLanguageCardProps {
   langCode: string
@@ -25,6 +24,7 @@ export const ProductLanguageCard = memo(({ langCode, form, isFirstLanguage = fal
     formState: { errors },
   } = useFormContext()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const { t } = useTranslation()
 
   const currentTitle = form.watch(`${langCode}.title`) || ""
   const currentCategory = form.watch(`${langCode}.category`) || ""
@@ -60,10 +60,10 @@ export const ProductLanguageCard = memo(({ langCode, form, isFirstLanguage = fal
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-base font-semibold">Product Section</span>
+              <span className="text-base font-semibold">{t('editProduct.section')}</span>
               {isFirstLanguage && (
                 <span className="text-xs bg-orange-100 text-orange-700 rounded-md px-2 py-0.5 w-fit mt-1 font-medium">
-                  Primary Language
+                  {t('editProduct.primaryLanguage')}
                 </span>
               )}
             </div>
@@ -92,15 +92,7 @@ export const ProductLanguageCard = memo(({ langCode, form, isFirstLanguage = fal
           </div>
         </div>
 
-        <CardDescription className="text-sm text-gray-600 mt-2">
-          Manage Product content for {langCode.toUpperCase()}
-          {currentTitle && <span className="block text-xs text-orange-600 mt-1 font-medium">"{currentTitle}"</span>}
-          <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-            {currentCategory && <span>Category: {currentCategory}</span>}
-            {currentPrice && <span className="flex items-center gap-1"><DollarSign className="h-3 w-3" />Price: {currentPrice}</span>}
-            {isFirstLanguage && currentDate && <span>Published: {format(new Date(currentDate), "MMM dd, yyyy")}</span>}
-          </div>
-        </CardDescription>
+       
       </CardHeader>
 
       <CardContent
@@ -117,7 +109,7 @@ export const ProductLanguageCard = memo(({ langCode, form, isFirstLanguage = fal
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-medium">
-                  Product Title {isFirstLanguage && <span className="text-red-500">*</span>}
+                 {t('editProduct.title')} {isFirstLanguage && <span className="text-red-500">*</span>}
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -138,7 +130,7 @@ export const ProductLanguageCard = memo(({ langCode, form, isFirstLanguage = fal
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-medium">
-                  Product Description {isFirstLanguage && <span className="text-red-500">*</span>}
+                  {t('editProduct.descriptionInput')}  {isFirstLanguage && <span className="text-red-500">*</span>}
                 </FormLabel>
                 <FormControl>
                   <Textarea
@@ -159,7 +151,7 @@ export const ProductLanguageCard = memo(({ langCode, form, isFirstLanguage = fal
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-medium">
-                  Product Content {isFirstLanguage && <span className="text-red-500">*</span>}
+                 {t('editProduct.content')}  {isFirstLanguage && <span className="text-red-500">*</span>}
                 </FormLabel>
                 <FormControl>
                   <Textarea
@@ -168,10 +160,7 @@ export const ProductLanguageCard = memo(({ langCode, form, isFirstLanguage = fal
                     {...field}
                   />
                 </FormControl>
-                <div className="text-xs text-gray-500 mt-1">
-                  {field.value?.length || 0} characters • Estimated reading time: {readingTime} minute
-                  {readingTime !== 1 ? "s" : ""}
-                </div>
+               
                 <FormMessage />
               </FormItem>
             )}
@@ -184,7 +173,7 @@ export const ProductLanguageCard = memo(({ langCode, form, isFirstLanguage = fal
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-medium">
-                  Product Category {isFirstLanguage && <span className="text-red-500">*</span>}
+                   {t('editProduct.category')}   {isFirstLanguage && <span className="text-red-500">*</span>}
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -206,7 +195,7 @@ export const ProductLanguageCard = memo(({ langCode, form, isFirstLanguage = fal
               <FormItem>
                 <FormLabel className="text-sm font-medium flex items-center gap-1">
                   <DollarSign className="h-4 w-4" />
-                  Product Price {isFirstLanguage && <span className="text-red-500">*</span>}
+                   {t('editProduct.price')}   {isFirstLanguage && <span className="text-red-500">*</span>}
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
@@ -217,53 +206,11 @@ export const ProductLanguageCard = memo(({ langCode, form, isFirstLanguage = fal
                     />
                   </div>
                 </FormControl>
-                <div className="text-xs text-gray-500 mt-1">
-                  Include currency symbol and format according to your target market
-                </div>
+                
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {/* Date Field with DatePicker - Only shown for first language */}
-          {isFirstLanguage && (
-            <FormField
-              control={form.control}
-              name={`${langCode}.date`}
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel className="text-sm font-medium">
-                    Publication Date <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full h-11 pl-3 text-left font-normal hover:border-primary transition-colors",
-                            !field.value && "text-muted-foreground",
-                          )}
-                        >
-                          {field.value ? format(new Date(field.value), "PPP") : <span>Select publication date</span>}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value ? new Date(field.value) : undefined}
-                        onSelect={(date) => field.onChange(date ? date.toISOString() : "")}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
 
           {/* Back Link Text Field */}
           <FormField
@@ -272,7 +219,7 @@ export const ProductLanguageCard = memo(({ langCode, form, isFirstLanguage = fal
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm font-medium">
-                  Button Text {isFirstLanguage && <span className="text-red-500">*</span>}
+                   {t('editProduct.BackButton')}   {isFirstLanguage && <span className="text-red-500">*</span>}
                 </FormLabel>
                 <FormControl>
                   <Input

@@ -57,6 +57,23 @@
       "idigitekAdmin": "Idigitek Admin"
     }
   },
+  "editProduct": {
+"publicationdate": "Date",
+"editProduct": "Edit Section",
+    "createProduct": "Create Section",
+    "save":"Save  Content",
+    "update":"Update  Content",
+
+"description": "Edit Content Across Multiple Languages",
+"section": "Section",
+"primaryLanguage":"Primary Language",
+"title": "Enter Title",
+"descriptionInput":"Description",
+"content":"Content",
+"category":"Categories",
+"price":"Price",
+"BackButton":"Back Button"
+},
   "Dashboard": {
     "title": "Dashboard",
     "subtitle": "Monitor your website configuration and analytics",

@@ -51,7 +51,7 @@ export const getProcessSectionConfig = (language: string = 'en') => {
   const translations = processSectionTranslations[language as keyof typeof processSectionTranslations] || processSectionTranslations.en;
   
   return {
-    name: translations.sectionName,
+    name: "Process Section Basic",
     slug: "process-main",
     subSectionName: translations.subSectionName,
     description: translations.sectionDescription,

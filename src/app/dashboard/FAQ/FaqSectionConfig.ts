@@ -49,7 +49,7 @@ export const getFaqSectionConfig = (language: string = 'en') => {
   const translations = faqSectionTranslations[language as keyof typeof faqSectionTranslations] || faqSectionTranslations.en;
   
   return {
-    name: translations.sectionName,
+    name: "FAQ Section Basic",
     slug: FAQ_SECTION_CONSTANTS.slug,
     subSectionName: translations.sectionName,
     description: translations.sectionDescription,

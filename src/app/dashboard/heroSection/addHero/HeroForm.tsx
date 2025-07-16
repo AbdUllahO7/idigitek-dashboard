@@ -910,7 +910,7 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
           title={state.existingSubSectionId ? t("heroesForm.updatingHeroes") : t("heroesForm.creatingHeroes")}
           description={t("heroesForm.saveDescription")}
         />
-
+       
         <Form {...form}>
           <LanguageTabs
             languageCards={languageIds.map((langId: Key | null | undefined, langIndex: number) => {

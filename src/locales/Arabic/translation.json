@@ -51,6 +51,22 @@
         "idigitekAdmin": "إدارة إيديجيتك"
     }
   },
+  "editProduct": {
+    "publicationdate" : "التاريخ",
+    "editProduct" : "تعديل القسم",
+    "createProduct": "إنشاءالقسم",
+    "description" : "تحرير المحتوى عبر لغات متعددة",
+    "section": "قسم",
+    "primaryLanguage":"اللغة الأساسية",
+    "title" :"أدخل العنوان",
+    "descriptionInput":"الوصف",
+    "content":"المحتوى",
+    "category":"الفئات",
+    "price":"السعر",
+    "BackButton":"زر العودة",
+    "save":" حفظ التغييرات",
+    "update":"تحديث القسم"
+  },
   "Dashboard": {
     "title": "لوحة التحكم",
     "subtitle": "راقب إعدادات موقعك والتحليلات",

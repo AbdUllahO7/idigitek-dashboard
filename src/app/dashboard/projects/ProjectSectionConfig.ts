@@ -50,7 +50,7 @@ export const getProjectSectionConfig = (language: string = 'en') => {
   const translations = projectSectionTranslations[language as keyof typeof projectSectionTranslations] || projectSectionTranslations.en;
   
   return {
-    name: translations.sectionName,
+    name: "Project Section Basic",
     slug: "Project-main",
     subSectionName: translations.sectionName,
     description: translations.sectionDescription,

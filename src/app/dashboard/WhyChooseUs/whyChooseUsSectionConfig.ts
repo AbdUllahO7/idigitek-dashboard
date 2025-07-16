@@ -51,7 +51,7 @@ export const getWhyChooseUsSectionConfig = (language: string = 'en') => {
   const translations = whyChooseUsSectionTranslations[language as keyof typeof whyChooseUsSectionTranslations] || whyChooseUsSectionTranslations.en;
   
   return {
-    name: translations.sectionName, // Fixed: Now uses translated name
+    name: "Why Choose Us Section Basic",
     slug: "why-choose-us-main",
     subSectionName: translations.subSectionName,
     description: translations.sectionDescription,

@@ -3,7 +3,7 @@
 import { forwardRef, useEffect, useState, useRef, useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/src/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/src/components/ui/form";
 import { Button } from "@/src/components/ui/button";
 import { Switch } from "@/src/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
@@ -11,7 +11,7 @@ import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
 import apiClient from "@/src/lib/api-client";
 import { useToast } from "@/src/hooks/use-toast";
-import { Loader2, Save, Navigation } from "lucide-react";
+import { Loader2, Save, Navigation, CalendarIcon, Calendar as CalendarLucide } from "lucide-react";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
 import { SubSection } from "@/src/api/types/hooks/section.types";
@@ -27,6 +27,10 @@ import { useTranslation } from "react-i18next";
 import { BlogsFormProps } from "@/src/api/types/sections/blog/blogSection.types";
 import {  createProductSchema } from "../../../services/addService/Utils/language-specific-schemas";
 import { ProductLanguageCard } from "./ProductLanguageCard";
+import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover";
+import { Calendar } from "@/src/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/src/lib/utils";
 
 const ProductForm = forwardRef<any, BlogsFormProps>((props, ref) => {
   const { 
@@ -744,6 +748,8 @@ const ProductForm = forwardRef<any, BlogsFormProps>((props, ref) => {
           imageType="logo"
         />
 
+     
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -776,7 +782,48 @@ const ProductForm = forwardRef<any, BlogsFormProps>((props, ref) => {
             />
           </CardContent>
         </Card>
-        
+           {/* Publication Date Section - Moved outside language cards */}
+        <Card>
+       
+          <CardContent className="pt-10">
+            <FormField
+              control={form.control}
+              name={`${defaultLangCode}.date`}
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="text-sm font-medium">
+                                  {t('editProduct.publicationdate')} <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full h-11 pl-3 text-left font-normal hover:border-primary transition-colors",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          {field.value ? format(new Date(field.value), "PPP") : <span>Select publication date</span>}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value ? new Date(field.value) : undefined}
+                        onSelect={(date) => field.onChange(date ? date.toISOString() : "")}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {languageIds.map((langId, index) => {
             const langCode = languageCodes[langId] || langId;
@@ -790,6 +837,7 @@ const ProductForm = forwardRef<any, BlogsFormProps>((props, ref) => {
             );
           })}
         </div>
+        
       </Form>
       
       <div className="flex justify-end mt-6">
@@ -807,7 +855,7 @@ const ProductForm = forwardRef<any, BlogsFormProps>((props, ref) => {
           ) : (
             <>
               <Save className="mr-2 h-4 w-4" />
-              {existingSubSectionId ? "Update Product Content" : "Save Product Content"}
+              {existingSubSectionId ? t('editProduct.update') : t('editProduct.save') }
             </>
           )}
         </Button>

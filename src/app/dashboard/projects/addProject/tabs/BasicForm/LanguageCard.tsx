@@ -8,11 +8,8 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/src/
 import { Input } from "@/src/components/ui/input"
 import { Textarea } from "@/src/components/ui/textarea"
 import type { UseFormReturn } from "react-hook-form"
-import { CalendarIcon, ChevronDown, ChevronUp, X, FolderOpen } from "lucide-react"
-import { format } from "date-fns"
-import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover"
+import { ChevronDown, ChevronUp, X, FolderOpen } from "lucide-react"
 import { Button } from "@/src/components/ui/button"
-import { Calendar } from "@/src/components/ui/calendar"
 import { cn } from "@/src/lib/utils"
 import { useTranslation } from "react-i18next"
 import { useLanguage } from "@/src/context/LanguageContext"
@@ -30,7 +27,6 @@ export const LanguageCard = memo(
     const { t } = useTranslation()
     const { language } = useLanguage()
     const currentTitle = form.watch(`${langCode}.title`) || ""
-    const currentDate = form.watch(`${langCode}.date`)
 
     const handleClose = () => {
       if (onClose && !isFirstLanguage) {
@@ -100,13 +96,6 @@ export const LanguageCard = memo(
               langCode: langCode.toUpperCase(),
             })}
             {currentTitle && <span className="block text-xs mt-1 font-medium">"{currentTitle}"</span>}
-            {isFirstLanguage && currentDate && (
-              <span className="block text-xs text-gray-500 mt-1">
-                {t("projectLanguageCard.projectDateLabel", "Project Date: {{date}}", {
-                  date: format(new Date(currentDate), "PPP"),
-                })}
-              </span>
-            )}
           </CardDescription>
         </CardHeader>
 
@@ -200,50 +189,6 @@ export const LanguageCard = memo(
                 </FormItem>
               )}
             />
-
-            {/* Date Field with DatePicker - Only shown for first language */}
-            {isFirstLanguage && (
-              <FormField
-                control={form.control}
-                name={`${langCode}.date`}
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel className="text-sm font-medium">
-                      {t("projectLanguageCard.projectDate", "Project Date")}
-                    </FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full h-11 pl-3 text-left font-normal hover:border-primary transition-colors",
-                              !field.value && "text-muted-foreground",
-                            )}
-                          >
-                            {field.value ? (
-                              format(new Date(field.value), "PPP")
-                            ) : (
-                              <span>{t("projectLanguageCard.datePlaceholder", "Select a date")}</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={field.onChange}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
 
             {/* Button Text Field */}
             <FormField

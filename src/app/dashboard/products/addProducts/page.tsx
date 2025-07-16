@@ -210,10 +210,10 @@ export default function AddProduct() {
     
           
     <FormShell
-      title={isCreateMode ? "Create New Product" : "Edit Product"}
+      title={isCreateMode ? t('editProduct.createProduct') : t('editProduct.editProduct')}
       subtitle={isCreateMode 
-        ? "Create a new service with multilingual content" 
-        : `Editing "${sectionItemData?.data?.name || 'Product'}" content across multiple languages`}
+        ? t('editProduct.description')
+        : `"${sectionItemData?.data?.name || 'Product'}" ${t('editProduct.description')}`}
       backUrl={`/dashboard/products?sectionId=${sectionId}`}
       activeLanguages={activeLanguages}
       serviceData={sectionItemData?.data}

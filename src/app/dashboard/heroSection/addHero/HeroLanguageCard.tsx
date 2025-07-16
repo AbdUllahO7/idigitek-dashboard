@@ -83,6 +83,7 @@ export const LanguageTabs = memo(({ languageCards }: LanguageTabsProps) => {
 
               {/* Heroes Content */}
               <div className="space-y-4">
+                
                 {heroes.length === 0 ? (
                   <div className="text-center  py-12 border-2 border-dashed border-gray-300 rounded-lg ">
                     <p className="text-gray-500 mb-4">No heroes yet</p>

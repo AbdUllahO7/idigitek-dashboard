@@ -812,21 +812,20 @@ const FaqForm = forwardRef<any, FaqFormProps>(
         />
         
         {/* Main Form */}
-      <Form {...form}>
+     <Form {...form}>
           <LanguageTabs
             languageCards={languageIds.map((langId) => {
-              const langCode = languageCodes[langId] || langId;
+              const langCode = languageCodes[langId] || langId
               return {
                 langId,
                 langCode,
                 form,
                 onAddFaq: addFaq,
                 onConfirmDelete: confirmRemoveFaq,
-              };
+              }
             })}
           />
         </Form>
-        
         {/* Action Buttons */}
         <div className="flex justify-between mt-6">
           {/* Delete Button - Only show if there's an existing subsection */}

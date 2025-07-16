@@ -52,6 +52,22 @@
       "idigitekAdmin": "Idigitek Yönetim"
     }
   },
+  "editProduct": {
+    "publicationdate": "Tarih",
+    "editProduct": "Bölümü Düzenle",
+    "description": "İçeriği Birden Fazla Dilde Düzenle",
+    "section": "Bölüm",
+        "createProduct": "Bölüm Ekleme",
+        "save":" Bilgileri Kaydet",
+        "update":"Güncelle",
+    "primaryLanguage":"Birincil Dil",
+    "title": "Başlık Girin",
+    "descriptionInput":"Açıklama",
+    "content":"İçerik",
+    "category":"Kategoriler",
+    "price":"Fiyat",
+    "BackButton":"Geri Düğmesi"
+    },
   "Dashboard": {
     "title": "Kontrol Paneli",
     "subtitle": "Web sitesi yapılandırmanızı ve analizlerinizi izleyin",

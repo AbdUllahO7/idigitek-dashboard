@@ -28,7 +28,6 @@ import { useWebsiteContext } from "@/src/providers/WebsiteContext"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations"
 import { ActionButton, CancelButton, ErrorCard, LoadingCard, MainFormCard, SuccessCard, WarningCard } from "@/src/utils/MainSectionComponents"
 import { ClickableImage } from "@/src/components/ClickableImage"
-import { Button } from "@/src/components/ui/button"
 
 // 🎯 NEW: Extended interface to include section info
 interface CreateNavigationSubSectionProps {
@@ -1473,8 +1472,8 @@ return (
             onClick={() => setIsExpanded(!isExpanded)}
           >
             <div className="flex items-center">
-              <Link size={20} className="mr-3 text-blue-600 dark:text-blue-400" />
-              <span>{subsectionExists ? t('Navigation.EditNavigation') : t('Navigation.CreateNavigation')}</span>
+              <Link size={20} className="mr-3 ml-3 text-blue-600 dark:text-blue-400" />
+              <span >{subsectionExists ? t('Navigation.EditNavigation') : t('Navigation.CreateNavigation')}</span>
             </div>
           
             
