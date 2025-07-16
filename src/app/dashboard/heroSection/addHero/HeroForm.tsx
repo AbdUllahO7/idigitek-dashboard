@@ -27,7 +27,7 @@ import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content
 import { createHeroSectionSchema } from "../../services/addService/Utils/language-specific-schemas";
 import { createHeroSectionDefaultValues, createLanguageCodeMap } from "../../services/addService/Utils/Language-default-values";
 import { createFormRef, getSubSectionCountsByLanguage, useForceUpdate, validateSubSectionCounts } from "../../services/addService/Utils/Expose-form-data";
-import { LanguageCard } from "./HeroLanguageCard";
+import { LanguageCard, LanguageTabs } from "./HeroLanguageCard";
 import { HeroesFormState } from "@/src/api/types/sections/heroSection/HeroSection.type";
 import { processAndLoadData } from "../../services/addService/Utils/load-form-data";
 import apiClient from "@/src/lib/api-client";
@@ -912,25 +912,22 @@ const HeroesForm = forwardRef<HeroFormRef, HeroFormProps>(
         />
 
         <Form {...form}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" >
-            {languageIds.map((langId: Key | null | undefined, langIndex: number) => {
+          <LanguageTabs
+            languageCards={languageIds.map((langId: Key | null | undefined, langIndex: number) => {
               const langCode = String(langId) in languageCodes ? languageCodes[String(langId)] : String(langId);
               const isFirstLanguage = langIndex === 0;
 
-              return (
-                <LanguageCard
-                  key={langId}
-                  langCode={langCode}
-                  isFirstLanguage={isFirstLanguage}
-                  form={form}
-                  addHero={addHero}
-                  removeHero={confirmDeleteStep}
-                  onDeleteStep={confirmDeleteStep}
-                  HeroImageUploader={HeroImageUploader}
-                />
-              );
+              return {
+                langCode,
+                isFirstLanguage,
+                form,
+                addHero,
+                removeHero: confirmDeleteStep,
+                onDeleteStep: confirmDeleteStep,
+                HeroImageUploader,
+              };
             })}
-          </div>
+          />
         </Form>
 
         <div className="flex justify-end mt-6">
