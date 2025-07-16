@@ -59,7 +59,7 @@ export const FeatureForm = memo(
     const featureCount = feature.content.features.length
 
     return (
-      <AccordionItem value={`item-${index}`} className="border rounded-lg overflow-hidden">
+      <AccordionItem value={`item-${index}`} className="border rounded-lg overflow-hidden py-7">
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">

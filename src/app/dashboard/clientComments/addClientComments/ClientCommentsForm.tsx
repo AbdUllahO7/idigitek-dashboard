@@ -27,7 +27,7 @@ import { createFormRef, getAvailableIcons, getSubSectionCountsByLanguage, getSaf
 import { processAndLoadData } from "../../services/addService/Utils/load-form-data";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
 import { clientCommentFormRef, clientCommentsFormProps, ClientCommentsFormState } from "@/src/api/types/sections/clientComments/clientComments.type";
-import { ClientCommentsLanguageCardCard } from "./ClientCommentsLanguageCard";
+import { ClientCommentsLanguageCardCard, LanguageTabs } from "./ClientCommentsLanguageCard";
 import { ValidationDialog } from "../../services/addService/Components/BenefitsForm/ValidationDialog";
 import { createClientCommentsUsSchema } from "../../services/addService/Utils/language-specific-schemas";
 import { useTranslation } from "react-i18next";
@@ -790,27 +790,24 @@ const ClientCommentsForm = forwardRef<clientCommentFormRef, clientCommentsFormPr
               description="Please wait while we save your changes..."
             />
 
-            <Form {...form}>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {languageIds.map((langId: Key | null | undefined, langIndex: number) => {
+    <Form {...form}>
+              <LanguageTabs
+                languageCards={languageIds.map((langId: Key | null | undefined, langIndex: number) => {
                   const langCode = String(langId) in languageCodes ? languageCodes[String(langId)] : String(langId);
                   const isFirstLanguage = langIndex === 0;
 
-                  return (
-                    <ClientCommentsLanguageCardCard
-                      key={langId}
-                      langCode={langCode}
-                      isFirstLanguage={isFirstLanguage}
-                      form={form}
-                      addBenefit={addClientComment}
-                      removeBenefit={removeClientComments}
-                      syncIcons={syncIcons}
-                      availableIcons={getAvailableIcons()}
-                      onDeleteStep={confirmDeleteStep}
-                    />
-                  );
+                  return {
+                    langCode,
+                    isFirstLanguage,
+                    form,
+                    addBenefit: addClientComment,
+                    removeBenefit: removeClientComments,
+                    syncIcons,
+                    availableIcons: getAvailableIcons(),
+                    onDeleteStep: confirmDeleteStep,
+                  };
                 })}
-              </div>
+              />
             </Form>
 
             <div className="flex justify-end mt-6">

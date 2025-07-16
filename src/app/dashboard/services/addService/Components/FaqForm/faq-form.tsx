@@ -14,7 +14,7 @@ import { createFaqDefaultValues} from "../../Utils/Language-default-values"
 import { createFormRef } from "../../Utils/Expose-form-data"
 import { processAndLoadData } from "../../Utils/load-form-data"
 
-import { LanguageCard } from "./LanguageCard"
+import { LanguageCard, LanguageTabs } from "./LanguageCard"
 import { LoadingDialog } from "@/src/utils/MainSectionComponents"
 import { FaqFormProps } from "@/src/api/types/sections/service/serviceSections.types"
 import { SubSection } from "@/src/api/types/hooks/section.types"
@@ -812,22 +812,19 @@ const FaqForm = forwardRef<any, FaqFormProps>(
         />
         
         {/* Main Form */}
-        <Form {...form}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {languageIds.map((langId) => {
+      <Form {...form}>
+          <LanguageTabs
+            languageCards={languageIds.map((langId) => {
               const langCode = languageCodes[langId] || langId;
-              return (
-                <LanguageCard
-                  key={langId}
-                  langId={langId}
-                  langCode={langCode}
-                  form={form}
-                  onAddFaq={addFaq}
-                  onConfirmDelete={confirmRemoveFaq}
-                />
-              );
+              return {
+                langId,
+                langCode,
+                form,
+                onAddFaq: addFaq,
+                onConfirmDelete: confirmRemoveFaq,
+              };
             })}
-          </div>
+          />
         </Form>
         
         {/* Action Buttons */}

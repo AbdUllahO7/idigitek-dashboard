@@ -34,16 +34,16 @@ export const FaqItem = memo(({
   };
 
   return (
-    <AccordionItem value={`item-${index}`}>
+      <AccordionItem value={`item-${index}`} className="border bg-[#020817]  rounded-lg overflow-hidden mb-10 py-3">
       <div className="flex items-center justify-between">
-        <AccordionTrigger className="flex-1">
+        <AccordionTrigger className="flex-1 mr-2 ml-2">
           {faq.question || t("faqForm.item.defaultTitle", { number: index + 1 })}
         </AccordionTrigger>
         <Button
           type="button"
           variant="destructive"
           size="icon"
-          className="mr-4"
+          className="mr-4 ml-4"
           onClick={handleDelete}
         >
           <Trash2 className="h-4 w-4" />

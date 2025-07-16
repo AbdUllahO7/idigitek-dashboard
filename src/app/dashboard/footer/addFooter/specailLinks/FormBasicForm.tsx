@@ -28,7 +28,7 @@ import { createFooterSectionSchema, createFooterSpecialLinkSectionSchema } from 
 import { createFooterSectionDefaultValues, createFooterSpecialLinkSectionDefaultValues, createLanguageCodeMap } from "../../../services/addService/Utils/Language-default-values";
 import { createFormRef, getSubSectionCountsByLanguage, useForceUpdate, validateSubSectionCounts } from "../../../services/addService/Utils/Expose-form-data";
 import { processAndLoadData } from "../../../services/addService/Utils/load-form-data";
-import { FooterLanguageCard } from "./FooterLanguageCard";
+import { FooterLanguageCard, LanguageTabs } from "./FooterLanguageCard";
 import { FooteresFormState, FooterFormProps } from "@/src/api/types/sections/footer/footerSection.type";
 import { StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
 import { useHeroImages } from "../utils/FooterImageUploader";
@@ -1045,28 +1045,24 @@ const syncSocialLinksBeforeValidation = useCallback(() => {
             : t("specialLinks.form.saving.creating")}
           description={t("specialLinks.form.saving.description")}
         />
-
         <Form {...form}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {languageIds.map((langId: Key | null | undefined, langIndex: number) => {
+          <LanguageTabs
+            languageCards={languageIds.map((langId: Key | null | undefined, langIndex: number) => {
               const langCode = String(langId) in languageCodes ? languageCodes[String(langId)] : String(langId);
               const isFirstLanguage = langIndex === 0;
 
-              return (
-                <FooterLanguageCard
-                  key={langId}
-                  langCode={langCode}
-                  isFirstLanguage={isFirstLanguage}
-                  form={form}
-                  addFooter={addFooter}
-                  removeFooter={confirmDeleteStep}
-                  onDeleteStep={confirmDeleteStep}
-                  FooterImageUploader={HeroImageUploader}
-                  SocialLinkImageUploader={SocialLinkImageUploader}
-                />
-              );
+              return {
+                langCode,
+                isFirstLanguage,
+                form,
+                addFooter,
+                removeFooter: confirmDeleteStep,
+                onDeleteStep: confirmDeleteStep,
+                FooterImageUploader: HeroImageUploader,
+                SocialLinkImageUploader,
+              };
             })}
-          </div>
+          />
         </Form>
 
         <div className="flex justify-end mt-6">

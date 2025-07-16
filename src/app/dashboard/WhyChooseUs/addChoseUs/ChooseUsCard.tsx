@@ -73,7 +73,7 @@ export const ChooseUsCard = memo(
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="h-8 w-8 p-0 hover:bg-gray-100"
+                className="h-8 w-8 p-0 "
               >
                 {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
               </Button>

@@ -38,9 +38,9 @@ export const StepCard = memo(
 
     return (
       <Card
-        className=""
+        className="space-x-10 space-y-10"
       >
-        <CardHeader className="p-4 pb-2">
+        <CardHeader className="p-4 pb-2 ">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">

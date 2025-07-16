@@ -22,7 +22,7 @@ import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
 import { processAndLoadData } from "../../Utils/load-form-data";
 import { ValidationDialog } from "./ValidationDialog";
-import { LanguageCard } from "./LanguageCard";
+import { LanguageCard, LanguageTabs } from "./LanguageCard";
 import { LoadingDialog } from "@/src/utils/MainSectionComponents";
 import { BenefitsFormState, HeroFormProps, HeroFormRef, StepToDelete } from "@/src/api/types/sections/service/serviceSections.types";
 import { ContentElement, ContentTranslation } from "@/src/api/types/hooks/content.types";
@@ -875,27 +875,24 @@ const BenefitsForm = forwardRef<HeroFormRef, HeroFormProps>(
           confirmText={t('benefitsFormForm.deleteDialogs.benefit.confirmText')}
         />
 
-        <Form {...form}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {languageIds.map((langId: Key | null | undefined, langIndex: number) => {
+       <Form {...form}>
+          <LanguageTabs
+            languageCards={languageIds.map((langId: Key | null | undefined, langIndex: number) => {
               const langCode = String(langId) in languageCodes ? languageCodes[String(langId)] : String(langId);
               const isFirstLanguage = langIndex === 0;
 
-              return (
-                <LanguageCard
-                  key={langId}
-                  langCode={langCode}
-                  isFirstLanguage={isFirstLanguage}
-                  form={form}
-                  addBenefit={addBenefit}
-                  removeBenefit={removeBenefit}
-                  syncIcons={syncIcons}
-                  availableIcons={getAvailableIcons()}
-                  onDeleteStep={confirmDeleteStep}
-                />
-              );
+              return {
+                langCode,
+                isFirstLanguage,
+                form,
+                addBenefit,
+                removeBenefit,
+                syncIcons,
+                availableIcons: getAvailableIcons(),
+                onDeleteStep: confirmDeleteStep,
+              };
             })}
-          </div>
+          />
         </Form>
 
         {/* Action Buttons */}

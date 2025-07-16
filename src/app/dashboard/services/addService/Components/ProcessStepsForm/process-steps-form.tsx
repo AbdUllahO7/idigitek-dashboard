@@ -19,7 +19,7 @@ import { createProcessStepsDefaultValues } from "../../Utils/Language-default-va
 import { createFormRef } from "../../Utils/Expose-form-data"
 import { processAndLoadData } from "../../Utils/load-form-data"
 import { createLanguageCodeMap } from "../../Utils/language-utils"
-import { LanguageCard } from "./LanguageCard"
+import { LanguageCard, LanguageTabs } from "./LanguageCard"
 import { LoadingDialog } from "@/src/utils/MainSectionComponents"
 import { HeroFormProps, HeroFormRef } from "@/src/api/types/sections/service/serviceSections.types"
 import { SubSection } from "@/src/api/types/hooks/section.types"
@@ -817,24 +817,21 @@ const ProcessStepsForm = forwardRef<HeroFormRef, HeroFormProps>(
         
         {/* Main Form */}
         <Form {...form}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {languageIds.map((langId) => {
+          <LanguageTabs
+            languageCards={languageIds.map((langId) => {
               const langCode = languageCodes[langId] || langId;
               
-              return (
-                <LanguageCard
-                  key={langId}
-                  langId={langId}
-                  langCode={langCode}
-                  isFirstLanguage={isFirstLanguage(langCode)}
-                  defaultLangCode={defaultLangCode}
-                  form={form}
-                  onAddStep={addProcessStep}
-                  onDeleteStep={confirmDeleteStep}
-                />
-              );
+              return {
+                langId,
+                langCode,
+                isFirstLanguage: isFirstLanguage(langCode),
+                defaultLangCode,
+                form,
+                onAddStep: addProcessStep,
+                onDeleteStep: confirmDeleteStep,
+              };
             })}
-          </div>
+          />
         </Form>
 
         {/* Action Buttons */}

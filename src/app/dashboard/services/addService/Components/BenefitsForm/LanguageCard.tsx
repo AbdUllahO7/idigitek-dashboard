@@ -1,9 +1,8 @@
 "use client";
 
-import { memo } from "react";
-import { useTranslation } from "react-i18next"; // or your i18n hook
+import { memo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { BenefitCard } from "./BenefitCard";
 import { IconNames } from "@/src/utils/MainSectionComponents";
@@ -18,7 +17,124 @@ interface LanguageCardProps {
   availableIcons: readonly IconNames[];
   onDeleteStep: (langCode: any, index: number) => void;
 }
-  
+
+interface LanguageTabsProps {
+  languageCards: Array<{
+    langCode: string;
+    isFirstLanguage: boolean;
+    form: any;
+    addBenefit: (langCode: string) => void;
+    removeBenefit: (langCode: string, index: number) => void;
+    syncIcons: (index: number, iconValue: string) => void;
+    availableIcons: readonly IconNames[];
+    onDeleteStep: (langCode: any, index: number) => void;
+  }>;
+}
+
+export const LanguageTabs = memo(({ languageCards }: LanguageTabsProps) => {
+  const [activeTab, setActiveTab] = useState(0);
+  const { t } = useTranslation();
+
+  return (
+    <div className="w-full">
+      {/* Tabs Navigation */}
+      <div className="border-b border-gray-200 mb-6">
+        <nav className="flex space-x-0">
+          {languageCards.map((card, index) => (
+            <button
+              key={card.langCode}
+              onClick={() => setActiveTab(index)}
+              className={`relative px-6 py-3 text-sm font-medium border-b-2 transition-all duration-200 ${
+                activeTab === index
+                  ? 'border-blue-500 text-blue-600 dark:text-green-700 '
+                  : 'border-transparent text-gray-500 dark:text-white hover:text-gray-700'
+              }`}
+            >
+              <div className="flex items-center space-x-2">
+                <span className="uppercase font-bold text-xs px-2 py-1 rounded ">
+                  {card.langCode}
+                </span>
+                {card.isFirstLanguage && (
+                  <span className="w-2 h-2 bg-amber-500 rounded-full"></span>
+                )}
+              </div>
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Tab Content */}
+      <div className="min-h-[400px]">
+        {languageCards.map((card, index) => {
+          const benefits = card.form.watch(card.langCode) || [];
+          
+          return (
+            <div
+              key={card.langCode}
+              className={`${activeTab === index ? 'block' : 'hidden'}`}
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-xl font-semibold">
+                    {t('benefitsForm.languageCard.title')}
+                  </h2>
+                  <p className="text-gray-600 text-sm mt-1">
+                    {t('benefitsForm.languageCard.description', { language: card.langCode.toUpperCase() })}
+                  </p>
+                  {card.isFirstLanguage && (
+                    <span className="inline-block mt-2 text-xs bg-amber-100 text-amber-800 rounded-md px-2 py-1">
+                      {t('benefitsForm.languageCard.primaryLanguageBadge')}
+                    </span>
+                  )}
+                </div>
+                <Button
+                  onClick={() => card.addBenefit(card.langCode)}
+                  className="flex items-center"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {t('benefitsForm.languageCard.addButton')}
+                </Button>
+              </div>
+
+              {/* Benefits Content */}
+              <div className="space-y-4">
+                {benefits.length === 0 ? (
+                  <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+                    <p className="text-gray-500 mb-4">No benefits yet</p>
+                    <Button
+                      variant="outline"
+                      onClick={() => card.addBenefit(card.langCode)}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      {t('benefitsForm.languageCard.addButton')}
+                    </Button>
+                  </div>
+                ) : (
+                  benefits.map((_: any, benefitIndex: number) => (
+                    <div key={`${card.langCode}-benefit-${benefitIndex}`} className=" rounded-lg p-4">
+                      <BenefitCard
+                        langCode={card.langCode}
+                        index={benefitIndex}
+                        form={card.form}
+                        isFirstLanguage={card.isFirstLanguage}
+                        syncIcons={card.syncIcons}
+                        availableIcons={card.availableIcons}
+                        onDelete={(langCodeParam, index) => card.onDeleteStep(langCodeParam, index)}
+                      />
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+});
+
+// Keep original LanguageCard for compatibility
 export const LanguageCard = memo(({ 
   langCode, 
   isFirstLanguage, 
@@ -28,28 +144,39 @@ export const LanguageCard = memo(({
   availableIcons,
   onDeleteStep
 }: LanguageCardProps) => {
-  const { t } = useTranslation(); // i18n hook
+  const { t } = useTranslation();
   const benefits = form.watch(langCode) || [];
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <span className="uppercase font-bold text-sm bg-primary text-primary-foreground rounded-md px-2 py-1 ml-2 mr-2">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center">
+          <span className="uppercase font-bold text-sm bg-primary text-primary-foreground rounded-md px-3 py-1.5 mr-3">
             {langCode}
           </span>
-          {t('benefitsForm.languageCard.title')}
+          <div>
+            <h3 className="text-lg font-semibold">{t('benefitsForm.languageCard.title')}</h3>
+            <p className="text-sm text-muted-foreground">
+              {t('benefitsForm.languageCard.description', { language: langCode.toUpperCase() })}
+            </p>
+          </div>
           {isFirstLanguage && (
-            <span className="ml-2 text-xs bg-amber-100 text-amber-800 rounded-md px-2 mr-2 py-1">
+            <span className="ml-3 text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full">
               {t('benefitsForm.languageCard.primaryLanguageBadge')}
             </span>
           )}
-        </CardTitle>
-        <CardDescription>
-          {t('benefitsForm.languageCard.description', { language: langCode.toUpperCase() })}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+        </div>
+        <Button
+          type="button"
+          onClick={() => addBenefit(langCode)}
+          className="flex items-center"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          {t('benefitsForm.languageCard.addButton')}
+        </Button>
+      </div>
+
+      <div className="space-y-4">
         {benefits.map((_: any, index: number) => (
           <BenefitCard
             key={`${langCode}-benefit-${index}`}
@@ -62,20 +189,10 @@ export const LanguageCard = memo(({
             onDelete={(langCodeParam, index) => onDeleteStep(langCodeParam, index)}
           />
         ))}
-
-        <Button 
-          type="button" 
-          variant="outline" 
-          size="sm" 
-          onClick={() => addBenefit(langCode)}
-          className="mt-2"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          {t('benefitsForm.languageCard.addButton')}
-        </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 });
 
+LanguageTabs.displayName = "LanguageTabs";
 LanguageCard.displayName = "LanguageCard";

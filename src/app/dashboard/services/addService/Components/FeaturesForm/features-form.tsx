@@ -34,7 +34,7 @@ type FeaturesSchemaType = ReturnType<typeof createFeaturesSchema>
 import DeleteSectionDialog from "@/src/components/DeleteSectionDialog"
 import { createFeaturesSchema } from "../../Utils/language-specific-schemas"
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations"
-import LanguageCard from "./LanguageCard"
+import LanguageCard, { LanguageTabs } from "./LanguageCard"
 import { useSubsectionDeleteManager } from "@/src/hooks/DeleteSubSections/useSubsectionDeleteManager"
 import { useTranslation } from "react-i18next"
 
@@ -1174,26 +1174,23 @@ const FeaturesForm = forwardRef<any, FeaturesFormProps>(
         />
         
         {/* Main Form */}
-        <Form {...form}>
-          <div className="grid grid-cols-1 gap-6">
-            {languageIds.map((langId) => {
+       <Form {...form}>
+          <LanguageTabs
+            languageCards={languageIds.map((langId) => {
               const langCode = languageCodes[langId] || langId;
-              return (
-                <LanguageCard
-                  key={langId}
-                  langId={langId}
-                  langCode={langCode}
-                  languageIds={languageIds}
-                  form={form}
-                  onAddFeature={addFeature}
-                  onRemoveFeature={confirmRemoveFeature}
-                  onAddFeatureItem={addFeatureItem}
-                  onRemoveFeatureItem={confirmRemoveFeatureItem}
-                  FeatureImageUploader={FeatureImageUploader}
-                />
-              );
+              return {
+                langId,
+                langCode,
+                languageIds,
+                form,
+                onAddFeature: addFeature,
+                onRemoveFeature: confirmRemoveFeature,
+                onAddFeatureItem: addFeatureItem,
+                onRemoveFeatureItem: confirmRemoveFeatureItem,
+                FeatureImageUploader,
+              };
             })}
-          </div>
+          />
         </Form>
         
         {/* Action Buttons */}

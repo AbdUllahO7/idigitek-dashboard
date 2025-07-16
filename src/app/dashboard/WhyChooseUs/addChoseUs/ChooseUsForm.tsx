@@ -25,7 +25,7 @@ import DeleteSectionDialog from "@/src/components/DeleteSectionDialog";
 import { createChooseUsDefaultValues, createLanguageCodeMap } from "../../services/addService/Utils/Language-default-values";
 import { createFormRef, getAvailableIcons, getSubSectionCountsByLanguage, getSafeIconValue, useForceUpdate, validateSubSectionCounts } from "../../services/addService/Utils/Expose-form-data";
 import { processAndLoadData } from "../../services/addService/Utils/load-form-data";
-import { ChooseUsLanguageCard } from "./ChooseUsLanguageCard";
+import { ChooseUsLanguageCard, LanguageTabs } from "./ChooseUsLanguageCard";
 import { ChooseUsFormProps, ChooseUsFormRef, ChoseUsFormState } from "@/src/api/types/sections/choseUS/ChooseUs.type";
 import { useContentTranslations } from "@/src/hooks/webConfiguration/use-content-translations";
 import { useImageUploader } from "../../services/addService/Utils/Image-uploader";
@@ -754,7 +754,7 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
               description={t('chooseUsForm.savingChanges')}
             />
 
-            <Form {...form}>
+       <Form {...form}>
               <BackgroundImageSection
                 imagePreview={imagePreview || undefined}
                 imageValue={form.getValues().backgroundImage}
@@ -767,26 +767,23 @@ const ChooseUsForm = forwardRef<ChooseUsFormRef, ChooseUsFormProps>(
                 imageType="background"
               />
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {languageIds.map((langId: Key | null | undefined, langIndex: number) => {
+              <LanguageTabs
+                languageCards={languageIds.map((langId: Key | null | undefined, langIndex: number) => {
                   const langCode = String(langId) in languageCodes ? languageCodes[String(langId)] : String(langId);
                   const isFirstLanguage = langIndex === 0;
 
-                  return (
-                    <ChooseUsLanguageCard
-                      key={langId}
-                      langCode={langCode}
-                      isFirstLanguage={isFirstLanguage}
-                      form={form}
-                      addBenefit={addChoseUs}
-                      removeBenefit={removeChoseUs}
-                      syncIcons={syncIcons}
-                      availableIcons={getAvailableIcons()}
-                      onDeleteStep={confirmDeleteStep}
-                    />
-                  );
+                  return {
+                    langCode,
+                    isFirstLanguage,
+                    form,
+                    addBenefit: addChoseUs,
+                    removeBenefit: removeChoseUs,
+                    syncIcons,
+                    availableIcons: getAvailableIcons(),
+                    onDeleteStep: confirmDeleteStep,
+                  };
                 })}
-              </div>
+              />
             </Form>
 
             <div className="flex justify-end mt-6">
