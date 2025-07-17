@@ -11,40 +11,145 @@ import { useTranslation } from 'react-i18next';
 // Maximum file size in bytes (2MB)
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
+// 🚀 OPTIMIZATION: Image optimization settings
+const STANDARD_TARGET_WIDTH = 800;
+const STANDARD_TARGET_HEIGHT = 600;
+const THUMBNAIL_TARGET_WIDTH = 400;
+const THUMBNAIL_TARGET_HEIGHT = 300;
+const OPTIMIZATION_QUALITY = 0.8; // 80% quality
+
+// 🚀 OPTIMIZATION: Image optimization utility
+const optimizeImage = async (
+  file: File, 
+  targetWidth: number = STANDARD_TARGET_WIDTH, 
+  targetHeight: number = STANDARD_TARGET_HEIGHT,
+  quality: number = OPTIMIZATION_QUALITY
+): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    img.onload = () => {
+      // Calculate dimensions maintaining aspect ratio
+      const aspectRatio = img.width / img.height;
+      let newWidth = targetWidth;
+      let newHeight = targetHeight;
+
+      if (aspectRatio > 1) {
+        // Landscape
+        newHeight = newWidth / aspectRatio;
+      } else {
+        // Portrait or square
+        newWidth = newHeight * aspectRatio;
+      }
+
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+
+      // Draw and resize image
+      ctx?.drawImage(img, 0, 0, newWidth, newHeight);
+
+      // Convert to WebP with compression
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error('Failed to optimize image'));
+            return;
+          }
+
+          const optimizedFile = new File(
+            [blob], 
+            `optimized-${file.name.replace(/\.[^/.]+$/, '.webp')}`,
+            { 
+              type: 'image/webp',
+              lastModified: Date.now()
+            }
+          );
+
+          console.log(`🚀 Image optimized: ${Math.round(file.size / 1024)}KB → ${Math.round(optimizedFile.size / 1024)}KB`);
+          resolve(optimizedFile);
+        },
+        'image/webp',
+        quality
+      );
+    };
+
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = URL.createObjectURL(file);
+  });
+};
+
+// 🚀 OPTIMIZATION: Fallback for older browsers (JPEG)
+const optimizeImageFallback = async (
+  file: File, 
+  targetWidth: number = STANDARD_TARGET_WIDTH, 
+  targetHeight: number = STANDARD_TARGET_HEIGHT,
+  quality: number = OPTIMIZATION_QUALITY
+): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    img.onload = () => {
+      const aspectRatio = img.width / img.height;
+      let newWidth = targetWidth;
+      let newHeight = targetHeight;
+
+      if (aspectRatio > 1) {
+        newHeight = newWidth / aspectRatio;
+      } else {
+        newWidth = newHeight * aspectRatio;
+      }
+
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      ctx?.drawImage(img, 0, 0, newWidth, newHeight);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error('Failed to optimize image'));
+            return;
+          }
+
+          const optimizedFile = new File(
+            [blob], 
+            `optimized-${file.name}`,
+            { 
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            }
+          );
+
+          resolve(optimizedFile);
+        },
+        'image/jpeg',
+        quality
+      );
+    };
+
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = URL.createObjectURL(file);
+  });
+};
+
 /**
  * Options for the useImageUpload hook
  */
 interface UseImageUploadOptions {
-  /**
-   * Form instance from react-hook-form
-   */
   form: UseFormReturn<any>;
-  
-  /**
-   * Form field path for the image value 
-   * (e.g., "backgroundImage" or language-specific path)
-   */
   fieldPath?: string;
-  
-  /**
-   * Callback when an image is uploaded
-   */
   onUpload?: (file: File, previewUrl: string) => void;
-  
-  /**
-   * Callback when an image is removed
-   */
   onRemove?: () => void;
-  
-  /**
-   * Initial image URL for preview
-   */
   initialImageUrl?: string;
-  
-  /**
-   * Custom validation for file uploads
-   */
   validate?: (file: File) => boolean | string;
+  // 🚀 OPTIMIZATION: Add optimization options
+  enableOptimization?: boolean;
+  targetWidth?: number;
+  targetHeight?: number;
+  quality?: number;
 }
 
 /**
@@ -57,16 +162,21 @@ export const useImageUpload = (options: UseImageUploadOptions) => {
     onUpload, 
     onRemove, 
     initialImageUrl,
-    validate 
+    validate,
+    enableOptimization = true, // 🚀 Enable by default
+    targetWidth = STANDARD_TARGET_WIDTH,
+    targetHeight = STANDARD_TARGET_HEIGHT,
+    quality = OPTIMIZATION_QUALITY
   } = options;
   
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(initialImageUrl || null);
-  
+  const [isOptimizing, setIsOptimizing] = useState(false);
+
   /**
-   * Handle image upload
+   * Handle image upload with optimization
    */
-  const handleImageUpload = (file: File) => {
+  const handleImageUpload = async (file: File) => {
     if (!file) return;
 
     // Check file size (max 2MB)
@@ -96,30 +206,51 @@ export const useImageUpload = (options: UseImageUploadOptions) => {
       }
     }
 
-    // Store the file in state
-    setImageFile(file);
+    try {
+      let finalFile = file;
 
-    // Create a temporary URL for preview
-    const previewUrl = URL.createObjectURL(file);
-    setImagePreview(previewUrl);
+      // 🚀 OPTIMIZATION: Optimize image if enabled
+      if (enableOptimization) {
+        setIsOptimizing(true);
+        
+        try {
+          finalFile = await optimizeImage(file, targetWidth, targetHeight, quality);
+        } catch (error) {
+          console.warn('WebP optimization failed, falling back to JPEG:', error);
+          try {
+            finalFile = await optimizeImageFallback(file, targetWidth, targetHeight, quality);
+          } catch (fallbackError) {
+            console.warn('Image optimization failed completely, using original:', fallbackError);
+            finalFile = file;
+          }
+        }
+      }
 
-    // Set form value if fieldPath is provided
-    if (fieldPath) {
-      form.setValue(fieldPath, previewUrl, { shouldDirty: true });
+      // Store the optimized file in state
+      setImageFile(finalFile);
+
+      // Create a temporary URL for preview
+      const previewUrl = URL.createObjectURL(finalFile);
+      setImagePreview(previewUrl);
+
+      // Set form value if fieldPath is provided
+      if (fieldPath) {
+        form.setValue(fieldPath, previewUrl, { shouldDirty: true });
+      }
+
+      // Call the onUpload callback if provided
+      if (onUpload) {
+        onUpload(finalFile, previewUrl);
+      }
+
+      // Return cleanup function
+      return () => URL.revokeObjectURL(previewUrl);
+
+    } catch (error) {
+      console.error('Image upload failed:', error);
+    } finally {
+      setIsOptimizing(false);
     }
-
-    // Call the onUpload callback if provided
-    if (onUpload) {
-      onUpload(file, previewUrl);
-    }
-
-    toast({
-      title: "Image selected",
-      description: "Image has been selected successfully",
-    });
-
-    // Return cleanup function
-    return () => URL.revokeObjectURL(previewUrl);
   };
 
   /**
@@ -138,11 +269,6 @@ export const useImageUpload = (options: UseImageUploadOptions) => {
     if (onRemove) {
       onRemove();
     }
-    
-    toast({
-      title: "Image removed",
-      description: "Image has been removed",
-    });
   };
   
   return {
@@ -150,6 +276,7 @@ export const useImageUpload = (options: UseImageUploadOptions) => {
     imagePreview,
     handleImageUpload,
     handleImageRemove,
+    isOptimizing, // 🚀 Export optimization state
   };
 };
 
@@ -157,50 +284,16 @@ export const useImageUpload = (options: UseImageUploadOptions) => {
  * Props for the SimpleImageUploader component
  */
 interface SimpleImageUploaderProps {
-  /**
-   * Image URL for preview
-   */
   imageValue?: string;
-  
-  /**
-   * Unique ID for the file input
-   */
   inputId: string;
-  
-  /**
-   * Handler for file upload
-   */
   onUpload: (file: File) => void;
-  
-  /**
-   * Handler for image removal
-   */
   onRemove: () => void;
-  
-  /**
-   * Alt text for the image
-   */
   altText?: string;
-  
-  /**
-   * Custom placeholder text
-   */
   placeholderText?: string;
-  
-  /**
-   * Custom description text
-   */
   descriptionText?: string;
-  
-  /**
-   * Custom height for the image preview
-   */
   imageHeight?: string;
-  
-  /**
-   * Accepted file types
-   */
   acceptedTypes?: string;
+  disabled?: boolean; // 🚀 Add disabled prop
 }
 
 /**
@@ -213,13 +306,14 @@ export const SimpleImageUploader = ({
   onRemove,
   altText = "Image preview",
   placeholderText = "Click to upload image",
-  descriptionText = "SVG, PNG, JPG or GIF (max. 2MB)",
+  descriptionText = "SVG, PNG, JPG or GIF (max. 2MB, auto-optimized)",
   imageHeight = "h-48",
-  acceptedTypes = "image/*"
+  acceptedTypes = "image/*",
+  disabled = false
 }: SimpleImageUploaderProps) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file && !disabled) {
       onUpload(file);
     }
   };
@@ -234,15 +328,10 @@ export const SimpleImageUploader = ({
             <img
               src={imageValue}
               alt={altText}
-              className={`w-full ${imageHeight} object-cover rounded-md`}
-              key={imageValue} // Force re-render when imageValue changes
+              className={`w-full ${imageHeight} object-cover rounded-md ${disabled ? 'opacity-50' : ''}`}
+              key={imageValue}
               onError={() => {
                 console.error("Failed to load image:", imageValue);
-                toast({
-                  title: "Image Load Error",
-                  description: "Failed to load the image. Please check the URL or try uploading again.",
-                  variant: "destructive",
-                });
               }}
             />
             <Button
@@ -250,6 +339,7 @@ export const SimpleImageUploader = ({
               variant="destructive"
               className="absolute top-2 right-2 h-8 w-8 rounded-full"
               onClick={onRemove}
+              disabled={disabled}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -259,24 +349,32 @@ export const SimpleImageUploader = ({
                 size="sm"
                 className="w-full"
                 onClick={() => document.getElementById(inputId)?.click()}
+                disabled={disabled}
               >
-                {
-                    t('SectionTable.ChangeImage')
-                  }
+                {disabled ? 'Processing...' : t('SectionTable.ChangeImage')}
               </Button>
             </div>
           </div>
         ) : (
           <div
-            className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors"
-            onClick={() => document.getElementById(inputId)?.click()}
+            className={`border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors ${
+              disabled ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            onClick={() => !disabled && document.getElementById(inputId)?.click()}
           >
             <Upload className="h-10 w-10 text-muted-foreground mb-2" />
-            <p className="text-sm font-medium">{placeholderText}</p>
+            <p className="text-sm font-medium">{disabled ? 'Processing...' : placeholderText}</p>
             <p className="text-xs text-muted-foreground mt-1">{descriptionText}</p>
           </div>
         )}
-        <input id={inputId} type="file" accept={acceptedTypes} className="hidden" onChange={handleFileChange} />
+        <input 
+          id={inputId} 
+          type="file" 
+          accept={acceptedTypes} 
+          className="hidden" 
+          onChange={handleFileChange}
+          disabled={disabled}
+        />
       </div>
     </Card>
   );
@@ -286,14 +384,7 @@ export const SimpleImageUploader = ({
  * Props for the LabeledImageUploader component
  */
 interface LabeledImageUploaderProps extends SimpleImageUploaderProps {
-  /**
-   * Label text for the image uploader
-   */
   label: string;
-  
-  /**
-   * Optional helper text
-   */
   helperText?: string;
 }
 
@@ -309,6 +400,7 @@ export const LabeledImageUploader = ({
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
         <ImageIcon className="h-4 w-4" />
+        {label}
       </Label>
       {helperText && (
         <p className="text-xs text-muted-foreground mb-1">{helperText}</p>
@@ -323,57 +415,65 @@ export const LabeledImageUploader = ({
  */
 export const useFeatureImages = (form: UseFormReturn<any>) => {
   const [featureImages, setFeatureImages] = useState<Record<number, File>>({});
+  const [isOptimizing, setIsOptimizing] = useState<Record<number, boolean>>({});
   
   /**
-   * Handle image upload for a specific feature
+   * Handle image upload for a specific feature with optimization
    */
-  const handleFeatureImageUpload = (featureIndex: number, file: File) => {
+  const handleFeatureImageUpload = async (featureIndex: number, file: File) => {
     if (!file) return;
 
     // Check file size (max 2MB)
     if (file.size > MAX_FILE_SIZE) {
-      toast({
-        title: "File too large",
-        description: "Image must be less than 2MB",
-        variant: "destructive",
-      });
       return;
     }
 
-    // Read file as data URL for preview
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        const imageData = event.target.result as string;
+    try {
+      // 🚀 OPTIMIZATION: Show loading state
+      setIsOptimizing(prev => ({ ...prev, [featureIndex]: true }));
 
-        // Update the image for this feature across all languages
-        const formValues = form.getValues();
-
-        Object.keys(formValues).forEach((langCode) => {
-          if (formValues[langCode] && formValues[langCode][featureIndex]) {
-            form.setValue(`${langCode}.${featureIndex}.content.image` as any, imageData);
-          }
-        });
-
-        // Store the file in our local state
-        setFeatureImages((prev) => ({ ...prev, [featureIndex]: file }));
-
-        toast({
-          title: "Image uploaded",
-          description: "Image has been uploaded successfully for all languages",
-        });
+      let optimizedFile: File;
+      try {
+        // Optimize for feature images (smaller size)
+        optimizedFile = await optimizeImage(file, THUMBNAIL_TARGET_WIDTH, THUMBNAIL_TARGET_HEIGHT, 0.75);
+      } catch (error) {
+        console.warn('WebP optimization failed, falling back to JPEG:', error);
+        try {
+          optimizedFile = await optimizeImageFallback(file, THUMBNAIL_TARGET_WIDTH, THUMBNAIL_TARGET_HEIGHT, 0.75);
+        } catch (fallbackError) {
+          console.warn('Image optimization failed completely, using original:', fallbackError);
+          optimizedFile = file;
+        }
       }
-    };
 
-    reader.onerror = () => {
-      toast({
-        title: "Error reading file",
-        description: "There was an error reading the selected file",
-        variant: "destructive",
-      });
-    };
+      // Convert optimized file to data URL for form storage
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          const imageData = event.target.result as string;
 
-    reader.readAsDataURL(file);
+          // Update the image for this feature across all languages
+          const formValues = form.getValues();
+
+          Object.keys(formValues).forEach((langCode) => {
+            if (formValues[langCode] && formValues[langCode][featureIndex]) {
+              form.setValue(`${langCode}.${featureIndex}.content.image` as any, imageData);
+            }
+          });
+
+          // Store the optimized file in our local state
+          setFeatureImages((prev) => ({ ...prev, [featureIndex]: optimizedFile }));
+        }
+      };
+
+      reader.readAsDataURL(optimizedFile);
+
+    } catch (error) {
+      console.error('Feature image optimization failed:', error);
+    } finally {
+      // 🚀 Clear loading state
+      setIsOptimizing(prev => ({ ...prev, [featureIndex]: false }));
+    }
   };
 
   /**
@@ -393,11 +493,6 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
     const newFeatureImages = { ...featureImages };
     delete newFeatureImages[featureIndex];
     setFeatureImages(newFeatureImages);
-
-    toast({
-      title: "Image removed",
-      description: "Image has been removed from all languages",
-    });
   };
   
   /**
@@ -419,7 +514,7 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
   const FeatureImageUploader = ({ 
     featureIndex,
     label = "Feature Image",
-    helperText = "(applies to all languages)" 
+    helperText = "(auto-optimized for all languages)" 
   }: { 
     featureIndex: number;
     label?: string;
@@ -429,18 +524,20 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
     const firstLangCode = Object.keys(form.getValues())[0];
     const features = form.getValues()[firstLangCode] || [];
     const imageValue = features[featureIndex]?.content?.image || "";
+    const isCurrentlyOptimizing = isOptimizing[featureIndex] || false;
 
     const inputId = `file-upload-feature-${featureIndex}`;
 
     return (
       <LabeledImageUploader
-        label={label}
+        label={`${label} ${isCurrentlyOptimizing ? '(Optimizing...)' : ''}`}
         helperText={helperText}
         imageValue={imageValue}
         inputId={inputId}
         onUpload={(file) => handleFeatureImageUpload(featureIndex, file)}
         onRemove={() => handleFeatureImageRemove(featureIndex)}
         altText={`Feature ${featureIndex + 1} image`}
+        disabled={isCurrentlyOptimizing}
       />
     );
   };
@@ -451,70 +548,118 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
     handleFeatureImageRemove,
     updateFeatureImageIndices,
     FeatureImageUploader,
+    isOptimizing, // 🚀 Export optimization state
   };
-  };
+};
 
-  interface ImageUploaderOptions {
-    form: UseFormReturn<any>;
-    fieldPath: string;
-    initialImageUrl?: string;
-    onUpload?: (file: File, previewUrl: string) => void;
-    onRemove?: () => void;
-    validate?: (file: File) => boolean | string;
-  }
+interface ImageUploaderOptions {
+  form: UseFormReturn<any>;
+  fieldPath: string;
+  initialImageUrl?: string;
+  onUpload?: (file: File, previewUrl: string) => void;
+  onRemove?: () => void;
+  validate?: (file: File) => boolean | string;
+  // 🚀 OPTIMIZATION: Add optimization options
+  enableOptimization?: boolean;
+  targetWidth?: number;
+  targetHeight?: number;
+  quality?: number;
+}
+
+export const useImageUploader = ({ 
+  form, 
+  fieldPath, 
+  initialImageUrl, 
+  onUpload, 
+  onRemove, 
+  validate,
+  enableOptimization = true,
+  targetWidth = STANDARD_TARGET_WIDTH,
+  targetHeight = STANDARD_TARGET_HEIGHT,
+  quality = OPTIMIZATION_QUALITY
+}: ImageUploaderOptions) => {
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | undefined>(undefined);
+  const [isOptimizing, setIsOptimizing] = useState(false);
   
-  export const useImageUploader = ({ form, fieldPath, initialImageUrl, onUpload, onRemove, validate }: ImageUploaderOptions) => {
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | undefined>(undefined);
+  // Handle image upload with optimization
+  const handleImageUpload = useCallback(async (e: { target: { files: any[]; }; }) => {
+    const file = e.target.files[0];
+    if (!file) return;
     
-    // Handle image upload
-    const handleImageUpload = useCallback((e: { target: { files: any[]; }; }) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      
-      // Validate file if validation function provided
-      if (validate) {
-        const validationResult = validate(file);
-        if (typeof validationResult === 'string') {
-          alert(validationResult);
-          return;
+    // Validate file if validation function provided
+    if (validate) {
+      const validationResult = validate(file);
+      if (typeof validationResult === 'string') {
+        alert(validationResult);
+        return;
+      }
+    }
+
+    try {
+      let finalFile = file;
+
+      // 🚀 OPTIMIZATION: Optimize image if enabled
+      if (enableOptimization) {
+        setIsOptimizing(true);
+        
+        try {
+          finalFile = await optimizeImage(file, targetWidth, targetHeight, quality);
+        } catch (error) {
+          console.warn('WebP optimization failed, falling back to JPEG:', error);
+          try {
+            finalFile = await optimizeImageFallback(file, targetWidth, targetHeight, quality);
+          } catch (fallbackError) {
+            console.warn('Image optimization failed completely, using original:', fallbackError);
+            finalFile = file;
+          }
         }
       }
-      
-      // Create preview URL
-      const previewUrl = URL.createObjectURL(file);
-      setImageFile(file);
+
+      // Create preview URL from optimized file
+      const previewUrl = URL.createObjectURL(finalFile);
+      setImageFile(finalFile);
       setImagePreview(previewUrl);
+      
+      // Update form with optimized image URL
+      form.setValue(fieldPath, previewUrl, { shouldDirty: true });
       
       // Call onUpload callback if provided
       if (onUpload) {
-        onUpload(file, previewUrl);
+        onUpload(finalFile, previewUrl);
       }
-    }, [validate, onUpload]);
+
+    } catch (error) {
+      console.error('Image upload failed:', error);
+    } finally {
+      setIsOptimizing(false);
+    }
+  }, [validate, onUpload, form, fieldPath, enableOptimization, targetWidth, targetHeight, quality]);
+  
+  // Handle image removal
+  const handleImageRemove = useCallback(() => {
+    setImageFile(null);
+    setImagePreview(undefined);
+    form.setValue(fieldPath, '', { shouldDirty: true });
     
-    // Handle image removal
-    const handleImageRemove = useCallback(() => {
-      setImageFile(null);
-      setImagePreview(undefined);
-      form.setValue(fieldPath, '', { shouldDirty: true });
-      
-      // Call onRemove callback if provided
-      if (onRemove) {
-        onRemove();
-      }
-    }, [form, fieldPath, onRemove]);
-    
-    // Initialize with initial image URL if provided
-    useState(() => {
-      if (initialImageUrl) {
-        form.setValue(fieldPath, initialImageUrl);
-      }
-    });
-    
-    return {
-      imageFile,
-      imagePreview,
-      handleImageUpload,
-      handleImageRemove,
-    };
+    // Call onRemove callback if provided
+    if (onRemove) {
+      onRemove();
+    }
+  }, [form, fieldPath, onRemove]);
+  
+  // Initialize with initial image URL if provided
+  useState(() => {
+    if (initialImageUrl) {
+      form.setValue(fieldPath, initialImageUrl);
+    }
+  });
+  
+  return {
+    imageFile,
+    imagePreview,
+    handleImageUpload,
+    handleImageRemove,
+    isOptimizing, 
   };
+};
