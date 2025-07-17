@@ -12,11 +12,11 @@ import { useTranslation } from 'react-i18next';
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
 // 🚀 OPTIMIZATION: Image optimization settings
-const STANDARD_TARGET_WIDTH = 800;
-const STANDARD_TARGET_HEIGHT = 600;
+const STANDARD_TARGET_WIDTH = 1800;
+const STANDARD_TARGET_HEIGHT = 1600;
 const THUMBNAIL_TARGET_WIDTH = 400;
 const THUMBNAIL_TARGET_HEIGHT = 300;
-const OPTIMIZATION_QUALITY = 0.8; // 80% quality
+const OPTIMIZATION_QUALITY = 1; // 80% quality
 
 // 🚀 OPTIMIZATION: Image optimization utility
 const optimizeImage = async (

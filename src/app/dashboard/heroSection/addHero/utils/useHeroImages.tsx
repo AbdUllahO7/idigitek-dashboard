@@ -124,10 +124,7 @@ export const useHeroImages = (form: UseFormReturn<any>) => {
         // 🚀 OPTIMIZATION: Show loading state
         setIsOptimizing(prev => ({ ...prev, [featureIndex]: true }));
 
-        toast({
-          title: "Optimizing image...",
-          description: "Please wait while we optimize your image for better performance",
-        });
+      
 
         // 🚀 OPTIMIZATION: Optimize the image
         let optimizedFile: File;
@@ -165,11 +162,7 @@ export const useHeroImages = (form: UseFormReturn<any>) => {
 
       } catch (error) {
         console.error('Image optimization failed:', error);
-        toast({
-          title: "Image optimization failed",
-          description: "Failed to optimize image. Please try a different image.",
-          variant: "destructive",
-        });
+        
       } finally {
         // 🚀 Clear loading state
         setIsOptimizing(prev => ({ ...prev, [featureIndex]: false }));
@@ -205,10 +198,6 @@ export const useHeroImages = (form: UseFormReturn<any>) => {
         return newPreviews;
       });
 
-      toast({
-        title: "Image removed",
-        description: "Image has been removed from all languages",
-      });
     },
     [form]
   );

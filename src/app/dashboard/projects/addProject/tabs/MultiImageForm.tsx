@@ -78,6 +78,7 @@ const MultiImageForm = forwardRef<any, MultiImageFormProps>((props, ref) => {
     contentElements: [] as ContentElement[],
     isSaving: false,
     imagePreviews: [] as string[],
+    elementsToDelete: [] as string[], // Track elements to delete
   })
 
   // Use object state update for better performance and readability
@@ -94,6 +95,7 @@ const MultiImageForm = forwardRef<any, MultiImageFormProps>((props, ref) => {
     contentElements,
     isSaving,
     imagePreviews,
+    elementsToDelete,
   } = state
 
   // Hooks
@@ -103,13 +105,13 @@ const MultiImageForm = forwardRef<any, MultiImageFormProps>((props, ref) => {
 
   // Services
   const { useCreate: useCreateSubSection, useGetCompleteBySlug, useUpdate: useUpdateSubSection } = useSubSections()
-
-  const { useCreate: useCreateContentElement } = useContentElements()
+  const { useCreate: useCreateContentElement, useDelete: useDeleteContentElement } = useContentElements()
   const { useBulkUpsert: useBulkUpsertTranslations } = useContentTranslations()
 
   const createSubSection = useCreateSubSection()
   const updateSubSection = useUpdateSubSection()
   const createContentElement = useCreateContentElement()
+  const deleteContentElement = useDeleteContentElement()
 
   // Data fetching from API
   const {
@@ -258,7 +260,7 @@ const MultiImageForm = forwardRef<any, MultiImageFormProps>((props, ref) => {
     [form, imagePreviews, toast, updateState, t],
   )
 
-  // Handle image removal
+  // Handle image removal - FIXED VERSION
   const handleImageRemove = useCallback(
     (index: number) => {
       const images = form.getValues().images
@@ -272,18 +274,31 @@ const MultiImageForm = forwardRef<any, MultiImageFormProps>((props, ref) => {
         return
       }
 
+      // Check if there's a corresponding content element to mark for deletion
+      if (contentElements[index]) {
+        const elementToDelete = contentElements[index]._id
+        updateState({
+          elementsToDelete: [...elementsToDelete, elementToDelete]
+        })
+      }
+
       // Remove image at index
       const newImages = images.filter((_, i) => i !== index)
       form.setValue("images", newImages, { shouldDirty: true })
 
       // Remove preview
       const newPreviews = imagePreviews.filter((_, i) => i !== index)
+      
+      // Update content elements array to match the new images
+      const newContentElements = contentElements.filter((_, i) => i !== index)
+
       updateState({
         imagePreviews: newPreviews,
+        contentElements: newContentElements,
         hasUnsavedChanges: true,
       })
     },
-    [form, imagePreviews, toast, updateState, t],
+    [form, imagePreviews, contentElements, elementsToDelete, toast, updateState, t],
   )
 
   // Add new image field
@@ -333,7 +348,7 @@ const MultiImageForm = forwardRef<any, MultiImageFormProps>((props, ref) => {
     [toast, t],
   )
 
-  // Save handler
+  // Save handler - UPDATED to handle deletions
   const handleSave = useCallback(async () => {
     // Validate form
     const isValid = await form.trigger()
@@ -351,7 +366,33 @@ const MultiImageForm = forwardRef<any, MultiImageFormProps>((props, ref) => {
     try {
       const images = form.getValues().images
 
-      // Step 1: Create or update subsection
+      // Step 1: Delete marked elements
+      if (elementsToDelete.length > 0) {
+        try {
+          await Promise.all(
+            elementsToDelete.map(async (elementId) => {
+              await deleteContentElement.mutateAsync(elementId)
+            })
+          )
+          
+          // Clear the deletion queue
+          updateState({ elementsToDelete: [] })
+          
+          toast({
+            title: t('projectMultiImage.elementsDeleted', 'Elements Deleted'),
+            description: t('projectMultiImage.elementsDeletedSuccess', 'Removed elements have been deleted successfully.'),
+          })
+        } catch (error) {
+          console.error("Error deleting elements:", error)
+          toast({
+            title: t('projectMultiImage.deletionError', 'Deletion Error'),
+            description: t('projectMultiImage.deletionFailed', 'Some elements could not be deleted.'),
+            variant: "destructive",
+          })
+        }
+      }
+
+      // Step 2: Create or update subsection
       let sectionId = existingSubSectionId
       if (!sectionId) {
         if (!ParentSectionId) {
@@ -391,7 +432,7 @@ const MultiImageForm = forwardRef<any, MultiImageFormProps>((props, ref) => {
         throw new Error(t('projectMultiImage.failedToCreateSection', 'Failed to create or retrieve subsection ID'))
       }
 
-      // Step 2: Handle existing content elements
+      // Step 3: Handle existing content elements
       if (contentElements.length > 0) {
         // For existing elements, update them with new images
         const existingElements = [...contentElements]
@@ -427,7 +468,7 @@ const MultiImageForm = forwardRef<any, MultiImageFormProps>((props, ref) => {
           existingElements.push(newElement.data)
 
           const image = images[i] as ImageType;
-        if (image.file) {
+          if (image.file) {
             const imageUrl = await uploadImage(newElement.data._id, image.file)            
             updatedImageUrls[i] = imageUrl || ""
           } else {
@@ -521,6 +562,8 @@ const MultiImageForm = forwardRef<any, MultiImageFormProps>((props, ref) => {
     updateSubSection,
     uploadImage,
     websiteId,
+    elementsToDelete,
+    deleteContentElement,
   ])
 
   // Create form ref for parent component

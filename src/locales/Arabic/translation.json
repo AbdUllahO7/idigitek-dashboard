@@ -4082,7 +4082,7 @@
           "description": "يرجى الانتظار بينما نحفظ التغييرات..."
         },
         "validation": {
-          "countMismatch": "يجب أن يكون لكل لغة نفس عدد القسمات"
+          "countMismatch": "يجب أن يكون لكل لغة نفس عدد القسم"
         },
         "buttons": {
           "saving": "جاري الحفظ...",
@@ -4112,7 +4112,7 @@
         "loadErrorDesc": "فشل في تحميل بيانات القسم. يرجى المحاولة مرة أخرى.",
         "validationError": "خطأ في التحقق",
         "validationErrorDesc": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح.",
-        "validationCountError": "يجب أن يكون لجميع اللغات نفس عدد القسمات.",
+        "validationCountError": "يجب أن يكون لجميع اللغات نفس عدد القسم.",
         "imageUploadError": "خطأ في رفع الصورة",
         "imageUploadErrorDesc": "فشل في رفع الصورة للرابط  {{linkIndex}} في القسم {{footerIndex}}.",
         "removeError": "خطأ",
@@ -4184,20 +4184,20 @@
       "form": {
         "loading": "جارٍ تحميل بيانات القسم الرئيسي...",
         "saving": {
-          "updating": "تحديث القسمات",
-          "creating": "إنشاء القسمات",
+          "updating": "تحديث القسم",
+          "creating": "إنشاء القسم",
           "description": "يرجى الانتظار بينما نحفظ التغييرات..."
         },
         "validation": {
-          "countMismatch": "يجب أن تحتوي كل لغة على نفس عدد القسمات",
+          "countMismatch": "يجب أن تحتوي كل لغة على نفس عدد القسم",
           "errorTitle": "خطأ في التحقق",
-          "errorDescription": "يجب أن تحتوي جميع اللغات على نفس عدد القسمات.",
+          "errorDescription": "يجب أن تحتوي جميع اللغات على نفس عدد القسم.",
           "fieldsError": "يرجى ملء جميع الحقول المطلوبة بشكل صحيح."
         },
         "buttons": {
           "saving": "جارٍ الحفظ...",
-          "update": "تحديث القسمات",
-          "save": "حفظ القسمات"
+          "update": "تحديث القسم",
+          "save": "حفظ القسم"
         },
         "toasts": {
           "cannotRemove": {
