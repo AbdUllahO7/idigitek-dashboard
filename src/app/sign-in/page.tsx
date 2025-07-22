@@ -360,15 +360,7 @@ export default function SignIn() {
                   className="absolute h-40 w-40 rounded-full bg-white blur-3xl"
                 />
 
-                <motion.img
-                  initial={{ scale: 1.1, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 1.2 }}
-                  src="/assets/iDIGITEK.webp"
-                  alt="Abstract design"
-                  className="h-full w-full object-contain "
-                />
-
+              
                 {/* Vertical grid lines */}
                 <div
                   className="absolute inset-0 opacity-25"
@@ -385,52 +377,18 @@ export default function SignIn() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
               >
-                <motion.div variants={logoVariants} initial="hidden" animate="visible" className="mb-8">
-                  <div className="inline-flex h-24 w-24 items-center justify-center rounded-2xl bg-white/10 p-2 backdrop-blur-sm">
-                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <motion.path
-                        d="M12 2L2 7L12 12L22 7L12 2Z"
-                        stroke="white"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        initial={{ pathLength: 0, opacity: 0 }}
-                        animate={{ pathLength: 1, opacity: 1 }}
-                        transition={{ duration: 1, delay: 0.8, ease: "easeInOut" }}
-                      />
-                      <motion.path
-                        d="M2 17L12 22L22 17"
-                        stroke="white"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        initial={{ pathLength: 0, opacity: 0 }}
-                        animate={{ pathLength: 1, opacity: 1 }}
-                        transition={{ duration: 1, delay: 1.2, ease: "easeInOut" }}
-                      />
-                      <motion.path
-                        d="M2 12L12 17L22 12"
-                        stroke="white"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        initial={{ pathLength: 0, opacity: 0 }}
-                        animate={{ pathLength: 1, opacity: 1 }}
-                        transition={{ duration: 1, delay: 1.0, ease: "easeInOut" }}
-                      />
-                    </svg>
-                  </div>
-                </motion.div>
+           
+          <motion.img
+                  initial={{ scale: 1.1, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 1.2 }}
+                  src="/assets/iDIGITEK.webp"
+                  alt="Abstract design"
+                  className=" w-full object-contain "
+                />
 
                 <div className="relative">
-                  <motion.h2
-                    className="mb-2 text-4xl font-bold text-white"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7, duration: 0.8 }}
-                  >
-                    {t("login.brand.name")}
-                  </motion.h2>
+                 
 
                   {/* Animated underline */}
                   <motion.div
