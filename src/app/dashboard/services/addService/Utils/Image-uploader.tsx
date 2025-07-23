@@ -11,14 +11,15 @@ import { useTranslation } from 'react-i18next';
 // Maximum file size in bytes (2MB)
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
-// 🚀 OPTIMIZATION: Image optimization settings
-const STANDARD_TARGET_WIDTH = 1800;
-const STANDARD_TARGET_HEIGHT = 1600;
+// 🚀 FIXED: Proper compression settings
+const STANDARD_TARGET_WIDTH = 1200; // Reduced from 1800
+const STANDARD_TARGET_HEIGHT = 1000; // Reduced from 1600
 const THUMBNAIL_TARGET_WIDTH = 400;
 const THUMBNAIL_TARGET_HEIGHT = 300;
-const OPTIMIZATION_QUALITY = 1; // 80% quality
+const OPTIMIZATION_QUALITY = 0.8; // FIXED: 80% quality instead of 100%
+const THUMBNAIL_QUALITY = 0.75; // 75% quality for thumbnails
 
-// 🚀 OPTIMIZATION: Image optimization utility
+// 🚀 ENHANCED: Image optimization utility with better compression
 const optimizeImage = async (
   file: File, 
   targetWidth: number = STANDARD_TARGET_WIDTH, 
@@ -33,22 +34,38 @@ const optimizeImage = async (
     img.onload = () => {
       // Calculate dimensions maintaining aspect ratio
       const aspectRatio = img.width / img.height;
-      let newWidth = targetWidth;
-      let newHeight = targetHeight;
+      let newWidth, newHeight;
 
-      if (aspectRatio > 1) {
-        // Landscape
-        newHeight = newWidth / aspectRatio;
+      // 🚀 ENHANCED: Better dimension calculation for compression
+      if (img.width > targetWidth || img.height > targetHeight) {
+        if (aspectRatio > targetWidth / targetHeight) {
+          // Image is wider relative to target
+          newWidth = targetWidth;
+          newHeight = targetWidth / aspectRatio;
+        } else {
+          // Image is taller relative to target
+          newHeight = targetHeight;
+          newWidth = targetHeight * aspectRatio;
+        }
       } else {
-        // Portrait or square
-        newWidth = newHeight * aspectRatio;
+        // Image is smaller than target, don't upscale
+        newWidth = img.width;
+        newHeight = img.height;
       }
+
+      // Ensure dimensions are integers
+      newWidth = Math.round(newWidth);
+      newHeight = Math.round(newHeight);
 
       canvas.width = newWidth;
       canvas.height = newHeight;
 
-      // Draw and resize image
-      ctx?.drawImage(img, 0, 0, newWidth, newHeight);
+      // 🚀 ENHANCED: Better image drawing with smoothing
+      if (ctx) {
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+      }
 
       // Convert to WebP with compression
       canvas.toBlob(
@@ -67,7 +84,11 @@ const optimizeImage = async (
             }
           );
 
-          console.log(`🚀 Image optimized: ${Math.round(file.size / 1024)}KB → ${Math.round(optimizedFile.size / 1024)}KB`);
+          const originalSizeKB = Math.round(file.size / 1024);
+          const optimizedSizeKB = Math.round(optimizedFile.size / 1024);
+          const compressionRatio = Math.round(((file.size - optimizedFile.size) / file.size) * 100);
+          
+          console.log(`🚀 Image optimized: ${originalSizeKB}KB → ${optimizedSizeKB}KB (${compressionRatio}% compression)`);
           resolve(optimizedFile);
         },
         'image/webp',
@@ -80,7 +101,7 @@ const optimizeImage = async (
   });
 };
 
-// 🚀 OPTIMIZATION: Fallback for older browsers (JPEG)
+// 🚀 ENHANCED: Fallback for older browsers (JPEG) with better compression
 const optimizeImageFallback = async (
   file: File, 
   targetWidth: number = STANDARD_TARGET_WIDTH, 
@@ -94,18 +115,33 @@ const optimizeImageFallback = async (
 
     img.onload = () => {
       const aspectRatio = img.width / img.height;
-      let newWidth = targetWidth;
-      let newHeight = targetHeight;
+      let newWidth, newHeight;
 
-      if (aspectRatio > 1) {
-        newHeight = newWidth / aspectRatio;
+      // 🚀 ENHANCED: Same dimension calculation as WebP version
+      if (img.width > targetWidth || img.height > targetHeight) {
+        if (aspectRatio > targetWidth / targetHeight) {
+          newWidth = targetWidth;
+          newHeight = targetWidth / aspectRatio;
+        } else {
+          newHeight = targetHeight;
+          newWidth = targetHeight * aspectRatio;
+        }
       } else {
-        newWidth = newHeight * aspectRatio;
+        newWidth = img.width;
+        newHeight = img.height;
       }
+
+      newWidth = Math.round(newWidth);
+      newHeight = Math.round(newHeight);
 
       canvas.width = newWidth;
       canvas.height = newHeight;
-      ctx?.drawImage(img, 0, 0, newWidth, newHeight);
+
+      if (ctx) {
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+      }
 
       canvas.toBlob(
         (blob) => {
@@ -116,13 +152,18 @@ const optimizeImageFallback = async (
 
           const optimizedFile = new File(
             [blob], 
-            `optimized-${file.name}`,
+            `optimized-${file.name.replace(/\.[^/.]+$/, '.jpg')}`,
             { 
               type: 'image/jpeg',
               lastModified: Date.now()
             }
           );
 
+          const originalSizeKB = Math.round(file.size / 1024);
+          const optimizedSizeKB = Math.round(optimizedFile.size / 1024);
+          const compressionRatio = Math.round(((file.size - optimizedFile.size) / file.size) * 100);
+          
+          console.log(`🚀 Image optimized (JPEG fallback): ${originalSizeKB}KB → ${optimizedSizeKB}KB (${compressionRatio}% compression)`);
           resolve(optimizedFile);
         },
         'image/jpeg',
@@ -179,7 +220,7 @@ export const useImageUpload = (options: UseImageUploadOptions) => {
   const handleImageUpload = async (file: File) => {
     if (!file) return;
 
-    // Check file size (max 2MB)
+    // Check file size (max 2MB for original file)
     if (file.size > MAX_FILE_SIZE) {
       toast({
         title: "File too large",
@@ -213,15 +254,29 @@ export const useImageUpload = (options: UseImageUploadOptions) => {
       if (enableOptimization) {
         setIsOptimizing(true);
         
+     
+        
         try {
           finalFile = await optimizeImage(file, targetWidth, targetHeight, quality);
+          
+
+          
+        
         } catch (error) {
           console.warn('WebP optimization failed, falling back to JPEG:', error);
           try {
             finalFile = await optimizeImageFallback(file, targetWidth, targetHeight, quality);
+            
+         
+         
           } catch (fallbackError) {
             console.warn('Image optimization failed completely, using original:', fallbackError);
             finalFile = file;
+            toast({
+              title: "Compression failed",
+              description: "Using original image without compression",
+              variant: "destructive",
+            });
           }
         }
       }
@@ -248,6 +303,11 @@ export const useImageUpload = (options: UseImageUploadOptions) => {
 
     } catch (error) {
       console.error('Image upload failed:', error);
+      toast({
+        title: "Upload failed",
+        description: "Failed to process image. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsOptimizing(false);
     }
@@ -306,7 +366,7 @@ export const SimpleImageUploader = ({
   onRemove,
   altText = "Image preview",
   placeholderText = "Click to upload image",
-  descriptionText = "SVG, PNG, JPG or GIF (max. 2MB, auto-optimized)",
+  descriptionText = "SVG, PNG, JPG or GIF (max. 2MB, auto-compressed to 80% quality)",
   imageHeight = "h-48",
   acceptedTypes = "image/*",
   disabled = false
@@ -351,7 +411,7 @@ export const SimpleImageUploader = ({
                 onClick={() => document.getElementById(inputId)?.click()}
                 disabled={disabled}
               >
-                {disabled ? 'Processing...' : t('SectionTable.ChangeImage')}
+                {disabled ? 'Compressing...' : t('SectionTable.ChangeImage')}
               </Button>
             </div>
           </div>
@@ -363,7 +423,7 @@ export const SimpleImageUploader = ({
             onClick={() => !disabled && document.getElementById(inputId)?.click()}
           >
             <Upload className="h-10 w-10 text-muted-foreground mb-2" />
-            <p className="text-sm font-medium">{disabled ? 'Processing...' : placeholderText}</p>
+            <p className="text-sm font-medium">{disabled ? 'Compressing...' : placeholderText}</p>
             <p className="text-xs text-muted-foreground mt-1">{descriptionText}</p>
           </div>
         )}
@@ -425,6 +485,11 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
 
     // Check file size (max 2MB)
     if (file.size > MAX_FILE_SIZE) {
+      toast({
+        title: "File too large",
+        description: "Image must be less than 2MB",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -434,15 +499,29 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
 
       let optimizedFile: File;
       try {
-        // Optimize for feature images (smaller size)
-        optimizedFile = await optimizeImage(file, THUMBNAIL_TARGET_WIDTH, THUMBNAIL_TARGET_HEIGHT, 0.75);
+        // 🚀 FIXED: Use proper compression for feature images
+        optimizedFile = await optimizeImage(file, THUMBNAIL_TARGET_WIDTH, THUMBNAIL_TARGET_HEIGHT, THUMBNAIL_QUALITY);
+        
+        const originalSizeKB = Math.round(file.size / 1024);
+        const optimizedSizeKB = Math.round(optimizedFile.size / 1024);
+        const compressionRatio = Math.round(((file.size - optimizedFile.size) / file.size) * 100);
+        
+        toast({
+          title: "Feature image compressed!",
+          description: `${originalSizeKB}KB → ${optimizedSizeKB}KB (${compressionRatio}% smaller)`,
+        });
       } catch (error) {
         console.warn('WebP optimization failed, falling back to JPEG:', error);
         try {
-          optimizedFile = await optimizeImageFallback(file, THUMBNAIL_TARGET_WIDTH, THUMBNAIL_TARGET_HEIGHT, 0.75);
+          optimizedFile = await optimizeImageFallback(file, THUMBNAIL_TARGET_WIDTH, THUMBNAIL_TARGET_HEIGHT, THUMBNAIL_QUALITY);
         } catch (fallbackError) {
           console.warn('Image optimization failed completely, using original:', fallbackError);
           optimizedFile = file;
+          toast({
+            title: "Compression failed",
+            description: "Using original image without compression",
+            variant: "destructive",
+          });
         }
       }
 
@@ -470,6 +549,11 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
 
     } catch (error) {
       console.error('Feature image optimization failed:', error);
+      toast({
+        title: "Upload failed",
+        description: "Failed to process feature image. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       // 🚀 Clear loading state
       setIsOptimizing(prev => ({ ...prev, [featureIndex]: false }));
@@ -514,7 +598,7 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
   const FeatureImageUploader = ({ 
     featureIndex,
     label = "Feature Image",
-    helperText = "(auto-optimized for all languages)" 
+    helperText = "(auto-compressed for all languages)" 
   }: { 
     featureIndex: number;
     label?: string;
@@ -530,7 +614,7 @@ export const useFeatureImages = (form: UseFormReturn<any>) => {
 
     return (
       <LabeledImageUploader
-        label={`${label} ${isCurrentlyOptimizing ? '(Optimizing...)' : ''}`}
+        label={`${label} ${isCurrentlyOptimizing ? '(Compressing...)' : ''}`}
         helperText={helperText}
         imageValue={imageValue}
         inputId={inputId}
@@ -591,7 +675,11 @@ export const useImageUploader = ({
     if (validate) {
       const validationResult = validate(file);
       if (typeof validationResult === 'string') {
-        alert(validationResult);
+        toast({
+          title: "Invalid file",
+          description: validationResult,
+          variant: "destructive",
+        });
         return;
       }
     }
@@ -603,8 +691,22 @@ export const useImageUploader = ({
       if (enableOptimization) {
         setIsOptimizing(true);
         
+        toast({
+          title: "Compressing image...",
+          description: "Please wait while we optimize your image",
+        });
+        
         try {
           finalFile = await optimizeImage(file, targetWidth, targetHeight, quality);
+          
+          const originalSizeKB = Math.round(file.size / 1024);
+          const optimizedSizeKB = Math.round(finalFile.size / 1024);
+          const compressionRatio = Math.round(((file.size - finalFile.size) / file.size) * 100);
+          
+          toast({
+            title: "Image compressed successfully!",
+            description: `Reduced from ${originalSizeKB}KB to ${optimizedSizeKB}KB (${compressionRatio}% smaller)`,
+          });
         } catch (error) {
           console.warn('WebP optimization failed, falling back to JPEG:', error);
           try {
@@ -612,6 +714,11 @@ export const useImageUploader = ({
           } catch (fallbackError) {
             console.warn('Image optimization failed completely, using original:', fallbackError);
             finalFile = file;
+            toast({
+              title: "Compression failed",
+              description: "Using original image without compression",
+              variant: "destructive",
+            });
           }
         }
       }
@@ -631,6 +738,11 @@ export const useImageUploader = ({
 
     } catch (error) {
       console.error('Image upload failed:', error);
+      toast({
+        title: "Upload failed",
+        description: "Failed to process image. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsOptimizing(false);
     }

@@ -13,7 +13,6 @@ import { useForm } from "react-hook-form";
 import { Save, AlertTriangle, Loader2, Plus, Globe2 } from "lucide-react";
 import { Form } from "@/src/components/ui/form";
 import { Button } from "@/src/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { useToast } from "@/src/hooks/use-toast";
 import { useSubSections } from "@/src/hooks/webConfiguration/use-subSections";
 import { useContentElements } from "@/src/hooks/webConfiguration/use-content-elements";
