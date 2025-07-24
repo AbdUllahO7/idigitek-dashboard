@@ -3,7 +3,6 @@ import type { Section } from "@/src/api/types/hooks/section.types"
 import { PREDEFINED_SECTIONS } from "@/src/Const/SectionsData"
 import { TFunction } from "i18next"
 
-// 🎯 NEW: Helper function to safely get string value from multilingual or string name
 const getStringFromMultilingualOrString = (value: any, language: string = 'en'): string => {
   if (!value) return '';
   
@@ -27,7 +26,6 @@ const getStringFromMultilingualOrString = (value: any, language: string = 'en'):
   return String(value);
 }
 
-// 🎯 UPDATED: Enhanced section name translation with multilingual support
 export const getTranslatedSectionName = (
   section: Section,
   t: TFunction,
@@ -72,7 +70,6 @@ export const getTranslatedSectionName = (
   return getStringFromMultilingualOrString(section.subName || section.name, language) || 'Unnamed Section';
 }
 
-// 🎯 UPDATED: Enhanced visual info getter with duplicate support
 export const getSectionVisualInfo = (section: Section) => {
   const predefinedSection = PREDEFINED_SECTIONS.find(ps => {
     const sectionSubName = section.subName;
@@ -97,7 +94,6 @@ export const getSectionVisualInfo = (section: Section) => {
   };
 }
 
-// 🎯 UPDATED: Enhanced description getter with multilingual support
 export const getSectionDescription = (
   section: Section | any,
   t: TFunction,
@@ -142,7 +138,6 @@ export const getSectionDescription = (
   return '';
 }
 
-// 🎯 UPDATED: Enhanced predefined sections filter - only show sections NOT already added
 export const filterPredefinedSections = (
   searchQuery: string,
   categoryFilter: string,
@@ -185,7 +180,6 @@ export const filterPredefinedSections = (
   });
 }
 
-// 🎯 FIXED: Enhanced current sections filter with safe string handling
 export const filterCurrentSections = (
   sections: Section[],
   searchQuery: string,

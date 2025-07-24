@@ -11,8 +11,6 @@ interface ProtectedRouteProps {
   allowedRoles?: string[];
 }
 
-// For debugging - each component instance gets a unique ID
-const ROUTE_ID = Math.random().toString(36).substring(2, 9);
 
 export default function ProtectedRoute({ 
   children, 

@@ -1,0 +1,8 @@
+{
+  "entry": ["src/pages/**", "src/app/**", "next.config.js"],
+  "project": ["src/**"],
+  "ignore": ["**/*.test.*", "**/*.spec.*"],
+  "typescript": {
+    "entry": ["src/**/*.ts", "src/**/*.tsx"]
+  }
+}
